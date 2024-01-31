@@ -56,8 +56,11 @@ export default function Uploader() {
 	});
 
 	const handleUpload = () => {
+		const randomUUID = crypto.randomUUID();
+
 		uppy.setFileMeta(uppy.getFiles()[0].id, {
-			objectName: user?.id + "/" + uppy.getFiles()[0].name,
+			objectName:
+				user?.id + "/" + randomUUID + "/" + uppy.getFiles()[0].name,
 		});
 
 		uppy.upload();
