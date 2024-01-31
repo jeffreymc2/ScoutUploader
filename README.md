@@ -66,3 +66,5 @@ execute function create_user_on_signup ();
 ```sql
 drop trigger create_user_on_signup on auth.users;
 ```
+
+npm install @uppy/react @uppy/dashboard @uppy/drag-drop @uppy/progress-bar @uppy/status-bar @uppy/file-input

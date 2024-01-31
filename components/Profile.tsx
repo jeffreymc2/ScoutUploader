@@ -70,7 +70,15 @@ export default function Profile() {
 						<DropdownMenuItem onClick={handleLogout}>
 							Logout
 						</DropdownMenuItem>
-						<DropdownMenuItem>Billing</DropdownMenuItem>
+						<DropdownMenuItem
+							onClick={() => {
+								document
+									.getElementById("upload-trigger")
+									?.click();
+							}}
+						>
+							Upload
+						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			)}
