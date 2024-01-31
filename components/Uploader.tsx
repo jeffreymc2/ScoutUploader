@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
 	Dialog,
 	DialogContent,
@@ -18,11 +18,15 @@ import { Button } from "./ui/button";
 import Tus from "@uppy/tus";
 import useUser from "@/app/hook/useUser";
 import { supabaseBrowser } from "@/lib/supabase/browser";
+import { Input } from "./ui/input";
+import { toast } from "sonner";
 
 export default function Uploader() {
+	const inputRef = useRef() as React.MutableRefObject<HTMLInputElement>;
 	const { data: user } = useUser();
+	const supabase = supabaseBrowser();
+
 	const onBeforeRequest = async (req: any) => {
-		const supabase = supabaseBrowser();
 		const { data } = await supabase.auth.getSession();
 		req.setHeader("Authorization", `Bearer ${data.session?.access_token}`);
 	};
@@ -55,15 +59,38 @@ export default function Uploader() {
 		};
 	});
 
+	uppy.on("upload-success", () => {
+		uppy.cancelAll();
+		if (inputRef.current) {
+			inputRef.current.value = "";
+		}
+		document.getElementById("trigger-close")?.click();
+	});
+
 	const handleUpload = () => {
-		const randomUUID = crypto.randomUUID();
+		if (uppy.getFiles().length !== 0) {
+			const randomUUID = crypto.randomUUID();
 
-		uppy.setFileMeta(uppy.getFiles()[0].id, {
-			objectName:
-				user?.id + "/" + randomUUID + "/" + uppy.getFiles()[0].name,
-		});
+			uppy.setFileMeta(uppy.getFiles()[0].id, {
+				objectName:
+					user?.id + "/" + randomUUID + "/" + uppy.getFiles()[0].name,
+			});
 
-		uppy.upload();
+			uppy.upload().then(async () => {
+				const description = inputRef.current.value;
+				if (description.trim()) {
+					const { error } = await supabase
+						.from("posts")
+						.update({ description: description })
+						.eq("id", randomUUID);
+					if (error) {
+						toast.error("Fail to update descriptions.");
+					}
+				}
+			});
+		} else {
+			toast.warning("Please adding an image");
+		}
 	};
 
 	return (
@@ -82,6 +109,7 @@ export default function Uploader() {
 						className="w-auto"
 						hideUploadButton
 					/>
+					<Input placeholder=" image description" ref={inputRef} />
 					<Button className="w-full" onClick={handleUpload}>
 						Upload
 					</Button>
