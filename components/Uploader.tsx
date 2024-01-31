@@ -20,11 +20,13 @@ import useUser from "@/app/hook/useUser";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { Input } from "./ui/input";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function Uploader() {
 	const inputRef = useRef() as React.MutableRefObject<HTMLInputElement>;
 	const { data: user } = useUser();
 	const supabase = supabaseBrowser();
+	const router = useRouter();
 
 	const onBeforeRequest = async (req: any) => {
 		const { data } = await supabase.auth.getSession();
@@ -65,6 +67,7 @@ export default function Uploader() {
 			inputRef.current.value = "";
 		}
 		document.getElementById("trigger-close")?.click();
+		router.refresh();
 	});
 
 	const handleUpload = () => {
