@@ -1,14 +1,14 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { KeyRound } from "lucide-react";
-import React from "react";
+import React, { Suspense } from 'react';
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { useSearchParams } from "next/navigation";
 import { FaMicrosoft } from "react-icons/fa6";
 
-export default function Page() {
+const AuthPageContent = () => {
 	const params = useSearchParams();
 	const next = params.get("next") || "";
 	const handleLoginWithOAuth = (provider: "github" | "google") => {
@@ -59,3 +59,11 @@ export default function Page() {
 		</div>
 	);
 }
+
+export default function AuthPage() {
+	return (
+	  <Suspense fallback={<div>Loading...</div>}>
+		<AuthPageContent />
+	  </Suspense>
+	);
+  }
