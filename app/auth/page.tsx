@@ -11,7 +11,7 @@ import { FaMicrosoft } from "react-icons/fa6";
 export default function Page() {
 	const params = useSearchParams();
 	const next = params.get("next") || "";
-	const handleLoginWithOAuth = (provider: "github" | "google" | "azure") => {
+	const handleLoginWithOAuth = (provider: "github" | "google") => {
 		const supabase = supabaseBrowser();
 		supabase.auth.signInWithOAuth({
 			provider,
@@ -42,7 +42,7 @@ export default function Page() {
 					<Button
 						className=" w-full flex items-center gap-2 "
 						variant="outline"
-						onClick={() => handleLoginWithOAuth("azure")}
+						// onClick={() => handleLoginWithOAuth("azure")}
 					>
 						<FaMicrosoft /> Microsoft
 					</Button>
