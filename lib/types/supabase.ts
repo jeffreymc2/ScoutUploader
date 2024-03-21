@@ -12,7 +12,7 @@ export interface Database {
       posts: {
         Row: {
           created_at: string
-          description: string | null
+          player_id: string | null
           id: string
           name: string
           object_id: string
@@ -20,7 +20,7 @@ export interface Database {
         }
         Insert: {
           created_at?: string
-          description?: string | null
+          player_id?: string | null
           id?: string
           name: string
           object_id: string
@@ -28,7 +28,7 @@ export interface Database {
         }
         Update: {
           created_at?: string
-          description?: string | null
+          player_id?: string | null
           id?: string
           name?: string
           object_id?: string

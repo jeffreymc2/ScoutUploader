@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+	font-family: 'UnitedSansSmCdBd';
+	src: url('UnitedSansSmCdBd.woff2') format('woff2'); /* Adjust the path as needed */
+	font-weight: normal; /* Adjust as needed */
+	font-style: normal; /* Adjust as needed */
+  }
+  
+
 @layer base {
 	:root {
 		--background: 0 0% 100%;

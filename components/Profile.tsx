@@ -43,7 +43,7 @@ export default function Profile() {
 		<div>
 			{!data?.id ? (
 				<Link href="/auth" className=" animate-fade">
-					<Button variant="outline">SignIn</Button>
+					{/* <Button variant="outline">SignIn</Button> */}
 				</Link>
 			) : (
 				<DropdownMenu>
@@ -51,7 +51,7 @@ export default function Profile() {
 						<>
 							{data?.image_url ? (
 								<Image
-									src={data.image_url || ""}
+									src={data.image_url || "https://vyrybefhmqnaxzfijbpl.supabase.co/storage/v1/object/public/other/profile-default-icon-2048x2045-u3j7s5nj.png"}
 									alt={data.display_name || ""}
 									width={50}
 									height={50}
@@ -65,20 +65,12 @@ export default function Profile() {
 						</>
 					</DropdownMenuTrigger>
 					<DropdownMenuContent>
-						<DropdownMenuLabel>My Account</DropdownMenuLabel>
+						<DropdownMenuLabel>{data.email}</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem onClick={handleLogout}>
 							Logout
 						</DropdownMenuItem>
-						<DropdownMenuItem
-							onClick={() => {
-								document
-									.getElementById("upload-trigger")
-									?.click();
-							}}
-						>
-							Upload
-						</DropdownMenuItem>
+						
 					</DropdownMenuContent>
 				</DropdownMenu>
 			)}

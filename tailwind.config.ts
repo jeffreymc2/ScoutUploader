@@ -1,4 +1,6 @@
 import type { Config } from "tailwindcss";
+const colors = require("tailwindcss/colors");
+/** @type {import('tailwindcss').Config} */
 
 const config = {
 	darkMode: ["class"],
@@ -18,12 +20,24 @@ const config = {
 			},
 		},
 		extend: {
+			
 			colors: {
 				border: "hsl(var(--border))",
 				input: "hsl(var(--input))",
 				ring: "hsl(var(--ring))",
 				background: "hsl(var(--background))",
 				foreground: "hsl(var(--foreground))",
+				'blue': {
+					100: '#bfdbfe',
+					200: '#93c5fd',
+					300: '#60a5fa',
+					400: '#3b82f6',
+					500: '#005cb9',
+					600: '#1d4ed8',
+					700: '#003764',
+					800: '#1e3a8a',
+					900: '#003764',
+				  },
 				primary: {
 					DEFAULT: "hsl(var(--primary))",
 					foreground: "hsl(var(--primary-foreground))",
@@ -76,6 +90,9 @@ const config = {
 					},
 				},
 			},
+			fontFamily: {
+                pgFont: ['UnitedSansSmCdBd', 'sans-serif'], // Add your custom font followed by fallback fonts
+            },
 			animation: {
 				"accordion-down": "accordion-down 0.2s ease-out",
 				"accordion-up": "accordion-up 0.2s ease-out",
