@@ -29,6 +29,7 @@ interface PlayerData {
   Age: string;
   ProfilePic: string | null;
 }
+
 interface Post {
   created_at: string;
   player_id: string | null;
@@ -43,13 +44,13 @@ interface Post {
 }
 
 interface PlayerSearchProps {
-  posts: Post[];
+  posts: Post[] | null;
 }
 
 export default async function PlayerPage({
-  params, 
+  params,
 }: {
-  params: { player_id: string; post_by: string; image: string } ;
+  params: { player_id: string; post_by: string; image: string };
 }) {
   const player_id = params.player_id;
 
@@ -249,23 +250,7 @@ export default async function PlayerPage({
           ))}
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-10 mt-10">
-        {posts.map((post) => (
-          <div key={post.id} className="rounded-md w-full space-y-5 relative">
-            <div className="w-full h-96 relative rounded-md border">
-              <Image
-                src={imgeUrlHost + post.image}
-                alt={post.player_id || ''}
-                fill
-                className="rounded-md object-cover object-center"
-              />
-            </div>
-            <p className="text-xs">Posted by: @{post.profiles?.display_name}</p>
-            <p className="text-lg font-pgFont">Player Id: {post.player_id}</p>
-            <DeletePost post_by={post.post_by} image={post.image} />
-          </div>
-        ))}
-      </div>
+      
     </>
   );
 }
