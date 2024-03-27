@@ -1,16 +1,22 @@
+//app/api/players/route.ts
+
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const playerID = searchParams.get('playerID');
-
-  if (!playerID) {
-    return NextResponse.json({ message: 'Missing playerID parameter' }, { status: 400 });
-  }
+  const textSearch = searchParams.get('textSearch');
+  const limit = searchParams.get('limit') || '10'; // Provides a default value if not provided
+  const state = searchParams.get('state') || ''; // Provides a default value if not provided
+  const searchQuery = searchParams.get('query');
 
   // Construct the URL for the external API request
-  const url = `ttps://tpa.perfectgame.org/api/ScoutNotes/PlayerSearchV2?playerName=${encodeURIComponent(playerID)}`;
+  const url = `https://tpa.perfectgame.org/api/ScoutNotes/EventTeams?eventID=${encodeURIComponent(
+    searchQuery || ''
+  )}&limit=${encodeURIComponent(limit)}&state=${encodeURIComponent(state)}`;
 
+  // ...rest of your code remains the same
+
+  
   try {
     const response = await fetch(url, {
       headers: {
@@ -21,12 +27,20 @@ export async function GET(request: NextRequest) {
     });
 
     if (response.ok) {
-      const data = await response.json();
-      return NextResponse.json(data);
+      const data = await response.text();
+
+      try {
+        const result = JSON.parse(data);
+        return NextResponse.json(result);
+      } catch (parseError) {
+        console.error('Error parsing response data:', parseError);
+        return NextResponse.json({ message: 'Error parsing response data' }, { status: 500 });
+      }
     } else {
       const errorData = await response.text();
       console.error('Error fetching data:', response.status, response.statusText);
       console.error('Error details:', errorData);
+
       return NextResponse.json(
         { message: 'Failed to fetch data', error: response.statusText },
         { status: response.status }

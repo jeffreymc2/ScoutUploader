@@ -1,4 +1,4 @@
-// components/PlayerSearch.tsx
+//app/components/PlayerSearch.tsx
 'use client';
 
 import { useState } from 'react';
@@ -9,6 +9,7 @@ import { Input } from './ui/input';
 import { Button } from './ui/button';
 
 import { IoIosCloseCircleOutline } from "react-icons/io";
+import { toast } from 'sonner';
 
 interface Post {
   created_at: string;
@@ -34,12 +35,19 @@ export default function PlayerSearch({ posts }: PlayerSearchProps) {
   const router = useRouter();
 
   const handleSearch = () => {
-    router.push(searchQuery ? `/?player_id=${encodeURIComponent(searchQuery)}` : '/');
+    
+    router.push(searchQuery ? `/players/${encodeURIComponent(searchQuery)}` : '/');
+    if (!searchQuery.trim()) {
+      toast.info('Please enter a Player Id to search.');
+      return;
+    }
+
+
   };
 
   return (
-    <div className="mt-10">
-      <div className="flex items-center w-1/3 relative">
+    <div className="mt-5">
+    <div className="flex items-center w-full relative">
     <Input
       type="text"
       value={searchQuery}
@@ -60,23 +68,7 @@ export default function PlayerSearch({ posts }: PlayerSearchProps) {
     )}
     <Button onClick={handleSearch} className="ml-2 flex-shrink-0">Search</Button>
   </div>
-      <div className="grid grid-cols-3 gap-10 mt-10">
-        {posts.map((post) => (
-          <div key={post.id} className="rounded-md w-full space-y-5 relative">
-            <div className="w-full h-96 relative rounded-md border">
-              <Image
-                src={imgeUrlHost + post.image}
-                alt={post.player_id || ''}
-                fill
-                className="rounded-md object-cover object-center"
-              />
-            </div>
-            <p className="text-xs">Posted by: @{post.profiles?.display_name}</p>
-            <p className="text-lg font-pgFont">Player Id: {post.player_id}</p>
-            <DeletePost post_by={post.post_by} image={post.image} />
-          </div>
-        ))}
-      </div>
+      
     </div>
   );
 }
