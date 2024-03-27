@@ -88,7 +88,7 @@ export default function EventSearch({ teams }: EventSearchProps) {
       </div>
 
       {searchResults.length > 0 && (
-        <Select
+        <Select 
           onValueChange={(value) =>
             setSelectedTeam(
               searchResults.find(
@@ -97,8 +97,9 @@ export default function EventSearch({ teams }: EventSearchProps) {
             )
           }
           defaultValue={selectedTeam?.TournamentTeamID.toString()}
-        >
-          <SelectTrigger className="w-full">
+        >            <p className="text-xl text-gray-900 my-2 font-pgFont">Select a Team</p>
+
+          <SelectTrigger className="w-full mb-5 ">
             <SelectValue className="my-5" placeholder="Select a team" />
           </SelectTrigger>
           <SelectContent>
