@@ -1,27 +1,27 @@
-// // components/SearchComponent.tsx
+// components/SearchComponent.tsx
 "use client";
 import EventSearch from "@/components/EventSearch";
 import PlayerSearch from "@/components/PlayerSearch";
-import { Post } from "@/lib/types/types";
 import PlayerSearchByName from "@/components/PlayerSearchByName";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'; // adjust the import path accordingly
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Post } from "@/lib/types/types";
 
 const SearchComponent = ({ posts }: { posts: Post[] }) => {
   return (
     <Tabs defaultValue="playerName" className="w-full">
-      <TabsList>
-        <TabsTrigger value="playerName">By Name</TabsTrigger>
-        <TabsTrigger value="event">By Event ID</TabsTrigger>
-        <TabsTrigger value="player">By Player ID</TabsTrigger>
+      <TabsList className="mb-4"> {/* Margin-bottom for spacing */}
+        <TabsTrigger value="playerName" className="px-4 py-2">By Name</TabsTrigger>
+        <TabsTrigger value="event" className="px-4 py-2">By Event ID</TabsTrigger>
+        <TabsTrigger value="player" className="px-4 py-2">By Player ID</TabsTrigger>
       </TabsList>
       
-      <TabsContent value="playerName">
+      <TabsContent value="playerName" className="min-h-[400px]"> {/* Minimum height */}
         <PlayerSearchByName />
       </TabsContent>
-      <TabsContent value="event">
+      <TabsContent value="event" className="min-h-[400px]">
         <EventSearch teams={[]} />
       </TabsContent>
-      <TabsContent value="player">
+      <TabsContent value="player" className="min-h-[400px]">
         <PlayerSearch posts={posts} />
       </TabsContent>
     </Tabs>
@@ -29,45 +29,3 @@ const SearchComponent = ({ posts }: { posts: Post[] }) => {
 };
 
 export default SearchComponent;
-
-// import { useState } from "react";
-// import EventSearch from "@/components/EventSearch";
-// import PlayerSearch from "@/components/PlayerSearch";
-// import PlayerSearchByName from "@/components/PlayerSearchByName";
-// import { Post } from "@/lib/types/types";
-
-// const SearchComponent = ({ posts }: { posts: Post[] }) => {
-//   const [activeSearch, setActiveSearch] = useState('playerName');
-
-//   const getActiveSearchComponent = () => {
-//     switch (activeSearch) {
-//       case 'playerName':
-//         return <PlayerSearchByName />;
-//       case 'event':
-//         return <EventSearch teams={[]} />;
-//       case 'player':
-//         return <PlayerSearch posts={posts} />;
-//       default:
-//         return null;
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <div className="flex gap-4 mb-4">
-//         <button className="btn" onClick={() => setActiveSearch('playerName')}>
-//           Search by Name
-//         </button>
-//         <button className="btn" onClick={() => setActiveSearch('event')}>
-//           Search by Event ID
-//         </button>
-//         <button className="btn" onClick={() => setActiveSearch('player')}>
-//           Search by Player ID
-//         </button>
-//       </div>
-//       {getActiveSearchComponent()}
-//     </div>
-//   );
-// };
-
-// export default SearchComponent;

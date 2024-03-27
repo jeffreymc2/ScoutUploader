@@ -16,9 +16,9 @@ const inter = Inter({ subsets: ["latin"], display: "swap" });
 const pgFont = localFont({ src: './UnitedSansSmCdBd.woff2' });
 
 export const metadata: Metadata = {
-  title: "Perfect Game Rewards Dashboard",
+  title: "Perfect Game Scout Uploader",
   description:
-    "PG Rewards is a loyalty program that rewards customers for their participation in Perfect Game events.",
+    "PG Scouts can upload player images and videos.",
 };
 
 

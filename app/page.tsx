@@ -40,11 +40,11 @@ export default async function Page({ searchParams }: { searchParams: any }) {
   }
 
   return (
-    <div className="container mx-auto">
-      <h1 className="text-2xl font-bold mt-5 font-pgFont">
+    <>
+    <h1 className="text-2xl font-bold mt-5 font-pgFont">
         Search for Players
       </h1>
       <SearchComponent posts={posts} />
-    </div>
+      </>
   );
 }
