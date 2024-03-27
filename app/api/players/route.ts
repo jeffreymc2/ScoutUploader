@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Construct the URL for the external API request
-  const url = `ttps://tpa.perfectgame.org/api/ScoutNotes/PlayerSearchV2?playerName=${encodeURIComponent(playerID)}`;
+  const url = `https://tpa.perfectgame.org/api/ScoutNotes/PlayerProfile?playerID=${encodeURIComponent(playerID)}`;
 
   try {
     const response = await fetch(url, {
