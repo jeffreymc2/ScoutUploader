@@ -66,8 +66,6 @@ export default async function PlayerPage({
   // );
   const response = await fetch(process.env.NEXT_PUBLIC_URL + `/api/players?playerID=${player_id}`);
 
-  console.log('API URL:', process.env.NEXT_PUBLIC_URL);
-
   const playerData: PlayerData = await response.json();
 
 
@@ -82,8 +80,6 @@ export default async function PlayerPage({
     console.error("Error fetching images:", postsError);
     return <div>Error fetching images</div>;
   }
-
-  console.log("Player data:", playerData);
 
 
   // Construct image URLs directly here assuming 'object_id' stores the path in Supabase Storage
