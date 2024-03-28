@@ -35,13 +35,14 @@ const AuthPageContent = () => {
   return (
    
     <Card className="flex flex-col justify-center items-center mt-5 bg-white  border-none">
-		<div className="p-4">
-      <PerfectGameLogo backgroundColor="#005cb9" />
-	</div>
+		
       
       <CardContent className="w-full max-w-md px-4 py-8 mx-auto bg-white rounded-lg shadow-lg">
+	  <div className="flex flex-col justify-center items-center mt-5 bg-white  border-non">
+      <PerfectGameLogo backgroundColor="#005cb9" />
+	</div>
 	  <CardHeader className="text-center">
-        <CardTitle className="text-4xl font-bold font-pgFont text-blue-500">
+        <CardTitle className="text-2xl font-bold font-pgFont text-blue-500">
           PG Scout | Profile Uploader
         </CardTitle>
         <CardDescription className="text-lg text-gray-600">
