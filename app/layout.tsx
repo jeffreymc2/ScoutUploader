@@ -28,10 +28,10 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-              <div className="w-full relative mx-auto  xl:px-0">
+              <div className="w-full relative mx-auto xl:px-0">
                 <Navbar />
               </div>
-            <main className="min-h-screen pt-5 pb-5 space-y-10 px-10 xl:px-0 bg-white">
+            <main className="min-h-screen pt-5 pb-5 space-y-10 px-5 xl:px-0 bg-white">
               {" "}
               {/* Optionally, apply a background color or other full-width styles here */}
               <div className="max-w-6xl mx-auto">
