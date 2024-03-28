@@ -27,42 +27,56 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
     if (isVideoFile(file.image)) {
       const video = document.createElement('video');
       video.src = file.image;
-      video.crossOrigin = 'anonymous'; // Make sure CORS policies allow this
+      video.crossOrigin = 'anonymous'; // Ensure CORS policies allow this
       video.preload = 'metadata';
-
-      const updateThumbnail = () => {
-        video.currentTime =0; // Seek to middle of the video
-      };
-
+      video.style.position = 'absolute';
+      video.style.width = '0';
+      video.style.height = '0';
+      video.style.top = '0';
+      video.style.left = '-10000px'; // Off-screen
+  
+      // Append the video to the body to ensure it's part of the DOM
+      document.body.appendChild(video);
+  
       video.onloadedmetadata = () => {
-        // Ensure the video is ready and has metadata loaded
-        updateThumbnail();
+        // After metadata loads, seek to a frame
+        video.currentTime = 1;
       };
-
+  
       video.onseeked = () => {
-        // Once the video has seeked to the desired time, capture the frame
-        const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext('2d');
-        ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const thumbnail = canvas.toDataURL('image/png');
-        setThumbnailUrl(thumbnail);
+        // Introduce a slight delay before capturing the thumbnail
+        setTimeout(() => {
+          const canvas = document.createElement('canvas');
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const thumbnail = canvas.toDataURL('image/png');
+          setThumbnailUrl(thumbnail);
+  
+          // Remove the video element after capturing the thumbnail
+          document.body.removeChild(video);
+        }, 1000); // Adjust delay as necessary
       };
-
-      // Load the video to trigger metadata loading
-      video.load();
+  
+      video.onerror = () => {
+        console.error('Error loading video for thumbnail generation');
+        // Consider removing the video element in case of error as well
+        document.body.removeChild(video);
+      };
     }
   }, [file.image]);
+  
 
   return (
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <div className="relative aspect-square w-full h-48 cursor-pointer" onClick={() => setIsOpen(true)}>
-            <img
+            <Image
               src={thumbnailUrl || 'https://rfgveuhgzxqkaualspln.supabase.co/storage/v1/object/public/misc/pg-video.jpg'} // Fallback thumbnail
               alt={`Thumbnail posted by ${file.post_by || 'Unknown'}`}
+              fill={true}
               className="rounded-lg object-cover"
             />
             {isVideoFile(file.image) && (
