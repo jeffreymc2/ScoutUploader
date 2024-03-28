@@ -80,7 +80,7 @@ export default function PlayerSearchByName() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Enter player name"
-          className="w-full pl-3 pr-10 py-2 border rounded-md"
+          className="w-full pl-3 pr-10 py-2 border rounded-md text-base"
         />
         {searchQuery && (
           <button
@@ -98,9 +98,7 @@ export default function PlayerSearchByName() {
         {searchResults.map((player) => (
           <Card key={player.PlayerID} className="flex flex-col items-center p-4 shadow-md bg-color-gray-100">
             {player.ProfilePic ? (
-              <div className="w-full items-center justify-center">
-              <Image  src={player.ProfilePic} alt={player.PlayerName} width={250} height={250} className="w-full items-center justify-center rounded-lg" />
-              </div>
+              <Image  src={player.ProfilePic} alt={player.PlayerName} width={150} height={150} className="w-full items-center justify-center rounded-lg" />
             ) : (
               <div className="bg-gray-200 rounded-full w-24 h-24 flex items-center justify-center">
                 <span>{player.PlayerName[0]}</span>

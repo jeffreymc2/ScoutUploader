@@ -82,7 +82,7 @@ export default function EventSearch({ teams }: EventSearchProps) {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search players by event and team"
-          className="w-full "
+          className="w-full text-base"
         />
         <Button className="ml-2 flex-shrink-0" onClick={handleSearch}>Search</Button>
       </div>
