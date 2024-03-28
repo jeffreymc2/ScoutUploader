@@ -16,24 +16,27 @@ const DeletePost: React.FC<DeletePostProps> = ({ post_by, image }) => {
   const router = useRouter();
 
   const handleDelete = async () => {
-    // Extract the file path within the storage bucket from the image URL
-    const filePath = image.replace(process.env.NEXT_PUBLIC_SUPABASE_URL + "/storage/v1/object/public/", "");
-    
-    const supabase = supabaseBrowser();
-    const { error } = await supabase
-      .storage
-      .from('images') // make sure this is the correct bucket name
-      .remove([filePath]);
-
-    if (error) {
-      console.error("Failed to delete image:", error);
-      toast.error(`Failed to delete image: ${error.message}`);
-    } else {
-      console.log(`Successfully removed image: ${image}`);
-      toast.success("Successfully removed image");
-      router.refresh(); // 'refresh()' is not a function on the Next.js Router. Use 'reload()' instead.
+    try {
+      const supabase = supabaseBrowser();
+      // Extract the path from the full URL
+      const imagePath = image.split('/public/images/').pop() ?? '';
+      console.log('Attempting to remove image with path:', imagePath); // Log the corrected path
+      const { data, error } = await supabase.storage.from('images').remove([imagePath]);
+  
+      if (error) {
+        console.error('Failed to delete image:', error);
+        toast.error(`Failed to delete image: ${error.message}`);
+      } else {
+        console.log('Successfully removed image with path:', imagePath, data);
+        toast.success('Successfully removed image');
+        router.refresh();
+      }
+    } catch (error) {
+      console.error('Error during delete operation:', error);
+      toast.error('An error occurred while deleting the image');
     }
   };
+  
 
   if (isFetching) {
     return null;

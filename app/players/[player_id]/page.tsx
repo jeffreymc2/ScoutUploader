@@ -5,6 +5,9 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import DeletePost from "@/components/DeletePost";
 import { Button } from "@/components/ui/button";
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
+import BackButton from "@/components/BackButton";
+import { Car } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface PlayerData {
   PlayerID: number;
@@ -99,9 +102,13 @@ export default async function PlayerPage({
 
   return (
     <>
-      <div className="flex flex-col bg-gray-100 dark:bg-gray-800">
-        <div className="w-full  p-5 bg-white rounded-lg shadow-md dark:bg-gray-900">
+      <div className="flex flex-col  ">
+      <span><BackButton /></span>
+
+        <div className="w-full  p-5 bg-white rounded-lg shadow-md ">
+
           <div className="flex items-center space-x-4">
+            
             <Avatar className="w-40 h-40">
               <Image
                 alt="Player Avatar"
@@ -231,11 +238,13 @@ export default async function PlayerPage({
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-2xl font-pgFont font-bold ">
-          Uploaded Images/Videos
-        </h2>
+     
+        <Card className="mt-5 shadow-lg border border-gray-100 min-h-96">
 
-        <div className="grid grid-cols-4 gap-4">
+        <CardHeader>
+        <CardTitle className="font-pgFont">Photo and Video Uploads of {playerData.PlayerName}</CardTitle>
+      </CardHeader>
+      <CardContent className="grid gap-4">        <div className="grid grid-cols-4 gap-4">
           {playerSearchProps.posts?.map((post) => (
             <div key={post.id} className="relative h-48 w-48">
               <Image
@@ -245,13 +254,19 @@ export default async function PlayerPage({
                 height={500}
                 unoptimized={false} // Consider setting unoptimized only if necessary
               />
-              <p className="text-sm font-bold font-pgFont">
+              {/* <p className="text-sm font-bold font-pgFont">
                 Posted by: @{post.profiles?.display_name}
-              </p>
+              </p> */}
+
               <DeletePost post_by={post.post_by} image={post.image} />
+
             </div>
           ))}
+
         </div>
+        </CardContent>
+        </Card> 
+
       </div>
     </>
   );

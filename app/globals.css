@@ -57,9 +57,7 @@
 	}
 }
 
-html {
-	overflow-y: scroll;
-  }
+
 
 @layer base {
 	* {
@@ -84,4 +82,13 @@ html {
 .uppy-Dashboard-inner {
 	width: auto !important;
 	height: 25rem !important;
+}
+
+html {
+	overflow-y: scroll;
+  }
+
+main {
+		overflow: hidden;
+
 }

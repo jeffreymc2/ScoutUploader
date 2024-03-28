@@ -40,7 +40,7 @@ export default function Profile() {
 	};
 
 	return (
-		<div>
+<div className="relative">
 			{!data?.id ? (
 				<Link href="/auth" className=" animate-fade">
 					{/* <Button variant="outline">SignIn</Button> */}
@@ -55,16 +55,16 @@ export default function Profile() {
 									alt={data.display_name || ""}
 									width={50}
 									height={50}
-									className=" rounded-full  animate-fade ring-2 cursor-pointer"
+									className=" rounded-full  animate-fade  cursor-pointer"
 								/>
 							) : (
-								<div className="h-[50px] w-[50px] flex items-center justify-center ring-2 rounded-full text-2xl font-bold cursor-pointer">
+								<div className="h-[50px] w-[50px] flex items-center justify-center rounded-full text-2xl font-bold cursor-pointer">
 									<h1>{data.email[0]}</h1>
 								</div>
 							)}
 						</>
 					</DropdownMenuTrigger>
-					<DropdownMenuContent>
+					<DropdownMenuContent className="absolute right-0 mt-2 w-56 z-50">
 						<DropdownMenuLabel>{data.email}</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem onClick={handleLogout}>

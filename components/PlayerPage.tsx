@@ -22,7 +22,6 @@ export default function PlayerPage({ playerid, FullName }: PlayerPageProps) {
 
   const player_id = playerid.toString();
 
-
   useEffect(() => {
     const fetchImages = async () => {
       const supabase = supabaseBrowser();
@@ -58,10 +57,13 @@ export default function PlayerPage({ playerid, FullName }: PlayerPageProps) {
               height={200}
               className="rounded-md object-cover object-center"
             />
-            <DeletePost post_by={player_id.toString()} image={`${player_id}/${image}`} />
+            <div className='p-2'>
+            <DeletePost post_by={player_id} image={`${player_id}/${image}`} />
+            </div>
           </div>
         ))}
       </div>
+      
       <Uploader playerid={playerid} FullName={FullName} />
     </div>
   );
