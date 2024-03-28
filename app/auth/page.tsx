@@ -25,39 +25,39 @@ const AuthPageContent = () => {
   };
 
   return (
-    <div className="flex items-center justify-center w-full min-h-screen px-4">
-  <div className="w-full max-w-xs sm:max-w-sm md:max-w-md rounded-lg shadow-lg border space-y-6 p-6 sm:p-8 relative bg-white">
-    <PerfectGameLogo backgroundColor="#005cb9" />
-    <div className="text-center">
-      <h1 className="text-2xl sm:text-3xl font-bold text-blue-500">PG Scout | Profile Uploader</h1>
-      <p className="text-sm text-gray-600 mt-2">Sign In With Your PG Account</p>
-    </div>
-    <div className="flex flex-col gap-4">
-      <Button
-        className="flex items-center justify-center gap-2 py-3 text-sm sm:text-base"
-        variant="outline"
-        onClick={() => handleLoginWithOAuth("github")}
-      >
-        <FaGithub className="text-lg" /> Github
-      </Button>
-      <Button
-        className="flex items-center justify-center gap-2 py-3 text-sm sm:text-base"
-        variant="outline"
-        // Uncomment and adjust as necessary for Microsoft login functionality
-        // onClick={() => handleLoginWithOAuth("microsoft")}
-      >
-        <FaMicrosoft className="text-lg" /> Microsoft
-      </Button>
-      <Button
-        className="flex items-center justify-center gap-2 py-3 text-sm sm:text-base"
-        variant="outline"
-        onClick={() => handleLoginWithOAuth("google")}
-      >
-        <FcGoogle className="text-lg" /> Google
-      </Button>
-    </div>
+	<div className="flex items-center justify-center min-h-screen p-4">
+	<div className="w-full max-w-lg sm:max-w-xl md:max-w-2xl lg:max-w-4xl xl:max-w-5xl mx-auto rounded-lg shadow-lg border bg-white space-y-6 p-6 sm:p-8 md:p-10">
+	  <div className="text-center">
+		<PerfectGameLogo backgroundColor="#005cb9" />
+		<h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-500">PG Scout | Profile Uploader</h1>
+		<p className="mt-2 text-sm sm:text-base md:text-lg text-gray-600">Sign In With Your PG Account</p>
+	  </div>
+	  <div className="flex flex-col gap-4">
+		<Button
+		  className="items-center justify-center gap-2 py-2 sm:py-3 text-sm sm:text-md md:text-lg"
+		  variant="outline"
+		  onClick={() => handleLoginWithOAuth("github")}
+		>
+		  <FaGithub className="text-lg md:text-xl" /> Github
+		</Button>
+		{/* <Button
+		  className="items-center justify-center gap-2 py-2 sm:py-3 text-sm sm:text-md md:text-lg"
+		  variant="outline"
+		  onClick={() => handleLoginWithOAuth("microsoft")}
+		>
+		  <FaMicrosoft className="text-lg md:text-xl" /> Microsoft
+		</Button> */}
+		<Button
+		  className="items-center justify-center gap-2 py-2 sm:py-3 text-sm sm:text-md md:text-lg"
+		  variant="outline"
+		  onClick={() => handleLoginWithOAuth("google")}
+		>
+		  <FcGoogle className="text-lg md:text-xl" /> Google
+		</Button>
+	  </div>
+	</div>
   </div>
-</div>
+  
 
   );
 };
