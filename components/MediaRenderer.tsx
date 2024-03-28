@@ -60,10 +60,9 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
           <div className="relative aspect-square w-full h-48 cursor-pointer" onClick={() => setIsOpen(true)}>
-            <Image
+            <img
               src={thumbnailUrl || 'https://rfgveuhgzxqkaualspln.supabase.co/storage/v1/object/public/misc/pg-video.jpg'} // Fallback thumbnail
               alt={`Thumbnail posted by ${file.post_by || 'Unknown'}`}
-              fill={true}
               className="rounded-lg object-cover"
             />
             {isVideoFile(file.image) && (
