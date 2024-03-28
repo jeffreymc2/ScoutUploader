@@ -291,7 +291,7 @@ export default async function PlayerPage({
                               Are you absolutely sure?
                             </AlertDialogTitle>
                             <AlertDialogDescription>
-                              This action cannot be undone. This will
+                              This will
                               permanently delete this file
                               from our servers.
                             </AlertDialogDescription>
