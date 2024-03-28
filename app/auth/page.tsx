@@ -25,41 +25,40 @@ const AuthPageContent = () => {
   };
 
   return (
-    <div className="flex items-center justify-center w-full min-h-screen">
-
-      <div className="w-full max-w-md rounded-md border shadow-lg border  space-y-5 p-6 sm:p-8 md:p-10 relative bg-gray-100 border-gray-100">
-	<PerfectGameLogo backgroundColor="#005cb9" />
-        <div className="flex items-center gap-2">
-		
-          <h1 className="text-3xl font-pgFont font-bold text-blue-500">PG Scout | Profile Uploader</h1>
-        </div>
-        <p className="text-sm text-gray-400">Sign In With Your PG Account</p>
-        <div className="flex flex-col gap-5">
-          <Button
-            className="w-full flex items-center gap-2"
-            variant="outline"
-            onClick={() => handleLoginWithOAuth("github")}
-          >
-            <FaGithub /> Github
-          </Button>
-          <Button
-            className="w-full flex items-center gap-2"
-            variant="outline"
-            // onClick={() => handleLoginWithOAuth("azure")}
-          >
-            <FaMicrosoft /> Microsoft
-          </Button>
-          <Button
-            className="w-full flex items-center gap-2"
-            variant="outline"
-            onClick={() => handleLoginWithOAuth("google")}
-          >
-            <FcGoogle /> Google
-          </Button>
-        </div>
-        {/* <div className="glowBox -z-10"></div> */}
-      </div>
+    <div className="flex items-center justify-center w-full min-h-screen px-4">
+  <div className="w-full max-w-xs sm:max-w-sm md:max-w-md rounded-lg shadow-lg border space-y-6 p-6 sm:p-8 relative bg-white">
+    <PerfectGameLogo backgroundColor="#005cb9" />
+    <div className="text-center">
+      <h1 className="text-2xl sm:text-3xl font-bold text-blue-500">PG Scout | Profile Uploader</h1>
+      <p className="text-sm text-gray-600 mt-2">Sign In With Your PG Account</p>
     </div>
+    <div className="flex flex-col gap-4">
+      <Button
+        className="flex items-center justify-center gap-2 py-3 text-sm sm:text-base"
+        variant="outline"
+        onClick={() => handleLoginWithOAuth("github")}
+      >
+        <FaGithub className="text-lg" /> Github
+      </Button>
+      <Button
+        className="flex items-center justify-center gap-2 py-3 text-sm sm:text-base"
+        variant="outline"
+        // Uncomment and adjust as necessary for Microsoft login functionality
+        // onClick={() => handleLoginWithOAuth("microsoft")}
+      >
+        <FaMicrosoft className="text-lg" /> Microsoft
+      </Button>
+      <Button
+        className="flex items-center justify-center gap-2 py-3 text-sm sm:text-base"
+        variant="outline"
+        onClick={() => handleLoginWithOAuth("google")}
+      >
+        <FcGoogle className="text-lg" /> Google
+      </Button>
+    </div>
+  </div>
+</div>
+
   );
 };
 
