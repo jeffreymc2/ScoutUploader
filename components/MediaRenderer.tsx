@@ -18,10 +18,11 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState('');
 
-  const isVideoFile = (url: string) => {
+  // Define isVideoFile as a function declaration
+  function isVideoFile(url: string) {
     const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.flv', '.wmv'];
     return videoExtensions.some(extension => url.toLowerCase().endsWith(extension));
-  };
+  }
 
   useEffect(() => {
     if (isVideoFile(file.image)) {
@@ -64,6 +65,9 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
         // Consider removing the video element in case of error as well
         document.body.removeChild(video);
       };
+    } else {
+      // Directly set the thumbnailUrl for non-video files
+      setThumbnailUrl(file.image);
     }
   }, [file.image]);
   
@@ -74,7 +78,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
         <DialogTrigger asChild>
           <div className="relative aspect-square w-full h-48 cursor-pointer" onClick={() => setIsOpen(true)}>
             <Image
-              src={thumbnailUrl || 'https://rfgveuhgzxqkaualspln.supabase.co/storage/v1/object/public/misc/pg-video.jpg'} // Fallback thumbnail
+              src={thumbnailUrl || 'https://rfgveuhgzxqkaualspln.supabase.co/storage/v1/object/public/misc/pg-video.jpg'} // Use the direct or generated thumbnail
               alt={`Thumbnail posted by ${file.post_by || 'Unknown'}`}
               fill={true}
               className="rounded-lg object-cover"
