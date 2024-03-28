@@ -7,7 +7,15 @@ import { Button } from "@/components/ui/button";
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
 import BackButton from "@/components/BackButton";
 import { Car } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import MediaRenderer from "@/components/MediaRenderer";
+import { Suspense } from "react";
 
 interface PlayerData {
   PlayerID: number;
@@ -79,6 +87,13 @@ export default async function PlayerPage({
     console.error("Error fetching images:", postsError);
     return <div>Error fetching images</div>;
   }
+  // Helper function to determine if a file URL is a video
+  const isVideoFile = (url: string) => {
+    const videoExtensions = [".mp4", ".webm", ".ogg"]; // Extend with more video file extensions as needed
+    return videoExtensions.some((extension) =>
+      url.toLowerCase().endsWith(extension)
+    );
+  };
 
   // Construct image URLs directly here assuming 'object_id' stores the path in Supabase Storage
   // const imageUrlHost = process.env.NEXT_PUBLIC_SUPABASE_URL + "/storage/v1/object/public/images/";
@@ -102,22 +117,24 @@ export default async function PlayerPage({
 
   return (
     <>
-      <div className="flex flex-col lg:flex-row">
-  <span><BackButton /></span>
+      <span>
+        <BackButton />
+      </span>
 
-  <div className="w-full p-5 bg-white rounded-lg shadow-md">
-    <div className="flex flex-col lg:flex-row items-center lg:space-x-4">
-      <Avatar className="w-60 h-60 rounded-lg">
-        <Image
-          alt="Player Avatar"
-          src={playerData.ProfilePic ?? ""}
-          fill={true}
-          style={{
-            objectFit: "cover",
-          }}
-        />
-        <AvatarFallback>JP</AvatarFallback>
-      </Avatar>
+      <div className="flex flex-col lg:flex-row">
+        <div className="w-full p-5 bg-white rounded-lg shadow-md">
+          <div className="flex flex-col lg:flex-row items-center lg:space-x-4">
+            <Avatar className="w-60 h-60 rounded-lg">
+              <Image
+                alt="Player Avatar"
+                src={playerData.ProfilePic ?? ""}
+                fill={true}
+                style={{
+                  objectFit: "cover",
+                }}
+              />
+              <AvatarFallback>JP</AvatarFallback>
+            </Avatar>
             <div className="flex-1 space-y-1">
               <h2 className="text-5xl font-pgFont font-bold">
                 {playerData?.PlayerName || "N/A"}
@@ -233,35 +250,30 @@ export default async function PlayerPage({
                 {playerData?.Note || "N/A"}
               </p>
             </div>
-            </div>
+          </div>
         </div>
       </div>
 
       <div className="space-y-4">
-     
-      <Card className="mt-5 shadow-lg border border-gray-100 min-h-96">
-  <CardHeader>
-    <CardTitle className="font-pgFont">{`Photo and Video Uploads of ${playerData.PlayerName}`}</CardTitle>
-  </CardHeader>
-  <CardContent>
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-      {playerSearchProps.posts?.map((post) => (
-        <div key={post.id} className="relative aspect-square w-full h-48">
-          <Image
-            src={post.image}
-            alt={`Image posted by ${post.post_by || "Unknown"}`}
-            fill // Replaces layout="fill", indicating the image should fill its parent
-            className="rounded-lg object-cover" // Ensures the image covers the area, maintaining aspect ratio without stretching
-            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw" // Adjust sizes based on your layout responsiveness
-          />
-          <DeletePost post_by={post.post_by} image={post.image} />
-        </div>
-      ))}
-    </div>
-  </CardContent>
-</Card>
-
-
+        <Suspense fallback={<div>Loading...</div>}>
+          <Card className="mt-5 shadow-lg border border-gray-100 min-h-96">
+            <CardHeader>
+              <CardTitle className="font-pgFont">{`Photo and Video Uploads of ${playerData.PlayerName}`}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                {playerSearchProps.posts?.map((post) => (
+                  <div key={post.id} className="relative">
+                    <MediaRenderer file={post} />
+                    <div className="absolute top-2 right-2">
+                      <DeletePost post_by={post.post_by} image={post.image} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </Suspense>
       </div>
     </>
   );

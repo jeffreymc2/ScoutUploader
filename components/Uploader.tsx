@@ -60,22 +60,23 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   
 
   const [uppy] = useState(() =>
-    new Uppy({
-      restrictions: {
-        maxNumberOfFiles: 50,
-        allowedFileTypes: ["image/*"],
-        maxFileSize: 5 * 10000 * 1000,
-      },
-      debug: true,
+  new Uppy({
+    restrictions: {
+      maxNumberOfFiles: 50,
+      // Include both image and video file types
+      allowedFileTypes: ["image/*", "video/*"],
+      maxFileSize: 5 * 10000 * 1000, // 50MB limit, adjust as needed
+    },
+    debug: true,
+  }).use(Tus, {
+    endpoint: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/upload/resumable`,
+    onBeforeRequest, // Ensure this function is defined or implemented elsewhere in your code
+    limit: 10,
+    chunkSize: 6 * 1024 * 1024, // 6MB chunks, adjust as needed
+    allowedMetaFields: ['bucketName', 'objectName', 'contentType', 'cacheControl'],
+  })
+);
 
-    }).use(Tus, {
-      endpoint: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/upload/resumable`,
-      onBeforeRequest, limit: 10,
-      chunkSize: 6 * 1024 * 1024,
-      allowedMetaFields: ['bucketName', 'objectName', 'contentType', 'cacheControl'],
-    })
-    
-  );
 
 
   uppy.on('file-added', (file) => {
@@ -90,9 +91,12 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
 
   uppy.on('complete', (result) => {
     toast.success("Upload complete!");
-    window.location.reload();
-
-  })
+    // Check if the current pathname includes "/players"
+    if (window.location.pathname.includes('/players')) {
+      window.location.reload();
+    }
+  });
+  
 
 
 

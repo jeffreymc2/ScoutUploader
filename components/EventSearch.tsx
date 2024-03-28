@@ -154,9 +154,6 @@ export default function EventSearch({ teams }: EventSearchProps) {
               <DialogContent>
                 <DialogHeader>
                   {/* <h1 className="font-pgFont text-2xl">Perfect Game Scout Profile Uploader</h1> */}
-                  <DialogTitle className="font-pgFont">
-                    Player Details
-                  </DialogTitle>
                 </DialogHeader>
                 <DialogDescription>
                   {selectedPlayer && (
