@@ -124,10 +124,10 @@ export default async function PlayerPage({
               <h2 className="text-5xl font-pgFont font-bold">
                 {playerData?.PlayerName || "N/A"}
               </h2>
-              <p className="text-md text-gray-500 dark:text-gray-400">
+              <p className="text-md text-gray-500 ">
                 Player ID:{playerData?.PlayerID || "N/A"}
               </p>
-              <p className="text-md text-gray-500 dark:text-gray-400">
+              <p className="text-md text-gray-500 ">
                 Grad Year:{playerData?.GradYear || "N/A"} | Age:{" "}
                 {playerData?.Age || "N/A"}
               </p>
@@ -149,87 +149,87 @@ export default async function PlayerPage({
           <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="space-y-1">
               <p className="text-sm font-light">Height</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 dark:text-gray-400">
+              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
                 {playerData?.Height || "N/A"}
               </p>
             </div>
             <div className="space-y-1">
               <p className="text-sm font-light">Weight</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 dark:text-gray-400">
+              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
                 {playerData?.Weight || "N/A"} lbs
               </p>
             </div>
             <div className="space-y-1">
               <p className="text-sm font-light">City</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 dark:text-gray-400">
+              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
                 {playerData?.CityState || "N/A"}
               </p>
             </div>
 
             <div className="space-y-1">
               <p className="text-sm font-light">College Commitment</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 dark:text-gray-400">
+              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
                 {playerData?.Commitment || "N/A"}{" "}
               </p>
             </div>
             <div className="space-y-1">
               <p className="text-sm font-light">Highschool</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 dark:text-gray-400">
+              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
                 {playerData.HighSchool}
               </p>
             </div>
             <div className="space-y-1">
               <p className="text-sm font-light">National Pos Rank</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 dark:text-gray-400">
+              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
                 {playerData?.NationalPosRank || "N/A"}
               </p>
             </div>
             <div className="space-y-1">
               <p className="text-sm font-light">State Pos Rank</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 dark:text-gray-400">
+              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
                 {playerData?.StatePosRank || "N/A"}
               </p>
             </div>
             <div className="space-y-1">
               <p className="text-sm font-light">National Rank</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 dark:text-gray-400">
+              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
                 {playerData?.NationalRank || "N/A"}
               </p>
             </div>
             <div className="space-y-1">
               <p className="text-sm font-light">State Rank</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 dark:text-gray-400">
+              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
                 {playerData?.StateRank || "N/A"}
               </p>
             </div>
 
             <div className="space-y-1">
               <p className="text-sm font-light">Bats/Throws</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 dark:text-gray-400">
+              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
                 {playerData?.BatsThrows || "N/A"}
               </p>
             </div>
             <div className="space-y-1">
               <p className="text-sm font-light">Primary Position</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 dark:text-gray-400">
+              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
                 {playerData?.PrimaryPos || "N/A"}
               </p>
             </div>
             <div className="space-y-1">
               <p className="text-sm font-light">Best PG Grade</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 dark:text-gray-400">
+              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
                 {playerData?.bestPGGrade || "N/A"}
               </p>
             </div>
             <div className="space-y-1">
               <p className="text-sm font-light">Best Rank Sort</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 dark:text-gray-400">
+              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
                 {playerData?.BestRankSort || "N/A"}
               </p>
             </div>
             <div className="space-y-1">
               <p className="text-sm font-light">Notes</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 dark:text-gray-400">
+              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
                 {playerData?.Note || "N/A"}
               </p>
             </div>
@@ -239,33 +239,28 @@ export default async function PlayerPage({
 
       <div className="space-y-4">
      
-        <Card className="mt-5 shadow-lg border border-gray-100 min-h-96">
-
-        <CardHeader>
-        <CardTitle className="font-pgFont">Photo and Video Uploads of {playerData.PlayerName}</CardTitle>
-      </CardHeader>
-      <CardContent className="grid gap-4">        <div className="grid grid-cols-4 gap-4">
-          {playerSearchProps.posts?.map((post) => (
-            <div key={post.id} className="relative h-48 w-48">
-              <Image
-                src={post.image}
-                alt={`Image posted by ${post.post_by || "Unknown"}`}
-                width={500}
-                height={500}
-                unoptimized={false} // Consider setting unoptimized only if necessary
-              />
-              {/* <p className="text-sm font-bold font-pgFont">
-                Posted by: @{post.profiles?.display_name}
-              </p> */}
-
-              <DeletePost post_by={post.post_by} image={post.image} />
-
-            </div>
-          ))}
-
+      <Card className="mt-5 shadow-lg border border-gray-100 min-h-96">
+  <CardHeader>
+    <CardTitle className="font-pgFont">{`Photo and Video Uploads of ${playerData.PlayerName}`}</CardTitle>
+  </CardHeader>
+  <CardContent>
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+      {playerSearchProps.posts?.map((post) => (
+        <div key={post.id} className="relative aspect-square w-full h-48">
+          <Image
+            src={post.image}
+            alt={`Image posted by ${post.post_by || "Unknown"}`}
+            fill // Replaces layout="fill", indicating the image should fill its parent
+            className="rounded-lg object-cover" // Ensures the image covers the area, maintaining aspect ratio without stretching
+            sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw" // Adjust sizes based on your layout responsiveness
+          />
+          <DeletePost post_by={post.post_by} image={post.image} />
         </div>
-        </CardContent>
-        </Card> 
+      ))}
+    </div>
+  </CardContent>
+</Card>
+
 
       </div>
     </>
