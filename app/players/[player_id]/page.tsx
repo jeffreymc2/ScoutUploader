@@ -102,24 +102,22 @@ export default async function PlayerPage({
 
   return (
     <>
-      <div className="flex flex-col">
-      <span><BackButton /></span>
+      <div className="flex flex-col lg:flex-row">
+  <span><BackButton /></span>
 
-        <div className="w-full  p-5 bg-white rounded-lg shadow-md ">
-
-          <div className="flex items-center space-x-4">
-            
-            <Avatar className="lg:w-60 lg:h-60 h-30 w-30 rounded-lg">
-              <Image
-                alt="Player Avatar"
-                src={playerData.ProfilePic ?? ""}
-                fill={true}
-                style={{
-                  objectFit: "cover",
-                }}
-              />
-              <AvatarFallback>JP</AvatarFallback>
-            </Avatar>
+  <div className="w-full p-5 bg-white rounded-lg shadow-md">
+    <div className="flex flex-col lg:flex-row items-center lg:space-x-4">
+      <Avatar className="lg:w-60 lg:h-60 rounded-lg">
+        <Image
+          alt="Player Avatar"
+          src={playerData.ProfilePic ?? ""}
+          fill={true}
+          style={{
+            objectFit: "cover",
+          }}
+        />
+        <AvatarFallback>JP</AvatarFallback>
+      </Avatar>
             <div className="flex-1 space-y-1">
               <h2 className="text-5xl font-pgFont font-bold">
                 {playerData?.PlayerName || "N/A"}
