@@ -18,7 +18,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   const [thumbnailUrl, setThumbnailUrl] = useState('');
 
   const isVideoFile = (url: string) => {
-    const videoExtensions = ['.mp4', '.webm', '.ogg'];
+    const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.flv', '.wmv'];
     return videoExtensions.some((extension) => url.toLowerCase().endsWith(extension));
   };
 
@@ -76,17 +76,16 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             <Image
               src={thumbnailUrl}
               alt={`Video thumbnail posted by ${file.post_by || 'Unknown'}`}
-              fill
+              fill={true}
               className="rounded-lg object-cover"
-              sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw"
             />
           ) : (
             <Image
               src={file.image}
               alt={`Image posted by ${file.post_by || 'Unknown'}`}
-              fill
+              fill={true}
               className="rounded-lg object-cover"
-              sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw"
+              // sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw"
             />
             
           )}
@@ -122,7 +121,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
           alt={`Image posted by ${file.post_by || 'Unknown'}`}
           fill
           className="rounded-lg object-cover"
-          sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw"
+          // sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw"
         />
       </div>
     );

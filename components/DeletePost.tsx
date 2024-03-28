@@ -6,6 +6,7 @@ import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
+
 interface DeletePostProps {
   post_by: string;
   image: string;
@@ -16,11 +17,11 @@ const DeletePost: React.FC<DeletePostProps> = ({ post_by, image }) => {
   const router = useRouter();
 
   const handleDelete = async () => {
+    toast.info("Deleting image...");
     try {
       const supabase = supabaseBrowser();
       // Extract the path from the full URL
       const imagePath = image.split('/public/images/').pop() ?? '';
-      console.log('Attempting to remove image with path:', imagePath); // Log the corrected path
       const { data, error } = await supabase.storage.from('images').remove([imagePath]);
   
       if (error) {
@@ -45,8 +46,8 @@ const DeletePost: React.FC<DeletePostProps> = ({ post_by, image }) => {
   // Assuming that 'post_by' is the user ID of the user who posted the image
   if (user?.id === post_by) {
     return (
-      <div className="absolute top-0 right-5">
-        <Button onClick={handleDelete}>Delete</Button>
+      <div >
+        <Button onClick={handleDelete}>Yes,Delete</Button>
       </div>
     );
   }

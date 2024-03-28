@@ -8,6 +8,18 @@ import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
 import BackButton from "@/components/BackButton";
 import { Car } from "lucide-react";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+import {
   Card,
   CardContent,
   CardDescription,
@@ -260,13 +272,39 @@ export default async function PlayerPage({
             <CardHeader>
               <CardTitle className="font-pgFont">{`Photo and Video Uploads of ${playerData.PlayerName}`}</CardTitle>
             </CardHeader>
+
             <CardContent>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {playerSearchProps.posts?.map((post) => (
                   <div key={post.id} className="relative">
                     <MediaRenderer file={post} />
+
                     <div className="absolute top-2 right-2">
-                      <DeletePost post_by={post.post_by} image={post.image} />
+                      <AlertDialog>
+                        <AlertDialogTrigger>
+                          {" "}
+                          <Button>Delete</Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Are you absolutely sure?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will
+                              permanently delete this file
+                              from our servers.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <DeletePost
+                              post_by={post.post_by}
+                              image={post.image}
+                            />
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </div>
                 ))}
