@@ -109,7 +109,7 @@ export default async function PlayerPage({
 
           <div className="flex items-center space-x-4">
             
-            <Avatar className="w-60 h-60">
+            <Avatar className="w-60 h-60 rounded-lg">
               <Image
                 alt="Player Avatar"
                 src={playerData.ProfilePic ?? ""}

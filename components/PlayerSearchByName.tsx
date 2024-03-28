@@ -96,9 +96,9 @@ export default function PlayerSearchByName() {
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-10">
         {searchResults.map((player) => (
-          <Card key={player.PlayerID} className="flex flex-col items-center p-4">
+          <Card key={player.PlayerID} className="flex flex-col items-center p-4 shadow-md bg-color-gray-100">
             {player.ProfilePic ? (
-              <Image src={player.ProfilePic} alt={player.PlayerName} width={100} height={100} className="rounded-full" />
+              <Image src={player.ProfilePic} alt={player.PlayerName} width={125} height={125} className="rounded-lg" />
             ) : (
               <div className="bg-gray-200 rounded-full w-24 h-24 flex items-center justify-center">
                 <span>{player.PlayerName[0]}</span>
