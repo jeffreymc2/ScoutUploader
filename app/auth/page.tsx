@@ -8,6 +8,7 @@ import { supabaseBrowser } from "@/lib/supabase/browser";
 import { useSearchParams } from "next/navigation";
 import { FaMicrosoft } from "react-icons/fa6";
 import Image from "next/image";
+import PerfectGameLogo from "@/components/PGLogo"
 
 const AuthPageContent = () => {
   const params = useSearchParams();
@@ -25,19 +26,14 @@ const AuthPageContent = () => {
 
   return (
     <div className="flex items-center justify-center w-full min-h-screen">
-		
-      <div className="w-full max-w-md rounded-md border space-y-5 p-6 sm:p-8 md:p-10 relative bg-gray-100">
-	  <Image 
-					src={"https://rfgveuhgzxqkaualspln.supabase.co/storage/v1/object/public/logos/pg_horizontal_primary_2_white.png"} 
-					alt={""}				
-					width={250}
-					height={50}
-					/>
+
+      <div className="w-full max-w-md rounded-md border shadow-lg border  space-y-5 p-6 sm:p-8 md:p-10 relative bg-gray-100 border-gray-100">
+	<PerfectGameLogo backgroundColor="#005cb9" />
         <div className="flex items-center gap-2">
 		
-          <h1 className="text-xl font-pgFont font-bold text-white">PG Scout | Profile Uploader</h1>
+          <h1 className="text-3xl font-pgFont font-bold text-blue-500">PG Scout | Profile Uploader</h1>
         </div>
-        <p className="text-sm text-white">Sign In With Your PG Account</p>
+        <p className="text-sm text-gray-400">Sign In With Your PG Account</p>
         <div className="flex flex-col gap-5">
           <Button
             className="w-full flex items-center gap-2"
