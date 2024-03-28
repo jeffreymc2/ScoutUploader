@@ -102,14 +102,14 @@ export default async function PlayerPage({
 
   return (
     <>
-      <div className="flex flex-col  ">
+      <div className="flex flex-col">
       <span><BackButton /></span>
 
         <div className="w-full  p-5 bg-white rounded-lg shadow-md ">
 
           <div className="flex items-center space-x-4">
             
-            <Avatar className="w-40 h-40">
+            <Avatar className="w-60 h-60">
               <Image
                 alt="Player Avatar"
                 src={playerData.ProfilePic ?? ""}

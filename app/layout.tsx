@@ -31,7 +31,7 @@ export default function RootLayout({
               <div className="w-full relative m">
                 <Navbar />
               </div>
-            <main className="min-h-screen pt-20 pb-10 space-y-10  xl:px-0 bg-white">
+            <main className="min-h-screen pt-10 pb-5 space-y-10  xl:px-0 bg-white">
               {" "}
               {/* Optionally, apply a background color or other full-width styles here */}
               <div className="max-w-6xl mx-auto">
