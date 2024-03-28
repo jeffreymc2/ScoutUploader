@@ -64,9 +64,15 @@
 	height: 25rem !important;
 }
 
+Always show the scrollbar but make it transparent
 html {
-	overflow-y: scroll;
+	scrollbar-color: transparent transparent;
+	overflow: hidden;
+	z-index: 1000;
   }
+  
+  
+  
 
 main {
 		overflow: hidden;

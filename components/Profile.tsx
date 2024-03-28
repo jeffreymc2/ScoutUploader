@@ -64,7 +64,7 @@ export default function Profile() {
 							)}
 						</>
 					</DropdownMenuTrigger>
-					<DropdownMenuContent className="absolute right-0 mt-2 w-56 z-50">
+					<DropdownMenuContent className="">
 						<DropdownMenuLabel>{data.email}</DropdownMenuLabel>
 						<DropdownMenuSeparator />
 						<DropdownMenuItem onClick={handleLogout}>

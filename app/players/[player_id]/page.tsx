@@ -221,6 +221,8 @@ export default async function PlayerPage({
                 {playerData?.bestPGGrade || "N/A"}
               </p>
             </div>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <p className="text-sm font-light">Best Rank Sort</p>
               <p className="text-2xl font-bold font-pgFont text-gray-500 ">
@@ -233,7 +235,7 @@ export default async function PlayerPage({
                 {playerData?.Note || "N/A"}
               </p>
             </div>
-          </div>
+            </div>
         </div>
       </div>
 

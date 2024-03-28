@@ -4,23 +4,25 @@ import Link from "next/link";
 import Image from "next/image";
 
 export default function Navbar() {
-  return (
-    <div className="flex justify-between items-center h-20 bg-blue-500 px-4 sm:px-6 lg:px-8">
-      <Link href="/">
-        {/* <Image
-          src={"https://rfgveuhgzxqkaualspln.supabase.co/storage/v1/object/public/logos/pg_horizontal_primary_2_white.png"}
-          alt={""}
-          width={250}
-          height={50}
-          className="w-auto h-8 sm:h-10"
-        /> */}
-		<PerfectGameLogo />	
-      </Link>
-
-      <Profile />
-    </div>
-  );
-}
+	return (
+	  // Using px-4 (padding on the x-axis) to add padding inside the navbar,
+	  // while keeping items flexible and spaced with justify-between.
+	  // Adjust the px value based on your design requirements.
+	  <div className="flex justify-between items-center h-20 bg-blue-500 px-4 lg:px-8">
+		<Link href="/">
+		  <PerfectGameLogo />
+		</Link>
+  
+		{/* This wrapper ensures that the Profile component does not stick to the screen edge
+			on smaller screens while allowing some spacing on larger screens.
+			Adjust the margin as needed for your design. */}
+		<div className="flex items-center gap-4">
+		  <Profile />
+		</div>
+	  </div>
+	);
+  }
+  
 
 function PerfectGameLogo() {
 	const svgStyle = {
