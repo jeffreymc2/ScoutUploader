@@ -51,6 +51,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   };
 
   useEffect(() => {
+    
     if (isVideoFile(file.image)) {
       getThumbnailFromVideo(file.image)
         .then((thumbnail) => {
@@ -61,6 +62,8 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
         });
     }
   }, [file.image]);
+
+  if (isVideoFile(file.image)) {
 
   return (
     <>
@@ -110,7 +113,21 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
       </DialogContent>
     </Dialog>
     </>
-  );
+    );
+  } else {
+    return (
+      <div className="relative aspect-square w-full h-48">
+        <Image
+          src={file.image}
+          alt={`Image posted by ${file.post_by || 'Unknown'}`}
+          fill
+          className="rounded-lg object-cover"
+          sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw"
+        />
+      </div>
+    );
+  }
 };
 
 export default MediaRenderer;
+
