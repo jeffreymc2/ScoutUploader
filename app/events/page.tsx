@@ -1,7 +1,7 @@
 // app/page.tsx
 import { supabaseServer } from "@/lib/supabase/server";
 
-import SearchComponent from "@/components/SearchComponent";
+import EventSearchRoute from "@/components/EventSearchTermRoute";
 
 
 
@@ -42,7 +42,7 @@ export default async function Page({ searchParams }: { searchParams: any }) {
     <h1 className="text-2xl font-bold mt-5 font-pgFont">
         Search & Upload Media
       </h1>
-      <SearchComponent posts={[]}  />
+      <EventSearchRoute events={[]} />
       </>
   );
 }

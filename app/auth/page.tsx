@@ -43,7 +43,7 @@ const AuthPageContent = () => {
 	</div>
 	  <CardHeader className="text-center">
         <CardTitle className="text-2xl font-bold font-pgFont text-blue-500">
-          PG Scout | Profile Uploader
+          PG Scout | Media Uploader
         </CardTitle>
         <CardDescription className="text-lg text-gray-600">
           Sign In With Your PG Account

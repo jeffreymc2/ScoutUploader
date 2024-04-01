@@ -12,11 +12,17 @@ export default function Navbar() {
 		<Link href="/">
 		  <PerfectGameLogo />
 		</Link>
-  
+	
 		{/* This wrapper ensures that the Profile component does not stick to the screen edge
 			on smaller screens while allowing some spacing on larger screens.
 			Adjust the margin as needed for your design. */}
-		<div className="flex items-center gap-4">
+		<div className="flex items-center gap-4 text-white">
+		<Link href="/events">
+		<p>Events</p>	
+		</Link>
+		<Link href="/players">
+		<p>Players</p>	
+		</Link>
 		  <Profile />
 		</div>
 	  </div>

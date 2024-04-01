@@ -75,16 +75,19 @@ export default function PlayerSearchByName() {
   return (
     <div className="mt-5">
       <div className="flex items-center relative">
-        <Input
+      <Input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Enter player name"
-          className="w-full pl-3 pr-10 py-2 border rounded-md text-base"
+          placeholder="Search by player name"
+          className="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md text-base"
         />
         {searchQuery && (
           <button
-            onClick={clearSearch}
+            onClick={() => {
+              setSearchQuery(""); // Clear the input
+              // handleSearch(); // Uncomment if you decide to trigger search immediately
+            }}
             className="absolute right-20 top-1/2 mr-5 transform -translate-y-1/2 flex items-center justify-center text-gray-400 hover:text-gray-600"
           >
             <IoIosCloseCircleOutline className="w-6 h-6" />

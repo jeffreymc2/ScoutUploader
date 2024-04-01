@@ -1,11 +1,11 @@
 // app/page.tsx
 import { supabaseServer } from "@/lib/supabase/server";
 
-import SearchComponent from "@/components/SearchComponent";
+import PlayerSearchComponent from "@/components/PlayerSearchComponent";
 
 
 
-export default async function Page({ searchParams }: { searchParams: any }) {
+export default async function PlayerPage({ searchParams }: { searchParams: any }) {
   const playerId = searchParams.player_id ?? null;
 
   let posts:
@@ -42,7 +42,7 @@ export default async function Page({ searchParams }: { searchParams: any }) {
     <h1 className="text-2xl font-bold mt-5 font-pgFont">
         Search & Upload Media
       </h1>
-      <SearchComponent posts={[]}  />
+      <PlayerSearchComponent posts={[]}  />
       </>
   );
 }

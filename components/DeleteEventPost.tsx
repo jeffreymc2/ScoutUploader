@@ -7,13 +7,13 @@ import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
+
 interface DeletePostProps {
   post_by: string;
   image: string;
-  event_id?: string; // Add event_id to props
 }
 
-const DeletePost: React.FC<DeletePostProps> = ({ post_by, image, event_id }) => {
+const DeleteEventsPost: React.FC<DeletePostProps> = ({ post_by, image }) => {
   const { data: user, isFetching } = useUser();
   const router = useRouter();
 
@@ -21,21 +21,9 @@ const DeletePost: React.FC<DeletePostProps> = ({ post_by, image, event_id }) => 
     toast.info("Deleting image...");
     try {
       const supabase = supabaseBrowser();
-
-      // Adjust logic to handle both 'images' and 'events' folders
-      let imagePath = '';
-      let bucket = 'images'; // Default bucket
-
-      if (event_id) {
-        // If event_id is present, assume the image is in the 'events' folder
-        imagePath = image.split('/public/events/').pop() ?? '';
-        bucket = 'events';
-      } else {
-        // Otherwise, use the 'images' folder
-        imagePath = image.split('/public/images/').pop() ?? '';
-      }
-
-      const { data, error } = await supabase.storage.from(bucket).remove([imagePath]);
+      // Extract the path from the full URL
+      const imagePath = image.split('/public/events/').pop() ?? '';
+      const { data, error } = await supabase.storage.from('events').remove([imagePath]);
   
       if (error) {
         console.error('Failed to delete image:', error);
@@ -50,6 +38,7 @@ const DeletePost: React.FC<DeletePostProps> = ({ post_by, image, event_id }) => 
       toast.error('An error occurred while deleting the image');
     }
   };
+  
 
   if (isFetching) {
     return null;
@@ -58,7 +47,7 @@ const DeletePost: React.FC<DeletePostProps> = ({ post_by, image, event_id }) => 
   // Assuming that 'post_by' is the user ID of the user who posted the image
   if (user?.id === post_by) {
     return (
-      <div>
+      <div >
         <Button onClick={handleDelete}>Yes,Delete</Button>
       </div>
     );
@@ -67,5 +56,4 @@ const DeletePost: React.FC<DeletePostProps> = ({ post_by, image, event_id }) => 
   return null;
 }
 
-export default DeletePost;
-
+export default DeleteEventsPost;

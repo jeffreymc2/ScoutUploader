@@ -10,13 +10,9 @@ import { Button } from "./ui/button";
 import Tus from "@uppy/tus";
 import useUser from "@/app/hook/useUser";
 import { supabaseBrowser } from "@/lib/supabase/browser";
-import { Input } from "./ui/input";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-import debounce from "lodash/debounce";
-import { debug } from "console";
-import { randomUUID } from "crypto";
+
 
 export interface PlayerResponse {
   PlayerID: string;
@@ -60,30 +56,32 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   
 
   const [uppy] = useState(() =>
-  new Uppy({
-    restrictions: {
-      maxNumberOfFiles: 50,
-      // Include both image and video file types
-      allowedFileTypes: ["image/*", "video/*"],
-      maxFileSize: 5 * 10000 * 1000, // 50MB limit, adjust as needed
-    },
-    debug: true,
-  }).use(Tus, {
-    endpoint: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/upload/resumable`,
-    onBeforeRequest, // Ensure this function is defined or implemented elsewhere in your code
-    limit: 10,
-    chunkSize: 6 * 1024 * 1024, // 6MB chunks, adjust as needed
-    allowedMetaFields: ['bucketName', 'objectName', 'contentType', 'cacheControl'],
-  })
-);
+    new Uppy({
+      restrictions: {
+        maxNumberOfFiles: 50,
+        allowedFileTypes: ["image/*", "video/*"],
+        maxFileSize: 5 * 10000 * 1000,
+      },
+      debug: true,
 
+    }).use(Tus, {
+      endpoint: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/upload/resumable`,
+      onBeforeRequest, limit: 10,
+      chunkSize: 6 * 1024 * 1024,
+      allowedMetaFields: ['bucketName', 'objectName', 'contentType', 'cacheControl'],
+    })
+    
+  );
 
 
   uppy.on('file-added', (file) => {
+
+    const fileNameWithUUID = `${player_id}_${file.name}`;
+
     file.meta = {
       ...file.meta,
       bucketName: "images",
-      objectName:  `${user?.id}/${player_id}/${file.name}`,
+      objectName:  `${user?.id}/${player_id}/${fileNameWithUUID}`,
       contentType: file.type,
     }
   })
@@ -136,87 +134,3 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
 };
 
 export default Uploader;
-
-// // app/components/Uploader.tsx
-// "use client";
-// import React, { useState } from "react";
-// import Uppy from "@uppy/core";
-// import { Dashboard } from "@uppy/react";
-// import "@uppy/core/dist/style.css";
-// import "@uppy/dashboard/dist/style.css";
-// import { Button } from "./ui/button";
-// import Tus from "@uppy/tus";
-// import useUser from "@/app/hook/useUser";
-// import { supabaseBrowser } from "@/lib/supabase/browser";
-// import { toast } from "sonner";
-
-// interface UploaderProps {
-//   playerid: number;
-//   FullName: string;
-// }
-
-// const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
-//   const { data: user } = useUser();
-//   const supabase = supabaseBrowser();
-
-//   const player_id = playerid.toString();
-
-//   const [uppy] = useState(() =>
-//     new Uppy({
-//       restrictions: {
-//         maxNumberOfFiles: 50,
-//         allowedFileTypes: ["image/*"],
-//         maxFileSize: 5 * 10000 * 1000,
-//       },
-//       debug: true,
-//     }).use(Tus, {
-//       endpoint: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/upload/resumable`,
-//       onBeforeRequest: async (req: any) => {
-//         const { data } = await supabase.auth.getSession();
-//         req.setHeader("Authorization", `Bearer ${data?.session?.access_token}`);
-//       },
-//       limit: 10,
-//       chunkSize: 6 * 1024 * 1024,
-//       allowedMetaFields: ['bucketName', 'objectName', 'contentType', 'cacheControl'],
-//     })
-//   );
-
-//   uppy.on('file-added', (file) => {
-//     file.meta = {
-//       ...file.meta,
-//       bucketName: "images",
-//       objectName: `${user?.id}/${player_id}/${file.name}`,
-//       contentType: file.type,
-//     };
-//   });
-
-//   uppy.on('complete', (result) => {
-//     console.log('Upload complete!', result.successful);
-//   });
-
-//   const handleUpload = () => {
-//     if (uppy.getFiles().length === 0) {
-//       toast.error("Please select a file to upload.");
-//       return;
-//     }
-
-//     uppy.upload();
-//   };
-
-//   return (
-//     <div className="space-y-5">
-//       <div className="space-y-5">
-//         <h1 className="font-pgFont text-2xl">
-//           Perfect Game Scout Profile Uploader
-//         </h1>
-//         <p>Selected Player: {FullName} | Player ID: {playerid}</p>
-//       </div>
-//       <Dashboard uppy={uppy} className="w-auto" hideUploadButton />
-//       <Button id="upload-trigger" className="w-full" onClick={handleUpload}>
-//         Upload
-//       </Button>
-//     </div>
-//   );
-// };
-
-// export default Uploader;

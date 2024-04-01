@@ -1,3 +1,5 @@
+//app/players/%5Bplayer_id%5D/page.tsx
+
 import { supabaseServer } from "@/lib/supabase/server";
 import Image from "next/image";
 import Uploader from "@/components/Uploader";
@@ -28,6 +30,7 @@ import {
 } from "@/components/ui/card";
 import MediaRenderer from "@/components/MediaRenderer";
 import { Suspense } from "react";
+import { Player } from "@/lib/types/types";
 
 interface PlayerData {
   PlayerID: number;
@@ -53,9 +56,9 @@ interface PlayerData {
 }
 
 interface Post {
+  id: string;
   created_at: string;
   player_id: string | null;
-  id: string;
   name: string;
   object_id: string;
   post_by: string;
@@ -63,68 +66,54 @@ interface Post {
     display_name: string | null;
   } | null;
   image: string;
+  event_id?: string;
+  team_id?: string;
+  isVideo?: boolean;
 }
 
 interface PlayerSearchProps {
   posts: Post[] | null;
+  players: Player[];
+  eventId?: string;
 }
 
 export default async function PlayerPage({
   params,
 }: {
-  params: { player_id: string; post_by: string; image: string };
+  params: { player_id: string };
 }) {
   const player_id = params.player_id;
-
   const supabase = supabaseServer();
 
-  // // Fetch player data - Assuming this API endpoint is correct
-  // const response = await fetch(process.env.NEXT_PUBLIC_URL +
-  //   `/api/players?playerID=${player_id}`
-  // );
   const response = await fetch(
     process.env.NEXT_PUBLIC_URL + `/api/players?playerID=${player_id}`
   );
-
   const playerData: PlayerData = await response.json();
 
+  // Fetch posts (image references) related to the player from the "posts" table
   // Fetch posts (image references) related to the player from the "posts" table
   const { data: posts, error: postsError } = await supabase
     .from("posts")
     .select("*")
-    .eq("player_id", playerData.PlayerID.toString())
+    .eq("player_id", playerData.PlayerID)
     .order("created_at", { ascending: false });
 
   if (postsError) {
     console.error("Error fetching images:", postsError);
     return <div>Error fetching images</div>;
   }
-  // Helper function to determine if a file URL is a video
-  const isVideoFile = (url: string) => {
-    const videoExtensions = [".mp4", ".webm", ".ogg"]; // Extend with more video file extensions as needed
-    return videoExtensions.some((extension) =>
-      url.toLowerCase().endsWith(extension)
-    );
-  };
-
-  // Construct image URLs directly here assuming 'object_id' stores the path in Supabase Storage
-  // const imageUrlHost = process.env.NEXT_PUBLIC_SUPABASE_URL + "/storage/v1/object/public/images/";
-  // const postImages = posts?.map((post) => ({
-  //   image: `${imageUrlHost}${post.post_by}/${post.player_id}/${post.name}`,
-  //   ...post,
-  // }));
-
-  // Assuming 'posts' matches the structure expected by PlayerSearchProps
-  const imageUrlHost =
-    process.env.NEXT_PUBLIC_SUPABASE_URL + "/storage/v1/object/public/images/";
 
   const playerSearchProps: PlayerSearchProps = {
-    posts:
-      posts.map((post) => ({
-        ...post,
-        profiles: null,
-        image: `${imageUrlHost}${post.post_by}/${post.player_id}/${post.name}`,
-      })) || null,
+    posts: posts.map((post) => ({
+      ...post,
+      profiles: null,
+      image: post.event_id
+        ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`
+        : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/${post.post_by}/${post.player_id}/${post.name}`,
+      isVideo: isVideoFile(post.name),
+    })),
+    players: [],
+    eventId: "",
   };
 
   return (
@@ -276,6 +265,7 @@ export default async function PlayerPage({
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {playerSearchProps.posts?.map((post) => (
+                  
                   <div key={post.id} className="relative">
                     <MediaRenderer file={post} />
 
@@ -291,9 +281,8 @@ export default async function PlayerPage({
                               Are you absolutely sure?
                             </AlertDialogTitle>
                             <AlertDialogDescription>
-                              This will
-                              permanently delete this file
-                              from our servers.
+                              This action cannot be undone. This will
+                              permanently delete this file from our servers.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
@@ -301,6 +290,7 @@ export default async function PlayerPage({
                             <DeletePost
                               post_by={post.post_by}
                               image={post.image}
+                              event_id={post.event_id || ""} 
                             />
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -314,5 +304,20 @@ export default async function PlayerPage({
         </Suspense>
       </div>
     </>
+  );
+}
+// Helper function to determine if a file is a video based on its extension
+function isVideoFile(fileName: string) {
+  const videoExtensions = [
+    ".mp4",
+    ".webm",
+    ".ogg",
+    ".mov",
+    ".avi",
+    ".flv",
+    ".wmv",
+  ];
+  return videoExtensions.some((extension) =>
+    fileName.toLowerCase().endsWith(extension)
   );
 }

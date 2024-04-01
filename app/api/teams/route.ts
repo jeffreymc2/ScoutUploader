@@ -4,16 +4,13 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const textSearch = searchParams.get('textSearch');
-  const limit = searchParams.get('limit') || '10'; // Provides a default value if not provided
-  const state = searchParams.get('state') || ''; // Provides a default value if not provided
-  const searchQuery = searchParams.get('query');
+  const eventId = searchParams.get('query');
+
 
   // Construct the URL for the external API request
   const url = `https://tpa.perfectgame.org/api/ScoutNotes/EventTeams?eventID=${encodeURIComponent(
-    searchQuery || ''
-  )}&limit=${encodeURIComponent(limit)}&state=${encodeURIComponent(state)}`;
-
+    eventId || ''
+  )}`;
   // ...rest of your code remains the same
 
   

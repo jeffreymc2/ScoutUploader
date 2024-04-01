@@ -1,4 +1,4 @@
-//app/api/events/route.ts
+//app/api/players/route.ts
 
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -10,9 +10,9 @@ export async function GET(request: NextRequest) {
   const searchQuery = searchParams.get('query');
 
   // Construct the URL for the external API request
-  const url = `https://tpa.perfectgame.org/api/ScoutNotes/EventTeams?eventID=${encodeURIComponent(
+  const url = `https://tpa.perfectgame.org/api/ScoutNotes/EventSearch?eventSearchTerm=${encodeURIComponent(
     searchQuery || ''
-  )}&limit=${encodeURIComponent(limit)}&state=${encodeURIComponent(state)}`;
+  )}&eventState=${encodeURIComponent(state)}`;
 
   // ...rest of your code remains the same
 
