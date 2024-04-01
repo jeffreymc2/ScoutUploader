@@ -1,9 +1,13 @@
+"use client"
+
 import React from "react";
 import Profile from "./Profile";
 import Link from "next/link";
-import Image from "next/image";
+import useUser from "@/app/hook/useUser";
 
 export default function Navbar() {
+	const { isFetching, data } = useUser();
+
 	return (
 	  // Using px-4 (padding on the x-axis) to add padding inside the navbar,
 	  // while keeping items flexible and spaced with justify-between.
@@ -13,16 +17,22 @@ export default function Navbar() {
 		  <PerfectGameLogo />
 		</Link>
 	
+		
 		{/* This wrapper ensures that the Profile component does not stick to the screen edge
 			on smaller screens while allowing some spacing on larger screens.
 			Adjust the margin as needed for your design. */}
 		<div className="flex items-center gap-4 text-white">
+		{data?.id && (
+
+			<>
 		<Link href="/events">
 		<p>Events</p>	
 		</Link>
 		<Link href="/players">
 		<p>Players</p>	
 		</Link>
+		</>
+		)}
 		  <Profile />
 		</div>
 	  </div>

@@ -33,22 +33,19 @@ const AuthPageContent = () => {
   };
 
   return (
-   
-    <Card className="flex flex-col justify-center items-center mt-5 bg-white  border-none">
-		
-      
+    <Card className="flex flex-col justify-center items-center mt-5 bg-white border-none">
       <CardContent className="w-full max-w-md px-4 py-8 mx-auto bg-white rounded-lg shadow-lg">
-	  <div className="flex flex-col justify-center items-center mt-5 bg-white  border-non">
-      <PerfectGameLogo backgroundColor="#005cb9" />
-	</div>
-	  <CardHeader className="text-center">
-        <CardTitle className="text-2xl font-bold font-pgFont text-blue-500">
-          PG Scout | Media Uploader
-        </CardTitle>
-        <CardDescription className="text-lg text-gray-600">
-          Sign In With Your PG Account
-        </CardDescription>
-      </CardHeader>
+        <div className="flex flex-col justify-center items-center mt-5 bg-white  border-non">
+          <PerfectGameLogo backgroundColor="#005cb9" />
+        </div>
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold font-pgFont text-blue-500">
+            Media Uploader
+          </CardTitle>
+          <CardDescription className="text-md text-gray-600">
+            Sign In With Your PG Account
+          </CardDescription>
+        </CardHeader>
         <div className="flex flex-col gap-4">
           <Button
             className="flex items-center justify-center gap-2 py-3 text-base rounded-lg border border-gray-200 shadow-sm"
@@ -65,7 +62,9 @@ const AuthPageContent = () => {
         </div>
       </CardContent>
       <CardFooter className="text-center">
-        <p className="text-gray-500 p-5">©2024 Perfect Game Inc. All rights reserved.</p>
+        <p className="text-gray-500 text-xs p-5">
+          ©2024 Perfect Game Inc. All rights reserved.
+        </p>
       </CardFooter>
     </Card>
   );
