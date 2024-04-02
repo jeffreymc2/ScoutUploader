@@ -10,8 +10,8 @@ const EventSearchComponent = ({ posts }: { posts: Post[] }) => {
   return (
     <Tabs defaultValue="event" className="w-full">
       <TabsList className="mb-4">
-        <TabsTrigger value="event" className="px-4 py-2">By Event Name</TabsTrigger>
-        <TabsTrigger value="eventsearch" className="px-4 py-2">By Event ID</TabsTrigger>
+        <TabsTrigger value="eventsearch" className="px-4 py-2">By Event Name</TabsTrigger>
+        <TabsTrigger value="event" className="px-4 py-2">By Event ID</TabsTrigger>
     
       </TabsList>
 
