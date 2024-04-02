@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
 import BackButton from "@/components/BackButton";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import { SkeletonCard } from "../loading";
+import { SkeletonCard } from "./loading";
 
 import { Car } from "lucide-react";
 import {
