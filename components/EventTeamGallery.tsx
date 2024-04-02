@@ -1,6 +1,7 @@
 // components/EventTeamGallery.tsx
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 import {
   Select,
   SelectContent,
@@ -11,24 +12,40 @@ import {
 import { Player, Post } from "@/lib/types/types";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
+// import DeletePost from "@/components/DeletePost";
 import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
 import MediaRenderer from "./MediaRenderer";
-import { AlertDialog, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel } from "@radix-ui/react-alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+} from "@radix-ui/react-alert-dialog";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import DeletePost from "./DeletePost";
 import { AlertDialogHeader, AlertDialogFooter } from "./ui/alert-dialog";
+// import DeleteEventsPost from "./DeleteEventPost";
 
 interface EventTeamGalleryProps {
   posts: Post[];
   players: Player[];
+  eventId: string;
+  teamId: string;
+  image: string;
 }
 
-const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({ posts, players }) => {
+const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
+  posts,
+  players,
+}) => {
   const supabase = supabaseBrowser();
+  // const imageUrlHost =
+  //   process.env.NEXT_PUBLIC_SUPABASE_URL + "/storage/v1/object/public/events/";
+
   const router = useRouter();
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
   const eventSearchProps: EventTeamGalleryProps = {
     posts: posts.map((post) => ({
@@ -40,19 +57,13 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({ posts, players }) =
       isVideo: isVideoFile(post.name),
     })),
     players: [],
+    eventId: "",
+    teamId: "",
+    image: "",
   };
 
-  const handleSavePlayer = async (postId: string, playerId: string) => {
-    try {
-      await supabase
-        .from("posts")
-        .update({ player_id: playerId })
-        .eq("id", postId);
-      router.refresh();
-    } catch (error) {
-      console.error("Error updating post:", error);
-    }
-  };
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
   const openAlert = (post: Post) => {
     setSelectedPost(post);
@@ -64,72 +75,61 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({ posts, players }) =
     setIsAlertOpen(false);
   };
 
+  const handleSavePlayer = async (postId: string, playerId: string) => {
+    try {
+      await supabase
+        .from("posts")
+        .update({ player_id: playerId })
+        .eq("id", postId);
+    } catch (error) {
+      console.error("Error updating post:", error);
+    }
+    router.refresh();
+  };
+
   return (
-    <>
-      <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-2">
-        {eventSearchProps.posts?.map((post) => {
-          const assignedPlayer = players.find(
-            (player) => player.playerid.toString() === post.player_id
-          );
+    <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-2">
+      {eventSearchProps.posts?.map((post) => {
+        const assignedPlayer = players.find(
+          (player) => player.playerid.toString() === post.player_id
+        );
 
-          return (
-            <div key={post.id} className="flex flex-col">
-              <div className="relative">
-                <MediaRenderer file={post} />
-                <div
-                  className="absolute top-2 right-2 cursor-pointer"
-                  onClick={() => openAlert(post)}
-                >
-                  <RiDeleteBin5Line className="w-6 h-6 text-white" />
-                </div>
+        return (
+          // This div wraps each post's content, ensuring they're grouped
+          <div key={post.id} className="flex flex-col">
+            <div key={post.id} className="relative">
+              <MediaRenderer file={post} />
+              <div
+                className="absolute top-2 right-2 cursor-pointer"
+                onClick={() => openAlert(post)}
+              >
+                <RiDeleteBin5Line className="w-6 h-6 text-white" />
               </div>
-              <div onClick={(event) => event.stopPropagation()}>
-                <PlayerSelect
-                  post={post}
-                  players={players}
-                  onSavePlayer={handleSavePlayer}
-                />
-              </div>
-              {assignedPlayer && (
-                <p className="text-xs my-2">
-                  Current Player Selected: {assignedPlayer.FullName} | Player ID:{" "}
-                  {assignedPlayer.playerid}
-                </p>
-              )}
-              {!assignedPlayer && (
-                <p className="text-xs my-2">
-                  No player has been assigned to this file.
-                </p>
-              )}
             </div>
-          );
-        })}
-      </div>
 
-      {selectedPost && (
-        <AlertDialog open={isAlertOpen} onOpenChange={setIsAlertOpen}>
-          <AlertDialogContent className="fixed inset-0 z-50 flex items-center justify-center">
-            <div className="bg-white rounded-lg shadow-lg p-6 max-w-md mx-auto">
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete this file
-                  from our servers.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel onClick={closeAlert}>Cancel</AlertDialogCancel>
-                <DeletePost
-                  post_by={selectedPost.post_by}
-                  image={selectedPost.image}
-                  event_id={selectedPost.event_id || ""}
-                />
-              </AlertDialogFooter>
+            <div onClick={(event) => event.stopPropagation()}>
+              <PlayerSelect
+                post={post}
+                players={players}
+                onSavePlayer={handleSavePlayer}
+              />
             </div>
-          </AlertDialogContent>
-        </AlertDialog>
-      )}
-    </>
+            {assignedPlayer && (
+              <p className="text-xs my-2">
+                Current Player Selected: {assignedPlayer.FullName} | Player ID:{" "}
+                {assignedPlayer.playerid}
+              </p>
+            )}
+            {!assignedPlayer && (
+              <p className="text-xs my-2">
+                No player has been assigned to this file.
+              </p>
+            )}
+          </div>
+        );
+      })}
+    </div>
+    
   );
 };
 
@@ -139,7 +139,11 @@ interface PlayerSelectProps {
   onSavePlayer: (postId: string, playerId: string) => void;
 }
 
-const PlayerSelect: React.FC<PlayerSelectProps> = ({ post, players, onSavePlayer }) => {
+const PlayerSelect: React.FC<PlayerSelectProps> = ({
+  post,
+  players,
+  onSavePlayer,
+}) => {
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
   const [isSelectOpen, setIsSelectOpen] = useState(false);
 
@@ -173,8 +177,12 @@ const PlayerSelect: React.FC<PlayerSelectProps> = ({ post, players, onSavePlayer
           </SelectTrigger>
           <SelectContent className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-2">
             {players.map((player) => (
-              <SelectItem key={player.playerid} value={player.playerid.toString()}>
-                {player.FullName} | ID: {player.playerid} | Jersey#: {player.jerseynumber}
+              <SelectItem
+                key={player.playerid}
+                value={player.playerid.toString()}
+              >
+                {player.FullName} | ID: {player.playerid} | Jersey#:{" "}
+                {player.jerseynumber}
               </SelectItem>
             ))}
           </SelectContent>
@@ -190,11 +198,19 @@ const PlayerSelect: React.FC<PlayerSelectProps> = ({ post, players, onSavePlayer
     </>
   );
 };
-
+export default EventTeamGallery;
 // Helper function to determine if a file is a video based on its extension
 function isVideoFile(fileName: string) {
-  const videoExtensions = [".mp4", ".webm", ".ogg", ".mov", ".avi", ".flv", ".wmv"];
-  return videoExtensions.some((extension) => fileName.toLowerCase().endsWith(extension));
+  const videoExtensions = [
+    ".mp4",
+    ".webm",
+    ".ogg",
+    ".mov",
+    ".avi",
+    ".flv",
+    ".wmv",
+  ];
+  return videoExtensions.some((extension) =>
+    fileName.toLowerCase().endsWith(extension)
+  );
 }
-
-export default EventTeamGallery;
