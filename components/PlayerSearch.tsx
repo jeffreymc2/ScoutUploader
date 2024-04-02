@@ -28,7 +28,7 @@ interface PlayerSearchProps {
   posts: Post[];
 }
 
-const imgeUrlHost = 'https://rfgveuhgzxqkaualspln.supabase.co/storage/v1/object/public/images/';
+const imgeUrlHost =  process.env.NEXT_PUBLIC_SUPABASE_URL+'/storage/v1/object/public/images/';
 
 export default function PlayerSearch({ posts }: PlayerSearchProps) {
   const [searchQuery, setSearchQuery] = useState('');

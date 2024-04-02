@@ -17,7 +17,7 @@ interface PlayerPageProps {
   FullName: string;
 }
 
-const imageUrlHost = 'https://rfgveuhgzxqkaualspln.supabase.co/storage/v1/object/public/images/';
+const imageUrlHost = process.env.NEXT_PUBLIC_SUPABASE_URL+'/storage/v1/object/public/images/';
 
 export default function PlayerPage({ playerid, FullName }: PlayerPageProps) {
   const [files, setFiles] = useState<FileData[]>([]);
