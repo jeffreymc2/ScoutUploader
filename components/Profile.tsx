@@ -72,7 +72,7 @@ export default function Profile() {
           <DropdownMenuContent className="">
             <DropdownMenuLabel>{data.email}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <Profile  />
+            <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )}
