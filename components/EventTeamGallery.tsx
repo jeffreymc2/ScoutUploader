@@ -16,6 +16,10 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
 import MediaRenderer from "./MediaRenderer";
+import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel } from "@radix-ui/react-alert-dialog";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import DeletePost from "./DeletePost";
+import { AlertDialogHeader, AlertDialogFooter } from "./ui/alert-dialog";
 // import DeleteEventsPost from "./DeleteEventPost";
 
 interface EventTeamGalleryProps {
@@ -76,7 +80,35 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
           <div key={post.id} className="flex flex-col">
             <div className="relative w-full h-60">
               <MediaRenderer file={post}  />
+              <div className="absolute top-2 right-2">
+                      <AlertDialog>
+                        <AlertDialogTrigger>
+                          {" "}
+                          <RiDeleteBin5Line className="w-6 h-6 text-white" />
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Are you absolutely sure?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will
+                              permanently delete this file from our servers.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <DeletePost
+                              post_by={post.post_by}
+                              image={post.image}
+                              event_id={post.event_id || ""} 
+                            />
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
             </div>
+            
             <div onClick={(event) => event.stopPropagation()}>
               <PlayerSelect
                 post={post}
