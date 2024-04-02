@@ -11,7 +11,7 @@ const nextConfig = {
 				protocol: "https",
 			},
 			{
-				hostname: "rfgveuhgzxqkaualspln.supabase.co",
+				hostname: "avkhdvyjcweghosyfiiw.supabase.co",
 				protocol: "https",
 			},
 			{
@@ -20,7 +20,7 @@ const nextConfig = {
 			},
 			{
 				protocol: 'https',
-				hostname: 'rfgveuhgzxqkaualspln.supabase.co',
+				hostname: 'avkhdvyjcweghosyfiiw.supabase.co',
 				pathname: '/storage/v1/upload/resumable/**',
 			  },
 			  {

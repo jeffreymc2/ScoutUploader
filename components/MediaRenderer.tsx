@@ -100,7 +100,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
         )}
 
         <div
-            className="relative aspect-square w-full h-48 cursor-pointer"
+            className="relative aspect-square w-full h-48 "
             onClick={() => setIsOpen(true)}
           >
             {file.isVideo ? (
@@ -126,7 +126,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             )}
           </div>
           <DialogTrigger >
-              <p className="text-sm text-blue-500">Preview Media</p>
+              <p className="text-sm text-blue-500 cursor-pointer">Preview Media</p>
           </DialogTrigger>
       </Dialog>
       {file.event_id && (
