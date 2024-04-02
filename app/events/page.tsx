@@ -16,7 +16,7 @@ export default async function Page({ searchParams }: { searchParams: any }) {
         name: string;
         object_id: string;
         post_by: string;
-        profiles: { display_name: string | null } | null;
+        profile: { display_name: string | null } | null;
         image: string;
       }[]
     | undefined = [];
@@ -25,7 +25,7 @@ export default async function Page({ searchParams }: { searchParams: any }) {
     const supabase = supabaseServer();
     const { data } = await supabase
       .from("posts")
-      .select("*,profiles(display_name)")
+      .select("*,profile(display_name)")
       .eq("player_id", playerId)
       .order("created_at", { ascending: false });
 

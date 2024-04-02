@@ -32,7 +32,7 @@ export interface Post {
   name: string;
   object_id: string;
   post_by: string;
-  profiles: {
+  profile: {
     display_name: string | null;
   } | null;
   image: string;

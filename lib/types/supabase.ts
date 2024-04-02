@@ -52,12 +52,12 @@ export interface Database {
             foreignKeyName: "posts_post_by_fkey"
             columns: ["post_by"]
             isOneToOne: false
-            referencedRelation: "profiles"
+            referencedRelation: "profile"
             referencedColumns: ["id"]
           }
         ]
       }
-      profiles: {
+      profile: {
         Row: {
           created_at: string
           display_name: string | null
@@ -81,7 +81,7 @@ export interface Database {
         }
         Relationships: [
           {
-            foreignKeyName: "profiles_id_fkey"
+            foreignKeyName: "profile_id_fkey"
             columns: ["id"]
             isOneToOne: true
             referencedRelation: "users"

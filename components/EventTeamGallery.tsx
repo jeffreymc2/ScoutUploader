@@ -40,7 +40,7 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
   const eventSearchProps: EventTeamGalleryProps = {
     posts: posts.map((post) => ({
       ...post,
-      profiles: null,
+      profile: null,
       image: post.event_id
         ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`
         : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/${post.post_by}/${post.player_id}/${post.name}`,
