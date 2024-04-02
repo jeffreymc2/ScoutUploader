@@ -47,12 +47,12 @@ const AuthPageContent = () => {
           </CardDescription>
         </CardHeader>
         <div className="flex flex-col gap-4">
-          {/* <Button
+          <Button
             className="flex items-center justify-center gap-2 py-3 text-base rounded-lg border border-gray-200 shadow-sm"
             onClick={() => handleLoginWithOAuth("github")}
           >
             <FaGithub className="text-xl" /> Github
-          </Button> */}
+          </Button>
           <Button
             className="flex items-center justify-center gap-2 py-3 text-base rounded-lg border border-gray-200 shadow-sm"
             onClick={() => handleLoginWithOAuth("azure")}

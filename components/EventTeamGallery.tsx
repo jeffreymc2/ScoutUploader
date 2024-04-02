@@ -99,12 +99,34 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
           <div key={post.id} className="flex flex-col">
             <div key={post.id} className="relative">
               <MediaRenderer file={post} />
-              <div
-                className="absolute top-2 right-2 cursor-pointer"
-                onClick={() => openAlert(post)}
-              >
-                <RiDeleteBin5Line className="w-6 h-6 text-white" />
-              </div>
+             
+                <div className="absolute top-2 right-2">
+                      <AlertDialog>
+                        <AlertDialogTrigger>
+                          {" "}
+                          <RiDeleteBin5Line className="w-6 h-6 text-white" />
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Are you absolutely sure?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will
+                              permanently delete this file from our servers.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <DeletePost
+                              post_by={post.post_by}
+                              image={post.image}
+                              event_id={post.event_id || ""} 
+                            />
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
             </div>
 
             <div onClick={(event) => event.stopPropagation()}>
@@ -125,8 +147,11 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                 No player has been assigned to this file.
               </p>
             )}
+            
           </div>
         );
+
+        
       })}
     </div>
     
