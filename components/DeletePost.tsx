@@ -65,7 +65,7 @@ if (user?.id === post_by) {
 } else {
   return (
     <div>
-      <p>Only the user who posted the image can delete it.</p>
+      <p className="text-sm text-muted-foreground">Only the user who posted the image can delete it.</p>
     </div>
   );
 }
