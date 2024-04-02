@@ -56,22 +56,20 @@ const DeletePost: React.FC<DeletePostProps> = ({ post_by, image, event_id }) => 
   }
 
   // Assuming that 'post_by' is the user ID of the user who posted the image
-  if (user?.id === post_by) {
-    return (
-      <div>
-        <Button onClick={handleDelete}>Yes,Delete</Button>
-      </div>
-    );
-    } else {
-      return (
-        <div>
-       <p>Only the user who posted the image can delete it.</p>
-      </div>
-      )
-    }
-  }
+if (user?.id === post_by) {
+  return (
+    <div>
+      <Button onClick={handleDelete}>Yes, Delete</Button>
+    </div>
+  );
+} else {
+  return (
+    <div>
+      <p>Only the user who posted the image can delete it.</p>
+    </div>
+  );
+}
 
-  return null;
 }
 
 export default DeletePost;
