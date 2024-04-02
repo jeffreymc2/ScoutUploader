@@ -83,11 +83,11 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
             <div key={post.id} className="relative">
               <MediaRenderer file={post} />
               <AlertDialog>
-                <div className="absolute top-2 right-2">
-                  <AlertDialogTrigger>
+                <AlertDialogTrigger>
+                  <div className="absolute top-2 right-2">
                     <RiDeleteBin5Line className="w-6 h-6 text-white" />
-                  </AlertDialogTrigger>
-                </div>
+                  </div>
+                </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>
