@@ -108,15 +108,12 @@ interface PlayerSelectProps {
   onSavePlayer: (postId: string, playerId: string) => void;
 }
 
-const PlayerSelect: React.FC<PlayerSelectProps> = ({
-  post,
-  players,
-  onSavePlayer,
-}) => {
+const PlayerSelect: React.FC<PlayerSelectProps> = ({ post, players, onSavePlayer }) => {
   const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+  const [isSelectOpen, setIsSelectOpen] = useState(false);
 
-  const handleChange = (playerId: string) => {
-    const player = players.find((p) => p.playerid === parseInt(playerId));
+  const handleSelectChange = (value: string) => {
+    const player = players.find((p) => p.playerid === parseInt(value));
     setSelectedPlayer(player || null);
   };
 
@@ -131,7 +128,8 @@ const PlayerSelect: React.FC<PlayerSelectProps> = ({
     <>
       <div className="flex items-center justify-between relative">
         <Select
-          onValueChange={handleChange}
+          onOpenChange={setIsSelectOpen}
+          onValueChange={handleSelectChange}
           value={selectedPlayer?.playerid.toString() || ""}
         >
           <SelectTrigger className="w-full mt-2">
@@ -139,12 +137,8 @@ const PlayerSelect: React.FC<PlayerSelectProps> = ({
           </SelectTrigger>
           <SelectContent className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-2">
             {players.map((player) => (
-              <SelectItem
-                key={player.playerid}
-                value={player.playerid.toString()}
-              >
-                {player.FullName} | ID: {player.playerid} | Jersey#:{" "}
-                {player.jerseynumber}
+              <SelectItem key={player.playerid} value={player.playerid.toString()}>
+                {player.FullName} | ID: {player.playerid} | Jersey#: {player.jerseynumber}
               </SelectItem>
             ))}
           </SelectContent>
@@ -152,6 +146,7 @@ const PlayerSelect: React.FC<PlayerSelectProps> = ({
         <Button
           className="mx-2 bg-blue-500 text-white rounded"
           onClick={handleSave}
+          disabled={!selectedPlayer || isSelectOpen}
         >
           Save
         </Button>
@@ -159,7 +154,6 @@ const PlayerSelect: React.FC<PlayerSelectProps> = ({
     </>
   );
 };
-
 export default EventTeamGallery;
 // Helper function to determine if a file is a video based on its extension
 function isVideoFile(fileName: string) {
