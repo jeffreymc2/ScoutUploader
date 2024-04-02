@@ -275,7 +275,7 @@ export default async function PlayerPage({
                       <AlertDialog>
                         <AlertDialogTrigger>
                           {" "}
-                          <RiDeleteBin5Line/>
+                          <RiDeleteBin5Line className="w-6 h-6 text-white" />
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
