@@ -75,7 +75,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
 
   const imageStyle = {
     width: "100%",
-    height: "100%"
+    height: "425px"
   }
   return (
     <>
@@ -92,7 +92,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
               alt={`Media posted by ${file.post_by || "Unknown"}`}
               width={425}
               height={425}
-              className="rounded-lg object-contain sm:max-w-[425px]"
+              className="rounded-lg object-cover sm:max-w-[425px]"
               style={imageStyle}
              
             />
