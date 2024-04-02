@@ -78,11 +78,10 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
         return (
           // This div wraps each post's content, ensuring they're grouped
           <div key={post.id} className="flex flex-col">
-            <div className="relative w-full h-60">
-              <MediaRenderer file={post}  />
-              
-            </div>
-            <div className="absolute top-2 right-2">
+             <div key={post.id} className="relative">
+                    <MediaRenderer file={post} />
+
+                    <div className="absolute top-2 right-2">
                       <AlertDialog>
                         <AlertDialogTrigger>
                           {" "}
@@ -109,6 +108,8 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                         </AlertDialogContent>
                       </AlertDialog>
                     </div>
+                  </div>
+            
             <div onClick={(event) => event.stopPropagation()}>
               <PlayerSelect
                 post={post}
