@@ -83,31 +83,32 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
             <div key={post.id} className="relative">
               <MediaRenderer file={post} />
               <AlertDialog>
+                <div className="absolute top-2 right-2">
                   <AlertDialogTrigger>
                     <RiDeleteBin5Line className="w-6 h-6 text-white" />
                   </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Are you absolutely sure?
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        delete this file from our servers.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <DeletePost
-                        post_by={post.post_by}
-                        image={post.image}
-                        event_id={post.event_id || ""}
-                      />
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                </div>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Are you absolutely sure?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete
+                      this file from our servers.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <DeletePost
+                      post_by={post.post_by}
+                      image={post.image}
+                      event_id={post.event_id || ""}
+                    />
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
-         
             <div onClick={(event) => event.stopPropagation()}>
               <PlayerSelect
                 post={post}
@@ -127,7 +128,6 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
               </p>
             )}
           </div>
-          
         );
       })}
     </div>
