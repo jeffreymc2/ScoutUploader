@@ -2,7 +2,7 @@
 "use client";
 
 import EventSearch from "@/components/EventSearch";
-import EventSearchTerm from "@/components/EventSearchTerm";
+import EventSearchRoute from "@/components/EventSearchTermRoute";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Post } from "@/lib/types/types";
 
@@ -15,11 +15,12 @@ const EventSearchComponent = ({ posts }: { posts: Post[] }) => {
     
       </TabsList>
 
+      
+      <TabsContent value="eventsearch" className="min-h-[400px]">
+        <EventSearchRoute events={[]} />
+      </TabsContent>
       <TabsContent value="event" className="min-h-[400px]">
         <EventSearch teams={[]} />
-      </TabsContent>
-      <TabsContent value="eventsearch" className="min-h-[400px]">
-        <EventSearchTerm events={[]} />
       </TabsContent>
      
     </Tabs>

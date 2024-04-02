@@ -49,7 +49,7 @@ export default function LandingPage() {
               Search and Upload by Events
             </h2>
             <p className="mt-2 text-sm text-center text-gray-500 ">
-            Search by event name or id find and upload media content by events. Once uploaded, tag media to players.
+            Search by event name or id to find and upload media content by events. Once uploaded, tag media to players.
             </p>
             <div className="mt-4 flex justify-center">
               <Link
