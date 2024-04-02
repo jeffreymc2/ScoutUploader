@@ -8,6 +8,7 @@ import ReactPlayer from "react-player";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { PlayCircleIcon } from "lucide-react";
 import { Button } from "./ui/button";
+import { max } from "lodash";
 
 interface MediaRendererProps {
   file: {
@@ -72,15 +73,33 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
     }
   }, [file.image, file.isVideo]);
 
+  const imageStyle = {
+    width: "100%",
+    height: "100%"
+  }
   return (
     <>
       <Dialog onOpenChange={setIsOpen}>
        
-        {file.isVideo && (
+        {file.isVideo ? (
           <DialogContent className="sm:max-w-[425px]">
             <ReactPlayer url={file.image} controls width="100%" height="auto" />
           </DialogContent>
+        ) : (
+          <DialogContent className="sm:max-w-[425px]">
+            <Image
+              src={file.image}
+              alt={`Media posted by ${file.post_by || "Unknown"}`}
+              width={425}
+              height={425}
+              className="rounded-lg object-contain sm:max-w-[425px]"
+              style={imageStyle}
+             
+            />
+          </DialogContent>
+        
         )}
+
         <div
             className="relative aspect-square w-full h-48 cursor-pointer"
             onClick={() => setIsOpen(true)}
