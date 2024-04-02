@@ -7,6 +7,7 @@ import Image from "next/image";
 import ReactPlayer from "react-player";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { PlayCircleIcon } from "lucide-react";
+import { Button } from "./ui/button";
 
 interface MediaRendererProps {
   file: {
@@ -16,20 +17,13 @@ interface MediaRendererProps {
     event_id?: string;
     isVideo?: boolean;
   };
-  onClick?: () => void;
 }
 
-const MediaRenderer: React.FC<MediaRendererProps> = ({ file, onClick }) => {
+const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState("");
 
-  const handleClick = () => {
-    if (onClick) {
-      onClick();
-    } else {
-      setIsOpen(true);
-    }
-  };
+  
 
   useEffect(() => {
     if (file.isVideo) {
@@ -80,11 +74,16 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, onClick }) => {
 
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>
+      <Dialog onOpenChange={setIsOpen}>
+       
+        {file.isVideo && (
+          <DialogContent className="sm:max-w-[425px]">
+            <ReactPlayer url={file.image} controls width="100%" height="auto" />
+          </DialogContent>
+        )}
         <div
             className="relative aspect-square w-full h-48 cursor-pointer"
-            onClick={handleClick}
+            onClick={() => setIsOpen(true)}
           >
             {file.isVideo ? (
               thumbnailUrl ? (
@@ -108,12 +107,9 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, onClick }) => {
               />
             )}
           </div>
-        </DialogTrigger>
-        {file.isVideo && (
-          <DialogContent className="sm:max-w-[425px]">
-            <ReactPlayer url={file.image} controls width="100%" height="auto" />
-          </DialogContent>
-        )}
+          <DialogTrigger >
+              <p className="text-sm text-blue-500">Preview Media</p>
+          </DialogTrigger>
       </Dialog>
       {file.event_id && (
         <p className="text-sm mt-2">Uploaded from Event ID: {file.event_id}</p>

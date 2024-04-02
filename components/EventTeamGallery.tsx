@@ -75,15 +75,15 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
           // This div wraps each post's content, ensuring they're grouped
           <div key={post.id} className="flex flex-col">
             <div className="relative w-full h-60">
-              {/* Adjust h-60 as needed to control image height */}
-              <MediaRenderer file={post} />
+              <MediaRenderer file={post}  />
             </div>
-
-            <PlayerSelect
-              post={post}
-              players={players}
-              onSavePlayer={handleSavePlayer}
-            />
+            <div onClick={(event) => event.stopPropagation()}>
+              <PlayerSelect
+                post={post}
+                players={players}
+                onSavePlayer={handleSavePlayer}
+              />
+            </div>
             {assignedPlayer && (
               <p className="text-xs my-2">
                 Current Player Selected: {assignedPlayer.FullName} | Player ID:{" "}
@@ -124,6 +124,11 @@ const PlayerSelect: React.FC<PlayerSelectProps> = ({ post, players, onSavePlayer
     }
   };
 
+  const handleSelectClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setIsSelectOpen(true);
+  };
+
   return (
     <>
       <div className="flex items-center justify-between relative">
@@ -132,7 +137,7 @@ const PlayerSelect: React.FC<PlayerSelectProps> = ({ post, players, onSavePlayer
           onValueChange={handleSelectChange}
           value={selectedPlayer?.playerid.toString() || ""}
         >
-          <SelectTrigger className="w-full mt-2">
+          <SelectTrigger className="w-full mt-2" onClick={handleSelectClick}>
             <SelectValue placeholder="Select Player" />
           </SelectTrigger>
           <SelectContent className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-2">
