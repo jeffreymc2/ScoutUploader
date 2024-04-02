@@ -259,7 +259,6 @@ export default async function PlayerPage({
       </div>
 
       <div className="space-y-4">
-        <Suspense fallback={<Loading />}>
           <Card className="mt-5 shadow-lg border border-gray-100 min-h-96">
             <CardHeader>
               <CardTitle className="font-pgFont">{`Photo and Video Uploads of ${playerData.PlayerName}`}</CardTitle>
@@ -270,7 +269,10 @@ export default async function PlayerPage({
                 {playerSearchProps.posts?.map((post) => (
                   
                   <div key={post.id} className="relative">
+                            <Suspense fallback={<Loading />}>
+
                     <MediaRenderer file={post} />
+                    </Suspense>
 
                     <div className="absolute top-2 right-2">
                       <AlertDialog>
@@ -304,7 +306,6 @@ export default async function PlayerPage({
               </div>
             </CardContent>
           </Card>
-        </Suspense>
       </div>
     </>
   );
