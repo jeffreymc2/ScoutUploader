@@ -12,7 +12,6 @@ import {
 import { Player, Post } from "@/lib/types/types";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
-// import DeletePost from "@/components/DeletePost";
 import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
 import MediaRenderer from "./MediaRenderer";
@@ -27,7 +26,6 @@ import {
 import { RiDeleteBin5Line } from "react-icons/ri";
 import DeletePost from "./DeletePost";
 import { AlertDialogHeader, AlertDialogFooter } from "./ui/alert-dialog";
-// import DeleteEventsPost from "./DeleteEventPost";
 
 interface EventTeamGalleryProps {
   posts: Post[];
@@ -42,8 +40,6 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
   players,
 }) => {
   const supabase = supabaseBrowser();
-  // const imageUrlHost =
-  //   process.env.NEXT_PUBLIC_SUPABASE_URL + "/storage/v1/object/public/events/";
 
   const router = useRouter();
 
@@ -60,19 +56,6 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
     eventId: "",
     teamId: "",
     image: "",
-  };
-
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
-
-  const openAlert = (post: Post) => {
-    setSelectedPost(post);
-    setIsAlertOpen(true);
-  };
-
-  const closeAlert = () => {
-    setSelectedPost(null);
-    setIsAlertOpen(false);
   };
 
   const handleSavePlayer = async (postId: string, playerId: string) => {
@@ -99,36 +82,32 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
           <div key={post.id} className="flex flex-col">
             <div key={post.id} className="relative">
               <MediaRenderer file={post} />
-             
-                <div className="absolute top-2 right-2">
-                      <AlertDialog>
-                        <AlertDialogTrigger>
-                          {" "}
-                          <RiDeleteBin5Line className="w-6 h-6 text-white" />
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Are you absolutely sure?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will
-                              permanently delete this file from our servers.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <DeletePost
-                              post_by={post.post_by}
-                              image={post.image}
-                              event_id={post.event_id || ""} 
-                            />
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
+              <AlertDialog>
+                  <AlertDialogTrigger>
+                    <RiDeleteBin5Line className="w-6 h-6 text-white" />
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you absolutely sure?
+                      </AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently
+                        delete this file from our servers.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <DeletePost
+                        post_by={post.post_by}
+                        image={post.image}
+                        event_id={post.event_id || ""}
+                      />
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
             </div>
-
+         
             <div onClick={(event) => event.stopPropagation()}>
               <PlayerSelect
                 post={post}
@@ -147,14 +126,11 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                 No player has been assigned to this file.
               </p>
             )}
-            
           </div>
+          
         );
-
-        
       })}
     </div>
-    
   );
 };
 
