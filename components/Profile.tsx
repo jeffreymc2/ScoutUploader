@@ -52,28 +52,17 @@ export default function Profile() {
           <DropdownMenuTrigger>
             <>
               {data?.image_url ? (
-                <Image
-                  src={
-                    data.image_url ||
-                    "https://vyrybefhmqnaxzfijbpl.supabase.co/storage/v1/object/public/other/profile-default-icon-2048x2045-u3j7s5nj.png"
-                  }
-                  alt={data.display_name || ""}
-                  width={50}
-                  height={50}
-                  className=" rounded-full  animate-fade  cursor-pointer"
-                />
+                 <Profile />
               ) : (
-                <div className="h-[50px] w-[50px] flex items-center justify-center rounded-full text-2xl font-bold cursor-pointer">
-                  <h1>{data.email[0]}</h1>
-                </div>
+                  <Profile />
               )}
             </>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="">
+          {/* <DropdownMenuContent className="">
             <DropdownMenuLabel>{data.email}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
-          </DropdownMenuContent>
+          </DropdownMenuContent> */}
         </DropdownMenu>
       )}
     </div>
