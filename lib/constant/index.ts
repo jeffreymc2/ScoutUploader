@@ -3,7 +3,7 @@ export const protectedPaths = [
     "/dashboard",
     "/profile",
     "/events",
-    "/", // Home page
-    "/players/:path*",
-    "/players",
+    // "/", // Home page
+    // "/players/:path*",
+    // "/players",
   ];

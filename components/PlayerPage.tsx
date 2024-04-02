@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
 import { supabaseBrowser } from '@/lib/supabase/browser';
 import DeletePost from './DeletePost';
