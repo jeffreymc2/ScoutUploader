@@ -22,7 +22,7 @@ const AuthPageContent = () => {
   const params = useSearchParams();
   const next = params.get("next") || "";
 
-  const handleLoginWithOAuth = (provider: "github" | "google") => {
+  const handleLoginWithOAuth = (provider: "github" | "google" | "azure") => {
     const supabase = supabaseBrowser();
     supabase.auth.signInWithOAuth({
       provider,
@@ -55,9 +55,9 @@ const AuthPageContent = () => {
           </Button>
           <Button
             className="flex items-center justify-center gap-2 py-3 text-base rounded-lg border border-gray-200 shadow-sm"
-            onClick={() => handleLoginWithOAuth("google")}
+            onClick={() => handleLoginWithOAuth("azure")}
           >
-            <FcGoogle className="text-xl" /> Google
+            <FaMicrosoft className="text-xl" /> Microsoft
           </Button>
         </div>
       </CardContent>

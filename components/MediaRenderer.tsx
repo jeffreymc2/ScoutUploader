@@ -94,7 +94,6 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
               height={425}
               className="rounded-lg object-cover sm:max-w-[425px]"
               style={imageStyle}
-             
             />
           </DialogContent>
         
