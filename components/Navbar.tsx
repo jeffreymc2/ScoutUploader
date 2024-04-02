@@ -1,7 +1,7 @@
 "use client";
 
-import React, { Suspense } from "react";
-import Profile from "./Profile";
+import React, { Suspense, lazy } from "react";
+// import Profile from "./Profile";
 import { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -10,6 +10,8 @@ const navigation = [
   { name: "Events", href: "/events" },
   { name: "Players", href: "/players" },
 ];
+
+const Profile = lazy(() => import("./Profile"));
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -86,7 +88,10 @@ export default function Navbar() {
                 ))}
               </div>
               <div className="py-6">
+              <Suspense fallback={<div>Loading...</div>}>
+
                 <Profile />
+                </Suspense>
               </div>
             </div>
           </div>
