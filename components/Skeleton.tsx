@@ -1,3 +1,5 @@
+//app/components/Skeleton.tsx
+
 import { Skeleton } from "@/components/ui/skeleton"
 
 export function SkeletonCard() {
