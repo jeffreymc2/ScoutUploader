@@ -3,93 +3,71 @@ import { NextResponse, type NextRequest } from "next/server";
 import { protectedPaths } from "./lib/constant";
 
 export async function middleware(request: NextRequest) {
-	let response = NextResponse.next({
-		request: {
-			headers: request.headers,
-		},
-	});
-	const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-	const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-	
-	if (!supabaseUrl || !supabaseAnonKey) {
-	  console.error('Missing Supabase environment variables');
-	  // Handle the error or provide a fallback behavior
-	  return NextResponse.json({ error: 'Missing Supabase environment variables' }, { status: 500 });
-	}
-	
-	const supabase = createServerClient(supabaseUrl, supabaseAnonKey,{
-		cookies: {
-			get(name: string) {
-				return request.cookies.get(name)?.value;
-			},
-			set(name: string, value: string, options: CookieOptions) {
-				request.cookies.set({
-					name,
-					value,
-					...options,
-				});
-				response = NextResponse.next({
-					request: {
-						headers: request.headers,
-					},
-				});
-				response.cookies.set({
-					name,
-					value,
-					...options,
-				});
-			},
-			remove(name: string, options: CookieOptions) {
-				request.cookies.set({
-					name,
-					value: "",
-					...options,
-				});
-				response = NextResponse.next({
-					request: {
-						headers: request.headers,
-					},
-				});
-				response.cookies.set({
-					name,
-					value: "",
-					...options,
-				});
-			},
-		},
-	});
-	
+  let response = NextResponse.next({
+    request: { headers: request.headers },
+  });
 
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-	const { data } = await supabase.auth.getSession();
-	const url = new URL(request.url);
-
-if (data.session) {
-  return response;
-} else {
-  const isProtectedPath = protectedPaths.some((path) =>
-    url.pathname.startsWith(path.replace(":path*", ""))
-  );
-
-  if (isProtectedPath && !url.pathname.startsWith("/auth")) {
-    return NextResponse.redirect(
-      new URL("/auth?next=" + url.pathname, request.url)
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.error("Missing Supabase environment variables");
+    return NextResponse.json(
+      { error: "Missing Supabase environment variables" },
+      { status: 500 }
     );
   }
-  return response;
-}
+
+  const supabase = createServerClient(
+    supabaseUrl,
+    supabaseAnonKey,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          request.cookies.set({ name, value, ...options });
+          response = NextResponse.next({
+            request: { headers: request.headers },
+          });
+          response.cookies.set({ name, value, ...options });
+        },
+        remove(name: string, options: CookieOptions) {
+          request.cookies.set({ name, value: "", ...options });
+          response = NextResponse.next({
+            request: { headers: request.headers },
+          });
+          response.cookies.set({ name, value: "", ...options });
+        },
+      },
+    }
+  );
+
+  const { data } = await supabase.auth.getSession();
+  const url = new URL(request.url);
+
+  if (data.session) {
+    return response;
+  } else {
+    const isProtectedPath = protectedPaths.some((path) => {
+      const regex = new RegExp("^" + path.replace(/:\w+/g, "[^/]+") + "$");
+      return regex.test(url.pathname);
+    });
+
+    if (isProtectedPath && !url.pathname.startsWith("/auth")) {
+      return NextResponse.redirect(
+        new URL("/auth?next=" + url.pathname, request.url)
+      );
+    }
+
+    return response;
+  }
 }
 
 export const config = {
-	matcher: [
-		/*
-		 * Match all request paths except for the ones starting with:
-		 * - _next/static (static files)
-		 * - _next/image (image optimization files)
-		 * - favicon.ico (favicon file)
-		 * Feel free to modify this pattern to include more paths.
-		 */
-		"/((?!_next/static|_next/image|favicon.ico).*)",
-		"/auth/:path*",
-	],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico).*)",
+    "/auth/:path*",
+  ],
 };
