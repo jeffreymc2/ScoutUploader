@@ -29,19 +29,20 @@ export default function Profile() {
     if (protectedPaths.includes(pathname)) {
       router.replace("/auth?next=" + pathname);
     }
+    
   };
 
   return (
     <div className="relative">
       {!data?.id ? (
         <Link href="/auth" className=" ">
-           <p className="text-sm font-semibold leading-6 text-gray-700">
+           <p className="text-sm font-semibold leading-6 sm:text-gray-100 md:text-gray-700">
             Log in <span aria-hidden="true">&rarr;</span>
           </p>
         </Link>
       ) : (
         <Link onClick={handleLogout} href="/" className=" ">
-        <p className="text-sm font-semibold leading-6 text-gray-700">
+        <p className="text-sm font-semibold leading-6 sm:text-gray-100 md:text-gray-700">
          Log Out <span aria-hidden="true">&rarr;</span>
        </p>
      </Link>
