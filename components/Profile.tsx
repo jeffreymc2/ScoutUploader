@@ -42,8 +42,10 @@ export default function Profile() {
   return (
     <div className="relative">
       {!data?.id ? (
-        <Link href="/auth" className=" animate-fade">
-          <Button variant="outline">SignIn</Button>
+        <Link href="/auth" className="">
+           <p className="text-sm font-semibold leading-6 text-gray-100">
+            Log in <span aria-hidden="true">&rarr;</span>
+          </p>
         </Link>
       ) : (
         <DropdownMenu>
@@ -70,7 +72,7 @@ export default function Profile() {
           <DropdownMenuContent className="">
             <DropdownMenuLabel>{data.email}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleLogout}>Logout</DropdownMenuItem>
+            <Profile  />
           </DropdownMenuContent>
         </DropdownMenu>
       )}

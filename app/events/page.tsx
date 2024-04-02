@@ -1,9 +1,6 @@
 // app/page.tsx
 import { supabaseServer } from "@/lib/supabase/server";
-
-import EventSearchRoute from "@/components/EventSearchTermRoute";
-
-
+import EventSearchComponent from "@/components/EventSearchComponent";
 
 export default async function Page({ searchParams }: { searchParams: any }) {
   const playerId = searchParams.player_id ?? null;
@@ -23,6 +20,7 @@ export default async function Page({ searchParams }: { searchParams: any }) {
 
   if (playerId) {
     const supabase = supabaseServer();
+    
     const { data } = await supabase
       .from("posts")
       .select("*,profile(display_name)")
@@ -42,7 +40,7 @@ export default async function Page({ searchParams }: { searchParams: any }) {
     <h1 className="text-2xl font-bold mt-5 font-pgFont">
         Search & Upload Media
       </h1>
-      <EventSearchRoute events={[]} />
+      <EventSearchComponent posts={[]}  />
       </>
   );
 }

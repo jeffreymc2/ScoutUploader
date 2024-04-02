@@ -63,19 +63,21 @@ export async function middleware(request: NextRequest) {
 
 	const { data } = await supabase.auth.getSession();
 	const url = new URL(request.url);
-	if (data.session) {
-		if (url.pathname === "/auth") {
-			return NextResponse.redirect(new URL("/", request.url));
-		}
-		return response;
-	} else {
-		if (protectedPaths.includes(url.pathname)) {
-			return NextResponse.redirect(
-				new URL("/auth?next=" + url.pathname, request.url)
-			);
-		}
-		return response;
-	}
+
+if (data.session) {
+  return response;
+} else {
+  const isProtectedPath = protectedPaths.some((path) =>
+    url.pathname.startsWith(path.replace(":path*", ""))
+  );
+
+  if (isProtectedPath && !url.pathname.startsWith("/auth")) {
+    return NextResponse.redirect(
+      new URL("/auth?next=" + url.pathname, request.url)
+    );
+  }
+  return response;
+}
 }
 
 export const config = {
@@ -88,6 +90,6 @@ export const config = {
 		 * Feel free to modify this pattern to include more paths.
 		 */
 		"/((?!_next/static|_next/image|favicon.ico).*)",
-		"/auth/:path*"
+		"/auth/:path*",
 	],
 };

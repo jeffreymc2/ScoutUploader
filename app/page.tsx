@@ -3,8 +3,6 @@ import { supabaseServer } from "@/lib/supabase/server";
 
 import SearchComponent from "@/components/SearchComponent";
 
-
-
 export default async function Page({ searchParams }: { searchParams: any }) {
   const playerId = searchParams.player_id ?? null;
 
@@ -34,15 +32,14 @@ export default async function Page({ searchParams }: { searchParams: any }) {
         image: `${post.post_by}/${post.player_id}/${post.name}`,
         ...post,
       })) || [];
-
   }
 
   return (
     <>
-    <h1 className="text-2xl font-bold mt-5 font-pgFont">
+      <h1 className="text-2xl font-bold mt-5 font-pgFont">
         Search & Upload Media
       </h1>
-      <SearchComponent posts={[]}  />
-      </>
+      <SearchComponent posts={[]} />
+    </>
   );
 }
