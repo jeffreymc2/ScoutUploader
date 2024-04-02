@@ -1,28 +1,23 @@
 import React from "react"
 import Link from "next/link"
+import { FaBaseball } from "react-icons/fa6"
 
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen">
-      <section className="w-full pt-12 md:pt-24 lg:pt-32">
+      <section className="w-full pt-12 ">
         <div className="container space-y-10 xl:space-y-16">
           <div className="flex flex-col items-center space-y-4 text-center">
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+              <h1 className="text-3xl font-bold tracking-tighter font-pgFont text-gray-700 sm:text-4xl md:text-5xl lg:text-6xl/none">
                 Welcome to Perfect Game Media Uploader
               </h1>
-              <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl ">
+              <p className="mx-auto max-w-[700px] text-gray-500 md:text-lg ">
                 Search and upload media by players, events, and more.
               </p>
             </div>
           </div>
-          <img
-            alt="Esports"
-            className="mx-auto aspect-[3/1] overflow-hidden rounded-t-xl object-cover object-center"
-            height="300"
-            src="/placeholder.svg"
-            width="1200"
-          />
+          
         </div>
       </section>
       <main className="flex flex-col items-center justify-center py-2">
@@ -39,7 +34,7 @@ export default function LandingPage() {
             </p>
             <div className="mt-4 flex justify-center">
               <Link
-                className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-600"
+                className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90 "
                 href="/players"
               >
                 Search Players
@@ -48,7 +43,7 @@ export default function LandingPage() {
           </div>
           <div className="w-full max-w-sm p-4 my-4 bg-white rounded-lg shadow-md ">
             <div className="flex items-center justify-center">
-              <CalendarIcon className="w-12 h-12 text-gray-700 " />
+              <FaBaseball className="w-12 h-12 text-gray-700 " />
             </div>
             <h2 className="mt-2 text-lg font-semibold text-center text-gray-700 ">
               Search and Upload by Events
@@ -58,7 +53,7 @@ export default function LandingPage() {
             </p>
             <div className="mt-4 flex justify-center">
               <Link
-                className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-600"
+                className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90 "
                 href="/events"
               >
                 Search Events
