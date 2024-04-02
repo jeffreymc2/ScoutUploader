@@ -38,15 +38,12 @@ const DeletePost: React.FC<DeletePostProps> = ({ post_by, image, event_id }) => 
       const { data, error } = await supabase.storage.from(bucket).remove([imagePath]);
   
       if (error) {
-        console.error('Failed to delete image:', error);
         toast.error(`Failed to delete image: ${error.message}`);
       } else {
-        console.log('Successfully removed image with path:', imagePath, data);
         toast.success('Successfully removed image');
         router.refresh();
       }
     } catch (error) {
-      console.error('Error during delete operation:', error);
       toast.error('An error occurred while deleting the image');
     }
   };

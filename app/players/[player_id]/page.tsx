@@ -8,6 +8,9 @@ import DeletePost from "@/components/DeletePost";
 import { Button } from "@/components/ui/button";
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
 import BackButton from "@/components/BackButton";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import { SkeletonCard } from "../loading";
+
 import { Car } from "lucide-react";
 import {
   AlertDialog,
@@ -256,7 +259,7 @@ export default async function PlayerPage({
       </div>
 
       <div className="space-y-4">
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<SkeletonCard />}>
           <Card className="mt-5 shadow-lg border border-gray-100 min-h-96">
             <CardHeader>
               <CardTitle className="font-pgFont">{`Photo and Video Uploads of ${playerData.PlayerName}`}</CardTitle>
@@ -273,7 +276,7 @@ export default async function PlayerPage({
                       <AlertDialog>
                         <AlertDialogTrigger>
                           {" "}
-                          <Button>Delete</Button>
+                          <RiDeleteBin5Line />
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
