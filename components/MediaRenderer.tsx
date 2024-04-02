@@ -16,11 +16,20 @@ interface MediaRendererProps {
     event_id?: string;
     isVideo?: boolean;
   };
+  onClick?: () => void;
 }
 
-const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
+const MediaRenderer: React.FC<MediaRendererProps> = ({ file, onClick }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState("");
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } else {
+      setIsOpen(true);
+    }
+  };
 
   useEffect(() => {
     if (file.isVideo) {
@@ -73,9 +82,9 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
     <>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogTrigger asChild>
-          <div
+        <div
             className="relative aspect-square w-full h-48 cursor-pointer"
-            onClick={() => setIsOpen(true)}
+            onClick={handleClick}
           >
             {file.isVideo ? (
               thumbnailUrl ? (
