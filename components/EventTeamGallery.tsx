@@ -82,7 +82,9 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
           <div key={post.id} className="flex flex-col">
             <div key={post.id} className="relative">
               <MediaRenderer file={post} />
-              <AlertDialog>
+              
+            </div>
+            <AlertDialog>
                 <AlertDialogTrigger>
                   <div className="absolute top-2 right-2">
                     <RiDeleteBin5Line className="w-6 h-6 text-white" />
@@ -108,7 +110,6 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-            </div>
             <div onClick={(event) => event.stopPropagation()}>
               <PlayerSelect
                 post={post}
