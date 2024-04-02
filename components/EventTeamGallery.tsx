@@ -22,10 +22,11 @@ import {
   AlertDialogTitle,
   AlertDialogDescription,
   AlertDialogCancel,
-} from "@radix-ui/react-alert-dialog";
+  AlertDialogHeader,
+  AlertDialogFooter,
+} from "@/components/ui/alert-dialog"
 import { RiDeleteBin5Line } from "react-icons/ri";
 import DeletePost from "./DeletePost";
-import { AlertDialogHeader, AlertDialogFooter } from "./ui/alert-dialog";
 
 interface EventTeamGalleryProps {
   posts: Post[];
