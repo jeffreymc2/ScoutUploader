@@ -83,7 +83,7 @@ const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID })
         </div>
       </div>
       <Dashboard uppy={uppy} className="w-auto" hideUploadButton />
-      <Button id="upload-trigger" className="w-full" onClick={handleUpload}>
+      <Button id="upload-trigger" className="px-4 py-2 ml-2 w-full font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90" onClick={handleUpload}>
         Upload
       </Button>
     </div>
