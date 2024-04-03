@@ -103,7 +103,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
     <>
       <Dialog onOpenChange={setIsOpen}>
         {file.isVideo ? (
-          <DialogContent className="sm:max-w-[66vw] sm:max-h-[66vh] flex items-center justify-center bg-transparent">
+          <DialogContent className="sm:max-w-[66vw] sm:max-h-[66vh] flex items-center justify-center bg-transparent border-0 border-transparent">
           <div className="relative w-full h-0 pb-[56.25%]">
             <ReactPlayer
               className="rounded-lg absolute top-0 left-0"
