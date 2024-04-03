@@ -10,7 +10,7 @@ import { Post } from "@/lib/types/types";
 
 const EventSearchComponent = ({ posts }: { posts: Post[] }) => {
   return (
-    <Tabs defaultValue="eventsearchbyname" className="w-full">
+    <Tabs defaultValue="eventsearch" className="w-full">
       <TabsList className="mb-4">
       {/* <TabsTrigger value="eventsearchbyname" className="px-4 py-2">By Event Date</TabsTrigger> */}
         <TabsTrigger value="eventsearch" className="px-4 py-2">By Event Name</TabsTrigger>
