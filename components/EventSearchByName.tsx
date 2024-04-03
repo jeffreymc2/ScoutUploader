@@ -19,7 +19,7 @@ type EventInfo = {
   EventLogoURL: string;
 };
 
-export default function EventSearch() {
+export default function EventSearchByName() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [searchResults, setSearchResults] = useState<EventInfo[]>([]);
   const router = useRouter();
