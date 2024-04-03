@@ -3,11 +3,12 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "sonner";
 import { format } from "date-fns";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-
-import { Card } from "@/components/ui/card";
+import { Calendar as CalendarIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Card } from "@/components/ui/card";
 
 type EventInfo = {
   EventID: number;
@@ -19,8 +20,8 @@ type EventInfo = {
   EventLogoURL: string;
 };
 
-export default function EventSearchByName() {
-  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
+export default function EventSearch() {
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [searchResults, setSearchResults] = useState<EventInfo[]>([]);
   const router = useRouter();
 
@@ -43,31 +44,31 @@ export default function EventSearchByName() {
 
   useEffect(() => {
     if (selectedDate) {
-      const formattedDate = format(selectedDate, "YYYY-mm-dd");
+      const formattedDate = format(selectedDate, "yyyy-MM-dd");
       fetchEventsByDate(formattedDate);
     }
   }, [selectedDate]);
 
-  const handleDateChange = (date: Date | null) => {
-    setSelectedDate(date);
-  };
-
   return (
     <div className="mt-5">
       <div className="flex items-center relative">
-        <DatePicker
-          selected={selectedDate}
-          onChange={handleDateChange}
-          dateFormat="YYYY-MM-DD"
-          className="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md text-base"
-          placeholderText="Select a date"
-        />
-        <Button
-          onClick={() => fetchEventsByDate(format(selectedDate!, "YYYY-mm-dd"))}
-          className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
-        >
-          Search
-        </Button>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant={"outline"}
+              className={cn(
+                "w-[280px] justify-start text-left font-normal",
+                !selectedDate && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {selectedDate ? format(selectedDate, "yyyy-MM-dd") : <span>Pick a date</span>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0">
+            <Calendar mode="single" selected={selectedDate} onSelect={setSelectedDate} />
+          </PopoverContent>
+        </Popover>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
         {searchResults.map((event) => (
