@@ -104,7 +104,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
       <Dialog onOpenChange={setIsOpen}>
         {file.isVideo ? (
           <DialogContent className="sm:max-w-[66vw] sm:max-h-[66vh]">
-            <ReactPlayer url={file.image} controls width="100%" height="100%" />
+            <ReactPlayer  className="rounded-lg object-cover relative" url={file.image} controls width="100%" height="100%" />
           </DialogContent>
         ) : (
           <DialogContent className="min-h-[50vh] sm:min-w-[66vw] sm:min-h-[66vh]">
