@@ -121,7 +121,7 @@ export default function EventSearchRoute({ events }: EventSearchProps) {
             <IoIosCloseCircleOutline className="w-6 h-6" />
           </button>
         )}
-        <Button onClick={handleSearch} className="ml-2 flex-shrink-0">
+        <Button onClick={handleSearch} className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90">
           Search
         </Button>
       </div>
@@ -180,7 +180,7 @@ export default function EventSearchRoute({ events }: EventSearchProps) {
 
       {selectedTeam && selectedEvent && (
         <>
-        <Button className="mr-2"
+        <Button className="px-4 py-2 mr-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
           onClick={() =>
             router.push(
               `/events/${selectedEvent.EventID}/${selectedTeam.TournamentTeamID}`
@@ -195,7 +195,7 @@ export default function EventSearchRoute({ events }: EventSearchProps) {
       {isDialogOpen && (
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={() => setIsDialogOpen(false)}>Close</Button>
+            <Button className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90" onClick={() => setIsDialogOpen(false)}>Close</Button>
           </DialogTrigger>
 
           <DialogContent>

@@ -40,22 +40,22 @@ const AuthPageContent = () => {
         </div>
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold font-pgFont text-blue-500">
-            Media Uploader
+            Peffect Game Media
           </CardTitle>
-          <CardDescription className="text-md text-gray-600">
-            Sign In With Your PG Account
+          <CardDescription className="text-sm text-gray-600">
+            Sign In With Your PG Account to Search and Upload Media by Players, Events, and More.
           </CardDescription>
         </CardHeader>
         <div className="flex flex-col gap-4">
           <Button
-            className="flex items-center justify-center gap-2 py-3 text-base rounded-lg border border-gray-200 shadow-sm"
+           className="flex items-center justify-center gap-2 py-3 text-base rounded-lg border border-gray-200 shadow-sm px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90 shadow-md"
             onClick={() => handleLoginWithOAuth("github")}
           >
             <FaGithub className="text-xl" /> Github
           </Button>
           <Button
-            className="flex items-center justify-center gap-2 py-3 text-base rounded-lg border border-gray-200 shadow-sm"
-            onClick={() => handleLoginWithOAuth("azure")}
+           className="flex items-center justify-center gap-2 py-3 text-base rounded-lg border border-gray-200 shadow-sm px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90 shadow-md"
+           onClick={() => handleLoginWithOAuth("azure")}
           >
             <FaMicrosoft className="text-xl" /> Microsoft
           </Button>
