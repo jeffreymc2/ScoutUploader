@@ -1,6 +1,7 @@
 import React from "react"
 import Link from "next/link"
 import { FaBaseball } from "react-icons/fa6"
+import { Card, CardContent } from "./ui/card"
 
 export default function LandingPage() {
   return (
@@ -22,7 +23,10 @@ export default function LandingPage() {
       </section>
       <main className="flex flex-col items-center justify-center py-2">
         <div className="flex flex-wrap justify-center space-x-4 md:space-x-6">
-          <div className="w-full max-w-sm p-4 my-4 bg-white rounded-lg shadow-md ">
+
+        <Card className=" shadow-lg">
+        <CardContent>
+
             <div className="flex items-center justify-center">
               <UsersIcon className="w-12 h-12 text-gray-700 " />
             </div>
@@ -40,8 +44,10 @@ export default function LandingPage() {
                 Search Players
               </Link>
             </div>
-          </div>
-          <div className="w-full max-w-sm p-4 my-4 bg-white rounded-lg shadow-md ">
+          </CardContent>
+          </Card>
+          <Card className=" shadow-lg">
+        <CardContent>
             <div className="flex items-center justify-center">
               <FaBaseball className="w-12 h-12 text-gray-700 " />
             </div>
@@ -59,7 +65,8 @@ export default function LandingPage() {
                 Search Events
               </Link>
             </div>
-          </div>
+          </CardContent>
+          </Card>
         </div>
       </main>
     </div>
