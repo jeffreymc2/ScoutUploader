@@ -22,7 +22,10 @@ const nextConfig = {
 				hostname: "rfgveuhgzxqkaualspln.supabase.co",
 				protocol: "https",
 			},
-
+			{
+				hostname: "0ebf220f63c8a281d66e-20abd5688b9423eda60643010803535a.ssl.cf1.rackcdn.com",
+				protocol: "https",
+			},
 			{
 				protocol: 'https',
 				hostname: 'avkhdvyjcweghosyfiiw.supabase.co',
