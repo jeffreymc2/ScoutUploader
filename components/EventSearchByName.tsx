@@ -38,6 +38,10 @@ export default function EventSearch() {
     const [searchResults, setSearchResults] = useState<EventInfo[]>([]);
     const [selectedEvent, setSelectedEvent] = useState<EventInfo | null>(null);
     const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
+    const [selectedTeams, setSelectedTeams] = useState<Record<number, Team | null>>({});
+    const [teamsData, setTeamsData] = useState<Record<number, Team[]>>({});
+
+
     const router = useRouter();
   
     const fetchEventsByDate = async (date: string) => {
@@ -65,33 +69,42 @@ export default function EventSearch() {
       }
     }, [selectedDate]);
   
-    const fetchTeamsByEventId = async (eventId: number) => {
-      try {
-        const response = await fetch(`/api/teams?eventId=${eventId}`);
-        const teams: Team[] = await response.json();
-        setSelectedEvent((prevEvent) => {
-          if (prevEvent && prevEvent.EventID === eventId) {
-            return { ...prevEvent, Teams: teams };
+    const fetchTeamsForEvent = async (eventId: number) => {
+        try {
+          const response = await fetch(`/api/teams?eventId=${encodeURIComponent(eventId)}`);
+          const teams: Team[] = await response.json();
+          setTeamsData((prevTeamsData) => ({
+            ...prevTeamsData,
+            [eventId]: teams,
+          }));
+        } catch (error) {
+          const errorMessage =
+            error instanceof Error ? error.message : "An unknown error occurred";
+          toast.error(`Error fetching teams: ${errorMessage}`);
+        }
+      };
+    
+      useEffect(() => {
+        searchResults.forEach((event) => {
+          if (!teamsData[event.EventID]) {
+            fetchTeamsForEvent(event.EventID);
           }
-          return prevEvent;
         });
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "An unknown error occurred";
-        toast.error(`Error fetching teams: ${errorMessage}`);
-      }
-    };
+      }, [searchResults, teamsData]);
   
-    const handleEventClick = (event: EventInfo) => {
-      setSelectedEvent(event);
-      fetchTeamsByEventId(event.EventID);
-    };
+    // const handleEventClick = (event: EventInfo) => {
+    //   setSelectedEvent(event);
+    //   fetchTeamsByEventId(event.EventID);
+    // };
   
-    const handleTeamSelect = (value: string) => {
-      const team = selectedEvent?.Teams?.find((team) => team.TeamID === parseInt(value)) || null;
-      setSelectedTeam(team);
-    };
-  
+
+    const handleTeamSelect = (eventId: number, teamId: string | null) => {
+        setSelectedTeams((prevSelectedTeams) => ({
+          ...prevSelectedTeams,
+          [eventId]: teamId ? teamsData[eventId]?.find((team) => team.TeamID === parseInt(teamId)) || null : null,
+        }));
+      };
+
     return (
     <div className="mt-5">
       <div className="flex items-center relative">
@@ -117,8 +130,7 @@ export default function EventSearch() {
         {searchResults.map((event) => (
           <Card
             key={event.EventID}
-            className="flex flex-row bg-white shadow-md rounded-lg overflow-hidden cursor-pointer"
-            onClick={() => handleEventClick(event)}
+            className="flex flex-col bg-white shadow-md rounded-lg overflow-hidden"
           >
             <div className="w-1/3 md:w-2/3">
               {event.EventLogoURL ? (
@@ -139,7 +151,7 @@ export default function EventSearch() {
             </div>
             <div className="w-2/3 md:w-2/3 p-4 flex flex-col justify-between">
               <div>
-                <h3 className="text-xl font-semibold">{event.EventName}</h3>
+              <h3 className="text-lg font-semibold">{event.EventName}</h3>
                 <p className="text-sm text-gray-500">
                   Event ID: {event.EventID}
                 </p>
@@ -152,31 +164,35 @@ export default function EventSearch() {
                 <p className="text-sm text-gray-500">
                   End Date: {new Date(event.EndDate).toLocaleDateString()}
                 </p>
-                {selectedEvent?.EventID === event.EventID && (
-                <Select onValueChange={handleTeamSelect}>
-                  <SelectTrigger className="w-full mt-2">
-                    <SelectValue placeholder="Select Team" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {selectedEvent.Teams?.map((team) => (
-                      <SelectItem key={team.TeamID} value={team.TeamID.toString()}>
-                        {team.TeamName}
-                      </SelectItem>
-                    )) || (
-                      <SelectItem disabled value={""}>No teams available</SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
-              )}
               </div>
-              <div className="mt-4 md:mt-0">
-                <Button
-                  className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
-                  onClick={() => router.push(`/events/${event.EventID}/${selectedTeam?.TeamID}`)}
-                >
-                  View Event
-                </Button>
-              </div>
+            </div>
+            <div className="p-4">
+              <Select
+                value={selectedTeams[event.EventID]?.TeamID?.toString() || ""}
+                onValueChange={(teamId) => handleTeamSelect(event.EventID, teamId)}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select Team" />
+                </SelectTrigger>
+                <SelectContent>
+                  {teamsData[event.EventID]?.map((team) => (
+                    <SelectItem key={team.TeamID} value={team.TeamID.toString()}>
+                      {team.TeamName}
+                    </SelectItem>
+                  )) || (
+                    <SelectItem disabled value={""}>No teams available</SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="p-4">
+              <Button
+                className="w-full font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+                disabled={!selectedTeams[event.EventID]}
+                onClick={() => router.push(`/events/${event.EventID}/${selectedTeams[event.EventID]?.TeamID}`)}
+              >
+                View Event
+              </Button>
             </div>
           </Card>
         ))}
