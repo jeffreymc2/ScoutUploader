@@ -84,7 +84,8 @@ export default function EventSearch({ teams }: EventSearchProps) {
           placeholder="Search by Event ID"
           className="w-full text-base"
         />
-        <Button className="ml-2 flex-shrink-0" onClick={handleSearch}>Search</Button>
+        <Button className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+ onClick={handleSearch}>Search</Button>
       </div>
 
       {searchResults.length > 0 && (
@@ -131,13 +132,15 @@ export default function EventSearch({ teams }: EventSearchProps) {
                 Jersey Number: {player.jerseynumber}
               </p>
               <Button
-               className="ml-2 flex-shrink-0"
+                className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+
                 onClick={() => handleViewPlayerPage(player.playerid)}
               >
                 View Player Page
               </Button>
               <Button
-                className="m-2 w-1/3"
+                className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+
                 onClick={() => handlePlayerClick(player)}
               >
                 Upload Files
