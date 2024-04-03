@@ -108,7 +108,6 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
           </DialogContent>
         ) : (
           <DialogContent className="sm:max-w-[66vw] sm:max-h-[66vh]">
-            <div className="relative">
               <Image
                 src={file.image}
                 alt={`Media posted by ${file.post_by || "Unknown"}`}
@@ -116,7 +115,6 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                 className="rounded-lg object-cover relative"
                 style={imageStyle as React.CSSProperties}
               />
-            </div>
           </DialogContent>
         )}
         <div
