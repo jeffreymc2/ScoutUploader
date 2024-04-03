@@ -112,7 +112,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                 src={file.image}
                 alt={`Media posted by ${file.post_by || "Unknown"}`}
                 fill={true}
-                className="rounded-lg object-contain"
+                className="rounded-lg object-contain object-center relative"
                 style={imageStyle}
               />
             </div>
