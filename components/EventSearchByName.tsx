@@ -77,14 +77,14 @@ export default function EventSearch() {
             key={event.EventID}
             className="flex flex-row bg-white shadow-md rounded-lg overflow-hidden"
           >
-            <div className="w-1/3 md:w-1/2">
+            <div className="w-1/3 md:w-1/4">
               {event.EventLogoURL ? (
                 <Image
                   src={event.EventLogoURL}
                   alt={event.EventName}
-                  width={150}
-                  height={150}
-                  className="w-full h-full object-cover"
+                  width={50}
+                  height={50}
+                  className="w-full h-full object-contain"
                 />
               ) : (
                 <div className="bg-gray-200 w-full h-full flex items-center justify-center">
