@@ -95,30 +95,31 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
 
   const imageStyle = {
     width: "100%",
-    height: "425px",
+    height: "100%",
   };
+  
   return (
     <>
       <Dialog onOpenChange={setIsOpen}>
         {file.isVideo ? (
-          <DialogContent className="sm:max-w-[425px]">
-            <ReactPlayer url={file.image} controls width="100%" height="auto" />
+          <DialogContent className="sm:max-w-[66vw] sm:max-h-[66vh]">
+            <ReactPlayer url={file.image} controls width="100%" height="100%" />
           </DialogContent>
         ) : (
-          <DialogContent className="sm:max-w-[425px]">
-            <Image
-              src={file.image}
-              alt={`Media posted by ${file.post_by || "Unknown"}`}
-              width={425}
-              height={425}
-              className="rounded-lg object-cover sm:max-w-[425px]"
-              style={imageStyle}
-            />
+          <DialogContent className="sm:max-w-[66vw] sm:max-h-[66vh]">
+            <div className="relative w-full h-full">
+              <Image
+                src={file.image}
+                alt={`Media posted by ${file.post_by || "Unknown"}`}
+                fill={true}
+                className="rounded-lg object-contain"
+                style={imageStyle}
+              />
+            </div>
           </DialogContent>
         )}
-
         <div
-          className="relative aspect-square w-full h-48 "
+          className="relative aspect-square w-full h-48"
           onClick={() => setIsOpen(true)}
         >
           {file.isVideo ? (
@@ -147,7 +148,6 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
           {file.event_id && (
             <p className="text-sm">Uploaded from Event ID: {file.event_id}</p>
           )}
-
           <div className="flex items-center gap-2">
             <DialogTrigger>
               <MdOutlinePreview className="cursor-pointer text-2xl" />
