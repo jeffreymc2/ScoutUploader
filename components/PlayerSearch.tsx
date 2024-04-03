@@ -66,7 +66,8 @@ export default function PlayerSearch({ posts }: PlayerSearchProps) {
         <IoIosCloseCircleOutline className="w-6 h-6" />
       </button>
     )}
-    <Button onClick={handleSearch} className="ml-2 flex-shrink-0">Search</Button>
+    <Button onClick={handleSearch} className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+>Search</Button>
   </div>
       
     </div>

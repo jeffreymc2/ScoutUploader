@@ -93,7 +93,8 @@ export default function PlayerSearchByName() {
             <IoIosCloseCircleOutline className="w-6 h-6" />
           </button>
         )}
-        <Button onClick={handleSearch} className="ml-2 flex-shrink-0">
+        <Button onClick={handleSearch} className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+>
           Search
         </Button>
       </div>
@@ -110,7 +111,8 @@ export default function PlayerSearchByName() {
             <h3 className="mt-2 text-lg font-semibold">{player.PlayerName}</h3>
             <p className="text-sm text-gray-500">Player ID: {player.PlayerID}</p>
             <p className="text-sm text-gray-500">{player.CityState}</p>
-            <Button className="mt-2" onClick={() => router.push(`/players/${player.PlayerID}`)}>
+            <Button  className="px-4 py-2 m-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+ onClick={() => router.push(`/players/${player.PlayerID}`)}>
               View Player
             </Button>
           </Card>

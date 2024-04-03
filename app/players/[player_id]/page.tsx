@@ -152,7 +152,8 @@ export default async function PlayerPage({
               <div className="space-y-4 pt-5">
                 <Dialog>
                   <DialogTrigger>
-                    <Button>Upload More Files</Button>
+                    <Button className="px-4 py-2 m-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+>Upload More Files</Button>
                   </DialogTrigger>
                   <DialogContent>
                     <Uploader
