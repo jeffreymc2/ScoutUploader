@@ -9,6 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Card } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type EventInfo = {
   EventID: number;
@@ -18,16 +25,23 @@ type EventInfo = {
   StartDate: string;
   EndDate: string;
   EventLogoURL: string;
+  Teams: Team[];
+};
+
+type Team = {
+  TeamID: number;
+  TeamName: string;
 };
 
 export default function EventSearch() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [searchResults, setSearchResults] = useState<EventInfo[]>([]);
+  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const router = useRouter();
 
   const fetchEventsByDate = async (date: string) => {
     try {
-      const response = await fetch(`/api/liveevents?date=${encodeURIComponent((date))}`);
+      const response = await fetch(`/api/liveevents?date=${encodeURIComponent(date)}`);
       const events: EventInfo[] = await response.json();
       console.log(events);
       if (events.length > 0) {
@@ -49,6 +63,13 @@ export default function EventSearch() {
       fetchEventsByDate(formattedDate);
     }
   }, [selectedDate]);
+
+  const handleTeamSelect = (value: string) => {
+    const team = searchResults
+      .flatMap((event) => event.Teams)
+      .find((team) => team.TeamID === parseInt(value)) || null;
+    setSelectedTeam(team);
+  };
 
   return (
     <div className="mt-5">
@@ -109,11 +130,23 @@ export default function EventSearch() {
                 <p className="text-sm text-gray-500">
                   End Date: {new Date(event.EndDate).toLocaleDateString()}
                 </p>
+                <Select onValueChange={handleTeamSelect}>
+                  <SelectTrigger className="w-full mt-2">
+                    <SelectValue placeholder="Select Team" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {event.Teams.map((team) => (
+                      <SelectItem key={team.TeamID} value={team.TeamID.toString()}>
+                        {team.TeamName}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="mt-4 md:mt-0">
                 <Button
                   className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
-                  onClick={() => router.push(`/events/${event.EventID}`)}
+                  onClick={() => router.push(`/events/${event.EventID}/${selectedTeam?.TeamID}`)}
                 >
                   View Event
                 </Button>
