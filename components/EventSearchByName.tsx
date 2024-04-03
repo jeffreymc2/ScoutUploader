@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { IoIosCloseCircleOutline } from "react-icons/io";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
-import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
@@ -20,7 +20,7 @@ type EventInfo = {
 };
 
 export default function EventSearch() {
-  const [searchDate, setSearchDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
   const [searchResults, setSearchResults] = useState<EventInfo[]>([]);
   const router = useRouter();
 
@@ -42,49 +42,28 @@ export default function EventSearch() {
   };
 
   useEffect(() => {
-    const today = format(new Date(), "MMMM-dd-yyyy");
-    setSearchDate(today);
-    fetchEventsByDate(today);
-  }, []);
-
-  const handleSearch = async () => {
-    if (!searchDate.trim()) {
-      setSearchResults([]);
-      toast.info("Please enter a valid date to search.");
-      return;
+    if (selectedDate) {
+      const formattedDate = format(selectedDate, "MMMM-dd-yyyy");
+      fetchEventsByDate(formattedDate);
     }
+  }, [selectedDate]);
 
-    await fetchEventsByDate(searchDate);
-  };
-
-  const clearSearch = () => {
-    setSearchDate("");
-    setSearchResults([]);
+  const handleDateChange = (date: Date | null) => {
+    setSelectedDate(date);
   };
 
   return (
     <div className="mt-5">
       <div className="flex items-center relative">
-        <Input
-          type="text"
-          value={searchDate}
-          onChange={(e) => setSearchDate(e.target.value)}
-          placeholder="Search by date (MMMM-DD-YYYY)"
+        <DatePicker
+          selected={selectedDate}
+          onChange={handleDateChange}
+          dateFormat="MMMM-dd-yyyy"
           className="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md text-base"
+          placeholderText="Select a date"
         />
-        {searchDate && (
-          <button
-            onClick={() => {
-              setSearchDate(""); // Clear the input
-              // handleSearch(); // Uncomment if you decide to trigger search immediately
-            }}
-            className="absolute right-20 top-1/2 mr-5 transform -translate-y-1/2 flex items-center justify-center text-gray-400 hover:text-gray-600"
-          >
-            <IoIosCloseCircleOutline className="w-6 h-6" />
-          </button>
-        )}
         <Button
-          onClick={handleSearch}
+          onClick={() => fetchEventsByDate(format(selectedDate!, "MMMM-dd-yyyy"))}
           className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
         >
           Search
