@@ -9,6 +9,9 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { PlayCircleIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { max } from "lodash";
+import { MdOutlinePreview } from "react-icons/md";
+import { IoCloudDownloadOutline } from "react-icons/io5";
+
 
 interface MediaRendererProps {
   file: {
@@ -134,14 +137,12 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             )}
           </div>
           <DialogTrigger >
-              <p className="text-sm text-blue-500 cursor-pointer">Preview Media</p>
+          <MdOutlinePreview className="cursor-pointer" />
           </DialogTrigger>
+          <IoCloudDownloadOutline onClick={handleDownload}/>
+
       </Dialog>
-      <div className="absolute bottom-2 right-2">
-        <p onClick={handleDownload} className="text-blue-500">
-          Download
-        </p>
-      </div>
+      
       {file.event_id && (
         <p className="text-sm mt-2">Uploaded from Event ID: {file.event_id}</p>
       )}
