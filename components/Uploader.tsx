@@ -96,8 +96,6 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   });
   
 
-
-
   const handleUpload = () => {
     if (!selectedPlayer) {
       toast.error("Please select a player.");
