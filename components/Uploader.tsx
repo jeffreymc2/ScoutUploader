@@ -60,7 +60,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       restrictions: {
         maxNumberOfFiles: 50,
         allowedFileTypes: ["image/*", "video/*"],
-        maxFileSize: 5 * 10000 * 1000,
+        maxFileSize: 5 * 10000 * 10000,
       },
       debug: true,
 
