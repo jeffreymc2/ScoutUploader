@@ -27,7 +27,7 @@ export default function EventSearch() {
 
   const fetchEventsByDate = async (date: string) => {
     try {
-      const response = await fetch(`/api/liveevents?date=${encodeURIComponent("date")}`);
+      const response = await fetch(`/api/liveevents?date=${encodeURIComponent((date))}`);
       const events: EventInfo[] = await response.json();
       console.log(events);
       if (events.length > 0) {
