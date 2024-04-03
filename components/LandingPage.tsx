@@ -28,7 +28,7 @@ export default function LandingPage() {
                 <UsersIcon className="w-12 h-12 text-gray-700" />
               </div>
               <h2 className="mt-4 text-lg font-semibold text-center text-gray-700">
-                Search & Upload by Players
+                Search & Upload Media Content by Players
               </h2>
               <p className="mt-2 text-sm text-center text-gray-500 flex-grow">
                 Search by player name or id find and upload media content by players.
@@ -49,7 +49,7 @@ export default function LandingPage() {
                 <FaBaseball className="w-12 h-12 text-gray-700" />
               </div>
               <h2 className="mt-4 text-lg font-semibold text-center text-gray-700">
-                Search and Upload by Events
+              Search & Upload Media Content by Events
               </h2>
               <p className="mt-2 text-sm text-center text-gray-500 flex-grow">
                 Search by event name or id to find and upload media content by events. Once uploaded,
