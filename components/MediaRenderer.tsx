@@ -78,7 +78,10 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
     const link = document.createElement("a");
     link.href = file.image;
     link.download = file.name;
+    link.style.display = "none";
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
   };
 
   const imageStyle = {
@@ -138,10 +141,10 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
 
           <div className="flex items-center gap-2">
             <DialogTrigger>
-              <MdOutlinePreview className="cursor-pointer text-3xl" />
+              <MdOutlinePreview className="cursor-pointer text-2xl" />
             </DialogTrigger>
             <IoCloudDownloadOutline
-              className="cursor-pointer text-3xl"
+              className="cursor-pointer text-2xl"
               onClick={handleDownload}
             />
           </div>
