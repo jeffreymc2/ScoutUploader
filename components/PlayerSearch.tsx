@@ -53,8 +53,8 @@ export default function PlayerSearch({ posts }: PlayerSearchProps) {
       value={searchQuery}
       onChange={(e) => setSearchQuery(e.target.value)}
       placeholder="Search player by Player ID"
-      className="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md"
-    />
+      className="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md text-base"
+      />
     {searchQuery && (
       <button
         onClick={() => {
