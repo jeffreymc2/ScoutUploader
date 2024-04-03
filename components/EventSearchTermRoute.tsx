@@ -189,7 +189,7 @@ export default function EventSearchRoute({ events }: EventSearchProps) {
         >
           View Team Gallery
         </Button>
-        <Button onClick={() => setIsDialogOpen(true)}>Upload Media</Button>
+        <Button className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90" onClick={() => setIsDialogOpen(true)}>Upload Media</Button>
         </>
       )}
       {isDialogOpen && (
