@@ -63,7 +63,10 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
     try {
       await supabase
         .from("posts")
-        .update({ player_id: playerId })
+        .update({
+          player_id: playerId,
+          post_type: ""
+        })
         .eq("id", postId);
     } catch (error) {
       console.error("Error updating post:", error);

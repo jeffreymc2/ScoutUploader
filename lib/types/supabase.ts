@@ -19,6 +19,7 @@ export interface Database {
           post_by: string
           event_id: string
           team_id: string
+          post_type: string
         }
         Insert: {
           created_at?: string
@@ -29,6 +30,8 @@ export interface Database {
           post_by: string
           event_id: string
           team_id: string
+          post_type: string
+
         }
         Update: {
           created_at?: string
@@ -39,6 +42,8 @@ export interface Database {
           post_by?: string
           event_id?: string
           team_id?: string
+          post_type: string
+
         }
         Relationships: [
           {

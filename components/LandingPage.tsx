@@ -5,7 +5,7 @@ import { Card, CardContent } from "./ui/card";
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col ">
       <section className="w-full pt-12">
         <div className="container space-y-10 xl:space-y-16">
           <div className="flex flex-col items-center space-y-4 text-center">

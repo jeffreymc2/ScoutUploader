@@ -38,8 +38,10 @@ export interface Post {
   } | null;
   image: string;
   event_id?: string;
+  featured_image?: boolean;
   team_id?: string;
   isVideo?: boolean;
+  post_type: string;
 }
 
   export interface EventData {

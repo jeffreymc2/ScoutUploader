@@ -2,6 +2,7 @@
 import { supabaseServer } from "@/lib/supabase/server";
 
 import LandingPage from "@/components/LandingPage";
+import Carousel from '../components/Carousel';
 
 export default async function Page({ searchParams }: { searchParams: any }) {
   const playerId = searchParams.player_id ?? null;
@@ -37,6 +38,9 @@ export default async function Page({ searchParams }: { searchParams: any }) {
   return (
     <>
    <LandingPage />
+   <div className="container mx-auto">
+   {/* <Carousel  /> */}
+   </div>
     </>
   );
 }

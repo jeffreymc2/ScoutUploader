@@ -152,8 +152,9 @@ export default async function PlayerPage({
               <div className="space-y-4 pt-5">
                 <Dialog>
                   <DialogTrigger>
-                    <Button className="px-4 py-2 m-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
->Upload More Files</Button>
+                    <Button className="px-4 py-2 m-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90">
+                      Upload More Files
+                    </Button>
                   </DialogTrigger>
                   <DialogContent>
                     <Uploader
@@ -268,7 +269,6 @@ export default async function PlayerPage({
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4">
                 {playerSearchProps.posts?.map((post) => (
-                  
                   <div key={post.id} className="relative">
                     <MediaRenderer file={post} />
 
@@ -293,7 +293,7 @@ export default async function PlayerPage({
                             <DeletePost
                               post_by={post.post_by}
                               image={post.image}
-                              event_id={post.event_id || ""} 
+                              event_id={post.event_id || ""}
                             />
                           </AlertDialogFooter>
                         </AlertDialogContent>
