@@ -17,6 +17,9 @@ type PlayerInfo = {
   PlayerID: number;
   PlayerName: string;
   ProfilePic: string;
+  State: string;
+  TeamName: string;
+  
 };
 
 export default function PlayerSearchByName() {
@@ -167,6 +170,10 @@ export default function PlayerSearchByName() {
                   Player ID: {player.PlayerID}
                 </p>
                 <p className="text-sm text-gray-500">{player.CityState}</p>
+                <p className="text-sm text-gray-500">Grad Year: {player.GradYear}</p>
+                <p className="text-sm text-gray-500">Team: {player.TeamName}</p>
+
+
               </div>
               <div className="mt-4 md:mt-0">
                 <Button
