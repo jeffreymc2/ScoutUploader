@@ -75,13 +75,22 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   }, [file.image, file.isVideo]);
 
   const handleDownload = () => {
-    const link = document.createElement("a");
-    link.href = file.image;
-    link.download = file.name;
-    link.style.display = "none";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    fetch(file.image)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = file.name;
+        link.style.display = "none";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((error) => {
+        console.error("Error downloading file:", error);
+      });
   };
 
   const imageStyle = {
