@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { IoIosCloseCircleOutline } from 'react-icons/io';
-import { toast } from 'sonner';
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { IoIosCloseCircleOutline } from "react-icons/io";
+import { toast } from "sonner";
 
 // Importing each UI component from its own path
-import {Input} from '@/components/ui/input';
-import {Dialog} from '@/components/ui/dialog';
-import {Card} from '@/components/ui/card';
-import {Button} from '@/components/ui/button';
+import { Input } from "@/components/ui/input";
+import { Dialog } from "@/components/ui/dialog";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 type PlayerInfo = {
   BestRankSort: number;
@@ -20,7 +20,7 @@ type PlayerInfo = {
 };
 
 export default function PlayerSearchByName() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<PlayerInfo[]>([]);
   const router = useRouter();
 
@@ -32,10 +32,11 @@ export default function PlayerSearchByName() {
         setSearchResults(players);
       } else {
         setSearchResults([]);
-        toast.info('No default players found.');
+        toast.info("No default players found.");
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      const errorMessage =
+        error instanceof Error ? error.message : "An unknown error occurred";
       toast.error(`Error fetching default players: ${errorMessage}`);
     }
   };
@@ -47,27 +48,30 @@ export default function PlayerSearchByName() {
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
       setSearchResults([]);
-      toast.info('Please enter a name to search.');
+      toast.info("Please enter a name to search.");
       return;
     }
 
     try {
-      const response = await fetch(`/api/playername?query=${encodeURIComponent(searchQuery)}`);
+      const response = await fetch(
+        `/api/playername?query=${encodeURIComponent(searchQuery)}`
+      );
       const players: PlayerInfo[] = await response.json();
       if (players.length > 0) {
         setSearchResults(players);
       } else {
         setSearchResults([]);
-        toast.info('No players found.');
+        toast.info("No players found.");
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      const errorMessage =
+        error instanceof Error ? error.message : "An unknown error occurred";
       toast.error(`Error searching for players: ${errorMessage}`);
     }
   };
 
   const clearSearch = () => {
-    setSearchQuery('');
+    setSearchQuery("");
     setSearchResults([]);
     fetchDefaultPlayers();
   };
@@ -75,7 +79,7 @@ export default function PlayerSearchByName() {
   return (
     <div className="mt-5">
       <div className="flex items-center relative">
-      <Input
+        <Input
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -93,28 +97,86 @@ export default function PlayerSearchByName() {
             <IoIosCloseCircleOutline className="w-6 h-6" />
           </button>
         )}
-        <Button onClick={handleSearch} className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
->
+        <Button
+          onClick={handleSearch}
+          className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+        >
           Search
         </Button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-10">
+      {/* <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-3 gap-4 mt-10">
         {searchResults.map((player) => (
-          <Card key={player.PlayerID} className="flex flex-col items-center p-4 shadow-md bg-color-gray-100">
+          <Card
+            key={player.PlayerID}
+            className="flex flex-col items-center p-4 shadow-md bg-color-gray-100"
+          >
             {player.ProfilePic ? (
-              <Image  src={player.ProfilePic} alt={player.PlayerName} width={150} height={150} className="w-full items-center justify-center rounded-lg" />
+              <Image
+                src={player.ProfilePic}
+                alt={player.PlayerName}
+                width={150}
+                height={150}
+                className="w-full items-center justify-center rounded-lg"
+              />
             ) : (
               <div className="bg-gray-200 rounded-full w-24 h-24 flex items-center justify-center">
                 <span>{player.PlayerName[0]}</span>
               </div>
             )}
             <h3 className="mt-2 text-lg font-semibold">{player.PlayerName}</h3>
-            <p className="text-sm text-gray-500">Player ID: {player.PlayerID}</p>
+            <p className="text-sm text-gray-500">
+              Player ID: {player.PlayerID}
+            </p>
             <p className="text-sm text-gray-500">{player.CityState}</p>
-            <Button  className="px-4 py-2 m-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
- onClick={() => router.push(`/players/${player.PlayerID}`)}>
+            <Button
+              className="px-4 py-2 m-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+              onClick={() => router.push(`/players/${player.PlayerID}`)}
+            >
               View Player
             </Button>
+          </Card>
+        ))}
+      </div> */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+        {searchResults.map((player) => (
+          <Card
+            key={player.PlayerID}
+            className="flex flex-row bg-white shadow-md rounded-lg overflow-hidden"
+          >
+            <div className="w-1/3 md:w-1/2">
+              {player.ProfilePic ? (
+                <Image
+                  src={player.ProfilePic}
+                  alt={player.PlayerName}
+                  width={150}
+                  height={150}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="bg-gray-200 w-full h-full flex items-center justify-center">
+                  <span className="text-4xl font-bold text-gray-400">
+                    {player.PlayerName[0]}
+                  </span>
+                </div>
+              )}
+            </div>
+            <div className="w-2/3 md:w-1/2 p-4 flex flex-col justify-between">
+              <div>
+                <h3 className="text-xl font-semibold">{player.PlayerName}</h3>
+                <p className="text-sm text-gray-500">
+                  Player ID: {player.PlayerID}
+                </p>
+                <p className="text-sm text-gray-500">{player.CityState}</p>
+              </div>
+              <div className="mt-4 md:mt-0">
+                <Button
+                  className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+                  onClick={() => router.push(`/players/${player.PlayerID}`)}
+                >
+                  View Player
+                </Button>
+              </div>
+            </div>
           </Card>
         ))}
       </div>
