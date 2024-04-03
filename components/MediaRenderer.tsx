@@ -103,7 +103,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
     <>
       <Dialog onOpenChange={setIsOpen}>
         {file.isVideo ? (
-          <DialogContent className="sm:max-w-[66vw] sm:max-h-[66vh] flex items-center justify-center">
+          <DialogContent className="sm:max-w-[66vw] sm:max-h-[66vh] flex items-center justify-center bg-transparent">
           <div className="relative w-full h-0 pb-[56.25%]">
             <ReactPlayer
               className="rounded-lg absolute top-0 left-0"
@@ -115,7 +115,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
           </div>
         </DialogContent>
       ) : (
-        <DialogContent className="min-h-[50vh] sm:min-w-[66vw] sm:min-h-[66vh]">
+        <DialogContent className="min-h-[50vh] sm:min-w-[66vw] sm:min-h-[66vh] bg-transparent">
           <Image
             src={file.image}
             alt={`Media posted by ${file.post_by || "Unknown"}`}
