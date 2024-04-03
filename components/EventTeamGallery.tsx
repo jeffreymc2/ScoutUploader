@@ -88,6 +88,7 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                     <RiDeleteBin5Line className="w-6 h-6 text-white absolute top-2 right-2" />
                 </AlertDialogTrigger>
                 <AlertDialogContent>
+                  
                   <AlertDialogHeader>
                     <AlertDialogTitle>
                       Are you absolutely sure?

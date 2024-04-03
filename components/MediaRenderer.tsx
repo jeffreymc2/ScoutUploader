@@ -15,6 +15,7 @@ interface MediaRendererProps {
     id: string;
     image: string;
     post_by: string;
+    name: string;
     event_id?: string;
     isVideo?: boolean;
   };
@@ -73,6 +74,13 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
     }
   }, [file.image, file.isVideo]);
 
+  const handleDownload = () => {
+    const link = document.createElement("a");
+    link.href = file.image;
+    link.download = file.name;
+    link.click();
+  };
+
   const imageStyle = {
     width: "100%",
     height: "425px"
@@ -129,6 +137,11 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
               <p className="text-sm text-blue-500 cursor-pointer">Preview Media</p>
           </DialogTrigger>
       </Dialog>
+      <div className="absolute bottom-2 right-2">
+        <p onClick={handleDownload} className="text-blue-500">
+          Download
+        </p>
+      </div>
       {file.event_id && (
         <p className="text-sm mt-2">Uploaded from Event ID: {file.event_id}</p>
       )}
