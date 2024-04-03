@@ -103,19 +103,26 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
     <>
       <Dialog onOpenChange={setIsOpen}>
         {file.isVideo ? (
-          <DialogContent className="sm:max-w-[66vw] sm:max-h-[66vh]">
-            <ReactPlayer  className="rounded-lg object-contain relative" url={file.image} controls width="100%" height="100%" />
-          </DialogContent>
-        ) : (
-          <DialogContent className="min-h-[50vh] sm:min-w-[66vw] sm:min-h-[66vh]">
-            <Image
-              src={file.image}
-              alt={`Media posted by ${file.post_by || "Unknown"}`}
-              fill={true}
-              className="rounded-lg object-contain relative"
-              // style={imageStyle as React.CSSProperties}
+          <DialogContent className="sm:max-w-[66vw] sm:max-h-[66vh] flex items-center justify-center">
+          <div className="relative w-full h-0 pb-[56.25%]">
+            <ReactPlayer
+              className="rounded-lg absolute top-0 left-0"
+              url={file.image}
+              controls
+              width="100%"
+              height="100%"
             />
-          </DialogContent>
+          </div>
+        </DialogContent>
+      ) : (
+        <DialogContent className="min-h-[50vh] sm:min-w-[66vw] sm:min-h-[66vh]">
+          <Image
+            src={file.image}
+            alt={`Media posted by ${file.post_by || "Unknown"}`}
+            fill={true}
+            className="rounded-lg object-cover relative"
+          />
+        </DialogContent>
         )}
         <div
           className="relative aspect-square w-full h-48"
