@@ -26,7 +26,7 @@ export default function EventSearchByName() {
 
   const fetchEventsByDate = async (date: string) => {
     try {
-      const response = await fetch(`/api/events?date=${encodeURIComponent(date)}`);
+      const response = await fetch(`/api/liveevents?date=${encodeURIComponent(date)}`);
       const events: EventInfo[] = await response.json();
       if (events.length > 0) {
         setSearchResults(events);
