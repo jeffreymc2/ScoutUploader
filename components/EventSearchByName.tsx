@@ -82,8 +82,8 @@ export default function EventSearch() {
                 <Image
                   src={event.EventLogoURL}
                   alt={event.EventName}
-                  width={75}
-                  height={75}
+                  width={50}
+                  height={50}
                   className="w-full h-full object-contain"
                 />
               ) : (
