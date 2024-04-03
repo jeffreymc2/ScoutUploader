@@ -93,12 +93,12 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
       });
   };
 
-  // const imageStyle = {
-  //   width: "100%",
-  //   height: "auto",
-  //   position: "relative!important",
-  // };
-  
+  const imageStyle = {
+    width: "100%",
+    height: "auto",
+    position: "relative!important",
+  };
+
   return (
     <>
       <Dialog onOpenChange={setIsOpen}>
@@ -107,14 +107,14 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             <ReactPlayer url={file.image} controls width="100%" height="100%" />
           </DialogContent>
         ) : (
-          <DialogContent className="sm:max-w-[66vw] sm:max-h-[66vh]">
-              <Image
-                src={file.image}
-                alt={`Media posted by ${file.post_by || "Unknown"}`}
-                fill={true}
-                className="rounded-lg object-cover relative"
-                // style={imageStyle as React.CSSProperties}
-              />
+          <DialogContent className="min-h-[50vh] sm:min-w-[66vw] sm:min-h-[66vh]">
+            <Image
+              src={file.image}
+              alt={`Media posted by ${file.post_by || "Unknown"}`}
+              fill={true}
+              className="rounded-lg object-cover relative"
+              // style={imageStyle as React.CSSProperties}
+            />
           </DialogContent>
         )}
         <div
@@ -140,7 +140,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
               alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
               fill={true}
               className="rounded-lg object-cover"
-              />
+            />
           )}
         </div>
         <div className="flex items-center justify-between gap-2 mt-2">
