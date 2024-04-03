@@ -12,7 +12,6 @@ import { max } from "lodash";
 import { MdOutlinePreview } from "react-icons/md";
 import { IoCloudDownloadOutline } from "react-icons/io5";
 
-
 interface MediaRendererProps {
   file: {
     id: string;
@@ -27,8 +26,6 @@ interface MediaRendererProps {
 const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState("");
-
-  
 
   useEffect(() => {
     if (file.isVideo) {
@@ -86,12 +83,11 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
 
   const imageStyle = {
     width: "100%",
-    height: "425px"
-  }
+    height: "425px",
+  };
   return (
     <>
       <Dialog onOpenChange={setIsOpen}>
-       
         {file.isVideo ? (
           <DialogContent className="sm:max-w-[425px]">
             <ReactPlayer url={file.image} controls width="100%" height="auto" />
@@ -107,42 +103,49 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
               style={imageStyle}
             />
           </DialogContent>
-        
         )}
 
         <div
-            className="relative aspect-square w-full h-48 "
-            onClick={() => setIsOpen(true)}
-          >
-            {file.isVideo ? (
-              thumbnailUrl ? (
-                <Image
-                  src={thumbnailUrl}
-                  alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
-                  fill={true}
-                  className="rounded-lg object-cover"
-                />
-              ) : (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <PlayCircleIcon className="w-12 h-12 text-white" />
-                </div>
-              )
-            ) : (
+          className="relative aspect-square w-full h-48 "
+          onClick={() => setIsOpen(true)}
+        >
+          {file.isVideo ? (
+            thumbnailUrl ? (
               <Image
                 src={thumbnailUrl}
                 alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
                 fill={true}
                 className="rounded-lg object-cover"
               />
-            )}
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <PlayCircleIcon className="w-12 h-12 text-white" />
+              </div>
+            )
+          ) : (
+            <Image
+              src={thumbnailUrl}
+              alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
+              fill={true}
+              className="rounded-lg object-cover"
+            />
+          )}
+        </div>
+        <div className="flex justify-end gap-2 mt-2">
+          <div>
+            <DialogTrigger>
+              <MdOutlinePreview className="cursor-pointer text-3xl" />
+            </DialogTrigger>
           </div>
-          <DialogTrigger >
-          <MdOutlinePreview className="cursor-pointer" />
-          </DialogTrigger>
-          <IoCloudDownloadOutline onClick={handleDownload}/>
-
+          <div>
+            <IoCloudDownloadOutline
+              className="cursor-pointer text-3xl"
+              onClick={handleDownload}
+            />
+          </div>
+        </div>
       </Dialog>
-      
+
       {file.event_id && (
         <p className="text-sm mt-2">Uploaded from Event ID: {file.event_id}</p>
       )}
@@ -151,4 +154,3 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
 };
 
 export default MediaRenderer;
-
