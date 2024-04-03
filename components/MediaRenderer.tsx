@@ -140,8 +140,8 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
               src={thumbnailUrl}
               alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
               fill={true}
-              className="rounded-lg object-cover"
-            />
+              className="rounded-lg object-contain object-center relative"
+              />
           )}
         </div>
         <div className="flex items-center justify-between gap-2 mt-2">
