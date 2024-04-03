@@ -141,7 +141,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
               src={thumbnailUrl}
               alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
               fill={true}
-              className="rounded-lg object-contain object-center relative"
+              className="rounded-lg object-cover"
               />
           )}
         </div>
