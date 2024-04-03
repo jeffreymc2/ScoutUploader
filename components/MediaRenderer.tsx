@@ -131,13 +131,15 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             />
           )}
         </div>
-        <div className="flex justify-end gap-2 mt-2">
-          <div>
+        <div className="flex items-center justify-between gap-2 mt-2">
+          {file.event_id && (
+            <p className="text-sm">Uploaded from Event ID: {file.event_id}</p>
+          )}
+
+          <div className="flex items-center gap-2">
             <DialogTrigger>
               <MdOutlinePreview className="cursor-pointer text-3xl" />
             </DialogTrigger>
-          </div>
-          <div>
             <IoCloudDownloadOutline
               className="cursor-pointer text-3xl"
               onClick={handleDownload}
@@ -145,10 +147,6 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
           </div>
         </div>
       </Dialog>
-
-      {file.event_id && (
-        <p className="text-sm mt-2">Uploaded from Event ID: {file.event_id}</p>
-      )}
     </>
   );
 };
