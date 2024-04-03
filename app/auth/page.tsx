@@ -40,7 +40,7 @@ const AuthPageContent = () => {
         </div>
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold font-pgFont text-blue-500">
-            Peffect Game Media
+            Perfect Game Media
           </CardTitle>
           <CardDescription className="text-sm text-gray-600">
             Sign In With Your PG Account to Search and Upload Media by Players, Events, and More.
