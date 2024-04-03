@@ -22,7 +22,7 @@ export default function LandingPage() {
       </section>
       <main className="flex flex-col items-center justify-center py-2">
         <div className="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6">
-          <Card className="w-full md:w-1/2 lg:w-1/3 shadow-lg">
+          <Card className="w-full md:w-1/2 lg:w-1/3 shadow-lg py-10 px-10">
             <CardContent className="flex flex-col items-center h-full">
               <div className="flex items-center justify-center">
                 <UsersIcon className="w-12 h-12 text-gray-700" />
@@ -43,7 +43,7 @@ export default function LandingPage() {
               </div>
             </CardContent>
           </Card>
-          <Card className="w-full md:w-1/2 lg:w-1/3 shadow-lg">
+          <Card className="w-full md:w-1/2 lg:w-1/3 shadow-lg py-10 px-10">
             <CardContent className="flex flex-col items-center h-full">
               <div className="flex items-center justify-center">
                 <FaBaseball className="w-12 h-12 text-gray-700" />
