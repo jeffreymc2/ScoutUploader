@@ -83,6 +83,11 @@ export default function EventSearch({ teams }: EventSearchProps) {
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search by Event ID"
           className="w-full text-base"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') { // Check if the pressed key is Enter
+              handleSearch();
+            }
+          }}
         />
         <Button className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
  onClick={handleSearch}>Search</Button>
