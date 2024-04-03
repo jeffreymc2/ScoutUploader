@@ -93,11 +93,11 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
       });
   };
 
-  const imageStyle = {
-    width: "100%",
-    height: "100%",
-    position: "relative!important",
-  };
+  // const imageStyle = {
+  //   width: "100%",
+  //   height: "auto",
+  //   position: "relative!important",
+  // };
   
   return (
     <>
@@ -113,7 +113,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                 alt={`Media posted by ${file.post_by || "Unknown"}`}
                 fill={true}
                 className="rounded-lg object-cover relative"
-                style={imageStyle as React.CSSProperties}
+                // style={imageStyle as React.CSSProperties}
               />
           </DialogContent>
         )}
