@@ -96,6 +96,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   const imageStyle = {
     width: "100%",
     height: "100%",
+    position: "relative!important",
   };
   
   return (
