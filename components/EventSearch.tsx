@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -39,11 +40,10 @@ export default function EventSearch({ teams }: EventSearchProps) {
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) {
-        setSearchResults([]);
-        toast.info('Please enter an event id to search.');
-        return;
-      }
-  
+      setSearchResults([]);
+      toast.info("Please enter an event id to search.");
+      return;
+    }
 
     try {
       const res = await fetch(
@@ -54,7 +54,6 @@ export default function EventSearch({ teams }: EventSearchProps) {
       if (data.length > 0) {
         setSearchResults(data);
         setSelectedTeam(data[0]);
-        
       } else {
         setSearchResults([]);
         setSelectedTeam(null);
@@ -76,7 +75,7 @@ export default function EventSearch({ teams }: EventSearchProps) {
 
   return (
     <div className="mt-5">
-    <div className="flex items-center w-full relative">
+      <div className="flex items-center w-full relative">
         <Input
           type="text"
           value={searchQuery}
@@ -84,17 +83,22 @@ export default function EventSearch({ teams }: EventSearchProps) {
           placeholder="Search by Event ID"
           className="w-full text-base"
           onKeyDown={(e) => {
-            if (e.key === 'Enter') { // Check if the pressed key is Enter
+            if (e.key === "Enter") {
+              // Check if the pressed key is Enter
               handleSearch();
             }
           }}
         />
-        <Button className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
- onClick={handleSearch}>Search</Button>
+        <Button
+          className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+          onClick={handleSearch}
+        >
+          Search
+        </Button>
       </div>
 
       {searchResults.length > 0 && (
-        <Select 
+        <Select
           onValueChange={(value) =>
             setSelectedTeam(
               searchResults.find(
@@ -103,8 +107,11 @@ export default function EventSearch({ teams }: EventSearchProps) {
             )
           }
           defaultValue={selectedTeam?.TournamentTeamID.toString()}
-        >            <p className="text-xl text-gray-900 my-2 font-pgFont">Select a Team</p>
-
+        >
+          {" "}
+          <p className="text-xl text-gray-900 my-2 font-pgFont">
+            Select a Team
+          </p>
           <SelectTrigger className="w-full mb-5 ">
             <SelectValue className="my-5" placeholder="Select a team" />
           </SelectTrigger>
@@ -129,6 +136,15 @@ export default function EventSearch({ teams }: EventSearchProps) {
               //   onClick={() => handlePlayerClick(player)}
               className="p-4 bg-white border border-gray-200 rounded-lg shadow "
             >
+              <div className="w-1/3 md:w-1/2">
+                <Image
+                  src={player.ProfilePic ? player.ProfilePic : ""}
+                  alt={player.PlayerName}
+                  width={150}
+                  height={150}
+                  className="w-full h-full object-cover"
+                />
+              </div>
               <h3 className="text-lg font-semibold">{player.FullName}</h3>
               <p className="mt-1 text-sm text-gray-500">
                 Player ID: {player.playerid}
@@ -138,14 +154,12 @@ export default function EventSearch({ teams }: EventSearchProps) {
               </p>
               <Button
                 className="px-4 py-2 m-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
-
                 onClick={() => handleViewPlayerPage(player.playerid)}
               >
                 View Player Page
               </Button>
               <Button
                 className="px-4 py-2 m-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
-
                 onClick={() => handlePlayerClick(player)}
               >
                 Upload Files

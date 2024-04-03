@@ -1,6 +1,7 @@
 // app/lib/types/types.ts
 
 export interface Player {
+    PlayerName: any;
     playerid: number;
     playereventid: number;
     FirstName: string;
