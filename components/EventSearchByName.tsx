@@ -43,7 +43,7 @@ export default function EventSearchByName() {
 
   useEffect(() => {
     if (selectedDate) {
-      const formattedDate = format(selectedDate, "YYYY-MM-DD");
+      const formattedDate = format(selectedDate, "YYYY-mm-dd");
       fetchEventsByDate(formattedDate);
     }
   }, [selectedDate]);
@@ -63,7 +63,7 @@ export default function EventSearchByName() {
           placeholderText="Select a date"
         />
         <Button
-          onClick={() => fetchEventsByDate(format(selectedDate!, "YYYY-MM-DD"))}
+          onClick={() => fetchEventsByDate(format(selectedDate!, "YYYY-mm-dd"))}
           className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
         >
           Search
