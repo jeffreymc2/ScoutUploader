@@ -29,7 +29,7 @@ export default function PlayerSearchByName() {
 
   const fetchDefaultPlayers = async () => {
     try {
-      const response = await fetch(`/api/playername?query=carson`);
+      const response = await fetch(`/api/playername?query=&limit=50&state`);
       const players: PlayerInfo[] = await response.json();
       if (players.length > 0) {
         setSearchResults(players);
@@ -171,7 +171,7 @@ export default function PlayerSearchByName() {
                 </p>
                 <p className="text-sm text-gray-500">{player.CityState}</p>
                 <p className="text-sm text-gray-500">Grad Year: {player.GradYear}</p>
-                <p className="text-sm text-gray-500">Team: {player.TeamName}</p>
+                <p className="text-sm text-gray-500">Best Rank: {player.BestRankSort}</p>
 
 
               </div>
