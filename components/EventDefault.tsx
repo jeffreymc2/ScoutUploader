@@ -120,7 +120,7 @@ export default function EventDefault() {
           {searchResults.map((event) => (
             <div
               key={event.EventID}
-              className="flex flex-col-2 bg-white shadow-md rounded-lg overflow-hidden"
+              className="flex flex-col-2 bg-white shadow-md rounded-lg overflow-hidden min-h-[225px]"
             >
               <div className="w-1/3 ">
                 {event.EventLogoURL ? (
