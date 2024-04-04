@@ -11,7 +11,7 @@ export default function LandingPage() {
         <div className="container space-y-10 xl:space-y-16">
           <div className="flex flex-col items-center space-y-4 text-center">
             <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter font-pgFont text-gray-700 sm:text-4xl md:text-5xl lg:text-6xl">
+              <h1 className="text-3xl font-bold tracking-tighter font-pgFont text-gray-100 sm:text-4xl md:text-5xl lg:text-6xl">
                 Perfect Game Media
               </h1>
               <p className="mx-auto max-w-[700px] text-gray-500 md:text-lg">
@@ -26,12 +26,12 @@ export default function LandingPage() {
           <Card className="w-full md:w-1/2 lg:w-1/3 shadow-lg py-10 px-10">
             <CardContent className="flex flex-col items-center h-full">
               <div className="flex items-center justify-center">
-                <UsersIcon className="w-12 h-12 text-gray-700" />
+                <UsersIcon className="w-12 h-12 text-blue-500" />
               </div>
-              <h2 className="mt-4 text-lg font-semibold text-center text-gray-700">
+              <h2 className="mt-4 text-lg font-semibold text-center text-gray-100">
                 Search & Upload Media Content by Players
               </h2>
-              <p className="mt-2 text-sm text-center text-gray-500 flex-grow">
+              <p className="mt-2 text-sm text-center text-gray-100 flex-grow">
                 Search by player name or id find and upload media content by players.
               </p>
               <div className="mt-6">
@@ -47,12 +47,12 @@ export default function LandingPage() {
           <Card className="w-full md:w-1/2 lg:w-1/3 shadow-lg py-10 px-10">
             <CardContent className="flex flex-col items-center h-full">
               <div className="flex items-center justify-center">
-                <FaBaseball className="w-12 h-12 text-gray-700" />
+                <FaBaseball className="w-12 h-12 text-blue-500" />
               </div>
-              <h2 className="mt-4 text-lg font-semibold text-center text-gray-700">
+              <h2 className="mt-4 text-lg font-semibold text-center text-gray-100">
               Search & Upload Media Content by Events
               </h2>
-              <p className="mt-2 text-sm text-center text-gray-500 flex-grow">
+              <p className="mt-2 text-sm text-center text-gray-100 flex-grow">
                 Search by event name or id to find and upload media content by events. Once uploaded,
                 tag media to players.
               </p>
