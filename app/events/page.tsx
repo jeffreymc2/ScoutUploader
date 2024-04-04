@@ -47,7 +47,7 @@ export default async function Page({ searchParams }: { searchParams: any }) {
       <EventSearchComponent posts={[]}  />
       </div>
       <h1 className="text-2xl font-bold mt-5 font-pgFont">
-        Today's Events
+        Today&apos;s Events
       </h1>
       <EventDefault />
       {/* <div className="mt-8">
