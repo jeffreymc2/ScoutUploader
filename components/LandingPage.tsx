@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { FaBaseball } from "react-icons/fa6";
 import { Card, CardContent } from "./ui/card";
+import BackgroundImage from "./BackgroundImage";
 
 export default function LandingPage() {
   return (
@@ -67,6 +68,8 @@ export default function LandingPage() {
           </Card>
         </div>
       </main>
+      <BackgroundImage />
+
     </div>
   );
 }
