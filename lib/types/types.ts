@@ -108,3 +108,14 @@ export interface Post {
     TeamCount: number;
   };
   
+
+  export interface LiveEventSearch {
+    EventID: number;
+    EventName: string;
+    StartDate: string; 
+    EndDate: string; // ISO 8601 format date-time string
+    DivisionID: number;
+    Division: string;
+    EventLogoURL: string;
+  };
+  

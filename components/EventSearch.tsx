@@ -90,7 +90,7 @@ export default function EventSearch({ teams }: EventSearchProps) {
           }}
         />
         <Button
-          className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+          className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
           onClick={handleSearch}
         >
           Search
@@ -153,13 +153,13 @@ export default function EventSearch({ teams }: EventSearchProps) {
                 Jersey Number: {player.jerseynumber}
               </p>
               <Button
-                className="px-4 py-2 m-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+                className="px-4 py-2 m-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
                 onClick={() => handleViewPlayerPage(player.playerid)}
               >
                 View Player Page
               </Button>
               <Button
-                className="px-4 py-2 m-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+                className="px-4 py-2 m-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
                 onClick={() => handlePlayerClick(player)}
               >
                 Upload Files

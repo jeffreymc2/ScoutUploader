@@ -127,7 +127,7 @@ export default function EventSearchRoute({ events }: EventSearchProps) {
             <IoIosCloseCircleOutline className="w-6 h-6" />
           </button>
         )}
-        <Button onClick={handleSearch} className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+        <Button onClick={handleSearch} className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
 >
           Search
         </Button>
@@ -187,7 +187,7 @@ export default function EventSearchRoute({ events }: EventSearchProps) {
 
       {selectedTeam && selectedEvent && (
         <>
-        <Button  className="px-4 py-2 mr-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+        <Button  className="px-4 py-2 mr-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
 
           onClick={() =>
             router.push(

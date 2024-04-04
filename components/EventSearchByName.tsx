@@ -187,7 +187,7 @@ export default function EventSearch() {
             </div>
             <div className="p-4">
               <Button
-                className="w-full font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+                className="w-full font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
                 disabled={!selectedTeams[event.EventID]}
                 onClick={() => router.push(`/events/${event.EventID}/${selectedTeams[event.EventID]?.TeamID}`)}
               >

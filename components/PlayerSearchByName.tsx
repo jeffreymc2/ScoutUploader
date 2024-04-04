@@ -87,7 +87,7 @@ export default function PlayerSearchByName() {
   };
 
   return (
-    <div className="mt-5">
+    <div className="">
       <div className="flex items-center relative">
         <Input
           type="text"
@@ -109,7 +109,7 @@ export default function PlayerSearchByName() {
         )}
         <Button
           onClick={handleSearch}
-          className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+          className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
         >
           Search
         </Button>
@@ -156,7 +156,7 @@ export default function PlayerSearchByName() {
                 </div>
                 <div className="mt-4 md:mt-0">
                   <Button
-                    className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+                    className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
                     onClick={() => router.push(`/players/${player.PlayerID}`)}
                   >
                     View Player

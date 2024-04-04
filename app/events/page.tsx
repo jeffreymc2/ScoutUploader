@@ -42,9 +42,15 @@ export default async function Page({ searchParams }: { searchParams: any }) {
     <h1 className="text-2xl font-bold mt-5 font-pgFont">
         Search & Upload Media
       </h1>
+      <div className="my-8">
+
       <EventSearchComponent posts={[]}  />
+      </div>
+      <h1 className="text-2xl font-bold mt-5 font-pgFont">
+        Today's Events
+      </h1>
       <EventDefault />
-      <div className="mt-8">
+      {/* <div className="mt-8">
         <h2 className="text-lg font-pgFont text-gray-600 font-semibold">How to Search for Events</h2>
         <p className="mt-2 text-gray-600 text-md">
           To find a specific event, you can search by the event&apos;s name or ID. If you&apos;re searching by name, type
@@ -57,7 +63,7 @@ export default async function Page({ searchParams }: { searchParams: any }) {
           <li>World Series</li>
           <li>Event ID: 77808</li>
         </ul>
-      </div>
+      </div> */}
       </>
   );
 }

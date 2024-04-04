@@ -15,14 +15,14 @@ export default function LandingPage() {
                 <h1 className="text-5xl font-bold tracking-loose font-pgFont text-gray-100 sm:text-6xl md:text-6xl lg:text-6xl">
                   Perfect Game Media
                 </h1>
-                <p className="mx-auto max-w-[700px] text-gray-100 md:text-xl pb-5 font-thin">
+                <p className="mx-auto max-w-[700px] text-gray-100 md:text-xl pb-5 sm:font-light text-lg font-light">
                   Search and upload media by players, events, and more.
                 </p>
               </div>
             </div>
           </div>
         </section>
-        <main className="flex flex-col items-center justify-center py-2">
+        <main className="flex flex-col items-center justify-center py-2 mb-5">
           <div className="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6">
             <Card className="w-full md:w-1/2 lg:w-1/3 shadow-lg py-10 px-10">
               <CardContent className="flex flex-col items-center h-full">
@@ -38,7 +38,7 @@ export default function LandingPage() {
                 </p>
                 <div className="mt-6">
                   <Link
-                    className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+                    className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
                     href="/players"
                   >
                     Search Players
@@ -60,7 +60,7 @@ export default function LandingPage() {
                 </p>
                 <div className="mt-6">
                   <Link
-                    className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+                    className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
                     href="/events"
                   >
                     Search Events

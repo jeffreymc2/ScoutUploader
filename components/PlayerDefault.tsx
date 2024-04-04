@@ -63,7 +63,7 @@ export default function PlayerDefault() {
       {isLoading ? (
         <PlayerSearchByNameSkeleton />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-5">
           {searchResults.map((player) => (
             <Card
               key={player.PlayerID}
@@ -102,7 +102,7 @@ export default function PlayerDefault() {
                 </div>
                 <div className="mt-4 md:mt-0">
                   <Button
-                    className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+                    className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
                     onClick={() => router.push(`/players/${player.PlayerID}`)}
                   >
                     View Player
