@@ -17,16 +17,16 @@ const SearchComponent = ({ posts }: { posts: Post[] }) => {
         <TabsTrigger value="eventsearch" className="px-4 py-2">By Event Name</TabsTrigger>
       </TabsList>
 
-      <TabsContent value="playerName" className="">
+      <TabsContent value="playerName" className="min-h-[50px]">
         <PlayerSearchByName />
       </TabsContent>
-      <TabsContent value="player" className="">
+      <TabsContent value="player" className="min-h-[50px]">
         <PlayerSearch posts={posts} />
       </TabsContent>
-      <TabsContent value="event" className="">
+      <TabsContent value="event" className="min-h-[50px]">
         <EventSearch teams={[]} />
       </TabsContent>
-      <TabsContent value="eventsearch" className="">
+      <TabsContent value="eventsearch" className="min-h-[50px]">
         <EventSearchTerm events={[]} /> {/* Pass an empty array or the actual events data */}
       </TabsContent>
     </Tabs>
