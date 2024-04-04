@@ -7,7 +7,7 @@ import QueryProvider from "@/components/query-provider";
 import Navbar from "@/components/Navbar";
 import { Toaster } from "@/components/ui/sonner";
 import localFont from "next/font/local";
-import { supabaseServer } from "@/lib/supabase/server"; 
+import Footer from "@/components/Footer";
 
 
 
@@ -42,6 +42,7 @@ export default function RootLayout({
             <Toaster />
           </ThemeProvider>
         </QueryProvider>
+        <Footer />
       </body>
     </html>
   );
