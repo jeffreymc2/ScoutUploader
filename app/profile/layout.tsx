@@ -8,7 +8,7 @@ import Navbar from "@/components/Navbar";
 import { Toaster } from "@/components/ui/sonner";
 import localFont from "next/font/local";
 import Footer from "@/components/Footer";
-import BackgroundImage from "@/components/BackgroundImage";
+
 
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
@@ -25,16 +25,13 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning className={pgFont.className}>
-
       <body className={`${inter.className} overflow-y-scroll min-h-full`} >
         <QueryProvider>
           <ThemeProvider attribute="class" enableSystem disableTransitionOnChange>
             <div className="w-full relative mx-auto xl:px-0">
               <Navbar />
             </div>
-            <BackgroundImage />
-
-            <main className="pt-5 pb-5 space-y-10 px-5 xl:px-0 bg-transparent">
+            <main className="pt-5 pb-5 space-y-10 px-5 xl:px-0 bg-pgGray-100">
               {/* Optionally, apply a background color or other full-width styles here */}
               <div className="max-w-6xl mx-auto">
                 {/* Centered container with max width */}
