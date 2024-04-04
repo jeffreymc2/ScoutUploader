@@ -15,10 +15,10 @@ const PlayerSearchComponent = ({ posts }: { posts: Post[] }) => {
     
       </TabsList>
 
-      <TabsContent value="playerName" className="min-h-[400px]">
+      <TabsContent value="playerName" className="min-h-[50px]">
         <PlayerSearchByName />
       </TabsContent>
-      <TabsContent value="player" className="min-h-[400px]">
+      <TabsContent value="player" className="min-h-[50px]">
         <PlayerSearch posts={posts} />
       </TabsContent>
      

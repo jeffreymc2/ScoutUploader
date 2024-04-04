@@ -21,10 +21,10 @@ const EventSearchComponent = ({ posts }: { posts: Post[] }) => {
       {/* <TabsContent value="eventsearchbyname" className="min-h-[400px]">
         <EventSearchByName />
       </TabsContent>  */}
-      <TabsContent value="eventsearch" className="min-h-[400px]">
+      <TabsContent value="eventsearch" className="min-h-[50px]">
         <EventSearchRoute events={[]} />
       </TabsContent>
-      <TabsContent value="event" className="min-h-[400px]">
+      <TabsContent value="event" className="min-h-[50px]">
         <EventSearch teams={[]} />
       </TabsContent>
      
