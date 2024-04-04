@@ -6,74 +6,78 @@ import BackgroundImage from "./BackgroundImage";
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col ">
-      <section className="w-full pt-12">
-        <div className="container space-y-10 xl:space-y-16">
-          <div className="flex flex-col items-center space-y-4 text-center">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter font-pgFont text-gray-100 sm:text-4xl md:text-5xl lg:text-6xl">
-                Perfect Game Media
-              </h1>
-              <p className="mx-auto max-w-[700px] text-gray-500 md:text-lg">
-                Search and upload media by players, events, and more.
-              </p>
+    <>
+      <BackgroundImage />
+      <div className="flex flex-col ">
+        <section className="w-full pt-12">
+          <div className="container space-y-10 xl:space-y-16">
+            <div className="flex flex-col items-center space-y-4 text-center">
+              <div className="space-y-2">
+                <h1 className="text-3xl font-bold tracking-tighter font-pgFont text-gray-100 sm:text-4xl md:text-5xl lg:text-6xl">
+                  Perfect Game Media
+                </h1>
+                <p className="mx-auto max-w-[700px] text-gray-500 md:text-lg">
+                  Search and upload media by players, events, and more.
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
-      <main className="flex flex-col items-center justify-center py-2">
-        <div className="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6">
-          <Card className="w-full md:w-1/2 lg:w-1/3 shadow-lg py-10 px-10">
-            <CardContent className="flex flex-col items-center h-full">
-              <div className="flex items-center justify-center">
-                <UsersIcon className="w-12 h-12 text-blue-500" />
-              </div>
-              <h2 className="mt-4 text-lg font-semibold text-center text-gray-100">
-                Search & Upload Media Content by Players
-              </h2>
-              <p className="mt-2 text-sm text-center text-gray-100 flex-grow">
-                Search by player name or id find and upload media content by players.
-              </p>
-              <div className="mt-6">
-                <Link
-                  className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
-                  href="/players"
-                >
-                  Search Players
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-          <Card className="w-full md:w-1/2 lg:w-1/3 shadow-lg py-10 px-10">
-            <CardContent className="flex flex-col items-center h-full">
-              <div className="flex items-center justify-center">
-                <FaBaseball className="w-12 h-12 text-blue-500" />
-              </div>
-              <h2 className="mt-4 text-lg font-semibold text-center text-gray-100">
-              Search & Upload Media Content by Events
-              </h2>
-              <p className="mt-2 text-sm text-center text-gray-100 flex-grow">
-                Search by event name or id to find and upload media content by events. Once uploaded,
-                tag media to players.
-              </p>
-              <div className="mt-6">
-                <Link
-                  className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
-                  href="/events"
-                >
-                  Search Events
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
-      <BackgroundImage />
-
-    </div>
+        </section>
+        <main className="flex flex-col items-center justify-center py-2">
+          <div className="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6">
+            <Card className="w-full md:w-1/2 lg:w-1/3 shadow-lg py-10 px-10">
+              <CardContent className="flex flex-col items-center h-full">
+                <div className="flex items-center justify-center">
+                  <UsersIcon className="w-12 h-12 text-blue-500" />
+                </div>
+                <h2 className="mt-4 text-lg font-semibold text-center text-gray-100">
+                  Search & Upload Media Content by Players
+                </h2>
+                <p className="mt-2 text-sm text-center text-gray-100 flex-grow">
+                  Search by player name or id find and upload media content by
+                  players.
+                </p>
+                <div className="mt-6">
+                  <Link
+                    className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+                    href="/players"
+                  >
+                    Search Players
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="w-full md:w-1/2 lg:w-1/3 shadow-lg py-10 px-10">
+              <CardContent className="flex flex-col items-center h-full">
+                <div className="flex items-center justify-center">
+                  <FaBaseball className="w-12 h-12 text-blue-500" />
+                </div>
+                <h2 className="mt-4 text-lg font-semibold text-center text-gray-100">
+                  Search & Upload Media Content by Events
+                </h2>
+                <p className="mt-2 text-sm text-center text-gray-100 flex-grow">
+                  Search by event name or id to find and upload media content by
+                  events. Once uploaded, tag media to players.
+                </p>
+                <div className="mt-6">
+                  <Link
+                    className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
+                    href="/events"
+                  >
+                    Search Events
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </main>
+      </div>
+    </>
   );
 }
-function CalendarIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
+function CalendarIcon(
+  props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>
+) {
   return (
     <svg
       {...props}
@@ -92,11 +96,12 @@ function CalendarIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGS
       <line x1="8" x2="8" y1="2" y2="6" />
       <line x1="3" x2="21" y1="10" y2="10" />
     </svg>
-  )
+  );
 }
 
-
-function UsersIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>) {
+function UsersIcon(
+  props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>
+) {
   return (
     <svg
       {...props}
@@ -115,5 +120,5 @@ function UsersIcon(props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGE
       <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
       <path d="M16 3.13a4 4 0 0 1 0 7.75" />
     </svg>
-  )
+  );
 }

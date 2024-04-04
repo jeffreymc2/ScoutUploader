@@ -6,7 +6,7 @@ const imageSrc = "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/pub
 
 export default function Background() {
     return (
-      <Image
+      <Image className="-z-100"
         alt="Mountains"
         src={imageSrc}
         placeholder="blur"
