@@ -31,7 +31,7 @@ export default function RootLayout({
             <div className="w-full relative mx-auto xl:px-0">
               <Navbar />
             </div>
-            <main className="pt-5 pb-5 space-y-10 px-5 xl:px-0 bg-white">
+            <main className="pt-5 pb-5 space-y-10 px-5 xl:px-0 bg-white-100">
               {/* Optionally, apply a background color or other full-width styles here */}
               <div className="max-w-6xl mx-auto">
                 {/* Centered container with max width */}
