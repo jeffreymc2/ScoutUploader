@@ -2,6 +2,7 @@
 import { supabaseServer } from "@/lib/supabase/server";
 import EventSearchComponent from "@/components/EventSearchComponent";
 import React from "react";
+import EventDefault from "@/components/EventDefault";
 
 export default async function Page({ searchParams }: { searchParams: any }) {
   const playerId = searchParams.player_id ?? null;
@@ -42,6 +43,7 @@ export default async function Page({ searchParams }: { searchParams: any }) {
         Search & Upload Media
       </h1>
       <EventSearchComponent posts={[]}  />
+      <EventDefault />
       <div className="mt-8">
         <h2 className="text-lg font-pgFont text-gray-600 font-semibold">How to Search for Events</h2>
         <p className="mt-2 text-gray-600 text-md">

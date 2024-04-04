@@ -24,7 +24,7 @@ type PlayerInfo = {
   TeamName: string;
 };
 
-export default function PlayerSearchByName() {
+export default function PlayerDefault() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,7 +33,7 @@ export default function PlayerSearchByName() {
 
   const fetchDefaultPlayers = async () => {
     try {
-      const response = await fetch(`/api/playername?query=&limit=30&state`);
+      const response = await fetch(`/api/playername?query=&limit=50&state`);
       const players: PlayerInfo[] = await response.json();
       if (players.length > 0) {
         setSearchResults(players);
@@ -53,66 +53,12 @@ export default function PlayerSearchByName() {
     fetchDefaultPlayers();
   }, []);
 
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) {
-      setSearchResults([]);
-      toast.info("Please enter a name to search.");
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `/api/playername?query=${encodeURIComponent(searchQuery)}`
-      );
-      const players: PlayerInfo[] = await response.json();
-      if (players.length > 0) {
-        setSearchResults(players);
-      } else {
-        setIsLoading(false); // Set to false once data is fetched
-
-        setSearchResults([]);
-        toast.info("No players found.");
-      }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "An unknown error occurred";
-      toast.error(`Error searching for players: ${errorMessage}`);
-    }
-  };
-
-  const clearSearch = () => {
-    setSearchQuery("");
-    setSearchResults([]);
-    fetchDefaultPlayers();
-  };
+  
 
   return (
     <div className="mt-5">
       <div className="flex items-center relative">
-        <Input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search by player name"
-          className="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md text-base"
-        />
-        {searchQuery && (
-          <button
-            onClick={() => {
-              setSearchQuery(""); // Clear the input
-              // handleSearch(); // Uncomment if you decide to trigger search immediately
-            }}
-            className="absolute right-20 top-1/2 mr-5 transform -translate-y-1/2 flex items-center justify-center text-gray-400 hover:text-gray-600"
-          >
-            <IoIosCloseCircleOutline className="w-6 h-6" />
-          </button>
-        )}
-        <Button
-          onClick={handleSearch}
-          className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-primary/90"
-        >
-          Search
-        </Button>
+        
       </div>
       {isLoading ? (
         <PlayerSearchByNameSkeleton />

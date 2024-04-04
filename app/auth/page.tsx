@@ -33,13 +33,13 @@ const AuthPageContent = () => {
   };
 
   return (
-    <Card className="flex flex-col justify-center items-center mt-5 bg-white border-none">
-      <CardContent className="w-full max-w-md px-4 py-8 mx-auto bg-white rounded-lg shadow-lg">
-        <div className="flex flex-col justify-center items-center mt-5 bg-white  border-non">
+    <Card className="flex flex-col justify-center items-center mt-5 border-none bg-transparent">
+      <CardContent className="w-full max-w-md px-4 py-8 mx-auto rounded-lg shadow-lg bg-white">
+        <div className="flex flex-col justify-center items-center mt-5 bg-white  border-none w-full">
           <PerfectGameLogo backgroundColor="#005cb9" />
         </div>
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold font-pgFont text-blue-500">
+          <CardTitle className="text-3xl font-bold font-pgFont text-blue-500">
             Perfect Game Media
           </CardTitle>
           <CardDescription className="text-sm text-gray-600">
@@ -62,7 +62,7 @@ const AuthPageContent = () => {
         </div>
       </CardContent>
       <CardFooter className="text-center">
-        <p className="text-gray-500 text-xs p-5">
+        <p className="text-gray-100 text-xs p-5">
           ©2024 Perfect Game Inc. All rights reserved.
         </p>
       </CardFooter>

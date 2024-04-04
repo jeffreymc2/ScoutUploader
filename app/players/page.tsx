@@ -3,8 +3,6 @@ import { supabaseServer } from "@/lib/supabase/server";
 
 import PlayerSearchComponent from "@/components/PlayerSearchComponent";
 
-
-
 export default async function PlayerPage({ searchParams }: { searchParams: any }) {
   const playerId = searchParams.player_id ?? null;
 
@@ -37,12 +35,16 @@ export default async function PlayerPage({ searchParams }: { searchParams: any }
 
   }
 
+  const isLoading = true; // Replace 'true' with the actual value of isLoading
+
   return (
     <>
-    <h1 className="text-2xl font-bold mt-5 font-pgFont">
+      <h1 className="text-2xl font-bold mt-5 font-pgFont">
         Search & Upload Media
       </h1>
-      <PlayerSearchComponent posts={[]}  />
-      </>
+      <div className="my-8">
+          <PlayerSearchComponent posts={[]} />
+      </div>
+    </>
   );
 }

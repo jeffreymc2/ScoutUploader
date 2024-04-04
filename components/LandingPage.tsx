@@ -12,10 +12,10 @@ export default function LandingPage() {
           <div className="container space-y-10 xl:space-y-16">
             <div className="flex flex-col items-center space-y-4 text-center">
               <div className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tighter font-pgFont text-gray-100 sm:text-4xl md:text-5xl lg:text-6xl">
+                <h1 className="text-5xl font-bold tracking-loose font-pgFont text-gray-100 sm:text-6xl md:text-6xl lg:text-6xl">
                   Perfect Game Media
                 </h1>
-                <p className="mx-auto max-w-[700px] text-gray-100 md:text-lg">
+                <p className="mx-auto max-w-[700px] text-gray-100 md:text-xl pb-5 font-thin">
                   Search and upload media by players, events, and more.
                 </p>
               </div>
