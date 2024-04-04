@@ -74,7 +74,7 @@ export default function EventSearch({ teams }: EventSearchProps) {
   };
 
   return (
-    <div className="mt-5">
+    <div className="mt-2">
       <div className="flex items-center w-full relative">
         <Input
           type="text"

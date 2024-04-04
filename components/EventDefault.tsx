@@ -111,16 +111,15 @@ export default function EventDefault() {
   };
 
   return (
-    <div className="mt-2">
+    <div className="mt-5">
       {isLoading ? (
         <PlayerSearchByNameSkeleton />
         ) : (
-          
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mt-5 mb-5">
           {searchResults.map((event) => (
             <div
               key={event.EventID}
-              className="flex flex-col-2 bg-white shadow-md rounded-lg overflow-hidden min-h-[225px]"
+              className="flex flex-col-2 bg-white shadow-md rounded-lg overflow-hidden"
             >
               <div className="w-1/3 ">
                 {event.EventLogoURL ? (
