@@ -1,32 +1,22 @@
 // BackgroundImage.tsx
 import Image from "next/image";
-import { ComponentPropsWithoutRef, ReactElement, ReactNode } from "react";
-import classNames, { Argument } from "classnames";
 
-interface BackgroundImageProps {
-  children?: ReactNode;
-  className?: Argument;
-  image: ReactElement<typeof Image>;
-}
+const imageSrc = "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/pg-bg.jpg"
 
-type BackgroundImageAdditionalProps = Omit<
-  ComponentPropsWithoutRef<"div">,
-  keyof BackgroundImageProps
->;
 
-export default function BackgroundImage({
-  children,
-  className,
-  image,
-  ...props
-}: BackgroundImageProps & BackgroundImageAdditionalProps) {
-  return (
-    <div
-      className={classNames("relative", "overflow-hidden", className)}
-      {...props}
-    >
-      <div className="absolute inset-0 -z-10">{image}</div>
-      <div className="z-10 flex h-full justify-center">{children}</div>
-    </div>
-  );
-}
+export default function Background() {
+    return (
+      <Image
+        alt="Mountains"
+        src={imageSrc}
+        placeholder="blur"
+        quality={100}
+        fill
+        sizes="100vw"
+        style={{
+          objectFit: 'cover',
+        }}
+      />
+    )
+  }
+  
