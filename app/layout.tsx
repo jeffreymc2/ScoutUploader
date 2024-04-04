@@ -25,7 +25,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning className={pgFont.className}>
-      <body className={`${inter.className} overflow-y-scroll`}>
+      <body className={`${inter.className} overflow-y-scroll min-h-full`} >
         <QueryProvider>
           <ThemeProvider attribute="class" enableSystem disableTransitionOnChange>
             <div className="w-full relative mx-auto xl:px-0">
