@@ -90,12 +90,7 @@ export default function PlayerSearchByName() {
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search by player name"
           className="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md text-base"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              // Check if the pressed key is Enter
-              handleSearch();
-            }
-          }}
+          
         />
         {searchQuery && (
           <button

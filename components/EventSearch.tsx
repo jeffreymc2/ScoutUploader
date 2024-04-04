@@ -81,7 +81,7 @@ export default function EventSearch({ teams }: EventSearchProps) {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search by Event ID"
-          className="w-full text-base"
+          className="w-full text-base "
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               // Check if the pressed key is Enter
