@@ -1,6 +1,7 @@
 // app/page.tsx
 import { supabaseServer } from "@/lib/supabase/server";
 import EventSearchComponent from "@/components/EventSearchComponent";
+import React from "react";
 
 export default async function Page({ searchParams }: { searchParams: any }) {
   const playerId = searchParams.player_id ?? null;
@@ -44,8 +45,8 @@ export default async function Page({ searchParams }: { searchParams: any }) {
       <div className="mt-8">
         <h2 className="text-lg font-semibold">How to Search for Baseball Events</h2>
         <p className="mt-2 text-gray-600">
-          To find a specific event, you can search by the event's name or ID. If you're searching by name, type
-          the full or partial name of the event into the search bar and click "Search". For ID searches, enter the
+          To find a specific event, you can search by the event&apos;s name or ID. If you&apos;re searching by name, type
+          the full or partial name of the event into the search bar and click Search. For ID searches, enter the
           unique event ID. Results will include all matches for your search criteria. You can then select a team associated with the event to upload media specific to that team, and then assign the media to a player.
         </p>
         <p className="mt-4 text-gray-600">Example searches:</p>
