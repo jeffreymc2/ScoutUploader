@@ -41,7 +41,20 @@ export default async function Page({ searchParams }: { searchParams: any }) {
         Search & Upload Media
       </h1>
       <EventSearchComponent posts={[]}  />
-         
+      <div className="mt-8">
+        <h2 className="text-lg font-semibold">How to Search for Baseball Events</h2>
+        <p className="mt-2 text-gray-600">
+          To find a specific event, you can search by the event's name or ID. If you're searching by name, type
+          the full or partial name of the event into the search bar and click "Search". For ID searches, enter the
+          unique event ID. Results will include all matches for your search criteria. You can then select a team associated with the event to upload media specific to that team, and then assign the media to a player.
+        </p>
+        <p className="mt-4 text-gray-600">Example searches:</p>
+        <ul className="list-disc pl-6 mt-2 text-gray-600">
+          <li>Showcase</li>
+          <li>World Series</li>
+          <li>Event ID: 77808</li>
+        </ul>
+      </div>
       </>
   );
 }
