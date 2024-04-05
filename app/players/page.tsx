@@ -42,7 +42,7 @@ export default async function PlayerPage({ searchParams }: { searchParams: any }
       <h1 className="text-2xl font-bold mt-5 font-pgFont">
         Search & Upload Media
       </h1>
-      <div className="my-8">
+      <div className="my-4">
           <PlayerSearchComponent posts={[]} />
       </div>
     </>

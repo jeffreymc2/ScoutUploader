@@ -138,7 +138,7 @@ export default function EventSearch({ teams }: EventSearchProps) {
             >
               <div className="w-1/3 md:w-1/2">
                 <Image
-                  src={player.ProfilePic ? player.ProfilePic : ""}
+                  src={player.ProfilePic ? player.ProfilePic : "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/default-avatar-photo-placeholder-profile-icon-vector.jpg"}
                   alt={player.PlayerName}
                   width={150}
                   height={150}

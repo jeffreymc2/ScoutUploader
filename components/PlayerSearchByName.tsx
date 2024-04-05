@@ -133,8 +133,8 @@ export default function PlayerSearchByName() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="bg-gray-200 w-full h-full flex items-center justify-center">
-                    <span className="text-4xl font-bold text-gray-400">
+                  <div className="bg-gray-200 w-full h-full flex items-center justify-center ">
+                    <span className="text-4xl font-bold text-gray-400 ">
                       {player.PlayerName[0]}
                     </span>
                   </div>
@@ -142,7 +142,7 @@ export default function PlayerSearchByName() {
               </div>
               <div className="w-2/3 md:w-1/2 p-4 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-xl font-semibold">{player.PlayerName}</h3>
+                  <h3 className="text-2xl font-semibold font-pgFont">{player.PlayerName}</h3>
                   <p className="text-sm text-gray-500">
                     Player ID: {player.PlayerID}
                   </p>

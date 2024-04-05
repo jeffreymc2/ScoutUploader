@@ -67,6 +67,3 @@ export default async function Page({ searchParams }: { searchParams: any }) {
       </>
   );
 }
-
-
-

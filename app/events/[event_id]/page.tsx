@@ -1,4 +1,4 @@
-// app/events/event_id/team_id/page.tsx
+// app/events/event_id/page.tsx
 
 import { supabaseServer } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

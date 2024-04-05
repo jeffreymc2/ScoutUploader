@@ -3,10 +3,11 @@ import React from "react";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import useUser from "@/app/hook/useUser";
+import { useRouter } from 'next/navigation'
 import Image from "next/image";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { useQueryClient } from "@tanstack/react-query";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { protectedPaths } from "@/lib/constant";
 
 
@@ -26,22 +27,23 @@ export default function Profile() {
     queryClient.clear();
     await supabase.auth.signOut();
     router.refresh();
-    if (protectedPaths.includes(pathname)) {
-      router.replace("/auth?next=" + pathname);
+    if ((protectedPaths as string[]).includes(pathname as string)) {
+      router.push("/auth");
     }
     
   };
 
   return (
-    <div className="relative">
+    <div className="relative -mt-2">
     {!data?.id ? (
-      <Link href="/auth" className="">
-        <p className="text-sm font-semibold leading-6 text-gray-700 lg:text-white">
-          Log in <span aria-hidden="true">&rarr;</span>
-        </p>
-      </Link>
+      
+      <Button onClick={() => router.push('/auth')} className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
+      >
+        Log In
+        </Button>
     ) : (
-      <Link onClick={handleLogout} href="/" className="">
+      <Link onClick={handleLogout} href="/" className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
+      >
         <p className="text-sm font-semibold leading-6 text-gray-700 lg:text-white">
           Log Out <span aria-hidden="true">&rarr;</span>
         </p>

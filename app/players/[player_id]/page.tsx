@@ -6,11 +6,10 @@ import Uploader from "@/components/Uploader";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import DeletePost from "@/components/DeletePost";
 import { Button } from "@/components/ui/button";
-import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BackButton from "@/components/BackButton";
+import { RiVideoUploadLine } from "react-icons/ri";
 import { RiDeleteBin5Line } from "react-icons/ri";
-
-import { Car } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,7 +21,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-
 import {
   Card,
   CardContent,
@@ -30,6 +28,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
 import MediaRenderer from "@/components/MediaRenderer";
 import { Suspense } from "react";
 import { Player } from "@/lib/types/types";
@@ -92,8 +91,6 @@ export default async function PlayerPage({
   );
   const playerData: PlayerData = await response.json();
 
-  // Fetch posts (image references) related to the player from the "posts" table
-  // Fetch posts (image references) related to the player from the "posts" table
   const { data: posts, error: postsError } = await supabase
     .from("posts")
     .select("*")
@@ -119,41 +116,142 @@ export default async function PlayerPage({
   };
 
   return (
-    <>
-      <span>
-        <BackButton />
-      </span>
+    <div className="container mx-auto p-4 ">
+      <BackButton />
 
-      <div className="flex flex-col lg:flex-row">
-        <div className="w-full p-5 bg-white rounded-lg shadow-md">
-          <div className="flex flex-col lg:flex-row items-center lg:space-x-4">
-            <Avatar className="w-60 h-60 rounded-lg">
-              <Image
-                alt="Player Avatar"
-                src={playerData.ProfilePic ?? ""}
-                fill={true}
-                style={{
-                  objectFit: "cover",
-                }}
+      <Card className="mt-2">
+  <CardContent className="p-0">
+    <div className="flex flex-col items-center justify-center space-y-4 md:flex-row md:space-y-0 md:space-x-8 p-0">
+      <Avatar className="w-80 h-80 mt-5 md:mt-0 md:w-80 md:h-80 rounded-sm">
+        <AvatarImage
+          src={playerData.ProfilePic ?? ""}
+          alt="Player Avatar"
+          className="rounded-sm object-cover object-center w-full h-full"
+        />
+        <AvatarFallback>
+          {playerData.PlayerName.slice(0, 2).toUpperCase()}
+        </AvatarFallback>
+      </Avatar>
+      <div className="flex-1 text-center md:text-left">
+        <h2 className="text-4xl font-pgFont md:text-6xl font-bold">
+          {playerData?.PlayerName || "N/A"}
+        </h2>
+        <p className="text-md text-gray-500">
+          Player ID: {playerData?.PlayerID || "N/A"}
+        </p>
+        <p className="text-md text-gray-500">
+          Grad Year: {playerData?.GradYear || "N/A"} | Age:{" "}
+          {playerData?.Age || "N/A"}
+        </p>
+        <div className="mt-4 mb-4">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800">
+              <RiVideoUploadLine className="h-6 w-6 mr-2"/>  Upload Media Content
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <Uploader
+                playerid={playerData.PlayerID}
+                FullName={playerData.PlayerName}
               />
-              <AvatarFallback>JP</AvatarFallback>
-            </Avatar>
-            <div className="flex-1 space-y-1">
-              <h2 className="text-5xl font-pgFont font-bold">
-                {playerData?.PlayerName || "N/A"}
-              </h2>
-              <p className="text-md text-gray-500 ">
-                Player ID:{playerData?.PlayerID || "N/A"}
-              </p>
-              <p className="text-md text-gray-500 ">
-                Grad Year:{playerData?.GradYear || "N/A"} | Age:{" "}
-                {playerData?.Age || "N/A"}
-              </p>
-              <div className="space-y-4 pt-5">
+            </DialogContent>
+          </Dialog>
+        </div>
+      </div>
+    </div>
+  </CardContent>
+</Card>
+
+
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="font-pgFont text-4xl">
+              Player Details
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Height</Label>
+                <p className="text-lg">{playerData?.Height || "N/A"}</p>
+              </div>
+              <div>
+                <Label>Weight</Label>
+                <p className="text-lg">{playerData?.Weight || "N/A"} lbs</p>
+              </div>
+              <div>
+                <Label>City</Label>
+                <p className="text-lg">{playerData?.CityState || "N/A"}</p>
+              </div>
+              <div>
+                <Label>College Commitment</Label>
+                <p className="text-lg">{playerData?.Commitment || "N/A"}</p>
+              </div>
+              <div>
+                <Label>High School</Label>
+                <p className="text-lg">{playerData.HighSchool}</p>
+              </div>
+              <div>
+                <Label>National Pos Rank</Label>
+                <p className="text-lg">
+                  {playerData?.NationalPosRank || "N/A"}
+                </p>
+              </div>
+              <div>
+                <Label>State Pos Rank</Label>
+                <p className="text-lg">{playerData?.StatePosRank || "N/A"}</p>
+              </div>
+              <div>
+                <Label>National Rank</Label>
+                <p className="text-lg">{playerData?.NationalRank || "N/A"}</p>
+              </div>
+              <div>
+                <Label>State Rank</Label>
+                <p className="text-lg">{playerData?.StateRank || "N/A"}</p>
+              </div>
+              <div>
+                <Label>Bats/Throws</Label>
+                <p className="text-lg">{playerData?.BatsThrows || "N/A"}</p>
+              </div>
+              <div>
+                <Label>Primary Position</Label>
+                <p className="text-lg">{playerData?.PrimaryPos || "N/A"}</p>
+              </div>
+              <div>
+                <Label>Best PG Grade</Label>
+                <p className="text-lg">{playerData?.bestPGGrade || "N/A"}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="font-pgFont text-4xl">Additional Info</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <Label>Notes</Label>
+                <p className="text-md">{playerData?.Note || "N/A"}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Suspense fallback={<div>Loading...</div>}>
+        <Card className="mt-4">
+          <CardHeader>
+            <CardTitle className="font-pgFont text-4xl">{`${playerData.PlayerName}'s`} Media Content 
+            </CardTitle>
+            <div className="mt-4 mb-4">
                 <Dialog>
-                  <DialogTrigger>
-                    <Button className="px-4 py-2 m-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800">
-                      Upload More Files
+                  <DialogTrigger asChild>
+                    <Button className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800">
+                    <RiVideoUploadLine className="h-6 w-6 mr-2"/>  Upload Media Content
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
@@ -164,151 +262,51 @@ export default async function PlayerPage({
                   </DialogContent>
                 </Dialog>
               </div>
-            </div>
-          </div>
-          <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="space-y-1">
-              <p className="text-sm font-light">Height</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
-                {playerData?.Height || "N/A"}
-              </p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm font-light">Weight</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
-                {playerData?.Weight || "N/A"} lbs
-              </p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm font-light">City</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
-                {playerData?.CityState || "N/A"}
-              </p>
-            </div>
-
-            <div className="space-y-1">
-              <p className="text-sm font-light">College Commitment</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
-                {playerData?.Commitment || "N/A"}{" "}
-              </p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm font-light">Highschool</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
-                {playerData.HighSchool}
-              </p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm font-light">National Pos Rank</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
-                {playerData?.NationalPosRank || "N/A"}
-              </p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm font-light">State Pos Rank</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
-                {playerData?.StatePosRank || "N/A"}
-              </p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm font-light">National Rank</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
-                {playerData?.NationalRank || "N/A"}
-              </p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm font-light">State Rank</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
-                {playerData?.StateRank || "N/A"}
-              </p>
-            </div>
-
-            <div className="space-y-1">
-              <p className="text-sm font-light">Bats/Throws</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
-                {playerData?.BatsThrows || "N/A"}
-              </p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm font-light">Primary Position</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
-                {playerData?.PrimaryPos || "N/A"}
-              </p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm font-light">Best PG Grade</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
-                {playerData?.bestPGGrade || "N/A"}
-              </p>
-            </div>
-          </div>
-          <div className="mt-4 grid grid-cols-2 gap-4">
-            <div className="space-y-1">
-              <p className="text-sm font-light">Best Rank Sort</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
-                {playerData?.BestRankSort || "N/A"}
-              </p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm font-light">Notes</p>
-              <p className="text-2xl font-bold font-pgFont text-gray-500 ">
-                {playerData?.Note || "N/A"}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        <Suspense fallback={<div>Loading...</div>}>
-          <Card className="mt-5 shadow-lg border border-gray-100 min-h-96">
-            <CardHeader>
-              <CardTitle className="font-pgFont">{`Photo and Video Uploads of ${playerData.PlayerName}`}</CardTitle>
-            </CardHeader>
-
-            <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4">
-                {playerSearchProps.posts?.map((post) => (
-                  <div key={post.id} className="relative">
-                    <MediaRenderer file={post} />
-
-                    <div className="absolute top-2 right-2">
-                      <AlertDialog>
-                        <AlertDialogTrigger>
-                          {" "}
-                          <RiDeleteBin5Line className="w-6 h-6 text-white" />
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Are you absolutely sure?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will
-                              permanently delete this file from our servers.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <DeletePost
-                              post_by={post.post_by}
-                              image={post.image}
-                              event_id={post.event_id || ""}
-                            />
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {playerSearchProps.posts?.map((post) => (
+                <div key={post.id} className="relative">
+                  <MediaRenderer file={post} />
+                  <div className="absolute top-2 right-2">
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="ghost" className="text-white">
+                          <RiDeleteBin5Line className="w-6 h-6" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete this file from our servers.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <DeletePost
+                            post_by={post.post_by}
+                            image={post.image}
+                            event_id={post.event_id || ""}
+                          />
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </Suspense>
-      </div>
-    </>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+          
+        </Card>
+      </Suspense>
+    </div>
   );
 }
+
 // Helper function to determine if a file is a video based on its extension
 function isVideoFile(fileName: string) {
   const videoExtensions = [
