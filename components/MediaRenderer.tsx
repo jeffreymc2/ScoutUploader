@@ -130,6 +130,9 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
         >
           {file.isVideo ? (
             thumbnailUrl ? (
+              <div className="absolute inset-0 flex items-center justify-center">
+              <PlayCircleIcon className="w-12 h-12 text-white" />
+            </div>
               <Image
                 src={thumbnailUrl}
                 alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
@@ -137,9 +140,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                 className="rounded-lg object-cover"
               />
             ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <PlayCircleIcon className="w-12 h-12 text-white" />
-              </div>
+             
             )
           ) : (
             <Image
