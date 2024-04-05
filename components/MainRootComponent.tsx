@@ -2,14 +2,15 @@
 import { usePathname } from "next/navigation";
 import React from "react";
 
-export default function MainRootComponent({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function MainRootComponent({ children }: { children: React.ReactNode }) {
   const playerId = "";
   const pathname = usePathname();
-  const mainBgClass = pathname.startsWith("/players") ? "bg-gray-100" : "";
+  
+  const mainBgClass = pathname.startsWith("/players") ||
+                      pathname.startsWith("/events") ||
+                      pathname.startsWith("/profile")
+    ? "bg-gray-100"
+    : "";
 
   return (
     <main className={`space-y-10 px-5 xl:px-0 flex-grow ${mainBgClass}`}>
