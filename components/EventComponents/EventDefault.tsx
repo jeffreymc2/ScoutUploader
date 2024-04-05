@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Team, LiveEventSearch } from "@/lib/types/types";
 import PlayerSearchByNameSkeleton from "@/components/PlayerSearchByNameSkeleton";
+
 import {
   Select,
   SelectTrigger,
@@ -56,17 +57,34 @@ export default function EventDefault() {
   const today = new Date();
   const formattedDate = format(today, "yyyy-MM-dd");
 
+  const fetchTournamentTeams = useCallback(
+    async (eventId: number) => {
+      try {
+        const response = await fetch(`/api/events?query=${eventId}`);
+        const data = await response.json();
+        setTeamsMap((prevTeamsMap) => ({
+          ...prevTeamsMap,
+          [eventId]: data,
+        }));
+      } catch (error) {
+        console.error(`Error fetching tournament teams for event ${eventId}:`, error);
+      }
+    },
+    []
+  );
+
   useEffect(() => {
     const fetchDefaultEvents = async () => {
       try {
-        const response = await fetch(
-          `/api/liveevents?query=${formattedDate}&state`
-        );
+        const response = await fetch(`/api/liveevents?query=${formattedDate}&state`);
         const events: EventSearch[] = await response.json();
-        console;
         if (events.length > 0) {
           setSearchResults(events);
           setFilteredResults(events);
+
+          // Fetch tournament teams for all events
+          events.forEach((event) => fetchTournamentTeams(event.EventID));
+
           setIsLoading(false);
         } else {
           setSearchResults([]);
@@ -79,31 +97,7 @@ export default function EventDefault() {
     };
 
     fetchDefaultEvents();
-  }, []);
-
-  useEffect(() => {
-    const fetchTournamentTeams = async () => {
-      const teamsMapData: { [eventId: number]: Team[] } = {};
-
-      for (const event of searchResults) {
-        try {
-          const response = await fetch(`/api/events?query=${event.EventID}`);
-          const data = await response.json();
-          console.log(data);
-          teamsMapData[event.EventID] = data;
-        } catch (error) {
-          console.error(
-            `Error fetching tournament teams for event ${event.EventID}:`,
-            error
-          );
-        }
-      }
-
-      setTeamsMap(teamsMapData);
-    };
-
-    fetchTournamentTeams();
-  }, [searchResults]);
+  }, [formattedDate, fetchTournamentTeams]);
 
   useEffect(() => {
     if (selectedDivision) {
@@ -221,7 +215,7 @@ export default function EventDefault() {
                           key={team.TournamentTeamID}
                           value={team.TournamentTeamID.toString()}
                         >
-                          Team Name: {team.TournamentTeamName} | Team ID:{" "}
+                        {team.TournamentTeamName} | Team ID:{" "}
                           {team.TournamentTeamID}
                         </SelectItem>
                       ))}

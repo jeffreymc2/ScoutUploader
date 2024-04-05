@@ -166,7 +166,7 @@ export default function EventSearchComponent({ events }: EventSearchProps) {
                 key={team.TournamentTeamID}
                 value={team.TournamentTeamID.toString()}
               >
-                Team Name: {team.TournamentTeamName} | Team Id:{team.TournamentTeamID}
+               {team.TournamentTeamName} | Team Id:{team.TournamentTeamID}
               </SelectItem>
             ))}
           </SelectContent>

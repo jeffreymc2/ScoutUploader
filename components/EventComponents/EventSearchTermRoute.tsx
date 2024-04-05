@@ -182,7 +182,7 @@ export default function EventSearchRoute({ events }: EventSearchProps) {
                 key={team.TournamentTeamID}
                 value={team.TournamentTeamID.toString()}
               >
-                Team Name: {team.TournamentTeamName} | Team ID:{" "}
+              {team.TournamentTeamName} | Team ID:{" "}
                 {team.TournamentTeamID}
               </SelectItem>
             ))}
