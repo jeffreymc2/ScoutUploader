@@ -116,7 +116,7 @@ export default function EventSearch({ teams }: EventSearchProps) {
             <SelectValue className="my-5" placeholder="Select a team" />
           </SelectTrigger>
           <SelectContent>
-          <SelectItem value="no_team" disabled>
+            <SelectItem value="no_team" disabled>
               No team selected
             </SelectItem>
             {searchResults.map((team) => (
@@ -141,7 +141,11 @@ export default function EventSearch({ teams }: EventSearchProps) {
             >
               <div className="w-1/3 md:w-1/2">
                 <Image
-                  src={player.ProfilePic ? player.ProfilePic : "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/default-avatar-photo-placeholder-profile-icon-vector.jpg"}
+                  src={
+                    player.ProfilePic
+                      ? player.ProfilePic
+                      : "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/default-avatar-photo-placeholder-profile-icon-vector.jpg"
+                  }
                   alt={player.PlayerName}
                   width={150}
                   height={150}
