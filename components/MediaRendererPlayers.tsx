@@ -7,12 +7,18 @@ import Image from "next/image";
 import ReactPlayer from "react-player";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { PlayCircleIcon } from "lucide-react";
+import { Button } from "./ui/button";
+import { max } from "lodash";
+import { MdOutlinePreview } from "react-icons/md";
+import { IoCloudDownloadOutline } from "react-icons/io5";
+import { Separator } from "@/components/ui/separator";
 
 interface MediaRendererProps {
   file: {
     id: string;
     image: string;
     post_by: string;
+    name: string;
     event_id?: string;
     isVideo?: boolean;
   };
@@ -69,49 +75,113 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
     }
   }, [file.image, file.isVideo]);
 
+  const handleDownload = () => {
+    fetch(file.image)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = file.name;
+        link.style.display = "none";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((error) => {
+        console.error("Error downloading file:", error);
+      });
+  };
+
+  const imageStyle = {
+    width: "100%",
+    height: "auto",
+    position: "relative!important",
+  };
+
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>
-          <div
-            className="relative aspect-square w-full h-48 cursor-pointer"
-            onClick={() => setIsOpen(true)}
-          >
-            {file.isVideo ? (
-              thumbnailUrl ? (
-                <Image
-                  src={thumbnailUrl}
-                  alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
-                  fill={true}
-                  className="rounded-lg object-cover"
-                />
-              ) : (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <PlayCircleIcon className="w-12 h-12 text-white" />
-                </div>
-              )
+      <Dialog onOpenChange={setIsOpen}>
+        {file.isVideo ? (
+          <DialogContent className="sm:max-w-[66vw]  flex items-center justify-center bg-transparent border-0 border-transparent">
+            <div className="relative w-full h-0 pb-[56.25%]">
+              <ReactPlayer
+                className="rounded-lg absolute top-0 left-0"
+                url={file.image}
+                controls
+                width="100%"
+                height="100%"
+              />
+            </div>
+          </DialogContent>
+        ) : (
+          <DialogContent className=" bg-transparent border-0 border-transparent">
+            <Image
+              src={file.image}
+              alt={`Media posted by ${file.post_by || "Unknown"}`}
+              fill={true}
+              className="rounded-lg object-cover relative"
+            />
+          </DialogContent>
+        )}
+        <div
+          className="relative  w-full h-48 shadow-sm rounded-lg cursor-pointer"
+          onClick={() => setIsOpen(true)}
+        >
+          {file.isVideo ? (
+            thumbnailUrl ? (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <DialogTrigger>
+                  <Image
+                    src={thumbnailUrl}
+                    alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
+                    fill={true}
+                    className="rounded-lg object-cover object-center"
+                  />
+                </DialogTrigger>
+                <DialogTrigger className="z-10">
+                  {" "}
+                  <PlayCircleIcon className="w-12 h-12 text-white z-10" />
+                </DialogTrigger>
+              </div>
             ) : (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <PlayCircleIcon className="w-12 h-12 text-white z-10" />
+              </div>
+            )
+          ) : (
+            <DialogTrigger>
               <Image
                 src={thumbnailUrl}
                 alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
                 fill={true}
-                className="rounded-lg object-cover"
+                className="rounded-sm object-cover object-center"
               />
-            )}
+            </DialogTrigger>
+          )}
+        </div>
+        <div className="flex items-center justify-between gap-2 mt-2">
+          <Separator />
+        </div>
+
+        <div className="flex items-center justify-between gap-2 mt-2">
+          {file.event_id && (
+            <p className="text-sm">Uploaded from Event ID: {file.event_id}</p>
+          )}
+          <div className="flex items-center gap-2">
+            <DialogTrigger>
+              <MdOutlinePreview className="cursor-pointer text-2xl" />
+            </DialogTrigger>
+            <IoCloudDownloadOutline
+              className="cursor-pointer text-2xl"
+              onClick={handleDownload}
+            />
           </div>
-        </DialogTrigger>
-        {file.isVideo && (
-          <DialogContent className="sm:max-w-[425px]">
-            <ReactPlayer url={file.image} controls width="100%" height="auto" />
-          </DialogContent>
-        )}
+        </div>
       </Dialog>
-      {file.event_id && (
-        <p className="text-sm mt-2">Uploaded from Event ID: {file.event_id}</p>
-      )}
     </>
   );
 };
 
 export default MediaRenderer;
-
