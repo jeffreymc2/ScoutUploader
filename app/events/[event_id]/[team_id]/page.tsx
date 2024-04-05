@@ -3,8 +3,8 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Suspense } from "react";
 import { Team, Post, Player } from "@/lib/types/types";
-import EventTeamGallery from "@/components/EventTeamGallery";
-import EventSkeletonLoader from "@/components/EventTeanSkeleton";
+import EventTeamGallery from "@/components/EventComponents/EventTeamGallery";
+import EventSkeletonLoader from "@/components/EventComponents/EventTeanSkeleton";
 
 interface EventTeamPageProps {
   params: {

@@ -38,8 +38,9 @@ export default function EventSearch() {
     const [searchResults, setSearchResults] = useState<EventInfo[]>([]);
     const [selectedEvent, setSelectedEvent] = useState<EventInfo | null>(null);
     const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
-    const [selectedTeams, setSelectedTeams] = useState<Record<number, Team | null>>({});
-    const [teamsData, setTeamsData] = useState<Record<number, Team[]>>({});
+    const [selectedTeams, setSelectedTeams] = useState<{
+      [eventId: number]: Team | null;
+    }>({});    const [teamsData, setTeamsData] = useState<Record<number, Team[]>>({});
 
 
     const router = useRouter();
@@ -167,14 +168,28 @@ export default function EventSearch() {
               </div>
             </div>
             <div className="p-4">
-              <Select
-                value={selectedTeams[event.EventID]?.TeamID?.toString() || ""}
-                onValueChange={(teamId) => handleTeamSelect(event.EventID, teamId)}
-              >
-                <SelectTrigger className="w-full">
+            <Select
+                    onValueChange={(value) => {
+                      const selectedTeam =
+                        teamsMap[event.EventID]?.find(
+                          (team) => team.TournamentTeamID === parseInt(value)
+                        ) || null;
+                      setSelectedTeams((prevState) => ({
+                        ...prevState,
+                        [event.EventID]: selectedTeam,
+                      }));
+                    }}
+                    value={
+                      selectedTeams[event.EventID]?.TournamentTeamID.toString() || "no_selection"
+                    }
+                  >
+                <SelectTrigger >
                   <SelectValue placeholder="Select Team" />
                 </SelectTrigger>
                 <SelectContent>
+                <SelectItem value="no_selection" disabled>
+                        No team selected
+                      </SelectItem>
                   {teamsData[event.EventID]?.map((team) => (
                     <SelectItem key={team.TeamID} value={team.TeamID.toString()}>
                       {team.TeamName}

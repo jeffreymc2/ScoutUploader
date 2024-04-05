@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select";
 import { EventSearch } from "@/lib/types/types";
 import { toast } from "sonner";
-import UploaderEvents from "./UploaderEvents";
+import UploaderEvents from "../UploaderEvents";
 import { Team } from "@/lib/types/types";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 
@@ -121,8 +121,7 @@ export default function EventSearchComponent({ events }: EventSearchProps) {
               ) || null
             )
           }
-          defaultValue={selectedEvent?.EventID.toString()}
-        >
+          value={selectedEvent?.EventID.toString() || "no_event"}    >
           <p className="text-xl text-gray-900 my-2 font-pgFont">
             Select an Event
           </p>
@@ -130,6 +129,9 @@ export default function EventSearchComponent({ events }: EventSearchProps) {
             <SelectValue className="my-5" placeholder="Select an event" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="no_selection" disabled>
+                        No team selected
+                      </SelectItem>
             {searchResults.map((event) => (
               <SelectItem key={event.EventID} value={event.EventID.toString()}>
                 {event.EventName}
@@ -156,6 +158,9 @@ export default function EventSearchComponent({ events }: EventSearchProps) {
             <SelectValue placeholder="Select a team" />
           </SelectTrigger>
           <SelectContent>
+          <SelectItem value="no_selection" disabled>
+                        No team selected
+                      </SelectItem>
             {teams.map((team) => (
               <SelectItem
                 key={team.TournamentTeamID}

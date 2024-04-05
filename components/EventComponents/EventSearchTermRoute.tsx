@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { EventSearch } from "@/lib/types/types";
 import { toast } from "sonner";
-import UploaderEvents from "./UploaderEvents";
+import UploaderEvents from "../UploaderEvents";
 import { Team } from "@/lib/types/types";
 
 import { IoIosCloseCircleOutline } from "react-icons/io";
@@ -56,7 +56,7 @@ export default function EventSearchRoute({ events }: EventSearchProps) {
       console.log(data);
       if (data.length > 0) {
         setSearchResults(data);
-        setSelectedEvent(data[0]);
+        setSelectedEvent(null);
       } else {
         setSearchResults([]);
         setSelectedEvent(null);
@@ -141,15 +141,18 @@ export default function EventSearchRoute({ events }: EventSearchProps) {
               ) || null
             )
           }
-          defaultValue={selectedEvent?.EventID.toString()}
+          value={selectedEvent?.EventID.toString() || "no_event"}
         >
           <p className="text-xl text-gray-900 my-2 font-pgFont">
             Select an Event
           </p>
           <SelectTrigger className="w-full mb-5">
-            <SelectValue className="my-5" placeholder="Select an event" />
+            <SelectValue placeholder="Select an event" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="no_event" disabled>
+              No event selected
+            </SelectItem>
             {searchResults.map((event) => (
               <SelectItem key={event.EventID} value={event.EventID.toString()}>
                 {event.EventName}
@@ -162,7 +165,7 @@ export default function EventSearchRoute({ events }: EventSearchProps) {
       {selectedEvent && teams.length > 0 && (
         <Select
           onValueChange={handleTeamSelect}
-          value={selectedTeam?.TournamentTeamID.toString() || ""}
+          value={selectedTeam?.TournamentTeamID.toString() || "no_team"}
         >
           <p className="text-xl text-gray-900 my-2 font-pgFont">
             Select a Team
@@ -171,6 +174,9 @@ export default function EventSearchRoute({ events }: EventSearchProps) {
             <SelectValue placeholder="Select a team" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="no_team" disabled>
+              No team selected
+            </SelectItem>
             {teams.map((team) => (
               <SelectItem
                 key={team.TournamentTeamID}
@@ -186,16 +192,16 @@ export default function EventSearchRoute({ events }: EventSearchProps) {
 
       {selectedTeam && selectedEvent && (
         <>
-        <Button className="px-4 py-2 mr-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
-          onClick={() =>
-            router.push(
-              `/events/${selectedEvent.EventID}/${selectedTeam.TournamentTeamID}`
-            )
-          }
-        >
-          View Team Gallery
-        </Button>
-        <Button className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800" onClick={() => setIsDialogOpen(true)}>Upload Media</Button>
+          <Button className="px-4 py-2 mr-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
+            onClick={() =>
+              router.push(
+                `/events/${selectedEvent.EventID}/${selectedTeam.TournamentTeamID}`
+              )
+            }
+          >
+            View Team Gallery
+          </Button>
+          <Button className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800" onClick={() => setIsDialogOpen(true)}>Upload Media</Button>
         </>
       )}
       {isDialogOpen && (

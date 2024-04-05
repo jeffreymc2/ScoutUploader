@@ -1,7 +1,7 @@
 // components/SearchComponent.tsx
 "use client";
-import EventSearch from "@/components/EventSearch";
-import EventSearchTerm from "@/components/EventSearchTerm";
+import EventSearch from "@/components/EventComponents/EventSearch";
+import EventSearchTerm from "@/components/EventComponents/EventSearchTerm";
 import PlayerSearch from "@/components/PlayerSearch";
 import PlayerSearchByName from "@/components/PlayerSearchByName";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';

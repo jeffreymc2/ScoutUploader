@@ -1,9 +1,9 @@
 // components/SearchComponent.tsx
 "use client";
 
-import EventSearch from "@/components/EventSearch";
-import EventSearchRoute from "@/components/EventSearchTermRoute";
-import EventSearchByName from "@/components/EventSearchByName";
+import EventSearch from "@/components/EventComponents/EventSearch";
+import EventSearchRoute from "@/components/EventComponents/EventSearchTermRoute";
+import EventSearchByName from "@/components/EventComponents/EventSearchByName";
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Post } from "@/lib/types/types";

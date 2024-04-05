@@ -13,8 +13,8 @@ import { Player, Post } from "@/lib/types/types";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Button } from "./ui/button";
-import MediaRenderer from "./MediaRenderer";
+import { Button } from "../ui/button";
+import MediaRenderer from "../MediaRenderer";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -26,7 +26,7 @@ import {
   AlertDialogFooter,
 } from "@/components/ui/alert-dialog"
 import { RiDeleteBin5Line } from "react-icons/ri";
-import DeletePost from "./DeletePost";
+import DeletePost from "../DeletePost";
 
 interface EventTeamGalleryProps {
   posts: Post[];

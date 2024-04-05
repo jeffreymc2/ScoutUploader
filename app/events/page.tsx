@@ -1,8 +1,8 @@
 // app/page.tsx
 import { supabaseServer } from "@/lib/supabase/server";
-import EventSearchComponent from "@/components/EventSearchComponent";
+import EventSearchComponent from "@/components/EventComponents/EventSearchComponent";
 import React from "react";
-import EventDefault from "@/components/EventDefault";
+import EventDefault from "@/components/EventComponents/EventDefault";
 
 export default async function Page({ searchParams }: { searchParams: any }) {
   const playerId = searchParams.player_id ?? null;

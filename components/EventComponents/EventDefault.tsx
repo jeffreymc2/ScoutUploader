@@ -7,8 +7,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Team, LiveEventSearch } from "@/lib/types/types";
-import PlayerSearchByNameSkeleton from "@/components/PlayerSearchByNameSkeleton"; // Adjust the import path as necessary
-
+import PlayerSearchByNameSkeleton from "@/components/PlayerSearchByNameSkeleton";
 import {
   Select,
   SelectTrigger,
@@ -23,7 +22,7 @@ import {
   DialogHeader,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import UploaderEvents from "./UploaderEvents";
+import UploaderEvents from "../UploaderEvents";
 
 interface EventSearch {
   TournamentTeamName: string;
@@ -44,11 +43,13 @@ interface EventSearch {
 export default function EventDefault() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchResults, setSearchResults] = useState<EventSearch[]>([]);
+  const [filteredResults, setFilteredResults] = useState<EventSearch[]>([]);
   const [selectedTeams, setSelectedTeams] = useState<{
     [eventId: number]: Team | null;
   }>({});
   const [teamsMap, setTeamsMap] = useState<{ [eventId: number]: Team[] }>({});
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedDivision, setSelectedDivision] = useState<string | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<EventSearch | null>(null);
   const router = useRouter();
 
@@ -62,12 +63,14 @@ export default function EventDefault() {
           `/api/liveevents?query=${formattedDate}&state`
         );
         const events: EventSearch[] = await response.json();
-
+        console;
         if (events.length > 0) {
           setSearchResults(events);
+          setFilteredResults(events);
           setIsLoading(false);
         } else {
           setSearchResults([]);
+          setFilteredResults([]);
           toast.info("No default events found.");
         }
       } catch (error) {
@@ -86,6 +89,7 @@ export default function EventDefault() {
         try {
           const response = await fetch(`/api/events?query=${event.EventID}`);
           const data = await response.json();
+          console.log(data);
           teamsMapData[event.EventID] = data;
         } catch (error) {
           console.error(
@@ -100,6 +104,17 @@ export default function EventDefault() {
 
     fetchTournamentTeams();
   }, [searchResults]);
+
+  useEffect(() => {
+    if (selectedDivision) {
+      const filtered = searchResults.filter(
+        (event) => event.Division === selectedDivision
+      );
+      setFilteredResults(filtered);
+    } else {
+      setFilteredResults(searchResults);
+    }
+  }, [selectedDivision, searchResults]);
 
   const handleViewTeamGallery = (eventId: number) => {
     const selectedTeam = selectedTeams[eventId];
@@ -117,11 +132,32 @@ export default function EventDefault() {
 
   return (
     <div className="mt-5">
+      <div className="mb-4">
+        <Select
+          value={selectedDivision || "all"}
+          onValueChange={(value) => setSelectedDivision(value === "all" ? null : value)}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Filter by Division" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Divisions</SelectItem>
+            {[...new Set(searchResults.map((event) => event.Division))].map(
+              (division) => (
+                <SelectItem key={division} value={division}>
+                  {division}
+                </SelectItem>
+              )
+            )}
+          </SelectContent>
+        </Select>
+      </div>
+
       {isLoading ? (
         <PlayerSearchByNameSkeleton />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mt-5 mb-5">
-          {searchResults.map((event) => (
+          {filteredResults.map((event) => (
             <div
               key={event.EventID}
               className="flex flex-col md:flex-row bg-white shadow-md rounded-lg min-h-[240px]"
@@ -150,7 +186,8 @@ export default function EventDefault() {
                     {event.EventName}
                   </h3>
                   <p className="text-sm text-gray-500">
-                    Start Date: {format(new Date(event.StartDate), "MMMM dd, yyyy")}
+                    Start Date:{" "}
+                    {format(new Date(event.StartDate), "MMMM dd, yyyy")}
                   </p>
                   <p className="text-sm text-gray-500">
                     End Date: {format(new Date(event.EndDate), "MMMM dd, yyyy")}
@@ -168,18 +205,24 @@ export default function EventDefault() {
                         [event.EventID]: selectedTeam,
                       }));
                     }}
-                    value={selectedTeams[event.EventID]?.TournamentTeamID.toString() || ""}
+                    value={
+                      selectedTeams[event.EventID]?.TournamentTeamID.toString() || "no_selection"
+                    }
                   >
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger>
                       <SelectValue placeholder="Select a team" />
                     </SelectTrigger>
-                    <SelectContent className="w-dvw	 p-0 flex items-center justify-center">
+                    <SelectContent className="p-0 flex items-center justify-center">
+                      <SelectItem value="no_selection" disabled>
+                        No team selected
+                      </SelectItem>
                       {teamsMap[event.EventID]?.map((team) => (
                         <SelectItem
                           key={team.TournamentTeamID}
                           value={team.TournamentTeamID.toString()}
                         >
-                          Team Name: {team.TournamentTeamName} | Team ID: {team.TournamentTeamID}
+                          Team Name: {team.TournamentTeamName} | Team ID:{" "}
+                          {team.TournamentTeamID}
                         </SelectItem>
                       ))}
                     </SelectContent>

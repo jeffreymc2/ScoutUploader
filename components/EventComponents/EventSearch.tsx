@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Team, Player } from "@/lib/types/types";
-import Uploader from "./Uploader";
+import Uploader from "../Uploader";
 import {
   Dialog,
   DialogContent,
@@ -106,7 +106,7 @@ export default function EventSearch({ teams }: EventSearchProps) {
               ) || null
             )
           }
-          defaultValue={selectedTeam?.TournamentTeamID.toString()}
+          value={selectedTeam?.TournamentTeamID.toString() || "no_team"}
         >
           {" "}
           <p className="text-xl text-gray-900 my-2 font-pgFont">
@@ -116,6 +116,9 @@ export default function EventSearch({ teams }: EventSearchProps) {
             <SelectValue className="my-5" placeholder="Select a team" />
           </SelectTrigger>
           <SelectContent>
+          <SelectItem value="no_team" disabled>
+              No team selected
+            </SelectItem>
             {searchResults.map((team) => (
               <SelectItem
                 key={team.TournamentTeamID}

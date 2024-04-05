@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Suspense } from "react";
 // import BackButton from "@/components/BackButton";
 import { Team, Post, Player } from "@/lib/types/types";
-import EventTeamGallery from "@/components/EventTeamGallery";
+import EventTeamGallery from "@/components/EventComponents/EventTeamGallery";
 
 interface EventTeamPageProps {
   params: {
