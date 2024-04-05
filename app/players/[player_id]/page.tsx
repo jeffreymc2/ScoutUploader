@@ -271,9 +271,7 @@ export default async function PlayerPage({
                   <div className="absolute top-2 ">
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                      <AlertDialogTrigger>
                     <RiDeleteBin5Line className="w-6 h-6 text-gray-900 absolute top-[200px] left-[35px]" />
-                </AlertDialogTrigger>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
