@@ -44,12 +44,7 @@ export default function EventSearch({ teams }: EventSearchProps) {
       toast.info("Please enter an event id to search.");
       return;
     }
-
-          // Check if the searchQuery is a number
-  if (isNaN(Number(searchQuery))) {
-    toast.error("Please enter an event ID. Click the tab above to search by event name.");
-    return;
-  }
+    
 
     try {
       const res = await fetch(
@@ -62,8 +57,7 @@ export default function EventSearch({ teams }: EventSearchProps) {
         setSelectedTeam(data[0]);
       } else {
         setSearchResults([]);
-        setSelectedEvent(null);
-        toast.info("No events found for the searched query.");
+        setSelectedTeam(null);
       }
     } catch (error: any) {
       toast.error("Error searching events:", error.message);
