@@ -11,6 +11,8 @@ import { Button } from "./ui/button";
 import { max } from "lodash";
 import { MdOutlinePreview } from "react-icons/md";
 import { IoCloudDownloadOutline } from "react-icons/io5";
+import { Separator } from "@/components/ui/separator"
+
 
 interface MediaRendererProps {
   file: {
@@ -115,12 +117,12 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
           </div>
         </DialogContent>
       ) : (
-        <DialogContent className="min-h-[50vh] sm:min-w-[66vw] sm:min-h-[66vh] bg-transparent">
+        <DialogContent className="min-h-[50vh] sm:min-w-[66vw] sm:min-h-[66vh] bg-transparent border-0 border-transparent">
           <Image
             src={file.image}
             alt={`Media posted by ${file.post_by || "Unknown"}`}
             fill={true}
-            className="rounded-lg object-cover relative"
+            className="rounded-lg object-contain relative"
           />
         </DialogContent>
         )}
@@ -130,32 +132,40 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
         >
           {file.isVideo ? (
             thumbnailUrl ? (
-              <div className="absolute inset-0 flex items-center justify-center">
-              <PlayCircleIcon className="w-12 h-12 text-white" />
-            </div>
+              
               <Image
                 src={thumbnailUrl}
                 alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
                 fill={true}
-                className="rounded-lg object-cover"
+                className="rounded-lg object-contain"
               />
+              
             ) : (
-             
+              <div className="absolute inset-0 flex items-center justify-center">
+                <PlayCircleIcon className="w-12 h-12 text-white" />
+              </div>
             )
           ) : (
             <Image
               src={thumbnailUrl}
               alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
               fill={true}
-              className="rounded-lg object-cover"
+              className="rounded-sm object-contain bg-gray-200"
             />
           )}
+
         </div>
+        <Separator />
+
         <div className="flex items-center justify-between gap-2 mt-2">
           {file.event_id && (
+            
             <p className="text-sm">Uploaded from Event ID: {file.event_id}</p>
+            
           )}
+          
           <div className="flex items-center gap-2">
+            
             <DialogTrigger>
               <MdOutlinePreview className="cursor-pointer text-2xl" />
             </DialogTrigger>
