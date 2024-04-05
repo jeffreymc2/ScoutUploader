@@ -121,7 +121,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
               src={file.image}
               alt={`Media posted by ${file.post_by || "Unknown"}`}
               fill={true}
-              className="rounded-lg object-cover relative"
+              className="rounded-lg object-contain relative"
             />
           </DialogContent>
         )}

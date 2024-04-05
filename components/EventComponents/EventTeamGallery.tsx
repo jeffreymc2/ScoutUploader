@@ -88,7 +88,7 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
               <MediaRenderer file={post} />
               <AlertDialog>
                 <AlertDialogTrigger>
-                    <RiDeleteBin5Line className="w-6 h-6 text-gray-900 absolute top-[208px] right-[65px]" />
+                    <RiDeleteBin5Line className="w-6 h-6 text-gray-900 absolute top-[208px] left-[30px]" />
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   

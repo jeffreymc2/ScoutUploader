@@ -268,11 +268,11 @@ export default async function PlayerPage({
               {playerSearchProps.posts?.map((post) => (
                 <div key={post.id} className="relative">
                   <MediaRenderer file={post} />
-                  <div className="absolute top-2 right-2">
+                  <div className="absolute top-2 ">
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                       <AlertDialogTrigger>
-                    <RiDeleteBin5Line className="w-6 h-6 text-gray-900 absolute top-[200px] right-[160px]" />
+                    <RiDeleteBin5Line className="w-6 h-6 text-gray-900 absolute top-[200px] left-[35px]" />
                 </AlertDialogTrigger>
                       </AlertDialogTrigger>
                       <AlertDialogContent>
@@ -300,7 +300,6 @@ export default async function PlayerPage({
               ))}
             </div>
           </CardContent>
-          
         </Card>
       </Suspense>
     </div>
