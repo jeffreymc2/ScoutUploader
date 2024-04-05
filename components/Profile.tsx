@@ -42,12 +42,10 @@ export default function Profile() {
         Log In
         </Button>
     ) : (
-      <Link onClick={handleLogout} href="/" className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
+      <Button onClick={handleLogout} className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
       >
-        <p className="text-sm font-semibold leading-6 text-gray-700 lg:text-white">
-          Log Out <span aria-hidden="true">&rarr;</span>
-        </p>
-      </Link>
+        Log Out
+      </Button>
     )}
   </div>
   );
