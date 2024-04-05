@@ -47,19 +47,24 @@ export default function EventSearchRoute({ events }: EventSearchProps) {
       toast.info("Please enter an event name to search.");
       return;
     }
-
+  
+    // Check if the searchQuery is a number
+    if (!isNaN(Number(searchQuery))) {
+      toast.error("Please enter an event name, not an ID. Click the tab above to search by ID.");
+      return;
+    }
+  
     try {
-      const res = await fetch(
-        `/api/eventsearch?query=${encodeURIComponent(searchQuery)}`
-      );
+      const res = await fetch(`/api/eventsearch?query=${encodeURIComponent(searchQuery)}`);
       const data = await res.json();
-      console.log(data);
+  
       if (data.length > 0) {
         setSearchResults(data);
         setSelectedEvent(null);
       } else {
         setSearchResults([]);
         setSelectedEvent(null);
+        toast.info("No events found for the searched query.");
       }
     } catch (error: any) {
       toast.error("Error searching events:", error.message);
