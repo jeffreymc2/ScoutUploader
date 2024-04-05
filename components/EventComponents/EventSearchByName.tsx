@@ -168,21 +168,10 @@ export default function EventSearch() {
               </div>
             </div>
             <div className="p-4">
-            <Select
-                    onValueChange={(value) => {
-                      const selectedTeam =
-                        teamsMap[event.EventID]?.find(
-                          (team) => team.TournamentTeamID === parseInt(value)
-                        ) || null;
-                      setSelectedTeams((prevState) => ({
-                        ...prevState,
-                        [event.EventID]: selectedTeam,
-                      }));
-                    }}
-                    value={
-                      selectedTeams[event.EventID]?.TournamentTeamID.toString() || "no_selection"
-                    }
-                  >
+              <Select
+                value={selectedTeams[event.EventID]?.TeamID?.toString() || ""}
+                onValueChange={(teamId) => handleTeamSelect(event.EventID, teamId)}
+              >
                 <SelectTrigger >
                   <SelectValue placeholder="Select Team" />
                 </SelectTrigger>
