@@ -10,8 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BackButton from "@/components/BackButton";
 import { RiVideoUploadLine } from "react-icons/ri";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import ScreenRecorder from "@/components/ScreenRecorder";
-import { useUser } from "@/app/hook/useUser";
+import ScreenRecorder from '@/components/ScreenRecorder';
+import { User, useUser } from '@/app/hook/useUser';
 
 import {
   AlertDialog,
