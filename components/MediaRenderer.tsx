@@ -13,6 +13,7 @@ import { MdOutlinePreview } from "react-icons/md";
 import { IoCloudDownloadOutline } from "react-icons/io5";
 import { Separator } from "@/components/ui/separator";
 
+
 interface MediaRendererProps {
   file: {
     id: string;
@@ -165,8 +166,10 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
           <Separator />
         </div>
 
-        <div className="flex items-center justify-start gap-2 mt-2">
-         
+        <div className="flex items-center justify-between gap-2 mt-2">
+          {file.event_id && (
+            <p className="text-sm">Uploaded from Event ID: {file.event_id}</p>
+          )}
           <div className="flex items-center gap-2">
             {/* <DialogTrigger>
               <MdOutlinePreview className="cursor-pointer text-2xl" />
@@ -176,11 +179,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
               onClick={handleDownload}
             />
           </div>
-          
         </div>
-        {file.event_id && (
-            <p className="text-sm mt-2">Uploaded from Event ID: {file.event_id}</p>
-          )}
       </Dialog>
     </>
   );
