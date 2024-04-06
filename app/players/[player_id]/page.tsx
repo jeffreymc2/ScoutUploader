@@ -249,7 +249,7 @@ export default async function PlayerPage({
         </Card>
       </div>
 
-      <Card className="min-h-[500px] min-w-[600px] mt-4 rounded-md">
+      <Card className="min-h-[650px] md:min-h-[470px] md:min-w-[600px] mt-4 rounded-md">
         <CardHeader className="mb-0 py-5 px-5 bg-gradient-to-b from-gray-200 to-whit1 rounded-t-md">
           <Image
             src="https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_horizontal_primary%20(3).png"
@@ -262,7 +262,7 @@ export default async function PlayerPage({
         <CardContent className="mt-5 rounded-b-md">
   <iframe
     src={url.toString()}
-    className="w-full mt-0 rounded-b-md min-h-[750px] md:min-h-[470px]"
+    className="w-full mt-0 rounded-b-md min-h-[650px] md:min-h-[470px]"
     id="ContentTopLevel_ContentPlaceHolder1_ifDesktop"
     frameBorder="0"
     allowFullScreen
