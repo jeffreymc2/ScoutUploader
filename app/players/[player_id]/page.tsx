@@ -10,11 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BackButton from "@/components/BackButton";
 import { RiVideoUploadLine } from "react-icons/ri";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import ScreenRecorder from '@/components/ScreenRecorder';
-import { useUser } from '@/app/hook/useUser';
-
-
-
+import ScreenRecorder from "@/components/ScreenRecorder";
+import { useUser } from "@/app/hook/useUser";
 
 import {
   AlertDialog,
@@ -85,9 +82,6 @@ interface PlayerSearchProps {
   eventId?: string;
 }
 
-
-
-
 export default async function PlayerPage({
   params,
 }: {
@@ -101,13 +95,13 @@ export default async function PlayerPage({
   const playerData: any = await response.json();
 
   const { data: posts, error: postsError } = await supabase
-    .from('posts')
-    .select('*')
-    .eq('player_id', playerData.PlayerID)
-    .order('created_at', { ascending: false });
+    .from("posts")
+    .select("*")
+    .eq("player_id", playerData.PlayerID)
+    .order("created_at", { ascending: false });
 
   if (postsError) {
-    console.error('Error fetching images:', postsError);
+    console.error("Error fetching images:", postsError);
     return <div>Error fetching images</div>;
   }
 
@@ -270,14 +264,13 @@ export default async function PlayerPage({
         <CardContent id="dkplus" className="mt-5 rounded-b-md">
           <iframe
             src={url.toString()}
-            className="w-full min-h-[450px]"
+            className="w-full min-h-[450px] embed-responsive-item w-full h-[470px] mt-0 rounded-b-md"
             id="ContentTopLevel_ContentPlaceHolder1_ifDesktop"
-            className="embed-responsive-item w-full h-[470px] mt-0 rounded-b-md"
             frameBorder="0"
             allowFullScreen
             name="638479303817445795"
           />
-      <ScreenRecorder playerID={playerData.PlayerID} user={null} />
+          <ScreenRecorder playerID={playerData.PlayerID} user={null} />
         </CardContent>
       </Card>
       <Suspense fallback={<div>Loading...</div>}>
