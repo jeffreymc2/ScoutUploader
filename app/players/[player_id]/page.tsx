@@ -260,16 +260,15 @@ export default async function PlayerPage({
           />
         </CardHeader>
         <CardContent className="mt-5 rounded-b-md">
-          <iframe
-            src={url.toString()}
-            className="w-full min-h-[450px]"
-            id="ContentTopLevel_ContentPlaceHolder1_ifDesktop"
-            className="embed-responsive-item w-full h-[470px] mt-0 rounded-b-md"
-            frameBorder="0"
-            allowFullScreen
-            name="638479303817445795"
-          />
-        </CardContent>
+  <iframe
+    src={url.toString()}
+    className="w-full mt-0 rounded-b-md min-h-[750px] md:min-h-[470px]"
+    id="ContentTopLevel_ContentPlaceHolder1_ifDesktop"
+    frameBorder="0"
+    allowFullScreen
+    name="638479303817445795"
+  />
+</CardContent>
       </Card>
       <Suspense fallback={<div>Loading...</div>}>
         <Card className="mt-4">
