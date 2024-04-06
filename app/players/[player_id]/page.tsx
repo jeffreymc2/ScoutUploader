@@ -10,6 +10,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BackButton from "@/components/BackButton";
 import { RiVideoUploadLine } from "react-icons/ri";
 import { RiDeleteBin5Line } from "react-icons/ri";
+import ScreenRecorder from '@/components/ScreenRecorder';
+import { useUser } from '@/app/hook/useUser';
+
+
+
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,6 +38,7 @@ import { Label } from "@/components/ui/label";
 import MediaRenderer from "@/components/MediaRenderer";
 import { Suspense } from "react";
 import { Player } from "@/lib/types/types";
+import DiamondKastVideo from "@/components/DiamondKastVideo";
 
 interface PlayerData {
   PlayerID: number;
@@ -78,6 +85,9 @@ interface PlayerSearchProps {
   eventId?: string;
 }
 
+
+
+
 export default async function PlayerPage({
   params,
 }: {
@@ -85,20 +95,19 @@ export default async function PlayerPage({
 }) {
   const player_id = params.player_id;
   const supabase = supabaseServer();
-
   const response = await fetch(
     process.env.NEXT_PUBLIC_URL + `/api/players?playerID=${player_id}`
   );
-  const playerData: PlayerData = await response.json();
+  const playerData: any = await response.json();
 
   const { data: posts, error: postsError } = await supabase
-    .from("posts")
-    .select("*")
-    .eq("player_id", playerData.PlayerID)
-    .order("created_at", { ascending: false });
+    .from('posts')
+    .select('*')
+    .eq('player_id', playerData.PlayerID)
+    .order('created_at', { ascending: false });
 
   if (postsError) {
-    console.error("Error fetching images:", postsError);
+    console.error('Error fetching images:', postsError);
     return <div>Error fetching images</div>;
   }
 
@@ -115,54 +124,58 @@ export default async function PlayerPage({
     eventId: "",
   };
 
+  const url = new URL(
+    `https://dk.perfectgame.org/players/${playerData.PlayerID}?ms=638479303817445795&sk=5p030Qdbe1E=&hst=`
+  );
+
   return (
     <div className="container mx-auto p-4 ">
       <BackButton />
 
       <Card className="mt-2">
-  <CardContent className="p-0">
-    <div className="flex flex-col items-center justify-center space-y-4 md:flex-row md:space-y-0 md:space-x-8 p-0">
-      <Avatar className="w-80 h-80 mt-5 md:mt-0 md:w-80 md:h-80 rounded-sm">
-        <AvatarImage
-          src={playerData.ProfilePic ?? ""}
-          alt="Player Avatar"
-          className="rounded-sm object-cover object-center w-full h-full"
-        />
-        <AvatarFallback>
-          {playerData.PlayerName.slice(0, 2).toUpperCase()}
-        </AvatarFallback>
-      </Avatar>
-      <div className="flex-1 text-center md:text-left">
-        <h2 className="text-4xl font-pgFont md:text-6xl font-bold">
-          {playerData?.PlayerName || "N/A"}
-        </h2>
-        <p className="text-md text-gray-500">
-          Player ID: {playerData?.PlayerID || "N/A"}
-        </p>
-        <p className="text-md text-gray-500">
-          Grad Year: {playerData?.GradYear || "N/A"} | Age:{" "}
-          {playerData?.Age || "N/A"}
-        </p>
-        <div className="mt-4 mb-4">
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800">
-              <RiVideoUploadLine className="h-6 w-6 mr-2"/>  Upload Media Content
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <Uploader
-                playerid={playerData.PlayerID}
-                FullName={playerData.PlayerName}
+        <CardContent className="p-0">
+          <div className="flex flex-col items-center justify-center space-y-4 md:flex-row md:space-y-0 md:space-x-8 p-0">
+            <Avatar className="w-80 h-80 mt-5 md:mt-0 md:w-80 md:h-80 rounded-sm">
+              <AvatarImage
+                src={playerData.ProfilePic ?? ""}
+                alt="Player Avatar"
+                className="rounded-sm object-cover object-center w-full h-full"
               />
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
-    </div>
-  </CardContent>
-</Card>
-
+              <AvatarFallback>
+                {playerData.PlayerName.slice(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 text-center md:text-left">
+              <h2 className="text-4xl font-pgFont md:text-6xl font-bold">
+                {playerData?.PlayerName || "N/A"}
+              </h2>
+              <p className="text-md text-gray-500">
+                Player ID: {playerData?.PlayerID || "N/A"}
+              </p>
+              <p className="text-md text-gray-500">
+                Grad Year: {playerData?.GradYear || "N/A"} | Age:{" "}
+                {playerData?.Age || "N/A"}
+              </p>
+              <div className="mt-4 mb-4">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800">
+                      <RiVideoUploadLine className="h-6 w-6 mr-2" /> Upload
+                      Media Content
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <Uploader
+                      playerid={playerData.PlayerID}
+                      FullName={playerData.PlayerName}
+                    />
+                  </DialogContent>
+                </Dialog>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
@@ -229,7 +242,9 @@ export default async function PlayerPage({
 
         <Card>
           <CardHeader>
-            <CardTitle className="font-pgFont text-4xl">Additional Info</CardTitle>
+            <CardTitle className="font-pgFont text-4xl">
+              Additional Info
+            </CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-4">
@@ -242,26 +257,51 @@ export default async function PlayerPage({
         </Card>
       </div>
 
+      <Card className="min-h-[500px] min-w-[600px] mt-4 rounded-md">
+        <CardHeader className="mb-0 py-5 px-5 bg-gradient-to-b from-gray-200 to-gray-100 rounded-t-md">
+          <Image
+            src="https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_horizontal_primary%20(3).png"
+            alt="DiamondKast Logo"
+            width={300}
+            height={500}
+            className="object-cover object-center mb-2"
+          />
+        </CardHeader>
+        <CardContent id="dkplus" className="mt-5 rounded-b-md">
+          <iframe
+            src={url.toString()}
+            className="w-full min-h-[450px]"
+            id="ContentTopLevel_ContentPlaceHolder1_ifDesktop"
+            className="embed-responsive-item w-full h-[470px] mt-0 rounded-b-md"
+            frameBorder="0"
+            allowFullScreen
+            name="638479303817445795"
+          />
+      <ScreenRecorder playerID={playerData.PlayerID} user={null} />
+        </CardContent>
+      </Card>
       <Suspense fallback={<div>Loading...</div>}>
         <Card className="mt-4">
           <CardHeader>
-            <CardTitle className="font-pgFont text-4xl">{`${playerData.PlayerName}'s`} Media Content 
+            <CardTitle className="font-pgFont text-4xl">
+              {`${playerData.PlayerName}'s`} Media Content
             </CardTitle>
             <div className="mt-4 mb-4">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800">
-                    <RiVideoUploadLine className="h-6 w-6 mr-2"/>  Upload Media Content
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <Uploader
-                      playerid={playerData.PlayerID}
-                      FullName={playerData.PlayerName}
-                    />
-                  </DialogContent>
-                </Dialog>
-              </div>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800">
+                    <RiVideoUploadLine className="h-6 w-6 mr-2" /> Upload Media
+                    Content
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <Uploader
+                    playerid={playerData.PlayerID}
+                    FullName={playerData.PlayerName}
+                  />
+                </DialogContent>
+              </Dialog>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -271,7 +311,7 @@ export default async function PlayerPage({
                   <div className="absolute top-2 ">
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                    <RiDeleteBin5Line className="w-6 h-6 text-gray-900 absolute top-[200px] left-[35px]" />
+                        <RiDeleteBin5Line className="w-6 h-6 text-gray-900 absolute top-[200px] left-[35px]" />
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                         <AlertDialogHeader>
