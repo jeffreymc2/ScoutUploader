@@ -78,23 +78,29 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
           
               canvas.toBlob(async (blob) => {
                 if (blob) {
-                  const { data, error } = await supabase.storage
-                    .from("thumbnails")
-                    .upload(`${file.id}.png`, blob);
-          
-                  if (error) {
-                    console.error("Error uploading thumbnail:", error);
-                  } else {
-                    console.log("Thumbnail uploaded successfully");
-          
-                    const { data: urlData } = supabase.storage
+                  try {
+                    const { data, error } = await supabase.storage
                       .from("thumbnails")
-                      .getPublicUrl(`${file.id}.png`);
+                      .upload(`${file.id}.png`, blob);
           
-                    if (urlData) {
-                      console.log("Public URL:", urlData?.publicUrl);
-                      setThumbnailUrl(urlData?.publicUrl || "");
+                    if (error) {
+                      console.error("Error uploading thumbnail:", error);
+                    } else {
+                      console.log("Thumbnail uploaded successfully");
+          
+                      try {
+                        const { data: urlData } = supabase.storage
+                          .from("thumbnails")
+                          .getPublicUrl(`${file.id}.png`);
+          
+                        console.log("Public URL:", urlData.publicUrl);
+                        setThumbnailUrl(urlData.publicUrl);
+                      } catch (error) {
+                        console.error("Error getting public URL:", error);
+                      }
                     }
+                  } catch (error) {
+                    console.error("Error uploading thumbnail:", error);
                   }
                 } else {
                   console.warn("Failed to create thumbnail blob");
