@@ -84,6 +84,9 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         objectName: `${user.id}/${player_id}/${fileNameWithUUID}`,
         contentType: file.type,
       };
+
+      console.log("File meta", file.meta);
+      console.log(user.id);
     } else {
       console.error("User or user.id is undefined");
       // Handle the case when user or user.id is undefined
