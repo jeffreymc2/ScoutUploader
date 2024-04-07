@@ -1,4 +1,4 @@
-//app/components/MediaRenderer.tsx
+// app/components/MediaRenderer.tsx
 
 "use client";
 
@@ -12,7 +12,9 @@ import { max } from "lodash";
 import { MdOutlinePreview } from "react-icons/md";
 import { IoCloudDownloadOutline } from "react-icons/io5";
 import { Separator } from "@/components/ui/separator";
+import { supabaseBrowser } from "@/lib/supabase/browser";
 
+const supabase = supabaseBrowser();
 
 interface MediaRendererProps {
   file: {
@@ -30,51 +32,95 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   const [thumbnailUrl, setThumbnailUrl] = useState("");
 
   useEffect(() => {
-    if (file.isVideo) {
-      const video = document.createElement("video");
-      video.src = file.image;
-      video.crossOrigin = "anonymous"; // Ensure CORS policies allow this
-      video.preload = "metadata";
-      video.style.position = "absolute";
-      video.style.width = "0";
-      video.style.height = "0";
-      video.style.top = "0";
-      video.style.left = "-10000px"; // Off-screen
+    const fetchThumbnail = async () => {
+      if (file.isVideo) {
+        // Check if thumbnail exists in Supabase storage
+        const { data: thumbnailData, error: thumbnailError } = await supabase.storage
+          .from("thumbnails")
+          .download(`${file.id}.png`);
 
-      // Append the video to the body to ensure it's part of the DOM
-      document.body.appendChild(video);
+        if (thumbnailData) {
+          // Thumbnail exists, set the URL
+          const url = URL.createObjectURL(thumbnailData);
+          setThumbnailUrl(url);
+        } else {
+          // Thumbnail doesn't exist, generate and save it
+          const video = document.createElement("video");
+          video.src = file.image;
+          video.crossOrigin = "anonymous";
+          video.preload = "metadata";
+          video.style.position = "absolute";
+          video.style.width = "0";
+          video.style.height = "0";
+          video.style.top = "0";
+          video.style.left = "-10000px";
 
-      video.onloadedmetadata = () => {
-        // After metadata loads, seek to a frame
-        video.currentTime = 1;
-      };
+          document.body.appendChild(video);
 
-      video.onseeked = () => {
-        // Introduce a slight delay before capturing the thumbnail
-        setTimeout(() => {
-          const canvas = document.createElement("canvas");
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          const ctx = canvas.getContext("2d");
-          ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
-          const thumbnail = canvas.toDataURL("image/png");
-          setThumbnailUrl(thumbnail);
+          video.onloadedmetadata = () => {
+            video.currentTime = 1;
+          };
 
-          // Remove the video element after capturing the thumbnail
-          document.body.removeChild(video);
-        }, 1000); // Adjust delay as necessary
-      };
+          video.onseeked = async () => {
+            setTimeout(async () => {
+              if (Math.abs(video.currentTime - 1) > 0.1) {
+                console.warn("Video seeked to an unexpected time. Current time:", video.currentTime);
+              }
+          
+              const canvas = document.createElement("canvas");
+              canvas.width = video.videoWidth;
+              canvas.height = video.videoHeight;
+              const ctx = canvas.getContext("2d");
+              ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
+          
+              // Temporarily add the canvas to the DOM for visual inspection
+              document.body.appendChild(canvas);
+          
+              canvas.toBlob(async (blob) => {
+                if (blob) {
+                  const { data, error } = await supabase.storage
+                    .from("thumbnails")
+                    .upload(`${file.id}.png`, blob);
+          
+                  if (error) {
+                    console.error("Error uploading thumbnail:", error);
+                  } else {
+                    console.log("Thumbnail uploaded successfully");
+          
+                    const { data: urlData } = supabase.storage
+                      .from("thumbnails")
+                      .getPublicUrl(`${file.id}.png`);
+          
+                    if (urlData) {
+                      console.log("Public URL:", urlData?.publicUrl);
+                      setThumbnailUrl(urlData?.publicUrl || "");
+                    }
+                  }
+                } else {
+                  console.warn("Failed to create thumbnail blob");
+                }
+          
+                // Remove the canvas from the DOM after inspection
+                document.body.removeChild(canvas);
+              }, "image/png");
+          
+              document.body.removeChild(video);
+            }, 1000);
+          };
+          
 
-      video.onerror = () => {
-        console.error("Error loading video for thumbnail generation");
-        // Consider removing the video element in case of error as well
-        document.body.removeChild(video);
-      };
-    } else {
-      // Directly set the thumbnailUrl for non-video files
-      setThumbnailUrl(file.image);
-    }
-  }, [file.image, file.isVideo]);
+          video.onerror = () => {
+            console.error("Error loading video for thumbnail generation");
+            document.body.removeChild(video);
+          };
+        }
+      } else {
+        setThumbnailUrl(file.image);
+      }
+    };
+
+    fetchThumbnail();
+  }, [file.id, file.image, file.isVideo]);
 
   const handleDownload = () => {
     fetch(file.image)
@@ -105,7 +151,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
     <>
       <Dialog onOpenChange={setIsOpen}>
         {file.isVideo ? (
-          <DialogContent className="sm:max-w-[66vw]  flex items-center justify-center bg-transparent border-0 border-transparent">
+          <DialogContent className="sm:max-w-[66vw] flex items-center justify-center bg-transparent border-0 border-transparent">
             <div className="relative w-full h-0 pb-[56.25%]">
               <ReactPlayer
                 className="rounded-lg absolute top-0 left-0"
@@ -117,17 +163,17 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             </div>
           </DialogContent>
         ) : (
-          <DialogContent className="min-h-[50vh]  sm:min-h-[66vh] bg-transparent border-0 border-transparent">
+          <DialogContent className="min-h-[70vh] sm:min-h-[66vh] bg-transparent border-0 border-transparent">
             <Image
               src={file.image}
               alt={`Media posted by ${file.post_by || "Unknown"}`}
               fill={true}
-              className="rounded-lg object-contain relative"
+              className="rounded-sm object-contain"
             />
           </DialogContent>
         )}
         <div
-          className="relative  w-full h-48 shadow-sm rounded-lg cursor-pointer"
+          className="relative w-full h-48 shadow-sm rounded-lg cursor-pointer"
           onClick={() => setIsOpen(true)}
         >
           {file.isVideo ? (
@@ -138,11 +184,10 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                     src={thumbnailUrl}
                     alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
                     fill={true}
-                    className="rounded-lg object-contain"
+                    className="rounded-sm object-cover object-center"
                   />
                 </DialogTrigger>
                 <DialogTrigger className="z-10">
-                  {" "}
                   <PlayCircleIcon className="w-12 h-12 text-white z-10" />
                 </DialogTrigger>
               </div>
@@ -157,7 +202,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                 src={thumbnailUrl}
                 alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
                 fill={true}
-                className="rounded-sm object-contain"
+                className="rounded-sm object-cover object-top"
               />
             </DialogTrigger>
           )}
@@ -165,21 +210,17 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
         <div className="flex items-center justify-between gap-2 mt-2">
           <Separator />
         </div>
-
         <div className="flex items-center justify-between gap-2 mt-2">
-          {file.event_id && (
-            <p className="text-sm">Uploaded from Event ID: {file.event_id}</p>
-          )}
           <div className="flex items-center gap-2">
-            {/* <DialogTrigger>
-              <MdOutlinePreview className="cursor-pointer text-2xl" />
-            </DialogTrigger> */}
             <IoCloudDownloadOutline
               className="cursor-pointer text-2xl"
               onClick={handleDownload}
             />
           </div>
         </div>
+        {file.event_id && (
+          <p className="text-sm">Uploaded from Event ID: {file.event_id}</p>
+        )}
       </Dialog>
     </>
   );
