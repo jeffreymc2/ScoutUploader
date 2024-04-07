@@ -334,10 +334,8 @@ export default async function PlayerPage({
   );
 }
 
-function isVideoFile(fileName: string | undefined | null) {
-  if (!fileName) {
-    return false;
-  }
+// Helper function to determine if a file is a video based on its extension
+function isVideoFile(fileName: string) {
   const videoExtensions = [
     ".mp4",
     ".webm",
