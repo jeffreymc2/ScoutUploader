@@ -7,9 +7,6 @@ import Image from "next/image";
 import ReactPlayer from "react-player";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { PlayCircleIcon } from "lucide-react";
-import { Button } from "./ui/button";
-import { max } from "lodash";
-import { MdOutlinePreview } from "react-icons/md";
 import { IoCloudDownloadOutline } from "react-icons/io5";
 import { Separator } from "@/components/ui/separator";
 import { supabaseBrowser } from "@/lib/supabase/browser";
@@ -24,109 +21,12 @@ interface MediaRendererProps {
     name: string;
     event_id?: string;
     isVideo?: boolean;
+    thumbnail_url?: string;
   };
 }
 
 const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [thumbnailUrl, setThumbnailUrl] = useState("");
-
-  useEffect(() => {
-    const fetchThumbnail = async () => {
-      if (file.isVideo) {
-        // Check if thumbnail exists in Supabase storage
-        const { data: thumbnailData, error: thumbnailError } = await supabase.storage
-          .from("thumbnails")
-          .download(`${file.id}.png`);
-
-        if (thumbnailData) {
-          // Thumbnail exists, set the URL
-          const url = URL.createObjectURL(thumbnailData);
-          setThumbnailUrl(url);
-        } else {
-          // Thumbnail doesn't exist, generate and save it
-          const video = document.createElement("video");
-          video.src = file.image;
-          video.crossOrigin = "anonymous";
-          video.preload = "metadata";
-          video.style.position = "absolute";
-          video.style.width = "0";
-          video.style.height = "0";
-          video.style.top = "0";
-          video.style.left = "-10000px";
-
-          document.body.appendChild(video);
-
-          video.onloadedmetadata = () => {
-            video.currentTime = 1;
-          };
-
-          video.onseeked = async () => {
-            setTimeout(async () => {
-              if (Math.abs(video.currentTime - 1) > 0.1) {
-                console.warn("Video seeked to an unexpected time. Current time:", video.currentTime);
-              }
-          
-              const canvas = document.createElement("canvas");
-              canvas.width = video.videoWidth;
-              canvas.height = video.videoHeight;
-              const ctx = canvas.getContext("2d");
-              ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
-          
-              // Temporarily add the canvas to the DOM for visual inspection
-              document.body.appendChild(canvas);
-          
-              canvas.toBlob(async (blob) => {
-                if (blob) {
-                  try {
-                    const { data, error } = await supabase.storage
-                      .from("thumbnails")
-                      .upload(`${file.id}.png`, blob);
-          
-                    if (error) {
-                      console.error("Error uploading thumbnail:", error);
-                    } else {
-                      console.log("Thumbnail uploaded successfully");
-          
-                      try {
-                        const { data: urlData } = supabase.storage
-                          .from("thumbnails")
-                          .getPublicUrl(`${file.id}.png`);
-          
-                        console.log("Public URL:", urlData.publicUrl);
-                        setThumbnailUrl(urlData.publicUrl);
-                      } catch (error) {
-                        console.error("Error getting public URL:", error);
-                      }
-                    }
-                  } catch (error) {
-                    console.error("Error uploading thumbnail:", error);
-                  }
-                } else {
-                  console.warn("Failed to create thumbnail blob");
-                }
-          
-                // Remove the canvas from the DOM after inspection
-                document.body.removeChild(canvas);
-              }, "image/png");
-          
-              document.body.removeChild(video);
-            }, 1000);
-          };
-          
-
-          video.onerror = () => {
-            console.error("Error loading video for thumbnail generation");
-            document.body.removeChild(video);
-          };
-        }
-      } else {
-        setThumbnailUrl(file.image);
-      }
-    };
-
-    fetchThumbnail();
-  }, [file.id, file.image, file.isVideo]);
 
   const handleDownload = () => {
     fetch(file.image)
@@ -145,12 +45,6 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
       .catch((error) => {
         console.error("Error downloading file:", error);
       });
-  };
-
-  const imageStyle = {
-    width: "100%",
-    height: "auto",
-    position: "relative!important",
   };
 
   return (
@@ -183,11 +77,11 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
           onClick={() => setIsOpen(true)}
         >
           {file.isVideo ? (
-            thumbnailUrl ? (
+            file.thumbnail_url ? (
               <div className="absolute inset-0 flex items-center justify-center">
                 <DialogTrigger>
                   <Image
-                    src={thumbnailUrl}
+                    src={file.thumbnail_url}
                     alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
                     fill={true}
                     className="rounded-sm object-cover object-center"
@@ -205,7 +99,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
           ) : (
             <DialogTrigger>
               <Image
-                src={thumbnailUrl}
+                src={file.image}
                 alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
                 fill={true}
                 className="rounded-sm object-cover object-top"
