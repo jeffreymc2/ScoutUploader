@@ -72,38 +72,47 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       objectName: `${user?.id}/${player_id}/${fileNameWithUUID}`,
       contentType: file.type,
     };
-
+  
     if (file.type?.startsWith("video/")) {
       // Generate thumbnail for video files
       const video = document.createElement("video");
       video.src = URL.createObjectURL(file.data);
       video.currentTime = 1;
-
+  
+      video.onloadedmetadata = () => {
+        console.log("Video dimensions:", video.videoWidth, video.videoHeight);
+      };
+  
       await new Promise((resolve) => {
-        video.onloadedmetadata = resolve;
+        video.onseeked = resolve;
       });
-
+  
       const canvas = document.createElement("canvas");
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      canvas.getContext("2d")?.drawImage(video, 0, 0, canvas.width, canvas.height);
-
+      const ctx = canvas.getContext("2d");
+      ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
+  
+      console.log("Canvas:", canvas);
+      console.log("Context:", ctx);
+  
       canvas.toBlob(async (blob) => {
         if (blob) {
           const thumbnailName = `${file.name.split(".")[0]}_thumbnail.png`;
           const { data: thumbnailData, error: thumbnailError } = await supabase.storage
             .from("thumbnails")
             .upload(`${user?.id}/${player_id}/${thumbnailName}`, blob);
-
+  
           if (thumbnailError) {
             console.error("Error uploading thumbnail:", thumbnailError);
           } else {
             const { data: thumbnailUrlData } = supabase.storage
               .from("thumbnails")
               .getPublicUrl(`${user?.id}/${player_id}/${thumbnailName}`);
-
+  
             const thumbnailUrl = thumbnailUrlData.publicUrl;
-
+            console.log("Thumbnail URL:", thumbnailUrl);
+  
             await supabase
               .from("posts")
               .insert({
@@ -114,8 +123,11 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
                 event_id: "",
                 team_id: "",
                 post_type: "video",
+                thumbnail_url: thumbnailUrl,
               });
           }
+        } else {
+          console.warn("Failed to create thumbnail blob");
         }
       }, "image/png");
     } else {

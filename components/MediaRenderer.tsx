@@ -107,17 +107,6 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             </DialogTrigger>
           )}
         </div>
-        <div className="flex items-center justify-between gap-2 mt-2">
-          <Separator />
-        </div>
-        <div className="flex items-center justify-between gap-2 mt-2">
-          <div className="flex items-center gap-2">
-            <IoCloudDownloadOutline
-              className="cursor-pointer text-2xl"
-              onClick={handleDownload}
-            />
-          </div>
-        </div>
         {file.event_id && (
           <p className="text-sm">Uploaded from Event ID: {file.event_id}</p>
         )}
