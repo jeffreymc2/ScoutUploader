@@ -75,16 +75,21 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
 
 
   uppy.on('file-added', (file) => {
-
     const fileNameWithUUID = `${player_id}_${file.name}`;
-
-    file.meta = {
-      ...file.meta,
-      bucketName: "images",
-      objectName:  `${user?.id}/${player_id}/${fileNameWithUUID}`,
-      contentType: file.type,
+  
+    if (user && user.id) {
+      file.meta = {
+        ...file.meta,
+        bucketName: "images",
+        objectName: `${user.id}/${player_id}/${fileNameWithUUID}`,
+        contentType: file.type,
+      };
+    } else {
+      console.error("User or user.id is undefined");
+      // Handle the case when user or user.id is undefined
+      // You can show an error message or take appropriate action
     }
-  })
+  });
 
 
   uppy.on('complete', (result) => {
