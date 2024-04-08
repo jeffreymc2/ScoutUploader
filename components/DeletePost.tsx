@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 interface DeletePlayerPostProps {
   post_by: string;
   image: string;
-  player_id: string;
+  player_id?: string;
 
 }
 
