@@ -21,21 +21,17 @@ const DeletePost: React.FC<DeletePostProps> = ({ post_by, image, event_id }) => 
     toast.info("Deleting image...");
     try {
       const supabase = supabaseBrowser();
-
-      // Adjust logic to handle both 'images' and 'events' folders
-      let imagePath = '';
-      let bucket = 'media'; // Default bucket
-
-      if (event_id) {
-        // If event_id is present, assume the image is in the 'events' folder
-        imagePath = image.split('/public/media/events').pop() ?? '';
-        bucket = 'media';
-      } else {
-        // Otherwise, use the 'images' folder
-        imagePath = image.split('/public/media/players').pop() ?? '';
+  
+      let imagePath;
+      let folderPath = image.includes('/events/') ? '/public/media/events/' : '/public/media/players/';
+      imagePath = image.split(folderPath).pop() ?? '';
+  
+      // Ensure no leading slash
+      if (imagePath.startsWith('/')) {
+        imagePath = imagePath.substring(1);
       }
-
-      const { data, error } = await supabase.storage.from(bucket).remove([imagePath]);
+  
+      const { data, error } = await supabase.storage.from('media').remove([`events/${imagePath}`, `players/${imagePath}`]);
   
       if (error) {
         console.error('Failed to delete image:', error);
@@ -50,6 +46,7 @@ const DeletePost: React.FC<DeletePostProps> = ({ post_by, image, event_id }) => 
       toast.error('An error occurred while deleting the image');
     }
   };
+  
 
   if (isFetching) {
     return null;
