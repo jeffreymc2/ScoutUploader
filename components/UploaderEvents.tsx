@@ -42,16 +42,20 @@ const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID })
         allowedMetaFields: ['bucketName', 'objectName', 'contentType', 'cacheControl'],
       })
   );
-
+  
   uppy.on('file-added', (file) => {
     const fileNameWithUUID = `${EventID}_${TeamID}_${file.name}`;
     file.meta = {
       ...file.meta,
       bucketName: "media",
-      objectName:  `events/${user?.id}/${EventID}/${TeamID}/${fileNameWithUUID}`,
+      objectName: `events/${user?.id}/${EventID}/${TeamID}/${fileNameWithUUID}`,
       contentType: file.type,
-    }
-  })
+      cacheControl: "undefined",
+    };
+  });
+
+
+
 
   uppy.on('complete', (result) => {
     toast.success("Upload complete!");
