@@ -82,7 +82,7 @@ interface PlayerSearchProps {
 export default async function PlayerPage({
   params,
 }: {
-  params: { player_id: string, post_by: string, image: string};
+  params: { player_id: string };
 }) {
   const player_id = params.player_id;
   const supabase = supabaseServer();
@@ -323,7 +323,7 @@ export default async function PlayerPage({
                           <DeletePost
                             post_by={post.post_by}
                             image={post.image}
-                            player_id={post.player_id || ""}
+                            event_id={post.event_id || ""}
                           />
                         </AlertDialogFooter>
                       </AlertDialogContent>
