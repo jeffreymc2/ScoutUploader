@@ -108,8 +108,8 @@ export default async function PlayerPage({
       ...post,
       profile: null,
       image: post.event_id
-        ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`
-        : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/${post.post_by}/${post.player_id}/${post.name}`,
+        ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`
+        : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`,
       isVideo: isVideoFile(post.name),
     })),
     players: [],
