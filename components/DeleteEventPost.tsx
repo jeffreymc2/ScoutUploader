@@ -1,4 +1,4 @@
-//app/components/DeletePost.tsx
+// app/components/DeleteEventPost.tsx
 "use client";
 import React from "react";
 import { Button } from "./ui/button";
@@ -7,53 +7,57 @@ import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-
-interface DeletePostProps {
+interface DeleteEventPostProps {
   post_by: string;
   image: string;
+  event_id: string;
+  team_id: string;
 }
 
-const DeleteEventsPost: React.FC<DeletePostProps> = ({ post_by, image }) => {
+const DeleteEventPost: React.FC<DeleteEventPostProps> = ({ post_by, image, event_id, team_id }) => {
   const { data: user, isFetching } = useUser();
   const router = useRouter();
 
   const handleDelete = async () => {
-    toast.info("Deleting image...");
+    toast.info("Deleting event image...");
     try {
       const supabase = supabaseBrowser();
-      // Extract the path from the full URL
-      const imagePath = image.split('/public/events/').pop() ?? '';
-      const { data, error } = await supabase.storage.from('events').remove([imagePath]);
-  
+      const bucket = 'media';
+      const imagePath = image.split(`/public/${bucket}/events/`).pop() ?? '';
+
+      const { data, error } = await supabase.storage.from(bucket).remove([`events/${imagePath}`]);
+
       if (error) {
-        console.error('Failed to delete image:', error);
-        toast.error(`Failed to delete image: ${error.message}`);
+        console.error('Failed to delete event image:', error);
+        toast.error(`Failed to delete event image: ${error.message}`);
       } else {
-        console.log('Successfully removed image with path:', imagePath, data);
-        toast.success('Successfully removed image');
+        console.log('Successfully removed event image with path:', imagePath, data);
+        toast.success('Successfully removed event image');
         router.refresh();
       }
     } catch (error) {
-      console.error('Error during delete operation:', error);
-      toast.error('An error occurred while deleting the image');
+      console.error('Error during event image delete operation:', error);
+      toast.error('An error occurred while deleting the event image');
     }
   };
-  
 
   if (isFetching) {
     return null;
   }
 
-  // Assuming that 'post_by' is the user ID of the user who posted the image
   if (user?.id === post_by) {
     return (
-      <div >
-        <Button onClick={handleDelete}>Yes,Delete</Button>
+      <div>
+        <Button onClick={handleDelete}>Yes, Delete</Button>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <p className="text-sm text-muted-foreground">Only the user who posted the event image can delete it.</p>
       </div>
     );
   }
+};
 
-  return null;
-}
-
-export default DeleteEventsPost;
+export default DeleteEventPost;

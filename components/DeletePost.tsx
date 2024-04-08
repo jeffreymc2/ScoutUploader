@@ -1,4 +1,4 @@
-// app/components/DeletePost.tsx
+// app/components/DeletePlayerPost.tsx
 "use client";
 import React from "react";
 import { Button } from "./ui/button";
@@ -7,46 +7,36 @@ import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-interface DeletePostProps {
+interface DeletePlayerPostProps {
   post_by: string;
   image: string;
-  player_id?: string;
-  event_id?: string;
-  team_id?: string;
+  player_id: string;
 }
 
-const DeletePost: React.FC<DeletePostProps> = ({ post_by, image, player_id, event_id, team_id }) => {
+const DeletePost: React.FC<DeletePlayerPostProps> = ({ post_by, image, player_id }) => {
   const { data: user, isFetching } = useUser();
   const router = useRouter();
 
   const handleDelete = async () => {
-    toast.info("Deleting image...");
+    toast.info("Deleting player image...");
     try {
       const supabase = supabaseBrowser();
       const bucket = 'media';
-      let imagePath = '';
+      const imagePath = image.split(`/public/${bucket}/players/`).pop() ?? '';
 
-      if (event_id && team_id) {
-        // Image is in the 'events' subfolder
-        imagePath = image.split(`/public/${bucket}/events/`).pop() ?? '';
-      } else if (player_id) {
-        // Image is in the 'players' subfolder
-        imagePath = image.split(`/public/${bucket}/players/`).pop() ?? '';
-      }
-
-      const { data, error } = await supabase.storage.from(bucket).remove([imagePath]);
+      const { data, error } = await supabase.storage.from(bucket).remove([`players/${imagePath}`]);
 
       if (error) {
-        console.error('Failed to delete image:', error);
-        toast.error(`Failed to delete image: ${error.message}`);
+        console.error('Failed to delete player image:', error);
+        toast.error(`Failed to delete player image: ${error.message}`);
       } else {
-        console.log('Successfully removed image with path:', imagePath, data);
-        toast.success('Successfully removed image');
+        console.log('Successfully removed player image with path:', imagePath, data);
+        toast.success('Successfully removed player image');
         router.refresh();
       }
     } catch (error) {
-      console.error('Error during delete operation:', error);
-      toast.error('An error occurred while deleting the image');
+      console.error('Error during player image delete operation:', error);
+      toast.error('An error occurred while deleting the player image');
     }
   };
 
@@ -63,7 +53,7 @@ const DeletePost: React.FC<DeletePostProps> = ({ post_by, image, player_id, even
   } else {
     return (
       <div>
-        <p className="text-sm text-muted-foreground">Only the user who posted the image can delete it.</p>
+        <p className="text-sm text-muted-foreground">Only the user who posted the player image can delete it.</p>
       </div>
     );
   }

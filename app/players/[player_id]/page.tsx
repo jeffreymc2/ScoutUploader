@@ -323,7 +323,7 @@ export default async function PlayerPage({
                           <DeletePost
                             post_by={post.post_by}
                             image={post.image}
-                            event_id={post.event_id || ""}
+                            player_id={post.player_id || ""}
                           />
                         </AlertDialogFooter>
                       </AlertDialogContent>
