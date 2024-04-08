@@ -78,7 +78,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     console.log('File added:', fileNameWithUUID); // Log file name with UUID
     file.meta = {
       ...file.meta,
-      bucketName: "images",
+      bucketName: "media",
       objectName: `${user?.id}/${player_id}/${fileNameWithUUID}`,
       contentType: file.type,
       cacheControl: "undefined", // Set an appropriate value for cacheControl if needed
