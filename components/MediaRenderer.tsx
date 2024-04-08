@@ -137,7 +137,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                     src={thumbnailUrl}
                     alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
                     fill={true}
-                    className="rounded-lg object-contain"
+                    className="rounded-lg object-cover object-top"
                   />
                 </DialogTrigger>
                 <DialogTrigger className="z-10">
@@ -156,7 +156,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                 src={thumbnailUrl}
                 alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
                 fill={true}
-                className="rounded-sm object-contain"
+                className="rounded-sm object-cover object-top"
               />
             </DialogTrigger>
           )}
@@ -166,9 +166,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
         </div>
 
         <div className="flex items-center justify-between gap-2 mt-2">
-          {file.event_id && (
-            <p className="text-sm">Uploaded from Event ID: {file.event_id}</p>
-          )}
+         
           <div className="flex items-center gap-2">
             {/* <DialogTrigger>
               <MdOutlinePreview className="cursor-pointer text-2xl" />
@@ -179,6 +177,9 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             />
           </div>
         </div>
+        {file.event_id && (
+            <p className="text-sm mt-5">Uploaded from Event ID: {file.event_id}</p>
+          )}
       </Dialog>
     </>
   );

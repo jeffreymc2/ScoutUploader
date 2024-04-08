@@ -249,27 +249,32 @@ export default async function PlayerPage({
         </Card>
       </div>
 
-      <Card className="min-h-[500px] min-w-[600px] mt-4 rounded-md">
-        <CardHeader className="mb-0 py-5 px-5 bg-gradient-to-b from-gray-100 to-whit1 rounded-t-md">
-          <Image
-            src="https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_horizontal_primary%20(3).png"
-            alt="DiamondKast Logo"
-            width={300}
-            height={500}
-            className="object-cover object-center mb-2"
-          />
+      <Card className="min-h-[500px] xs:min-w-[300px] sm:min-w-[400px] md:min-w-[500px] lg:min-w-[600px] mt-4 rounded-md">
+        <CardHeader className="mb-0 py-5 px-5 bg-gradient-to-b from-gray-100 to-white rounded-t-md">
+          <div className="flex ">
+            {" "}
+            {/* Center the image within the card header */}
+            <Image
+              src="https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_horizontal_primary%20(3).png"
+              alt="DiamondKast Logo"
+              width={300} // These values should be the maximum width and height you want the image to have
+              height={500} // The image will scale down on smaller screens because of the following CSS class
+              className="object-cover object-center mb-2 max-w-full h-auto" // Make image responsive
+            />
+          </div>
         </CardHeader>
         <CardContent className="mt-5 rounded-b-md">
           <iframe
             src={url.toString()}
-            className="w-full min-h-[450px]"
+            style={{ minHeight: "450px" }} // Inline styles to ensure minimum height is respected
+            className="w-full h-auto" // Width is full and height is auto to maintain aspect ratio
             id="ContentTopLevel_ContentPlaceHolder1_ifDesktop"
-            frameBorder="0"
             allowFullScreen
             name="638479303817445795"
           />
         </CardContent>
       </Card>
+
       <Suspense fallback={<div>Loading...</div>}>
         <Card className="mt-4">
           <CardHeader className="bg-gradient-to-b from-gray-100 to-white">
