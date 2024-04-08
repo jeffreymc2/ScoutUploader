@@ -116,9 +116,9 @@ export default async function PlayerPage({
     eventId: "",
   };
 
-  // const url = new URL(
-  //   `https://dk.perfectgame.org/players/${playerData.PlayerID}?ms=638479303817445795&sk=5p030Qdbe1E=&hst=`
-  // );
+  const url = new URL(
+    `https://dk.perfectgame.org/players/${playerData.PlayerID}?ms=638479303817445795&sk=5p030Qdbe1E=&hst=`
+  );
 
   return (
     <div className="container mx-auto p-4 ">
@@ -233,7 +233,7 @@ export default async function PlayerPage({
         </Card>
 
         <Card>
-          <CardHeader className="bg-gradient-to-b from-gray-200 to-whit1">
+          <CardHeader className="bg-gradient-to-b from-gray-100 to-whit1">
             <CardTitle className="font-pgFont text-4xl">
               Additional Info
             </CardTitle>
@@ -249,8 +249,8 @@ export default async function PlayerPage({
         </Card>
       </div>
 
-      <Card className="min-h-[650px] md:min-h-[470px] md:min-w-[600px] mt-4 rounded-md">
-        <CardHeader className="mb-0 py-5 px-5 bg-gradient-to-b from-gray-200 to-whit1 rounded-t-md">
+      <Card className="min-h-[500px] min-w-[600px] mt-4 rounded-md">
+        <CardHeader className="mb-0 py-5 px-5 bg-gradient-to-b from-gray-100 to-whit1 rounded-t-md">
           <Image
             src="https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_horizontal_primary%20(3).png"
             alt="DiamondKast Logo"
@@ -260,19 +260,19 @@ export default async function PlayerPage({
           />
         </CardHeader>
         <CardContent className="mt-5 rounded-b-md">
-  {/* <iframe
-    src={url.toString()}
-    className="w-full mt-0 rounded-b-md min-h-[650px] md:min-h-[470px]"
-    id="ContentTopLevel_ContentPlaceHolder1_ifDesktop"
-    frameBorder="0"
-    allowFullScreen
-    name="638479303817445795"
-  /> */}
-</CardContent>
+          <iframe
+            src={url.toString()}
+            className="w-full min-h-[450px]"
+            id="ContentTopLevel_ContentPlaceHolder1_ifDesktop"
+            frameBorder="0"
+            allowFullScreen
+            name="638479303817445795"
+          />
+        </CardContent>
       </Card>
       <Suspense fallback={<div>Loading...</div>}>
         <Card className="mt-4">
-          <CardHeader className="bg-gradient-to-b from-gray-200 to-whit1">
+          <CardHeader className="bg-gradient-to-b from-gray-100 to-white">
             <CardTitle className="font-pgFont text-4xl">
               {`${playerData.PlayerName}'s`} Media Content
             </CardTitle>
