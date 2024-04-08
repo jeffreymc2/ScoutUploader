@@ -1,5 +1,6 @@
-//app/components/UploaderEvents.tsx
+// app/components/UploaderEvents.tsx
 "use client";
+
 import React, { useState } from "react";
 import Uppy from "@uppy/core";
 import { Dashboard } from "@uppy/react";
@@ -11,7 +12,6 @@ import useUser from "@/app/hook/useUser";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
 
-
 interface UploaderProps {
   EventID: string;
   EventName: string;
@@ -19,9 +19,6 @@ interface UploaderProps {
 }
 
 const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID }) => {
-
-
-
   const { data: user } = useUser();
   const supabase = supabaseBrowser();
 
@@ -47,18 +44,14 @@ const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID })
   );
 
   uppy.on('file-added', (file) => {
-
-
     const fileNameWithUUID = `${EventID}_${TeamID}_${file.name}`;
-
     file.meta = {
       ...file.meta,
       bucketName: "media",
-      objectName:  `${user?.id}/${EventID}/${TeamID}/${fileNameWithUUID}`,
+      objectName:  `events/${user?.id}/${EventID}/${TeamID}/${fileNameWithUUID}`,
       contentType: file.type,
     }
   })
-
 
   uppy.on('complete', (result) => {
     toast.success("Upload complete!");
@@ -91,5 +84,3 @@ const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID })
 };
 
 export default UploaderEvents;
-
-
