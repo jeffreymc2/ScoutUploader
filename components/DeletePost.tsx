@@ -68,5 +68,6 @@ const DeletePost: React.FC<DeletePostProps> = ({ post_by, image, player_id, even
   }
 };
 
+
 export default DeletePost;
 
