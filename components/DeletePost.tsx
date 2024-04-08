@@ -11,9 +11,10 @@ interface DeletePostProps {
   post_by: string;
   image: string;
   event_id?: string; // Add event_id to props
+  team_id?: string; // Add team_id to props
 }
 
-const DeletePost: React.FC<DeletePostProps> = ({ post_by, image, event_id }) => {
+const DeletePost: React.FC<DeletePostProps> = ({ post_by, image, event_id, team_id }) => {
   const { data: user, isFetching } = useUser();
   const router = useRouter();
 

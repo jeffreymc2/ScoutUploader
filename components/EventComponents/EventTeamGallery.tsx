@@ -26,7 +26,7 @@ import {
   AlertDialogFooter,
 } from "@/components/ui/alert-dialog"
 import { RiDeleteBin5Line } from "react-icons/ri";
-import DeleteEventPost from "../DeleteEventPost";
+import DeletePost from "../DeletePost";
 
 interface EventTeamGalleryProps {
   posts: Post[];
@@ -103,7 +103,7 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <DeleteEventPost
+                    <DeletePost
                       post_by={post.post_by}
                       image={post.image}
                       event_id={post.event_id || ""}
