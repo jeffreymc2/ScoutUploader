@@ -24,7 +24,7 @@ const DeletePost: React.FC<DeletePostProps> = ({ post_by, image, event_id }) => 
 
       // Adjust logic to handle both 'images' and 'events' folders
       let imagePath = '';
-      let bucket = 'images'; // Default bucket
+      let bucket = 'media'; // Default bucket
 
       if (event_id) {
         // If event_id is present, assume the image is in the 'events' folder
@@ -32,7 +32,7 @@ const DeletePost: React.FC<DeletePostProps> = ({ post_by, image, event_id }) => 
         bucket = 'events';
       } else {
         // Otherwise, use the 'images' folder
-        imagePath = image.split('/public/images/').pop() ?? '';
+        imagePath = image.split('/public/media/').pop() ?? '';
       }
 
       const { data, error } = await supabase.storage.from(bucket).remove([imagePath]);

@@ -53,7 +53,7 @@ const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID })
 
     file.meta = {
       ...file.meta,
-      bucketName: "events",
+      bucketName: "media",
       objectName:  `${user?.id}/${EventID}/${TeamID}/${fileNameWithUUID}`,
       contentType: file.type,
     }
