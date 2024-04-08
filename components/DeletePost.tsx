@@ -28,10 +28,10 @@ const DeletePost: React.FC<DeletePostProps> = ({ post_by, image, player_id, even
 
       if (event_id && team_id) {
         // Image is in the 'events' subfolder
-        imagePath = `events/${post_by}/${event_id}/${team_id}/${image.split('/').pop() ?? ''}`;
+        imagePath = `events/${post_by}/${event_id}/${team_id}/${image.split('/').pop()}`;
       } else if (player_id) {
         // Image is in the 'players' subfolder
-        imagePath = `players/${post_by}/${player_id}/${image.split('/').pop() ?? ''}`;
+        imagePath = `players/${post_by}/${player_id}/${image.split('/').pop()}`;
       }
 
       const { data, error } = await supabase.storage.from(bucket).remove([imagePath]);
