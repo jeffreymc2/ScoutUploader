@@ -62,8 +62,8 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     .use(Tus, {
       endpoint: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/upload/resumable`,
       onBeforeRequest,
-      limit: 10,
-      chunkSize: 6 * 1024 * 1024,
+      limit: 20,
+      chunkSize: 15 * 1024 * 1024,
       allowedMetaFields: [
         "bucketName",
         "objectName",
