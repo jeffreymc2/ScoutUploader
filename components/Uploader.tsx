@@ -79,7 +79,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     file.meta = {
       ...file.meta,
       bucketName: "media",
-      objectName: `${user?.id}/${player_id}/${fileNameWithUUID}`,
+      objectName: `players/${user?.id}/${player_id}/${fileNameWithUUID}`,
       contentType: file.type,
       cacheControl: "undefined", // Set an appropriate value for cacheControl if needed
     };
