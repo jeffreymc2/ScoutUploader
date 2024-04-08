@@ -12,7 +12,11 @@ import Tus from "@uppy/tus";
 import useUser from "@/app/hook/useUser"; 
 import { supabaseBrowser } from "@/lib/supabase/browser"; 
 import { toast } from "sonner"; import { useRouter } from "next/navigation"; 
+
+
 export interface PlayerResponse { PlayerID: string; LastName: string; FirstName: string; PlayerName: string; DOB: string; } 
+
+
 interface UploaderProps { playerid: number; FullName: string; } 
 
 const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
@@ -30,10 +34,12 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
 
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  
   const onBeforeRequest = async (req: any) => {
-    const { data } = await supabase.auth.getSession();
+  const { data } = await supabase.auth.getSession();
     req.setHeader("Authorization", `Bearer ${data?.session?.access_token}`);
   };
+  
   const player_id = playerid.toString();
 
   const [uppy] = useState(() =>
@@ -44,7 +50,9 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         maxFileSize: 5 * 10000 * 10000,
       },
       debug: true,
-    }).use(Tus, {
+    })
+    
+    .use(Tus, {
       endpoint: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/upload/resumable`,
       onBeforeRequest,
       limit: 10,

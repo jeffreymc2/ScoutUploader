@@ -116,9 +116,9 @@ export default async function PlayerPage({
     eventId: "",
   };
 
-  const url = new URL(
-    `https://dk.perfectgame.org/players/${playerData.PlayerID}?ms=638479303817445795&sk=5p030Qdbe1E=&hst=`
-  );
+  // const url = new URL(
+  //   `https://dk.perfectgame.org/players/${playerData.PlayerID}?ms=638479303817445795&sk=5p030Qdbe1E=&hst=`
+  // );
 
   return (
     <div className="container mx-auto p-4 ">
@@ -260,14 +260,14 @@ export default async function PlayerPage({
           />
         </CardHeader>
         <CardContent className="mt-5 rounded-b-md">
-  <iframe
+  {/* <iframe
     src={url.toString()}
     className="w-full mt-0 rounded-b-md min-h-[650px] md:min-h-[470px]"
     id="ContentTopLevel_ContentPlaceHolder1_ifDesktop"
     frameBorder="0"
     allowFullScreen
     name="638479303817445795"
-  />
+  /> */}
 </CardContent>
       </Card>
       <Suspense fallback={<div>Loading...</div>}>
