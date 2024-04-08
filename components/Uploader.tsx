@@ -11,10 +11,17 @@ import { Button } from "./ui/button";
 import Tus from "@uppy/tus"; 
 import useUser from "@/app/hook/useUser"; 
 import { supabaseBrowser } from "@/lib/supabase/browser"; 
-import { toast } from "sonner"; import { useRouter } from "next/navigation"; 
+import { toast } from "sonner"; 
+import { useRouter } from "next/navigation"; 
 
 
-export interface PlayerResponse { PlayerID: string; LastName: string; FirstName: string; PlayerName: string; DOB: string; } 
+export interface PlayerResponse {
+  PlayerID: string;
+  LastName: string;
+  FirstName: string;
+  PlayerName: string;
+  DOB: string;
+} 
 
 
 interface UploaderProps { playerid: number; FullName: string; } 
@@ -22,11 +29,10 @@ interface UploaderProps { playerid: number; FullName: string; }
 const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   const { data: user } = useUser();
   const supabase = supabaseBrowser();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(
     null
   );
+  console.log('User data:', user); // Log user data
 
   useEffect(() => {
     setSelectedPlayer({ playerid, FullName });
@@ -36,11 +42,13 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   const router = useRouter();
   
   const onBeforeRequest = async (req: any) => {
-  const { data } = await supabase.auth.getSession();
+    const { data } = await supabase.auth.getSession();
+    console.log('Supabase session data:', data); // Log session data
     req.setHeader("Authorization", `Bearer ${data?.session?.access_token}`);
   };
   
   const player_id = playerid.toString();
+  console.log('Player ID:', player_id); // Log player ID
 
   const [uppy] = useState(() =>
     new Uppy({
@@ -51,7 +59,6 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       },
       debug: true,
     })
-    
     .use(Tus, {
       endpoint: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/upload/resumable`,
       onBeforeRequest,
@@ -65,8 +72,10 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       ],
     })
   );
+
   uppy.on('file-added', (file) => {
     const fileNameWithUUID = `${player_id}_${file.name}`;
+    console.log('File added:', fileNameWithUUID); // Log file name with UUID
     file.meta = {
       ...file.meta,
       bucketName: "images",
@@ -75,9 +84,10 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       cacheControl: "undefined", // Set an appropriate value for cacheControl if needed
     };
   });
+
   uppy.on("complete", (result) => {
+    console.log('Upload result:', result); // Log upload result
     toast.success("Upload complete!");
-    // Check if the current pathname includes "/players"
     if (window.location.pathname.includes("/players")) {
       window.location.reload();
     }
