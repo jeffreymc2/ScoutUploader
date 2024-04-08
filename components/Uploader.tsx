@@ -75,15 +75,21 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
 
   uppy.on('file-added', (file) => {
     const fileNameWithUUID = `${player_id}_${file.name}`;
+    const objectPath = `players/${user?.id}/${player_id}/${fileNameWithUUID}`; // Construct the path with the 'players' subfolder
+  
     console.log('File added:', fileNameWithUUID); // Log file name with UUID
+    console.log('Object Path:', objectPath); // Log the full object path for debugging
+  
     file.meta = {
       ...file.meta,
       bucketName: "media",
-      objectName: `players/${user?.id}/${player_id}/${fileNameWithUUID}`,
+      objectName: objectPath, // Use the constructed object path that includes the 'players' subfolder
       contentType: file.type,
-      cacheControl: "undefined", // Set an appropriate value for cacheControl if needed
+      // Assuming 'undefined' was a placeholder; for cache control, use 'public, max-age=...' or appropriate value
+      cacheControl: "public, max-age=3600", 
     };
   });
+  
 
   uppy.on("complete", (result) => {
     console.log('Upload result:', result); // Log upload result
