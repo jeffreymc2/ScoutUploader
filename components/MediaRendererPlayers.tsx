@@ -116,7 +116,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             </div>
           </DialogContent>
         ) : (
-          <DialogContent className=" bg-transparent border-0 border-transparent">
+          <DialogContent className="min-h-[50vh]  sm:min-h-[66vh] bg-transparent border-0 border-transparent">
             <Image
               src={file.image}
               alt={`Media posted by ${file.post_by || "Unknown"}`}
@@ -137,7 +137,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                     src={thumbnailUrl}
                     alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
                     fill={true}
-                    className="rounded-lg object-cover object-center"
+                    className="rounded-lg object-contain"
                   />
                 </DialogTrigger>
                 <DialogTrigger className="z-10">
@@ -156,7 +156,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                 src={thumbnailUrl}
                 alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
                 fill={true}
-                className="rounded-sm object-cover object-center"
+                className="rounded-sm object-contain"
               />
             </DialogTrigger>
           )}
@@ -170,9 +170,9 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             <p className="text-sm">Uploaded from Event ID: {file.event_id}</p>
           )}
           <div className="flex items-center gap-2">
-            <DialogTrigger>
+            {/* <DialogTrigger>
               <MdOutlinePreview className="cursor-pointer text-2xl" />
-            </DialogTrigger>
+            </DialogTrigger> */}
             <IoCloudDownloadOutline
               className="cursor-pointer text-2xl"
               onClick={handleDownload}
