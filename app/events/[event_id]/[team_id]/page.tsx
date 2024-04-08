@@ -42,6 +42,7 @@ export default async function EventTeamPage({ params }: EventTeamPageProps) {
   const teamsData: Team[] = await playersResponse.json();
   const playersData: Player[] = teamsData.find((team) => team.TournamentTeamID === parseInt(team_id))?.Roster || [];
 
+  
   return (
     <>
       <div className="space-y-4">
