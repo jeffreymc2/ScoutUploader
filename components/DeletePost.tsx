@@ -11,9 +11,10 @@ interface DeletePlayerPostProps {
   post_by: string;
   image: string;
   player_id: string;
+
 }
 
-const DeletePost: React.FC<DeletePlayerPostProps> = ({ post_by, image, player_id }) => {
+const DeletePost: React.FC<DeletePlayerPostProps> = ({ post_by, image }) => {
   const { data: user, isFetching } = useUser();
   const router = useRouter();
 
