@@ -13,7 +13,6 @@ import { MdOutlinePreview } from "react-icons/md";
 import { IoCloudDownloadOutline } from "react-icons/io5";
 import { Separator } from "@/components/ui/separator";
 
-
 interface MediaRendererProps {
   file: {
     id: string;
