@@ -82,7 +82,7 @@ interface PlayerSearchProps {
 export default async function PlayerPage({
   params,
 }: {
-  params: { player_id: string };
+  params: { player_id: string, post_by: string, image: string};
 }) {
   const player_id = params.player_id;
   const supabase = supabaseServer();
