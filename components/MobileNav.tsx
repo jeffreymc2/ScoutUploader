@@ -5,6 +5,7 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { logout } from "@/app/auth/actions"; // Ensure this is the correct path
 import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
 
 const navigation = [
   { name: "Events", href: "/events" },
@@ -14,10 +15,13 @@ const navigation = [
 export default function MobileMenu({ session }: { session: any }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
+  const router = useRouter();
+
   const handleLogout = useCallback(async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     await logout(); 
     setMobileMenuOpen(false); // Close the menu
+    router.refresh();
   }, []);
 
   return (

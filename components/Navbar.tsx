@@ -2,12 +2,13 @@ import React, { Suspense, lazy } from "react";
 import { Dialog } from "@headlessui/react";
 import getUserSession from "@/lib/getUserSession";
 import { supabaseServer } from "@/lib/supabase/server";
-
+import { useRouter } from 'next/navigation'
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "./ui/button";
 import NavbarSkeleton from "./NavbarSkeleton";
 import Link from "next/link";
 import MobileMenu from "./MobileNav";
+import { useNavigation } from "react-day-picker";
 
 const navigation = [
   { name: "Events", href: "/events" },
@@ -16,6 +17,7 @@ const navigation = [
 
 export default async function Navbar() {
   const { data } = await getUserSession();
+
 
   const logoutAction = async () => {
     "use server";
@@ -64,9 +66,11 @@ export default async function Navbar() {
             {data.session && (
               <form action={logoutAction} className="flex">
                 <li>
+                  <Link href="/">
                   <Button className="relative -mt-2 px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800">
                     Logout
                   </Button>
+                  </Link>
                 </li>
               </form>
             )}
