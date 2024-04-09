@@ -41,7 +41,9 @@ export interface Post {
   featured_image?: boolean;
   team_id?: string;
   isVideo?: boolean;
-  post_type: string;
+  post_type?: string;
+  title?: string;
+  description?: string;
 }
 
   export interface EventData {

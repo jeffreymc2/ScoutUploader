@@ -1,78 +1,85 @@
-import React, { Suspense, lazy } from "react";
+// MobileMenu.tsx
+"use client";
+
+import React, { useState } from "react";
 import { Dialog } from "@headlessui/react";
-import getUserSession from "@/lib/getUserSession";
-import { supabaseServer } from "@/lib/supabase/server";
-
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Button } from "./ui/button";
-import NavbarSkeleton from "./NavbarSkeleton";
 import Link from "next/link";
-import MobileMenu from "./MobileNav";
-
+import { logout } from "@/app/auth/actions";
+import { Button } from "./ui/button";
 const navigation = [
   { name: "Events", href: "/events" },
   { name: "Players", href: "/players" },
 ];
 
-export default async function Navbar() {
-  const { data } = await getUserSession();
-
-  const logoutAction = async () => {
-    "use server";
-    const supabase = await supabaseServer();
-    await supabase.auth.signOut();
-  };
+export default function MobileMenu({ session }: { session: any }) {
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-gradient-to-tl from-blue-500 to-blue-700 border-blue-500 border-b-2">
-      <nav
-        className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
-        aria-label="Global"
+    <div className="lg:hidden">
+      <button
+        type="button"
+        className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-100"
+        onClick={() => setMobileMenuOpen(true)}
       >
-        <a href="/" className="-m-1.5 p-1.5">
-          <span className="sr-only">Perfect Game</span>
-          <PerfectGameLogo />
-        </a>
+        <span className="sr-only">Open main menu</span>
+        <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+      </button>
 
-        <div className="hidden lg:flex lg:gap-x-12">
-          <>
-            {navigation.map((item) => {
-              return (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="text-sm font-semibold leading-6 text-gray-100"
-                >
-                  {item.name}
-                </a>
-              );
-            })}
-          </>
-
-          <ul>
-            {!data.session && (
-              <>
-                <li>
-                  <Button className="relative -mt-2 px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800">
-                    <Link href="/login" className="">
-                      Login
-                    </Link>
-                  </Button>
-                </li>
-              </>
-            )}
-            {data.session && (
-              <form action={logoutAction} className="flex">
-                <li>
-                  <Button className="ml-4">Logout</Button>
-                </li>
-              </form>
-            )}
-          </ul>
-        </div>
-        <MobileMenu session={data.session}/>
-      </nav>
-    </header>
+      <Dialog
+        as="div"
+        className="lg:hidden"
+        open={mobileMenuOpen}
+        onClose={setMobileMenuOpen}
+      >
+        <div className="fixed inset-0 z-10"/>
+        <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white  sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+          <div className="flex items-center justify-between p-6 bg-gradient-to-tl from-blue-500 to-blue-700 border-blue-500 border-b-2">
+            <a href="#" className="-m-1.5 p-1.5">
+              <span className="sr-only">Your Company</span>
+             <PerfectGameLogo/>
+            </a>
+            <button
+              type="button"
+              className="-m-2.5 rounded-md p-2.5 text-gray-700"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <span className="sr-only">Close menu</span>
+              <XMarkIcon className="h-6 w-6 text-white" aria-hidden="true" />
+            </button>
+          </div>
+          <div className="mt-2 flow-root p-5">
+            <div className="-my-6 divide-y divide-gray-500/10">
+              <div className="space-y-2 py-6">
+              
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+             
+              </div>
+              <div className="py-6">
+              {!session && (
+                <Button className="relative -mt-2 px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800 w-full">
+                  <Link href="/login">Login</Link>
+                </Button>
+              )}
+              {session && (
+                <form action={logout}>
+                  <Button className="relative -mt-2 px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800 w-full">Logout</Button>
+                </form>
+              )}
+            </div>
+            </div>
+          </div>
+        </Dialog.Panel>
+      </Dialog>
+    </div>
   );
 }
 

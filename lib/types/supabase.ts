@@ -20,6 +20,9 @@ export interface Database {
           event_id: string
           team_id: string
           post_type: string
+          title?: string
+          description?: string
+          featured_image?: boolean
         }
         Insert: {
           created_at?: string
@@ -31,6 +34,9 @@ export interface Database {
           event_id: string
           team_id: string
           post_type: string
+          title?: string
+          description?: string
+          featured_image?: boolean
 
         }
         Update: {
@@ -43,6 +49,9 @@ export interface Database {
           event_id?: string
           team_id?: string
           post_type: string
+          title?: string
+          description?: string
+          featured_image?: boolean
 
         }
         Relationships: [
