@@ -27,7 +27,7 @@ export default async function LoginPage() {
             {/*  */}
             <LoginForm />
             <Link href="/register" className="text-blue-500 text-sm pt-5">
-              <p>Don't yet have account? Register here</p>
+              <p>Don&apos;t yet have account? Register here</p>
             </Link>
           </CardContent>
           <CardFooter className="text-center mt-2 text-center items-center justify-center ">
