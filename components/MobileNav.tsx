@@ -16,7 +16,7 @@ export default function MobileMenu({ session }: { session: any }) {
 
   const handleLogout = useCallback(async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    await logout(); // Make sure this function is properly implemented to log out the user
+    await logout(); 
     setMobileMenuOpen(false); // Close the menu
   }, []);
 
@@ -52,23 +52,21 @@ export default function MobileMenu({ session }: { session: any }) {
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
                 {navigation.map((item) => (
-                  <Link key={item.name} href={item.href}>
-                    <a className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50" onClick={() => setMobileMenuOpen(false)}>
+                  <Link className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50" key={item.name} href={item.href} onClick={() => setMobileMenuOpen(false)}>
                       {item.name}
-                    </a>
                   </Link>
                 ))}
               </div>
               <div className="py-6">
                 {!session && (
-                  <Button className="w-full">
-                    <Link href="/login">
-                      <a className="block text-center" onClick={() => setMobileMenuOpen(false)}>Login</a>
+                  <Button className="relative px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800 w-full">
+                    <Link className="block text-center" href="/login" onClick={() => setMobileMenuOpen(false)}>
+                     Login
                     </Link>
                   </Button>
                 )}
                 {session && (
-                  <Button className="w-full" onClick={handleLogout}>Logout</Button>
+                  <Button className="relative px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800 w-full" onClick={handleLogout}>Logout</Button>
                 )}
               </div>
             </div>
