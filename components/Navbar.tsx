@@ -64,13 +64,15 @@ export default async function Navbar() {
             {data.session && (
               <form action={logoutAction} className="flex">
                 <li>
-                  <Button className="ml-4">Logout</Button>
+                  <Button className="relative -mt-2 px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800">
+                    Logout
+                  </Button>
                 </li>
               </form>
             )}
           </ul>
         </div>
-        <MobileMenu session={data.session}/>
+        <MobileMenu session={data.session} />
       </nav>
     </header>
   );
