@@ -121,7 +121,7 @@ export default async function PlayerPage({
   );
 
   return (
-    <div className="container mx-auto p-4 ">
+    <div className="container mx-auto p-0 ">
       <BackButton />
 
       <Card className="mt-2">
@@ -301,10 +301,10 @@ export default async function PlayerPage({
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
               {playerSearchProps.posts?.map((post) => (
-                <Card key={post.id} className="m-0 p-5 shadow-md">
-                <div className="relative ">
+                <Card key={post.id} className="m-0 p-0 shadow-md">
+                <div className="relative p-0">
                   <MediaRenderer file={{ ...post, post_type: "" }} />
-                  <div className="absolute top-2 ">
+                  <div className="absolute top-2 ml-4">
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <RiDeleteBin5Line className="w-6 h-6 text-gray-900 absolute top-[200px] left-[35px]" />

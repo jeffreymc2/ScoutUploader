@@ -13,7 +13,7 @@ export default function MainRootComponent({ children }: { children: React.ReactN
     : "";
 
   return (
-    <main className={`space-y-10 px-5 xl:px-0 flex-grow ${mainBgClass}`}>
+    <main className={`space-y-5 px-2 xl:px-0 flex-grow ${mainBgClass}`}>
       <div className="max-w-6xl mx-auto">{children}</div>
     </main>
   );

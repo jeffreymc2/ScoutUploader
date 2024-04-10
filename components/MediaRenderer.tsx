@@ -5,9 +5,7 @@ import Image from "next/image";
 import ReactPlayer from "react-player";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { PlayCircleIcon } from "lucide-react";
-import { Button } from "./ui/button";
-import { max } from "lodash";
-import { MdOutlinePreview } from "react-icons/md";
+
 import { IoCloudDownloadOutline } from "react-icons/io5";
 import MediaForm from "./MediaForm";
 import { Separator } from "@/components/ui/separator";
@@ -109,9 +107,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
       <Dialog onOpenChange={setIsOpen}>
         {file.isVideo ? (
           <DialogContent className="sm:max-w-[66vw]  flex items-center justify-center bg-transparent border-0 border-transparent">
-           
-            <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-4">
-              
+            <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
               <ReactPlayer
                 className="rounded-lg absolute top-0 left-0"
                 url={file.image}
@@ -123,7 +119,6 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
           </DialogContent>
         ) : (
           <DialogContent className="min-h-[50vh]  sm:min-h-[66vh] bg-transparent border-0 border-transparent">
-            
             <Image
               src={file.image}
               alt={`Media posted by ${file.post_by || "Unknown"}`}
@@ -133,28 +128,28 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
           </DialogContent>
         )}
         <div
-          className="relative  w-full h-48 shadow-sm rounded-lg cursor-pointer "
+          className="relative w-full h-48 shadow-sm rounded-lg cursor-pointer "
           onClick={() => setIsOpen(true)}
         >
           {file.isVideo ? (
             thumbnailUrl ? (
               <div className="absolute inset-0 flex items-center justify-center ">
                 <DialogTrigger>
-                  
-                  <Image
-                    src={thumbnailUrl}
-                    alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
-                    fill={true}
-                    className="rounded-lg object-cover object-top"
-                  />
+                  <div className="p-0 w-full">
+                    <Image
+                      src={thumbnailUrl}
+                      alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
+                      fill={true}
+                      className=" object-cover object-top rounded-t-lg"
+                    />
+                  </div>
                 </DialogTrigger>
                 <DialogTrigger className="z-10">
-                {file.featured_image && (
+                  {file.featured_image && (
                     <div className="absolute top-4 left-4">
                       <StarIcon className="text-yellow-400 w-6 h-6" />
                     </div>
-                  )}
-                  {" "}
+                  )}{" "}
                   <PlayCircleIcon className="w-12 h-12 text-white z-10" />
                 </DialogTrigger>
               </div>
@@ -169,7 +164,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                 src={thumbnailUrl}
                 alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
                 fill={true}
-                className="rounded-sm object-cover object-top"
+                className="object-cover object-top rounded-t-lg"
               />
               {file.featured_image && (
                 <div className="absolute top-4 left-4">
@@ -179,56 +174,59 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             </DialogTrigger>
           )}
         </div>
-        <div className="flex items-center justify-between gap-2 mt-2">
+        <div className="flex items-center justify-between gap-2 mt-0 ">
           <Separator />
         </div>
-
-        <div className="flex items-center justify-between gap-2 mt-2">
-          <div className="flex items-center gap-2">
-            <IoCloudDownloadOutline
-              className="cursor-pointer text-2xl"
-              onClick={handleDownload}
-            />
-            <Dialog>
-              {!file.isVideo ? (
-                <div className="mt-3">
-                  <MediaForm
-                    postId={file.id}
-                    mediaUrl={file.image}
-                    isVideo={false}
-                    thumbnailUrl={file.image}
-                  />
-                </div>
-              ) : (
-                <div className="mt-3">
-                  <MediaForm
-                    postId={file.id}
-                    mediaUrl={file.image}
-                    isVideo={true}
-                    thumbnailUrl={file.image}
-                  />
-                </div>
-              )}
-            </Dialog>
-          </div>
-          {file.featured_image && (
-            <div className="mt-0">
-              <Badge className="bg-blue-500 text-white hover:bg-blue-500 text-xs">
-                Featured Image
-              </Badge>
+        <div className="px-4 pb-4 pt-2">
+          <div className="flex items-center justify-between gap-2 mt-2">
+            <div className="flex items-center gap-2">
+              <IoCloudDownloadOutline
+                className="cursor-pointer text-2xl"
+                onClick={handleDownload}
+              />
+              <Dialog>
+                {!file.isVideo ? (
+                  <div className="mt-3">
+                    <MediaForm
+                      postId={file.id}
+                      mediaUrl={file.image}
+                      isVideo={false}
+                      thumbnailUrl={file.image}
+                    />
+                  </div>
+                ) : (
+                  <div className="mt-3">
+                    <MediaForm
+                      postId={file.id}
+                      mediaUrl={file.image}
+                      isVideo={true}
+                      thumbnailUrl={file.image}
+                    />
+                  </div>
+                )}
+              </Dialog>
             </div>
+            {file.featured_image && (
+              <div className="mt-0">
+                <Badge className="bg-blue-500 text-white hover:bg-blue-500 text-xs">
+                  Featured Image
+                </Badge>
+              </div>
+            )}
+          </div>
+          {file.title && (
+            <p className="text-md mt-2 leading-loose font-bold">{file.title}</p>
+          )}
+          {file.description && (
+            <p className="text-xs mt-1">{file.description}</p>
+          )}
+
+          {file.event_id && (
+            <p className="text-sm mt-5">
+              Uploaded from Event ID: {file.event_id}
+            </p>
           )}
         </div>
-        {file.title && (
-          <p className="text-md mt-2 leading-loose font-bold">{file.title}</p>
-        )}
-        {file.description && <p className="text-xs mt-1">{file.description}</p>}
-
-        {file.event_id && (
-          <p className="text-sm mt-5">
-            Uploaded from Event ID: {file.event_id}
-          </p>
-        )}
       </Dialog>
     </>
   );
