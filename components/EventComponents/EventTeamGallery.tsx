@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { RiDeleteBin5Line } from "react-icons/ri";
 import DeletePost from "../DeletePost";
+import Link from "next/link";
 
 interface EventTeamGalleryProps {
   posts: Post[];
@@ -88,7 +89,7 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
               <MediaRenderer file={{ ...post, post_type: post.post_type || "" }} />
               <AlertDialog>
                 <AlertDialogTrigger>
-                    <RiDeleteBin5Line className="w-6 h-6 text-gray-900 absolute top-[208px] left-[30px]" />
+                    <RiDeleteBin5Line className="w-6 h-6 text-gray-900 absolute top-[208px] left-[50px]" />
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   
@@ -122,10 +123,10 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
               />
             </div>
             {assignedPlayer && (
-              <p className="text-xs my-2">
-                Current Player Selected: {assignedPlayer.FullName} | Player ID:{" "}
-                {assignedPlayer.playerid}
-              </p>
+              <Link className="text-xs my-2" href={`/players/${assignedPlayer.playerid}`}>
+                Current Player Selected: <span className="text-blue-500">{assignedPlayer.FullName} | Player ID:{" "}
+                {assignedPlayer.playerid}</span>
+              </Link>
             )}
             {!assignedPlayer && (
               <p className="text-xs my-2">
