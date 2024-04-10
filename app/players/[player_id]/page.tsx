@@ -299,9 +299,10 @@ export default async function PlayerPage({
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
               {playerSearchProps.posts?.map((post) => (
-                <div key={post.id} className="relative">
+                <Card className="m-0 p-5 shadow-md">
+                <div key={post.id} className="relative ">
                   <MediaRenderer file={{ ...post, post_type: "" }} />
                   <div className="absolute top-2 ">
                     <AlertDialog>
@@ -330,6 +331,7 @@ export default async function PlayerPage({
                     </AlertDialog>
                   </div>
                 </div>
+              </Card>
               ))}
             </div>
           </CardContent>

@@ -11,6 +11,7 @@ import { MdOutlinePreview } from "react-icons/md";
 import { IoCloudDownloadOutline } from "react-icons/io5";
 import MediaForm from "./MediaForm";
 import { Separator } from "@/components/ui/separator";
+import { Badge } from "./ui/badge";
 
 interface MediaRendererProps {
   file: {
@@ -108,7 +109,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
       <Dialog onOpenChange={setIsOpen}>
         {file.isVideo ? (
           <DialogContent className="sm:max-w-[66vw]  flex items-center justify-center bg-transparent border-0 border-transparent">
-            <div className="relative w-full h-0 pb-[56.25%]">
+            <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-4">
               <ReactPlayer
                 className="rounded-lg absolute top-0 left-0"
                 url={file.image}
@@ -129,13 +130,18 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
           </DialogContent>
         )}
         <div
-          className="relative  w-full h-48 shadow-sm rounded-lg cursor-pointer"
+          className="relative  w-full h-48 shadow-sm rounded-lg cursor-pointer "
           onClick={() => setIsOpen(true)}
         >
           {file.isVideo ? (
             thumbnailUrl ? (
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center justify-center ">
                 <DialogTrigger>
+                  {file.featured_image && (
+                    <div className="absolute top-4 left-4">
+                      <StarIcon className="text-yellow-400 w-6 h-6" />
+                    </div>
+                  )}
                   <Image
                     src={thumbnailUrl}
                     alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
@@ -161,6 +167,11 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                 fill={true}
                 className="rounded-sm object-cover object-top"
               />
+              {file.featured_image && (
+                <div className="absolute top-4 left-4">
+                  <StarIcon className="text-yellow-400 w-6 h-6" />
+                </div>
+              )}
             </DialogTrigger>
           )}
         </div>
@@ -169,27 +180,80 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
         </div>
 
         <div className="flex items-center justify-between gap-2 mt-2">
-         
           <div className="flex items-center gap-2">
-      
             <IoCloudDownloadOutline
               className="cursor-pointer text-2xl"
               onClick={handleDownload}
             />
-          </div>
-        </div>
-        {file.event_id && (
-            <p className="text-sm mt-5">Uploaded from Event ID: {file.event_id}</p>
-          )}
             
+          </div>
+          {file.featured_image && (
+          <div className="mt-0">
+            <Badge className="bg-blue-500 text-white hover:bg-blue-500 text-xs">Featured Image</Badge>
+          </div>
+        )}
+        </div>
+        {file.title && <p className="text-md mt-2 leading-loose font-bold">{file.title}</p>}
+        {file.description && <p className="text-xs mt-1">{file.description}</p>}
+       
+
+        {file.event_id && (
+          <p className="text-sm mt-5">
+            Uploaded from Event ID: {file.event_id}
+          </p>
+        )}
       </Dialog>
       <Dialog>
-      <div className="mt-4">
-        <MediaForm postId={file.id} mediaUrl={file.image} isVideo={false} />
-      </div>
+        <div className="mt-3">
+          <MediaForm postId={file.id} mediaUrl={file.image} isVideo={false} />
+        </div>
       </Dialog>
     </>
   );
 };
 
 export default MediaRenderer;
+
+
+function CameraIcon(
+  props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>
+) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+      <circle cx="12" cy="13" r="3" />
+    </svg>
+  );
+}
+
+function StarIcon(
+  props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>
+) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+}

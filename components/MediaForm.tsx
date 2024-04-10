@@ -12,14 +12,20 @@ import { updatePost } from "@/app/media/actions";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import ReactPlayer from "react-player";
+import { FaEdit } from "react-icons/fa";
+
 import Image from "next/image";
 
 interface MediaFormProps {
-    postId: string;
-    mediaUrl: string;
-    isVideo: boolean;
-  }
-export default function MediaForm({ postId, mediaUrl, isVideo }: MediaFormProps) {
+  postId: string;
+  mediaUrl: string;
+  isVideo: boolean;
+}
+export default function MediaForm({
+  postId,
+  mediaUrl,
+  isVideo,
+}: MediaFormProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [initialData, setInitialData] = useState({
@@ -30,23 +36,23 @@ export default function MediaForm({ postId, mediaUrl, isVideo }: MediaFormProps)
 
   const supabase = supabaseBrowser();
 
-const fetchInitialData = useCallback(async () => {
+  const fetchInitialData = useCallback(async () => {
     const { data, error } = await supabase
-        .from("posts")
-        .select("title, description, featured_image")
-        .eq("id", postId)
-        .single();
+      .from("posts")
+      .select("title, description, featured_image")
+      .eq("id", postId)
+      .single();
 
     if (error) {
-        console.error("Error fetching initial data:", error);
+      console.error("Error fetching initial data:", error);
     } else {
-        setInitialData({
-            title: data?.title || "",
-            description: data?.description || "",
-            featured_image: data?.featured_image || false,
-        });
+      setInitialData({
+        title: data?.title || "",
+        description: data?.description || "",
+        featured_image: data?.featured_image || false,
+      });
     }
-}, [postId, supabase]);
+  }, [postId, supabase]);
 
   const handleDialogOpen = () => {
     fetchInitialData().then(() => setIsDialogOpen(true));
@@ -80,55 +86,60 @@ const fetchInitialData = useCallback(async () => {
   return (
     <>
       <DialogTrigger asChild>
-        <Button onClick={handleDialogOpen}>Edit</Button>
+        <FaEdit className="text-2xl absolute -mt-[98px] ml-[73px]" onClick={handleDialogOpen} />
       </DialogTrigger>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
-             {/* Media Preview */}
+          {/* Media Preview */}
           {isVideo ? (
             <div className="video-preview">
               <ReactPlayer url={mediaUrl} width="100%" height="100%" controls />
             </div>
           ) : (
             <div className="image-preview">
-              <Image src={mediaUrl} alt="Media Preview" width={500} height={280} layout="responsive" />
+              <Image
+                src={mediaUrl}
+                alt="Media Preview"
+                width={500}
+                height={280}
+                layout="responsive"
+              />
             </div>
           )}
-        <form onSubmit={handleSubmit}>
-          <input type="hidden" name="postId" value={postId} />
-          <div className="mt-4">
-            <Label htmlFor="title">Title</Label>
-            <Input
-              id="title"
-              name="title"
-              className="mt-1"
-              defaultValue={initialData.title}
-            />
-          </div>
-          <div className="mt-4">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              name="description"
-              className="mt-1"
-              defaultValue={initialData.description}
-            />
-          </div>
-          <div className="mt-4 flex items-center space-x-2">
-            <Switch
-              id="featured_image"
-              name="featured_image"
-              defaultChecked={initialData.featured_image}
-            />
-            <Label htmlFor="featured_image">Featured Image</Label>
-          </div>
-          <Button className="mt-2" type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Updating..." : "Save"}
-          </Button>
-        </form>
-      </DialogContent>
-    </Dialog>
+          <form onSubmit={handleSubmit}>
+            <input type="hidden" name="postId" value={postId} />
+            <div className="mt-4">
+              <Label htmlFor="title">Title</Label>
+              <Input
+                id="title"
+                name="title"
+                className="mt-1"
+                defaultValue={initialData.title}
+              />
+            </div>
+            <div className="mt-4">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                name="description"
+                className="mt-1"
+                defaultValue={initialData.description}
+              />
+            </div>
+            <div className="mt-4 flex items-center space-x-2">
+              <Switch
+                id="featured_image"
+                name="featured_image"
+                defaultChecked={initialData.featured_image}
+              />
+              <Label htmlFor="featured_image">Featured Image</Label>
+            </div>
+            <Button className="mt-2" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Updating..." : "Save"}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </>
   );
-
 }
