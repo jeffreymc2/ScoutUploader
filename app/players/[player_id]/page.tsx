@@ -301,8 +301,8 @@ export default async function PlayerPage({
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
               {playerSearchProps.posts?.map((post) => (
-                <Card className="m-0 p-5 shadow-md">
-                <div key={post.id} className="relative ">
+                <Card key={post.id} className="m-0 p-5 shadow-md">
+                <div className="relative ">
                   <MediaRenderer file={{ ...post, post_type: "" }} />
                   <div className="absolute top-2 ">
                     <AlertDialog>
