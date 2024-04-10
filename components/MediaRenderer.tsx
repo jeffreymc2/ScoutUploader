@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import ReactPlayer from "react-player";
+import Video from 'next-video';
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { PlayCircleIcon } from "lucide-react";
 
@@ -108,12 +108,17 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
         {file.isVideo ? (
           <DialogContent className="sm:max-w-[66vw]  flex items-center justify-center bg-transparent border-0 border-transparent">
             <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
-              <ReactPlayer
+              <Video
                 className="rounded-lg absolute top-0 left-0"
-                url={file.image}
+                src={file.image}
                 controls
-                width="100%"
-                height="100%"
+                autoPlay
+                loop
+                muted
+                playsInline
+                preload="metadata"
+                poster={thumbnailUrl}
+              
               />
             </div>
           </DialogContent>

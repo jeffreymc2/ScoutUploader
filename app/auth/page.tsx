@@ -47,9 +47,9 @@ const AuthPageContent = () => {
 
           <LoginForm />
           </div>
-          <Link href="/register" className="text-blue-500 text-sm pt-5">
+          {/* <Link href="/register" className="text-blue-500 text-sm pt-5">
             <p>Don&apos;t yet have account? Register here</p>
-          </Link>
+          </Link> */}
         </CardContent>
         <CardFooter className="text-center mt-2 text-center items-center justify-center ">
           <p className="text-gray-500 text-center items-center justofy-center text-xs">
