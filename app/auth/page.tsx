@@ -23,8 +23,8 @@ const AuthPageContent = () => {
 
 
   return (
-    <div className="flex items-center justify-center bg-transparent">
-      <Card className="w-full max-w-lg p-8 shadow-lg rounded-lg bg-gray-100">
+    <div className="flex min-h-screen items-center justify-center bg-transparent">
+    <Card className="w-full max-w-lg p-8 shadow-lg rounded-lg bg-gray-100 p-20">
         <div className="flex justify-center items-center mb-8 ">
           <div className="w-20 h-20 mr-2">
             <PerfectGameIcon backgroundColor="#005cb9" />{" "}
@@ -43,7 +43,10 @@ const AuthPageContent = () => {
         </CardHeader>
         <CardContent className="flex flex-col justify-center w-full items-center align-middle">
           {/*  */}
+          <div className="max-w-md w-full space-y-8">
+
           <LoginForm />
+          </div>
           <Link href="/register" className="text-blue-500 text-sm pt-5">
             <p>Don&apos;t yet have account? Register here</p>
           </Link>
