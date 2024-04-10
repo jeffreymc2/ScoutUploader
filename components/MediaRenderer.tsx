@@ -109,7 +109,9 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
       <Dialog onOpenChange={setIsOpen}>
         {file.isVideo ? (
           <DialogContent className="sm:max-w-[66vw]  flex items-center justify-center bg-transparent border-0 border-transparent">
+           
             <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-4">
+              
               <ReactPlayer
                 className="rounded-lg absolute top-0 left-0"
                 url={file.image}
@@ -121,6 +123,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
           </DialogContent>
         ) : (
           <DialogContent className="min-h-[50vh]  sm:min-h-[66vh] bg-transparent border-0 border-transparent">
+            
             <Image
               src={file.image}
               alt={`Media posted by ${file.post_by || "Unknown"}`}
@@ -137,11 +140,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             thumbnailUrl ? (
               <div className="absolute inset-0 flex items-center justify-center ">
                 <DialogTrigger>
-                  {file.featured_image && (
-                    <div className="absolute top-4 left-4">
-                      <StarIcon className="text-yellow-400 w-6 h-6" />
-                    </div>
-                  )}
+                  
                   <Image
                     src={thumbnailUrl}
                     alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
@@ -150,6 +149,11 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                   />
                 </DialogTrigger>
                 <DialogTrigger className="z-10">
+                {file.featured_image && (
+                    <div className="absolute top-4 left-4">
+                      <StarIcon className="text-yellow-400 w-6 h-6" />
+                    </div>
+                  )}
                   {" "}
                   <PlayCircleIcon className="w-12 h-12 text-white z-10" />
                 </DialogTrigger>
@@ -185,17 +189,40 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
               className="cursor-pointer text-2xl"
               onClick={handleDownload}
             />
-            
+            <Dialog>
+              {!file.isVideo ? (
+                <div className="mt-3">
+                  <MediaForm
+                    postId={file.id}
+                    mediaUrl={file.image}
+                    isVideo={false}
+                    thumbnailUrl={file.image}
+                  />
+                </div>
+              ) : (
+                <div className="mt-3">
+                  <MediaForm
+                    postId={file.id}
+                    mediaUrl={file.image}
+                    isVideo={true}
+                    thumbnailUrl={file.image}
+                  />
+                </div>
+              )}
+            </Dialog>
           </div>
           {file.featured_image && (
-          <div className="mt-0">
-            <Badge className="bg-blue-500 text-white hover:bg-blue-500 text-xs">Featured Image</Badge>
-          </div>
-        )}
+            <div className="mt-0">
+              <Badge className="bg-blue-500 text-white hover:bg-blue-500 text-xs">
+                Featured Image
+              </Badge>
+            </div>
+          )}
         </div>
-        {file.title && <p className="text-md mt-2 leading-loose font-bold">{file.title}</p>}
+        {file.title && (
+          <p className="text-md mt-2 leading-loose font-bold">{file.title}</p>
+        )}
         {file.description && <p className="text-xs mt-1">{file.description}</p>}
-       
 
         {file.event_id && (
           <p className="text-sm mt-5">
@@ -203,17 +230,11 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
           </p>
         )}
       </Dialog>
-      <Dialog>
-        <div className="mt-3">
-          <MediaForm postId={file.id} mediaUrl={file.image} isVideo={false} />
-        </div>
-      </Dialog>
     </>
   );
 };
 
 export default MediaRenderer;
-
 
 function CameraIcon(
   props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>
@@ -247,7 +268,7 @@ function StarIcon(
       width="24"
       height="24"
       viewBox="0 0 24 24"
-      fill="none"
+      fill="currentColor"
       stroke="currentColor"
       strokeWidth="2"
       strokeLinecap="round"

@@ -20,10 +20,12 @@ interface MediaFormProps {
   postId: string;
   mediaUrl: string;
   isVideo: boolean;
+  thumbnailUrl: string;
 }
 export default function MediaForm({
   postId,
   mediaUrl,
+  thumbnailUrl,
   isVideo,
 }: MediaFormProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -32,6 +34,7 @@ export default function MediaForm({
     title: "",
     description: "",
     featured_image: false,
+    thumbnailUrl: "",
   });
 
   const supabase = supabaseBrowser();
@@ -50,6 +53,7 @@ export default function MediaForm({
         title: data?.title || "",
         description: data?.description || "",
         featured_image: data?.featured_image || false,
+        thumbnailUrl: thumbnailUrl,
       });
     }
   }, [postId, supabase]);
@@ -86,7 +90,7 @@ export default function MediaForm({
   return (
     <>
       <DialogTrigger asChild>
-        <FaEdit className="text-2xl absolute -mt-[98px] ml-[73px]" onClick={handleDialogOpen} />
+        <FaEdit className="text-2xl absolute -mt-[20px] ml-[37px] cursor-pointer" onClick={handleDialogOpen} />
       </DialogTrigger>
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
