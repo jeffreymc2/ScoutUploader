@@ -28,7 +28,7 @@ export default async function RegisterPage() {
         </CardHeader>
         <CardContent className="flex flex-col justify-center w-full items-center align-middle">
           {/*  */}
-          <RegisterForm />
+          {/* <RegisterForm /> */}
           <Link href="/login" className="text-blue-500 text-sm pt-5">
             <p>Already have account? Login here</p>
           </Link>
@@ -44,3 +44,5 @@ export default async function RegisterPage() {
     </>
   );
 }
+
+

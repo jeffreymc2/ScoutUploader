@@ -59,10 +59,12 @@ export const LoginForm = () => {
     });
   };
 
-  
+  // const input_style =
+  //   'form-control block w-full px-4 py-5 text-sm font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition ease-in-out m-0 focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none';
+
   return (
     <form onSubmit={handleSubmit(onSubmitHandler)} className='w-full'>
-      {error && (
+      {/* {error && (
         <p className='text-center bg-red-300 py-4 mb-6 rounded'>{error}</p>
       )}
       <div className='mb-6'>
@@ -98,7 +100,7 @@ export const LoginForm = () => {
 
       <div className='flex items-center my-4 before:flex-1 before:border-t before:border-gray-300 before:mt-0.5 after:flex-1 after:border-t after:border-gray-300 after:mt-0.5'>
         <p className='text-center font-semibold mx-4 mb-0'>OR</p>
-      </div>
+      </div> */}
 
       <div className="flex flex-col gap-4 w-full">
             <a

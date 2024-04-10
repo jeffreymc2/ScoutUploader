@@ -118,7 +118,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             </div>
           </DialogContent>
         ) : (
-          <DialogContent className="min-h-[50vh]  sm:min-h-[66vh] bg-transparent border-0 border-transparent">
+          <DialogContent className="min-h-[50vh] sm:min-h-[66vh] bg-transparent border-0 border-transparent">
             <Image
               src={file.image}
               alt={`Media posted by ${file.post_by || "Unknown"}`}
@@ -147,7 +147,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                 <DialogTrigger className="z-10">
                   {file.featured_image && (
                     <div className="absolute top-4 left-4">
-                      <StarIcon className="text-yellow-400 w-6 h-6" />
+                      <StarIcon className="text-blue-500 w-6 h-6" />
                     </div>
                   )}{" "}
                   <PlayCircleIcon className="w-12 h-12 text-white z-10" />
@@ -168,7 +168,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
               />
               {file.featured_image && (
                 <div className="absolute top-4 left-4">
-                  <StarIcon className="text-yellow-400 w-6 h-6" />
+                  <StarIcon className="text-blue-500 w-6 h-6" />
                 </div>
               )}
             </DialogTrigger>
@@ -181,7 +181,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
           <div className="flex items-center justify-between gap-2 mt-2">
             <div className="flex items-center gap-2">
               <IoCloudDownloadOutline
-                className="cursor-pointer text-2xl"
+                className="cursor-pointer text-2xl text-gray-700"
                 onClick={handleDownload}
               />
               <Dialog>
@@ -215,7 +215,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             )}
           </div>
           {file.title && (
-            <p className="text-md mt-2 leading-loose font-bold">{file.title}</p>
+            <p className="text-md mt-2 leading-loose font-bold text-gray-700">{file.title}</p>
           )}
           {file.description && (
             <p className="text-xs mt-1">{file.description}</p>
