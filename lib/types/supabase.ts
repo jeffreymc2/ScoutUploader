@@ -19,7 +19,7 @@ export interface Database {
           post_by: string
           event_id: string
           team_id: string
-          post_type: string
+          post_type?: string
           title?: string
           description?: string
           featured_image?: boolean
@@ -33,7 +33,7 @@ export interface Database {
           post_by: string
           event_id: string
           team_id: string
-          post_type: string
+          post_type?: string
           title?: string
           description?: string
           featured_image?: boolean
@@ -48,7 +48,7 @@ export interface Database {
           post_by?: string
           event_id?: string
           team_id?: string
-          post_type: string
+          post_type?: string
           title?: string
           description?: string
           featured_image?: boolean

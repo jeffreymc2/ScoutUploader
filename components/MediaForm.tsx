@@ -1,94 +1,134 @@
-// // app/components/MediaForm.tsx
-// "use client";
+// app/components/MediaForm.tsx
+"use client";
 
-// import { useForm } from "react-hook-form";
-// import { zodResolver } from "@hookform/resolvers/zod";
-// import * as z from "zod";
-// import { Button } from "@/components/ui/button";
-// import { Switch } from "@/components/ui/switch";
-// import { Label } from "@/components/ui/label";
-// import { Input } from "@/components/ui/input";
-// import { Textarea } from "@/components/ui/textarea";
-// import { toast } from "sonner";
-// import { supabaseServer } from "@/lib/supabase/server";
-// import { Post } from "@/lib/types/types";
+import { useState, useEffect, useCallback } from "react";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import { updatePost } from "@/app/media/actions";
+import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
+import { supabaseBrowser } from "@/lib/supabase/browser";
+import ReactPlayer from "react-player";
+import Image from "next/image";
 
-// const mediaFormSchema = z.object({
-//   title: z.string().min(1, "Title is required"),
-//   description: z.string().optional(),
-//   featured_image: z.boolean().default(false),
-// });
+interface MediaFormProps {
+    postId: string;
+    mediaUrl: string;
+    isVideo: boolean;
+  }
+export default function MediaForm({ postId, mediaUrl, isVideo }: MediaFormProps) {
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [initialData, setInitialData] = useState({
+    title: "",
+    description: "",
+    featured_image: false,
+  });
 
-// type MediaFormData = z.infer<typeof mediaFormSchema>;
+  const supabase = supabaseBrowser();
 
-// interface MediaFormProps {
-//   postId: string;
-// }
+const fetchInitialData = useCallback(async () => {
+    const { data, error } = await supabase
+        .from("posts")
+        .select("title, description, featured_image")
+        .eq("id", postId)
+        .single();
 
-// export default function MediaForm({ postId }: MediaFormProps) {
-//   const {
-//     register,
-//     handleSubmit,
-//     formState: { errors, isSubmitting },
-//   } = useForm<MediaFormData>({
-//     resolver: zodResolver(mediaFormSchema),
-//   });
+    if (error) {
+        console.error("Error fetching initial data:", error);
+    } else {
+        setInitialData({
+            title: data?.title || "",
+            description: data?.description || "",
+            featured_image: data?.featured_image || false,
+        });
+    }
+}, [postId, supabase]);
 
-//   const onSubmit = async (formData: MediaFormData) => {
-//     try {
-//       const supabase = supabaseServer();
+  const handleDialogOpen = () => {
+    fetchInitialData().then(() => setIsDialogOpen(true));
+  };
 
-//       const updateData: Partial<Post> = {
-//         title: formData.title,
-//         description: formData.description,
-//         featured_image: formData.featured_image,
-//       };
+  useEffect(() => {
+    if (isDialogOpen) {
+      fetchInitialData();
+    }
+  }, [isDialogOpen, fetchInitialData]);
 
-//       const { data, error } = await supabase
-//         .from("posts")
-//         .update(updateData)
-//         .eq("id", postId)
-//         .single();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSubmitting(true);
 
-//       if (error) {
-//         throw error;
-//       }
+    const formData = new FormData(event.currentTarget);
+    formData.append("postId", postId);
 
-//       toast({
-//         title: "Post updated",
-//         description: "The post has been updated successfully.",
-//         variant: "success",
-//       });
-//     } catch (error) {
-//       console.error("Error updating post:", error);
-//       toast({
-//         title: "Error",
-//         description: "An error occurred while updating the post.",
-//         variant: "destructive",
-//       });
-//     }
-//   };
+    const response = await updatePost(formData);
 
-//   return (
-//     <form onSubmit={handleSubmit(onSubmit)}>
-//       <div className="mt-4">
-//         <Label htmlFor="title">Title</Label>
-//         <Input id="title" {...register("title")} className="mt-1" />
-//         {errors.title && <p className="text-red-500">{errors.title.message}</p>}
-//       </div>
-//       <div className="mt-4">
-//         <Label htmlFor="description">Description</Label>
-//         <Textarea id="description" {...register("description")} className="mt-1" />
-//       </div>
-//       <div className="mt-4 flex items-center space-x-2">
-//         <Switch id="featured_image" {...register("featured_image")} />
-//         <Label htmlFor="featured_image">Featured Image</Label>
-//       </div>
-//       <div className="mt-4">
-//         <Button type="submit" disabled={isSubmitting}>
-//           {isSubmitting ? "Saving..." : "Save"}
-//         </Button>
-//       </div>
-//     </form>
-//   );
-// }
+    setIsSubmitting(false);
+
+    if (response.success) {
+      toast.success("Post updated successfully.");
+      setIsDialogOpen(false);
+    } else {
+      toast.error("An error occurred while updating the post.");
+    }
+  };
+
+  return (
+    <>
+      <DialogTrigger asChild>
+        <Button onClick={handleDialogOpen}>Edit</Button>
+      </DialogTrigger>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+             {/* Media Preview */}
+          {isVideo ? (
+            <div className="video-preview">
+              <ReactPlayer url={mediaUrl} width="100%" height="100%" controls />
+            </div>
+          ) : (
+            <div className="image-preview">
+              <Image src={mediaUrl} alt="Media Preview" width={500} height={280} layout="responsive" />
+            </div>
+          )}
+        <form onSubmit={handleSubmit}>
+          <input type="hidden" name="postId" value={postId} />
+          <div className="mt-4">
+            <Label htmlFor="title">Title</Label>
+            <Input
+              id="title"
+              name="title"
+              className="mt-1"
+              defaultValue={initialData.title}
+            />
+          </div>
+          <div className="mt-4">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              name="description"
+              className="mt-1"
+              defaultValue={initialData.description}
+            />
+          </div>
+          <div className="mt-4 flex items-center space-x-2">
+            <Switch
+              id="featured_image"
+              name="featured_image"
+              defaultChecked={initialData.featured_image}
+            />
+            <Label htmlFor="featured_image">Featured Image</Label>
+          </div>
+          <Button className="mt-2" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? "Updating..." : "Save"}
+          </Button>
+        </form>
+      </DialogContent>
+    </Dialog>
+    </>
+  );
+
+}

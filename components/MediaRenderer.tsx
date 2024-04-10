@@ -1,5 +1,3 @@
-//app/components/MediaRenderer.tsx
-
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -11,6 +9,7 @@ import { Button } from "./ui/button";
 import { max } from "lodash";
 import { MdOutlinePreview } from "react-icons/md";
 import { IoCloudDownloadOutline } from "react-icons/io5";
+import MediaForm from "./MediaForm";
 import { Separator } from "@/components/ui/separator";
 
 interface MediaRendererProps {
@@ -21,6 +20,10 @@ interface MediaRendererProps {
     name: string;
     event_id?: string;
     isVideo?: boolean;
+    post_type: string;
+    title?: string;
+    description?: string;
+    featured_image?: boolean;
   };
 }
 
@@ -94,11 +97,11 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
       });
   };
 
-  const imageStyle = {
-    width: "100%",
-    height: "auto",
-    position: "relative!important",
-  };
+  // const imageStyle = {
+  //   width: "100%",
+  //   height: "auto",
+  //   position: "relative!important",
+  // };
 
   return (
     <>
@@ -168,9 +171,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
         <div className="flex items-center justify-between gap-2 mt-2">
          
           <div className="flex items-center gap-2">
-            {/* <DialogTrigger>
-              <MdOutlinePreview className="cursor-pointer text-2xl" />
-            </DialogTrigger> */}
+      
             <IoCloudDownloadOutline
               className="cursor-pointer text-2xl"
               onClick={handleDownload}
@@ -180,6 +181,12 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
         {file.event_id && (
             <p className="text-sm mt-5">Uploaded from Event ID: {file.event_id}</p>
           )}
+            
+      </Dialog>
+      <Dialog>
+      <div className="mt-4">
+        <MediaForm postId={file.id} mediaUrl={file.image} isVideo={false} />
+      </div>
       </Dialog>
     </>
   );
