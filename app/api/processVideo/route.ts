@@ -1,12 +1,11 @@
-// app/api/processVideo/route.ts
 import { NextResponse } from 'next/server';
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile } from '@ffmpeg/util';
 import { supabaseServer } from '@/lib/supabase/server';
 
 export async function POST(request: Request) {
+  
   const { videoPath } = await request.json();
-
   console.log('Received video path:', videoPath);
 
   const ffmpeg = new FFmpeg();
@@ -26,9 +25,9 @@ export async function POST(request: Request) {
     console.log('Fetching video file from Supabase storage...');
     const videoFileResponse = await supabaseServer().storage.from('media').getPublicUrl(videoPath);
     console.log('Video file fetched from Supabase storage', videoFileResponse);
+
     const videoFile = await fetch(videoFileResponse.data.publicUrl);
     console.log('Video file fetched ', videoFile);
-
     console.log('Video file fetched successfully');
 
     console.log('Reading video file data...');
@@ -56,24 +55,19 @@ export async function POST(request: Request) {
     console.log('Thumbnail data read successfully');
 
     const supabase = supabaseServer();
-
     const compressedVideoPath = videoPath.replace('.mp4', '_compressed.mp4');
     const thumbnailPath = videoPath.replace('.mp4', '_thumbnail.jpg');
 
     console.log('Uploading compressed video to Supabase storage...');
     await supabase.storage
       .from('media')
-      .upload(compressedVideoPath, compressedVideoData, {
-        contentType: 'video/mp4',
-      });
+      .upload(compressedVideoPath, compressedVideoData, { contentType: 'video/mp4' });
     console.log('Compressed video uploaded to Supabase storage');
 
     console.log('Uploading thumbnail to Supabase storage...');
     await supabase.storage
       .from('media')
-      .upload(thumbnailPath, thumbnailData, {
-        contentType: 'image/jpeg',
-      });
+      .upload(thumbnailPath, thumbnailData, { contentType: 'image/jpeg' });
     console.log('Thumbnail uploaded to Supabase storage');
 
     console.log('Terminating FFmpeg...');
