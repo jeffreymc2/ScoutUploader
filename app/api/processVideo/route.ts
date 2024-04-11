@@ -24,9 +24,10 @@ export async function POST(request: Request) {
 
   try {
     console.log('Fetching video file from Supabase storage...');
+    // const videoFile = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${videoPath}`);
     const videoFileResponse = await supabaseServer().storage.from('media').getPublicUrl(videoPath);
     const videoFile = await fetch(videoFileResponse.data.publicUrl);
-
+    
     console.log('Video file fetched successfully');
 
     console.log('Reading video file data...');
