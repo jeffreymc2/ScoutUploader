@@ -1,4 +1,6 @@
 // pages/api/processVideo.js
+import { NextResponse } from 'next/server';
+
 import { supabaseBrowser } from '@/lib/supabase/browser';
 import fs from 'fs';
 import { exec } from 'child_process';
@@ -11,12 +13,10 @@ const execPromise = util.promisify(exec);
 
 const supabase = supabaseBrowser();
 
-export default async function handler(req: any, res: any) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  const { videoPath } = req.body;
+export async function POST(req: any, res: any) {
+    //get request
+  
+  const { videoPath } = await req.body;
   if (!videoPath) {
     return res.status(400).json({ error: 'Video path is required' });
   }
