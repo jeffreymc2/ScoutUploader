@@ -51,7 +51,7 @@ export async function middleware(request: NextRequest) {
     return response;
   } else {
     const isProtectedPath = protectedPaths.some((path) => {
-      const regex = new RegExp("^" + path.replace(/:\w+/g, "[^/]+") + "$");
+      const regex = new RegExp("^" + (path as string).replace(/:\w+/g, "[^/]+") + "$");
       return regex.test(url.pathname);
     });
 
