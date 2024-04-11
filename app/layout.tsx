@@ -35,7 +35,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <Footer />
           <Toaster />
         </QueryProvider>
-        
       </body>
     </html>
   );

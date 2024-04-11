@@ -2,12 +2,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
-import QueryProvider from "@/components/query-provider";
-import { Toaster } from "@/components/ui/sonner";
+
 import localFont from "next/font/local";
 import BackgroundImage from "@/components/BackgroundImage";
-import Background from "@/components/BackgroundImage";
 
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
@@ -27,7 +24,7 @@ export default function RootLayout({
 
       <>
 
-                  <Background />
+                  <BackgroundImage />
 
               {/* Optionally, apply a background color or other full-width styles here */}
               <div className="max-w-6xl mx-auto ">

@@ -12,6 +12,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
+import Link from "next/link";
 
 const AuthPageContent = () => {
   const params = useSearchParams();
