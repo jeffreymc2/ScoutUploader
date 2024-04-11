@@ -1,3 +1,4 @@
+// app/api/processVideo/route.ts
 import { NextResponse } from 'next/server';
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile } from '@ffmpeg/util';
@@ -6,54 +7,78 @@ import { supabaseServer } from '@/lib/supabase/server';
 export async function POST(request: Request) {
   const { videoPath } = await request.json();
 
+  console.log('Received video path:', videoPath);
+
   const ffmpeg = new FFmpeg();
   ffmpeg.on('log', (log) => {
     console.log('FFmpeg Log:', log.message);
   });
 
+  console.log('Loading FFmpeg...');
   await ffmpeg.load();
+  console.log('FFmpeg loaded successfully');
+
   const inputVideoName = 'input.mp4';
   const outputVideoName = 'output.mp4';
   const outputThumbnailName = 'thumbnail.jpg';
 
-  console.log('Video path:', videoPath);
+  try {
+    console.log('Fetching video file from Supabase storage...');
+    const videoFile = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${videoPath}`);
+    console.log('Video file fetched successfully');
 
-  // Fetch the video file from Supabase storage
-  const videoFile = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${videoPath}`);
-  console.log('Video file:', videoFile);
-  const videoData = await videoFile.arrayBuffer();
-  console.log('Video data:', videoData);
+    console.log('Reading video file data...');
+    const videoData = await videoFile.arrayBuffer();
+    console.log('Video file data read successfully');
 
-  // Write the video file to the FFmpeg virtual filesystem
-  await ffmpeg.writeFile(inputVideoName, new Uint8Array(videoData));
+    console.log('Writing video file to FFmpeg virtual filesystem...');
+    await ffmpeg.writeFile(inputVideoName, new Uint8Array(videoData));
+    console.log('Video file written to FFmpeg virtual filesystem');
 
-  // Run FFmpeg commands to compress the video and generate a thumbnail
-  await ffmpeg.exec(['-i', inputVideoName, '-vf', 'scale=-2:720', '-c:v', 'libx264', '-preset', 'fast', '-crf', '23', outputVideoName]);
-  await ffmpeg.exec(['-i', inputVideoName, '-ss', '00:00:01', '-vframes', '1', outputThumbnailName]);
+    console.log('Compressing video...');
+    await ffmpeg.exec(['-i', inputVideoName, '-vf', 'scale=-2:720', '-c:v', 'libx264', '-preset', 'fast', '-crf', '23', outputVideoName]);
+    console.log('Video compression completed');
 
-  // Read the compressed video and thumbnail from the FFmpeg virtual filesystem
-  const compressedVideoData = await ffmpeg.readFile(outputVideoName);
-  const thumbnailData = await ffmpeg.readFile(outputThumbnailName);
+    console.log('Generating thumbnail...');
+    await ffmpeg.exec(['-i', inputVideoName, '-ss', '00:00:01', '-vframes', '1', outputThumbnailName]);
+    console.log('Thumbnail generation completed');
 
-  // Upload the compressed video and thumbnail to Supabase storage
-  const supabase = supabaseServer();
+    console.log('Reading compressed video data...');
+    const compressedVideoData = await ffmpeg.readFile(outputVideoName);
+    console.log('Compressed video data read successfully');
 
-  const compressedVideoPath = videoPath.replace('.mp4', '_compressed.mp4');
-  const thumbnailPath = videoPath.replace('.mp4', '_thumbnail.jpg');
+    console.log('Reading thumbnail data...');
+    const thumbnailData = await ffmpeg.readFile(outputThumbnailName);
+    console.log('Thumbnail data read successfully');
 
-  await supabase.storage
-    .from('media')
-    .upload(compressedVideoPath, compressedVideoData, {
-      contentType: 'video/mp4',
-    });
+    const supabase = supabaseServer();
 
-  await supabase.storage
-    .from('media')
-    .upload(thumbnailPath, thumbnailData, {
-      contentType: 'image/jpeg',
-    });
+    const compressedVideoPath = videoPath.replace('.mp4', '_compressed.mp4');
+    const thumbnailPath = videoPath.replace('.mp4', '_thumbnail.jpg');
 
-  await ffmpeg.terminate();
+    console.log('Uploading compressed video to Supabase storage...');
+    await supabase.storage
+      .from('media')
+      .upload(compressedVideoPath, compressedVideoData, {
+        contentType: 'video/mp4',
+      });
+    console.log('Compressed video uploaded to Supabase storage');
 
-  return NextResponse.json({ message: 'Video processing completed' });
+    console.log('Uploading thumbnail to Supabase storage...');
+    await supabase.storage
+      .from('media')
+      .upload(thumbnailPath, thumbnailData, {
+        contentType: 'image/jpeg',
+      });
+    console.log('Thumbnail uploaded to Supabase storage');
+
+    console.log('Terminating FFmpeg...');
+    await ffmpeg.terminate();
+    console.log('FFmpeg terminated');
+
+    return NextResponse.json({ message: 'Video processing completed' });
+  } catch (error) {
+    console.error('Error processing video:', error);
+    return NextResponse.json({ error: 'Failed to process video' }, { status: 500 });
+  }
 }
