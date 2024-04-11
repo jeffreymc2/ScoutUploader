@@ -85,14 +85,6 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     };
   });
 
-  uppy.on("complete", (result) => {
-    console.log('Upload result:', result); // Log upload result
-    toast.success("Upload complete!");
-    
-    if (window.location.pathname.includes("/players")) {
-      window.location.reload();
-    }
-  });
   uppy.on("complete", async (result) => {
     console.log('Upload result:', result);
     toast.success("Upload complete!");
