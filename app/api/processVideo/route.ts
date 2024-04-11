@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile } from '@ffmpeg/util';
-import { supabaseBrowser } from '@/lib/supabase/browser';
+import { supabaseServer } from '@/lib/supabase/server';
 
 export async function POST(request: Request) {
   const { videoPath } = await request.json();
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
   const thumbnailData = await ffmpeg.readFile(outputThumbnailName);
 
   // Upload the compressed video and thumbnail to Supabase storage
-  const supabase = supabaseBrowser();
+  const supabase = supabaseServer();
 
   const compressedVideoPath = videoPath.replace('.mp4', '_compressed.mp4');
   const thumbnailPath = videoPath.replace('.mp4', '_thumbnail.jpg');
