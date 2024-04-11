@@ -38,7 +38,7 @@ export default function MobileMenu({ session }: { session: any }) {
       <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
         <div className="fixed inset-0 z-10"/>
         <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-          <div className="flex items-center justify-between p-6 bg-gradient-to-tl from-blue-500 to-blue-700 border-blue-500 border-b-2">
+          <div className="flex items-center justify-between p-4 bg-gradient-to-tl from-blue-500 to-blue-700 border-blue-500 border-b-2">
             <a href="#" className="-m-1.5 p-1.5">
               <span className="sr-only">Perfect Game</span>
               <PerfectGameLogo />
