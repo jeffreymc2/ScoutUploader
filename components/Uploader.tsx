@@ -88,7 +88,6 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   uppy.on("complete", async (result) => {
     console.log('Upload result:', result);
     toast.success("Upload complete!");
-  
     result.successful.forEach(async (file) => {
       if (file.type?.startsWith('video/')) {
         const videoPath = `players/${user?.id}/${player_id}/${file.name}`;

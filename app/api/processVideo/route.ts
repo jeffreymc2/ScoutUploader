@@ -7,15 +7,22 @@ export async function POST(request: Request) {
   const { videoPath } = await request.json();
 
   const ffmpeg = new FFmpeg();
-  await ffmpeg.load();
+  ffmpeg.on('log', (log) => {
+    console.log('FFmpeg Log:', log.message);
+  });
 
+  await ffmpeg.load();
   const inputVideoName = 'input.mp4';
   const outputVideoName = 'output.mp4';
   const outputThumbnailName = 'thumbnail.jpg';
 
+  console.log('Video path:', videoPath);
+
   // Fetch the video file from Supabase storage
   const videoFile = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/${videoPath}`);
+  console.log('Video file:', videoFile);
   const videoData = await videoFile.arrayBuffer();
+  console.log('Video data:', videoData);
 
   // Write the video file to the FFmpeg virtual filesystem
   await ffmpeg.writeFile(inputVideoName, new Uint8Array(videoData));
