@@ -101,6 +101,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
             },
             body: JSON.stringify({ videoPath }),
           });
+          console.log('Video processing response:', response);
   
           if (!response.ok) {
             throw new Error('Failed to process video');
