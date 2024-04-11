@@ -1,10 +1,7 @@
 "use client";
-import { Button } from "@/components/ui/button";
 import React, { Suspense } from "react";
-import { FaMicrosoft } from "react-icons/fa6";
-import { supabaseBrowser } from "@/lib/supabase/browser";
+
 import { useSearchParams } from "next/navigation";
-import PerfectGameLogo from "@/components/PGLogo";
 import PerfectGameIcon from "@/components/PGIcon";
 import { LoginForm } from "../login/login-form";
 import {
@@ -15,7 +12,6 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import Link from "next/link";
 
 const AuthPageContent = () => {
   const params = useSearchParams();
