@@ -14,7 +14,7 @@ import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
-import MediaRenderer from "../MediaRenderer";
+import MediaRenderer from "../MediaComponents/MediaRenderer";
 import {
   AlertDialog,
   AlertDialogTrigger,

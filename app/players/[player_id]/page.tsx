@@ -29,7 +29,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import MediaRenderer from "@/components/MediaRenderer";
+import MediaRenderer from "@/components/MediaComponents/MediaRenderer";
 import { Suspense } from "react";
 import { Player } from "@/lib/types/types";
 // import DiamondKastVideo from "@/components/DiamondKastVideo";

@@ -46,6 +46,9 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "date-fns": "^3.6.0",
+    "eventsource-parser": "^1.1.2",
+    "ffmpeg-node": "^0.0.2",
+    "fluent-ffmpeg": "^2.1.2",
     "lodash": "^4.17.21",
     "lucide-react": "^0.315.0",
     "next": "14.1.0",
@@ -71,6 +74,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/fluent-ffmpeg": "^2.1.24",
     "@types/lodash": "^4.17.0",
     "@types/node": "^20",
     "@types/react": "^18",

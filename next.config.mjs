@@ -42,7 +42,11 @@ const nextConfig = {
 				hostname: 'dcb80a363a4153137b52-e3e81376f7ea45aa66e55c5aeb0ba59e.ssl.cf1.rackcdn.com',
 			  },
 		],
-	}
+	},
+	// images: {
+	// 	loader: 'custom',
+	// 	loaderFile: '@/lib/supabase/loader',
+	//   },
 };
 
 export default withNextVideo(nextConfig);

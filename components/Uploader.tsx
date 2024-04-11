@@ -88,10 +88,46 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   uppy.on("complete", (result) => {
     console.log('Upload result:', result); // Log upload result
     toast.success("Upload complete!");
+    
     if (window.location.pathname.includes("/players")) {
       window.location.reload();
     }
   });
+  uppy.on("complete", async (result) => {
+    console.log('Upload result:', result);
+    toast.success("Upload complete!");
+  
+    result.successful.forEach(async (file) => {
+      if (file.type?.startsWith('video/')) {
+        const videoPath = `players/${user?.id}/${player_id}/${file.name}`;
+        // Trigger video processing
+        try {
+          const response = await fetch('/api/processVideo', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ videoPath }),
+          });
+  
+          if (!response.ok) {
+            throw new Error('Failed to process video');
+          }
+  
+          toast.success("Video processing initiated");
+        } catch (error) {
+          console.error(error);
+          toast.error("Failed to initiate video processing");
+        }
+      }
+    });
+  
+    if (window.location.pathname.includes("/players")) {
+      window.location.reload();
+    }
+  });
+
+
   const handleUpload = () => {
     if (!selectedPlayer) {
       toast.error("Please select a player.");
@@ -103,6 +139,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     }
     uppy.upload();
   };
+  
   return (
     <div className="space-y-5">
       {" "}

@@ -8,7 +8,7 @@ import Navbar from "@/components/Navbar";
 import { Toaster } from "@/components/ui/sonner";
 import localFont from "next/font/local";
 import Footer from "@/components/Footer";
-import { usePathname } from 'next/navigation';
+import { usePathname } from "next/navigation";
 import MainRootComponent from "@/components/MainRootComponent";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
@@ -19,19 +19,25 @@ export const metadata: Metadata = {
   description: "PG Scouts can upload player images and videos.",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning className={pgFont.className}>
-      <body className={`${inter.className} overflow-y-scroll flex flex-col min-h-screen`}>
+      <body
+        className={`${inter.className} overflow-y-scroll flex flex-col min-h-screen`}
+      >
         <QueryProvider>
-          <ThemeProvider attribute="class" enableSystem disableTransitionOnChange>
+          <ThemeProvider
+            attribute="class"
+            enableSystem
+            disableTransitionOnChange
+          >
             <div className="w-full relative mx-auto xl:px-0">
               <Navbar />
             </div>
           </ThemeProvider>
-          <MainRootComponent>
-            {children}
-          </MainRootComponent>
+          <MainRootComponent>{children}</MainRootComponent>
           <Footer />
           <Toaster />
         </QueryProvider>
