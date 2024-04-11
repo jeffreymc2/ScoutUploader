@@ -90,7 +90,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     toast.success("Upload complete!");
     result.successful.forEach(async (file) => {
       if (file.type?.startsWith('video/')) {
-        const videoPath = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/players/${user?.id}/${player_id}/${file.name}`;
+        const videoPath = `media/players/${user?.id}/${player_id}/${file.name}`;
         // Trigger video processing
         try {
           const response = await fetch('/api/processVideo', {
