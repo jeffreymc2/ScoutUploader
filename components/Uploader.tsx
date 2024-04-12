@@ -119,13 +119,21 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         const videoPath = `players/${user?.id}/${player_id}/${file.name}`;
         try {
           const edgeFunctionUrl = process.env.NEXT_PUBLIC_SUPABASE_EDGE_PROCESS_VIDEO as string;
-          const { data } = await supabase.auth.getSession();
-
+          const { data, error } = await supabase.auth.getSession();
+  
+          if (error) {
+            console.error("Error retrieving session:", error);
+            toast.error("Failed to initiate video processing");
+            return;
+          }
+  
+          const accessToken = data.session?.access_token;
+  
           const response = await fetch(edgeFunctionUrl, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${data?.session?.access_token}`,
+              "Authorization": `Bearer ${accessToken}`,
             },
             body: JSON.stringify({ videoPath }),
           });
