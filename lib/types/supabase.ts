@@ -23,6 +23,7 @@ export interface Database {
           title?: string
           description?: string
           featured_image?: boolean
+          thumbnail?: string
         }
         Insert: {
           created_at?: string
@@ -37,6 +38,8 @@ export interface Database {
           title?: string
           description?: string
           featured_image?: boolean
+          thumbnail?: string
+
 
         }
         Update: {
@@ -52,6 +55,8 @@ export interface Database {
           title?: string
           description?: string
           featured_image?: boolean
+          thumbnail?: string
+
 
         }
         Relationships: [

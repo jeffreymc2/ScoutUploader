@@ -24,6 +24,7 @@ interface MediaRendererProps {
     title?: string;
     description?: string;
     featured_image?: boolean;
+    thumbnail?: string; 
   };
 }
 
@@ -36,23 +37,32 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   useEffect(() => {
     const fetchThumbnailUrl = async () => {
       if (file.isVideo) {
-        const thumbnailPath = `players/${user?.id}/${file.id}/${file.name}.png`;
-        const { data, error } = await supabase.storage
-          .from("media")
-          .download(thumbnailPath);
-
+        const { data: postData, error } = await supabase
+          .from("posts")
+          .select("thumbnail")
+          .eq("id", file.id)
+          .single();
+  
         if (error) {
           console.error("Error fetching thumbnail:", error);
-        } else {
-          setThumbnailUrl(URL.createObjectURL(data));
+        } else if (postData?.thumbnail) {
+          const { data: thumbnailData, error: thumbnailError } = await supabase.storage
+            .from("media")
+            .download(postData.thumbnail);
+  
+          if (thumbnailError) {
+            console.error("Error downloading thumbnail:", thumbnailError);
+          } else {
+            setThumbnailUrl(URL.createObjectURL(thumbnailData));
+          }
         }
       } else {
         setThumbnailUrl(file.image);
       }
     };
-
+  
     fetchThumbnailUrl();
-  }, [file.id, file.image, file.isVideo, file.name, user?.id]);
+  }, [file.id, file.image, file.isVideo, supabase]);
 
   const handleDownload = () => {
     fetch(file.image)
