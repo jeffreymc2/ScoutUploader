@@ -26,13 +26,13 @@ export interface PlayerResponse {
 
 interface UploaderProps { playerid: number; FullName: string; } 
 
-const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
-  const { data: userData, status } = useUser();
+const Uploader: React.FC<UploaderProps> = async ({ playerid, FullName }) => {
   const supabase = supabaseBrowser();
+  const { data: { user } } = await supabase.auth.getUser()
+    
   const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(
     null
   );
-  console.log('User data:', userData); // Log user data
 
   useEffect(() => {
     setSelectedPlayer({ playerid, FullName });
@@ -40,11 +40,12 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
 
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const jwt = "jAhUr7owkF8AdDXe3xXFvuEWxr8plb//FDJAIQ5A0SN1LUYyNNzK3qK06O8h6YjSArOIrjTp8gwfxrv6WaR6tA=="; // Replace "your_jwt_value_here" with the actual JWT value
   
   const onBeforeRequest = async (req: any) => {
-    const { data } = await supabase.auth.getSession();
-    console.log('Supabase session data:', data); // Log session data
-    req.setHeader("Authorization", `Bearer ${data?.session?.access_token}`);
+    const { data: { user } } = await supabase.auth.getUser(jwt);
+    console.log('Supabase session data:', user?.id); // Log session data
+    req.setHeader("Authorization", `Bearer ${jwt}`);
   };
   
   const player_id = playerid.toString();
@@ -79,8 +80,8 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     file.meta = {
       ...file.meta,
       bucketName: "media",
-      objectName: userData?.user
-        ? `players/${userData.user.id}/${player_id}/${fileNameWithUUID}`
+      objectName: user?.id
+        ? `players/${user.id}/${player_id}/${fileNameWithUUID}`
         : `players/${player_id}/${fileNameWithUUID}`,
       contentType: file.type,
       cacheControl: "undefined",
@@ -98,20 +99,22 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
 
   uppy.on('complete', async (result) => {
     console.log('Upload result:', result);
+    const { data: { user } } = await supabase.auth.getUser(jwt);
+
     toast.success('Upload complete!');
     result.successful.forEach(async (file) => {
       if (file.type?.startsWith('video/')) {
-        const videoPath = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/players/${userData?.user?.id}/${player_id}/${file.name}`;
+        const videoPath = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/players/${user?.id}/${player_id}/${file.name}`;
         try {
           const edgeFunctionUrl = process.env.NEXT_PUBLIC_SUPABASE_EDGE_PROCESS_VIDEO as string;
   
           // Check if the session exists and if the user is authenticated
-          if (status === 'success' && userData?.session && userData.session.access_token) {
+          if (user && user.id) {
             const response = await fetch(edgeFunctionUrl, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${userData.session.access_token}`,
+                Authorization: `Bearer ${jwt}`,
               },
               body: JSON.stringify({ videoPath }),
             });
@@ -136,7 +139,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       window.location.reload();
     }
   });
-  
+
   const handleUpload = () => {
     if (!selectedPlayer) {
       toast.error("Please select a player.");

@@ -17,7 +17,6 @@ export default function useUser() {
     queryFn: async () => {
       const supabase = supabaseBrowser();
       const { data } = await supabase.auth.getSession();
-
       if (data.session?.user) {
         // fetch user information profile
         const { data: user } = await supabase
@@ -27,9 +26,7 @@ export default function useUser() {
           .single();
         return { user, session: data.session };
       }
-
-      // Return the session even if the user is not authenticated
-      return { user: null, session: data.session || null };
+      return { user: null, session: null };
     },
   });
 }
