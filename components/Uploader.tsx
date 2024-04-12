@@ -28,9 +28,10 @@ interface UploaderProps {
 }
 
 const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
-  const { data: userData, status } = useUser();
+  const { data: user, status } = useUser();
+  const supabase = supabaseBrowser();
   const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(null);
-  console.log("User data:", userData);
+  console.log("User data:", user);
 
   useEffect(() => {
     setSelectedPlayer({ playerid, FullName });
@@ -40,8 +41,9 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   const router = useRouter();
 
   const onBeforeRequest = async (req: any) => {
-    if (userData?.session) {
-      req.setHeader("Authorization", `Bearer ${userData.session.access_token}`);
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+      req.setHeader("Authorization", `Bearer ${data.session.access_token}`);
     }
   };
 
@@ -71,7 +73,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     file.meta = {
       ...file.meta,
       bucketName: "media",
-      objectName: `players/${userData?.user?.id}/${player_id}/${fileNameWithUUID}`,
+      objectName: `players/${user?.id}/${player_id}/${fileNameWithUUID}`,
       contentType: file.type,
       cacheControl: "undefined",
     };
@@ -82,17 +84,18 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     toast.success("Upload complete!");
     result.successful.forEach(async (file) => {
       if (file.type?.startsWith("video/")) {
-        const videoPath = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/players/${userData?.user?.id}/${player_id}/${file.name}`;
+        const videoPath = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/players/${user?.id}/${player_id}/${file.name}`;
         try {
           const edgeFunctionUrl = process.env.NEXT_PUBLIC_SUPABASE_EDGE_PROCESS_VIDEO as string;
+          const { data } = await supabase.auth.getSession();
 
           // Check if the user is authenticated and has a session
-          if (userData?.session) {
+          if (data.session) {
             const response = await fetch(edgeFunctionUrl, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${userData.session.access_token}`,
+                Authorization: `Bearer ${data.session.access_token}`,
               },
               body: JSON.stringify({ videoPath }),
             });
