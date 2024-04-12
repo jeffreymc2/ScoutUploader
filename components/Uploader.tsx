@@ -9,7 +9,7 @@ import { Dashboard } from "@uppy/react";
 import "@uppy/core/dist/style.css"; import "@uppy/dashboard/dist/style.css"; 
 import { Button } from "./ui/button"; 
 import Tus from "@uppy/tus"; 
-import useUser from "@/app/hook/useUser"; 
+import useUser from "@/app/hook/getUser"; 
 import { supabaseBrowser } from "@/lib/supabase/browser"; 
 import { toast } from "sonner"; 
 import { useRouter } from "next/navigation"; 
