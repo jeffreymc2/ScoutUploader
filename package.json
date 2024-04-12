@@ -12,6 +12,7 @@
     "-": "^0.0.1",
     "@dnd-kit/core": "^6.1.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@ffmpeg/core": "^0.12.6",
     "@ffmpeg/ffmpeg": "^0.12.10",
     "@ffmpeg/util": "^0.12.1",
@@ -51,8 +52,8 @@
     "clsx": "^2.1.0",
     "date-fns": "^3.6.0",
     "eventsource-parser": "^1.1.2",
+    "ffmpeg": "^0.0.4",
     "ffmpeg-node": "^0.0.2",
-    "fluent-ffmpeg": "^2.1.2",
     "latest": "^0.2.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.315.0",
@@ -79,6 +80,7 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/ffmpeg": "^1.0.7",
     "@types/fluent-ffmpeg": "^2.1.24",
     "@types/lodash": "^4.17.0",
     "@types/node": "^20",
@@ -91,6 +93,7 @@
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
     "postcss": "^8",
+    "supabase": "^1.153.4",
     "tailwindcss": "^3.3.0",
     "typescript": "^5"
   }

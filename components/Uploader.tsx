@@ -85,15 +85,25 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     };
   });
 
-  uppy.on("complete", async (result) => {
+  // uppy.on("complete", (result) => {
+  //   console.log('Upload result:', result); // Log upload result
+  //   toast.success("Upload complete!");
+  //   if (window.location.pathname.includes("/players")) {
+  //     window.location.reload();
+  //   }
+  // });
+
+
+  uppy.on('complete', async (result) => {
     console.log('Upload result:', result);
-    toast.success("Upload complete!");
+    toast.success('Upload complete!');
     result.successful.forEach(async (file) => {
       if (file.type?.startsWith('video/')) {
-        const videoPath = `media/players/${user?.id}/${player_id}/${file.name}`;
+        const videoPath = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/players/${user?.id}/${player_id}/${file.name}`;
         // Trigger video processing
         try {
-          const response = await fetch('/api/processVideo', {
+          const edgeFunctionUrl = process.env.NEXT_PUBLIC_SUPABASE_EDGE_PROCESS_VIDEO as string;
+          const response = await fetch(edgeFunctionUrl, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -101,20 +111,20 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
             body: JSON.stringify({ videoPath }),
           });
           console.log('Video processing response:', response);
-  
+
           if (!response.ok) {
             throw new Error('Failed to process video');
           }
-  
-          toast.success("Video processing initiated");
+
+          toast.success('Video processing initiated');
         } catch (error) {
           console.error(error);
-          toast.error("Failed to initiate video processing");
+          toast.error('Failed to initiate video processing');
         }
       }
     });
   
-    if (window.location.pathname.includes("/players")) {
+    if (window.location.pathname.includes('/players')) {
       window.location.reload();
     }
   });
@@ -131,7 +141,6 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     }
     uppy.upload();
   };
-  
   return (
     <div className="space-y-5">
       {" "}
