@@ -27,12 +27,12 @@ export interface PlayerResponse {
 interface UploaderProps { playerid: number; FullName: string; } 
 
 const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
-  const { data: user } = useUser();
+  const { data: userData, status } = useUser();
   const supabase = supabaseBrowser();
   const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(
     null
   );
-  console.log('User data:', user); // Log user data
+  console.log('User data:', userData); // Log user data
 
   useEffect(() => {
     setSelectedPlayer({ playerid, FullName });
@@ -74,12 +74,13 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   );
 
   uppy.on('file-added', (file) => {
+
     const fileNameWithUUID = `${player_id}_${file.name}`;
     console.log('File added:', fileNameWithUUID);
     file.meta = {
       ...file.meta,
       bucketName: "media",
-      objectName: `players/${user?.id}/${player_id}/${fileNameWithUUID}`,
+      objectName: `players/${userData?.user?.id}/${player_id}/${fileNameWithUUID}`,
       contentType: file.type,
       cacheControl: "undefined",
     };
@@ -99,36 +100,41 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     toast.success('Upload complete!');
     result.successful.forEach(async (file) => {
       if (file.type?.startsWith('video/')) {
-        const videoPath = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/players/${user?.id}/${player_id}/${file.name}`;
-        // Trigger video processing
+        const videoPath = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/players/${userData?.user?.id}/${player_id}/${file.name}`;
         try {
           const edgeFunctionUrl = process.env.NEXT_PUBLIC_SUPABASE_EDGE_PROCESS_VIDEO as string;
-          const response = await fetch(edgeFunctionUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ videoPath }),
-          });
-          console.log('Video processing response:', response);
 
-          if (!response.ok) {
-            throw new Error('Failed to process video');
+          // Check if the user is authenticated and has a session
+          if (status === 'success' && userData?.user && userData.session) {
+            const response = await fetch(edgeFunctionUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${userData.session.access_token}`,
+              },
+              body: JSON.stringify({ videoPath }),
+            });
+
+            console.log('Video processing response:', response);
+            if (!response.ok) {
+              throw new Error('Failed to process video');
+            }
+            toast.success('Video processing initiated');
+          } else {
+            console.error('User is not authenticated');
+            toast.error('Failed to initiate video processing');
           }
-
-          toast.success('Video processing initiated');
         } catch (error) {
           console.error(error);
           toast.error('Failed to initiate video processing');
         }
       }
     });
-  
+
     if (window.location.pathname.includes('/players')) {
       window.location.reload();
     }
   });
-
 
   const handleUpload = () => {
     if (!selectedPlayer) {
