@@ -119,10 +119,13 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         const videoPath = `players/${user?.id}/${player_id}/${file.name}`;
         try {
           const edgeFunctionUrl = process.env.NEXT_PUBLIC_SUPABASE_EDGE_PROCESS_VIDEO as string;
+          const { data } = await supabase.auth.getSession();
+
           const response = await fetch(edgeFunctionUrl, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              "Authorization": `Bearer ${data?.session?.access_token}`,
             },
             body: JSON.stringify({ videoPath }),
           });
