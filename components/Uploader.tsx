@@ -74,13 +74,14 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   );
 
   uppy.on('file-added', (file) => {
-
     const fileNameWithUUID = `${player_id}_${file.name}`;
     console.log('File added:', fileNameWithUUID);
     file.meta = {
       ...file.meta,
       bucketName: "media",
-      objectName: `players/${userData?.user?.id}/${player_id}/${fileNameWithUUID}`,
+      objectName: userData?.user
+        ? `players/${userData.user.id}/${player_id}/${fileNameWithUUID}`
+        : `players/${player_id}/${fileNameWithUUID}`,
       contentType: file.type,
       cacheControl: "undefined",
     };
