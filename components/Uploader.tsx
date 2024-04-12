@@ -9,6 +9,7 @@ import { Dashboard } from "@uppy/react";
 import "@uppy/core/dist/style.css"; import "@uppy/dashboard/dist/style.css"; 
 import { Button } from "./ui/button"; 
 import Tus from "@uppy/tus"; 
+import useUser from "@/app/hook/useUser"; 
 import { supabaseBrowser } from "@/lib/supabase/browser"; 
 import { toast } from "sonner"; 
 import { useRouter } from "next/navigation"; 
@@ -25,13 +26,13 @@ export interface PlayerResponse {
 
 interface UploaderProps { playerid: number; FullName: string; } 
 
-const Uploader: React.FC<UploaderProps> = async ({ playerid, FullName }) => {
+const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
+  const { data: user } = useUser();
   const supabase = supabaseBrowser();
-  const { data: { user } } = await supabase.auth.getUser()
-    
   const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(
     null
   );
+  console.log('User data:', user); // Log user data
 
   useEffect(() => {
     setSelectedPlayer({ playerid, FullName });
@@ -39,12 +40,11 @@ const Uploader: React.FC<UploaderProps> = async ({ playerid, FullName }) => {
 
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
-  const jwt = "jAhUr7owkF8AdDXe3xXFvuEWxr8plb//FDJAIQ5A0SN1LUYyNNzK3qK06O8h6YjSArOIrjTp8gwfxrv6WaR6tA=="; // Replace "your_jwt_value_here" with the actual JWT value
   
   const onBeforeRequest = async (req: any) => {
-    const { data: { user } } = await supabase.auth.getUser(jwt);
-    console.log('Supabase session data:', user?.id); // Log session data
-    req.setHeader("Authorization", `Bearer ${jwt}`);
+    const { data: user } = await supabase.auth.getSession();
+    console.log('Supabase session data:', user); // Log session data
+    req.setHeader("Authorization", `Bearer ${user?.session?.access_token}`);
   };
   
   const player_id = playerid.toString();
@@ -74,14 +74,14 @@ const Uploader: React.FC<UploaderProps> = async ({ playerid, FullName }) => {
   );
 
   uppy.on('file-added', (file) => {
+    const { data: user } = useUser();
+
     const fileNameWithUUID = `${player_id}_${file.name}`;
     console.log('File added:', fileNameWithUUID);
     file.meta = {
       ...file.meta,
       bucketName: "media",
-      objectName: user?.id
-        ? `players/${user.id}/${player_id}/${fileNameWithUUID}`
-        : `players/${player_id}/${fileNameWithUUID}`,
+      objectName: `players/${user?.id}/${player_id}/${fileNameWithUUID}`,
       contentType: file.type,
       cacheControl: "undefined",
     };
@@ -97,27 +97,28 @@ const Uploader: React.FC<UploaderProps> = async ({ playerid, FullName }) => {
 
 
   uppy.on('complete', async (result) => {
-    console.log('Upload result:', result);
-    const { data: { user } } = await supabase.auth.getUser(jwt);
 
+    const { data: user } = await supabase.auth.getSession();
+
+    console.log('Upload result:', result);
     toast.success('Upload complete!');
     result.successful.forEach(async (file) => {
       if (file.type?.startsWith('video/')) {
-        const videoPath = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/players/${user?.id}/${player_id}/${file.name}`;
+        const videoPath = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/players/${user?.session?.user.id}/${player_id}/${file.name}`;
         try {
           const edgeFunctionUrl = process.env.NEXT_PUBLIC_SUPABASE_EDGE_PROCESS_VIDEO as string;
-  
-          // Check if the session exists and if the user is authenticated
-          if (user && user.id) {
+
+          // Check if the user is authenticated and has a session
+            if (user && user.session) {
             const response = await fetch(edgeFunctionUrl, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${jwt}`,
+                Authorization: `Bearer ${user.session.access_token}`,
               },
               body: JSON.stringify({ videoPath }),
             });
-  
+
             console.log('Video processing response:', response);
             if (!response.ok) {
               throw new Error('Failed to process video');
@@ -133,7 +134,7 @@ const Uploader: React.FC<UploaderProps> = async ({ playerid, FullName }) => {
         }
       }
     });
-  
+
     if (window.location.pathname.includes('/players')) {
       window.location.reload();
     }
