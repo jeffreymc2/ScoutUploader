@@ -19,6 +19,8 @@
     "@headlessui/react": "^1.7.18",
     "@heroicons/react": "^2.1.3",
     "@hookform/resolvers": "^3.3.4",
+    "@mux/mux-node": "^8.4.1",
+    "@mux/mux-uploader-react": "^1.0.0-beta.15",
     "@pinecone-database/pinecone": "^2.2.0",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-avatar": "^1.0.4",
