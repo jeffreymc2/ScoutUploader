@@ -191,7 +191,6 @@ export default function EventSearch({ teams }: EventSearchProps) {
                       <Uploader
                         playerid={selectedPlayer.playerid}
                         FullName={selectedPlayer.FullName}
-                        thumbnailUrl=""
                       />
                     </div>
                   )}

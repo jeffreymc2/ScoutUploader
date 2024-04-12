@@ -81,7 +81,7 @@ export default function PlayerPage({ playerid, FullName }: PlayerPageProps) {
           }
         })}
       </div>
-      <Uploader playerid={playerid} FullName={FullName} thumbnailUrl={""} />
+      <Uploader playerid={playerid} FullName={FullName} />
     </div>
   );
 }

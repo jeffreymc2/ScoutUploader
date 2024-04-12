@@ -16,7 +16,6 @@ export default async function PlayerPage({ searchParams }: { searchParams: any }
         post_by: string;
         profile: { display_name: string | null } | null;
         image: string;
-        
       }[]
     | undefined = [];
 
