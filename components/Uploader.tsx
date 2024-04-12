@@ -104,9 +104,9 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         const videoPath = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/players/${userData?.user?.id}/${player_id}/${file.name}`;
         try {
           const edgeFunctionUrl = process.env.NEXT_PUBLIC_SUPABASE_EDGE_PROCESS_VIDEO as string;
-
-          // Check if the user is authenticated and has a session
-          if (status === 'success' && userData?.user && userData.session) {
+  
+          // Check if the session exists and if the user is authenticated
+          if (status === 'success' && userData?.session && userData.session.access_token) {
             const response = await fetch(edgeFunctionUrl, {
               method: 'POST',
               headers: {
@@ -115,7 +115,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
               },
               body: JSON.stringify({ videoPath }),
             });
-
+  
             console.log('Video processing response:', response);
             if (!response.ok) {
               throw new Error('Failed to process video');
@@ -131,12 +131,12 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         }
       }
     });
-
+  
     if (window.location.pathname.includes('/players')) {
       window.location.reload();
     }
   });
-
+  
   const handleUpload = () => {
     if (!selectedPlayer) {
       toast.error("Please select a player.");
