@@ -80,6 +80,8 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   });
 
   uppy.on("complete", async (result) => {
+
+    const supabase = await supabaseBrowser();
     console.log("Upload result:", result);
     toast.success("Upload complete!");
     result.successful.forEach(async (file) => {
@@ -91,6 +93,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              "Authorization": `Bearer ${    (await supabase.auth.getSession()).data.session?.access_token }`,
             },
             body: JSON.stringify({ videoPath }),
           });
