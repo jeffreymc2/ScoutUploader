@@ -1,3 +1,5 @@
+// app/components/Uploader.tsx
+
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
@@ -28,9 +30,8 @@ interface UploaderProps {
 const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   const { data: user, status } = useUser();
   const supabase = supabaseBrowser();
-  const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(
-    null
-  );
+  const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(null);
+  console.log("User data:", user);
 
   useEffect(() => {
     setSelectedPlayer({ playerid, FullName });
@@ -39,8 +40,15 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
+  const onBeforeRequest = async (req: any) => {
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+      req.setHeader("Authorization", `Bearer ${data.session.access_token}`);
+    }
+  };
+
   const player_id = playerid.toString();
-  console.log('Player ID:', player_id);
+  console.log("Player ID:", player_id);
 
   const [uppy] = useState(() =>
     new Uppy({
@@ -52,70 +60,54 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       debug: true,
     }).use(Tus, {
       endpoint: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/upload/resumable`,
+      onBeforeRequest,
       limit: 20,
       chunkSize: 15 * 1024 * 1024,
-      allowedMetaFields: [
-        "bucketName",
-        "objectName",
-        "contentType",
-        "cacheControl",
-      ],
+      allowedMetaFields: ["bucketName", "objectName", "contentType", "cacheControl"],
     })
   );
 
-  uppy.on('file-added', (file) => {
+  uppy.on("file-added", (file) => {
     const fileNameWithUUID = `${player_id}_${file.name}`;
-    console.log('File added:', fileNameWithUUID);
+    console.log("File added:", fileNameWithUUID);
     file.meta = {
       ...file.meta,
       bucketName: "media",
-      objectName: user
-        ? `players/${user.id}/${player_id}/${fileNameWithUUID}`
-        : `players/${player_id}/${fileNameWithUUID}`,
+      objectName: `players/${user?.id}/${player_id}/${fileNameWithUUID}`,
       contentType: file.type,
       cacheControl: "undefined",
     };
   });
 
-  uppy.on('complete', async (result) => {
-    console.log('Upload result:', result);
-    toast.success('Upload complete!');
-
-    const { data: { session } } = await supabase.auth.getSession();
-
+  uppy.on("complete", async (result) => {
+    console.log("Upload result:", result);
+    toast.success("Upload complete!");
     result.successful.forEach(async (file) => {
-      if (file.type?.startsWith('video/')) {
+      if (file.type?.startsWith("video/")) {
         const videoPath = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/players/${user?.id}/${player_id}/${file.name}`;
         try {
           const edgeFunctionUrl = process.env.NEXT_PUBLIC_SUPABASE_EDGE_PROCESS_VIDEO as string;
-
-          if (session && session.access_token) {
-            const response = await fetch(edgeFunctionUrl, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${session.access_token}`,
-              },
-              body: JSON.stringify({ videoPath }),
-            });
-
-            console.log('Video processing response:', response);
-            if (!response.ok) {
-              throw new Error('Failed to process video');
-            }
-            toast.success('Video processing initiated');
-          } else {
-            console.error('User is not authenticated');
-            toast.error('Failed to initiate video processing');
+          const response = await fetch(edgeFunctionUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ videoPath }),
+          });
+  
+          console.log("Video processing response:", response);
+          if (!response.ok) {
+            throw new Error("Failed to process video");
           }
+          toast.success("Video processing initiated");
         } catch (error) {
           console.error(error);
-          toast.error('Failed to initiate video processing');
+          toast.error("Failed to initiate video processing");
         }
       }
     });
-
-    if (window.location.pathname.includes('/players')) {
+  
+    if (window.location.pathname.includes("/players")) {
       window.location.reload();
     }
   });
@@ -153,6 +145,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     </div>
   );
 };
+
 export default Uploader;
 
 // // app/components/Uploader.tsx
