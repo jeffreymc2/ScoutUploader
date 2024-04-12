@@ -37,4 +37,4 @@ yarn-error.log*
 next-env.d.ts
 
 # supabase edge function
-supabase/functions/processVideo/
+/supabase/functions/processVideo/
