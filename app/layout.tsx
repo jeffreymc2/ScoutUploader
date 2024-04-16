@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import QueryProvider from "@/components/query-provider";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/UtilityComponents/Navbar";
 import { Toaster } from "@/components/ui/sonner";
 import localFont from "next/font/local";
 import Footer from "@/components/Footer";

@@ -1,8 +1,8 @@
 // components/SearchComponent.tsx
 "use client";
 
-import PlayerSearch from "@/components/PlayerSearch";
-import PlayerSearchByName from "@/components/PlayerSearchByName";
+import PlayerSearch from "@/components/PlayerComponents/PlayerSearch";
+import PlayerSearchByName from "@/components/PlayerComponents/PlayerSearchByName";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Post } from "@/lib/types/types";
 

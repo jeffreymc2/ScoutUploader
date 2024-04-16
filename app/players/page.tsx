@@ -1,7 +1,7 @@
 // app/page.tsx
 import { supabaseServer } from "@/lib/supabase/server";
 
-import PlayerSearchComponent from "@/components/PlayerSearchComponent";
+import PlayerSearchComponent from "@/components/PlayerComponents/PlayerSearchComponent";
 
 export default async function PlayerPage({ searchParams }: { searchParams: any }) {
   const playerId = searchParams.player_id ?? null;

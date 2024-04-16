@@ -4,7 +4,7 @@ import { Inter } from "next/font/google";
 import "../globals.css";
 
 import localFont from "next/font/local";
-import BackgroundImage from "@/components/BackgroundImage";
+import BackgroundImage from "@/components/UtilityComponents/BackgroundImage";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 const pgFont = localFont({ src: "../UnitedSansSmCdBd.woff2" });

@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { EventSearch } from "@/lib/types/types";
 import { toast } from "sonner";
-import UploaderEvents from "./UploaderEvents";
+import UploaderEvents from "../UploaderEvents";
 import { Team } from "@/lib/types/types";
 
 import { IoIosCloseCircleOutline } from "react-icons/io";

@@ -76,6 +76,60 @@ export interface Database {
           }
         ]
       }
+
+      articles: {
+        Row: {
+          id: number
+          content: string | null
+          description: string | null
+          image: Buffer | null
+          image_meta: string | null
+          image_url: string | null
+          keyword: string | null
+          title: string | null
+          creator_id: string | null
+          modified_date: string | null
+          created_date: string
+          slug: string | null
+          player_mentions: Json | null
+        }
+        Insert: {
+          content?: string | null
+          description?: string | null
+          image?: Buffer | null
+          image_meta?: string | null
+          image_url?: string | null
+          keyword?: string | null
+          title?: string | null
+          creator_id?: string | null
+          modified_date?: string | null
+          slug?: string | null
+          player_mentions?: Json | null
+        }
+        Update: {
+          id?: number
+          content?: string | null
+          description?: string | null
+          image?: Buffer | null
+          image_meta?: string | null
+          image_url?: string | null
+          keyword?: string | null
+          title?: string | null
+          creator_id?: string | null
+          modified_date?: string | null
+          slug?: string | null
+          player_mentions?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "articles_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "users" // assuming you have a 'users' table in the 'auth' schema
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       profile: {
         Row: {
           created_at: string

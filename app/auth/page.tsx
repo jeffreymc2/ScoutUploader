@@ -2,7 +2,7 @@
 import React, { Suspense } from "react";
 
 import { useSearchParams } from "next/navigation";
-import PerfectGameIcon from "@/components/PGIcon";
+import PerfectGameIcon from "@/components/UtilityComponents/PGIcon";
 import { LoginForm } from "../login/login-form";
 import {
   Card,

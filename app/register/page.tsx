@@ -1,6 +1,6 @@
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/UtilityComponents/Navbar';
 import { RegisterForm } from './register-form';
-import PerfectGameIcon from '@/components/PGIcon';
+import PerfectGameIcon from '@/components/UtilityComponents/PGIcon';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import Link from 'next/link';
 

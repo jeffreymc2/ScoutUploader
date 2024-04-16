@@ -6,7 +6,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import QueryProvider from "@/components/query-provider";
 import { Toaster } from "@/components/ui/sonner";
 import localFont from "next/font/local";
-import BackgroundImage from "@/components/BackgroundImage";
+import BackgroundImage from "@/components/UtilityComponents/BackgroundImage";
 
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });

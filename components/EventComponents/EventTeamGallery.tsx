@@ -26,7 +26,7 @@ import {
   AlertDialogFooter,
 } from "@/components/ui/alert-dialog"
 import { RiDeleteBin5Line } from "react-icons/ri";
-import DeletePost from "../DeletePost";
+import DeletePost from "../UtilityComponents/DeletePost";
 import Link from "next/link";
 
 interface EventTeamGalleryProps {

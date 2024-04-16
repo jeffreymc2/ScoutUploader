@@ -5,10 +5,10 @@ import { supabaseServer } from "@/lib/supabase/server";
 import Image from "next/image";
 import Uploader from "@/components/Uploader";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
-import DeletePost from "@/components/DeletePost";
+import DeletePost from "@/components/UtilityComponents/DeletePost";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import BackButton from "@/components/BackButton";
+import BackButton from "@/components/UtilityComponents/BackButton";
 import { RiVideoUploadLine } from "react-icons/ri";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import {

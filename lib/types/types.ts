@@ -1,6 +1,10 @@
 // app/lib/types/types.ts
 
 export interface Player {
+    CollegeCommit: any;
+    City: any;
+    State: any;
+    Height: any;
     PlayerName: any;
     playerid: number;
     playereventid: number;
@@ -25,6 +29,68 @@ export interface Player {
   }
 
   
+  export interface GameData {
+    EventName: string;
+    VisitorTeamName: string;
+    HomeTeamName: string;
+    Inning: number;
+    InningHalf: number;
+    Balls: number | null;
+    Strikes: number | null;
+    Outs: number | null;
+    FirstBaseOccupied: boolean;
+    SecondBaseOccupied: boolean;
+    ThirdBaseOccupied: boolean;
+    PitchSpeed: number | null;
+    PitchType: string | null;
+    Batter: {
+      PlayerID: number | null;
+      Name: string | null;
+      CollegeCommit: string | null;
+      City: string | null;
+      State: string | null;
+      Height: string | null;
+      Weight: number | null;
+    };
+    BatterStats: any | null;
+    Pitcher: {
+      PlayerID: number | null;
+      Name: string | null;
+      CollegeCommit: string | null;
+      City: string | null;
+      State: string | null;
+      Height: string | null;
+      Weight: number | null;
+    };
+    PitcherStats: any | null;
+  }
+  
+  export interface Article {
+    id: number;
+    content: string | null;
+    description: string | null;
+    image: Buffer | null;
+    image_meta: string | null;
+    image_url: string | null;
+    keyword: string | null;
+    title: string | null;
+    creator_id: string | null;
+    modified_date: string | null;
+    created_date: string;
+    slug: string | null;
+    player_mentions: PlayerGameProfile[] | null;
+  }
+
+  export interface PlayerGameProfile {
+    PlayerID: number | null;
+    Name: string | null;
+    CollegeCommit: string | null;
+    City: string | null;
+    State: string | null;
+    Height: string | null;
+    Weight: number | null;
+    id: string | null;
+  }
   
 export interface Post {
   id: string;
@@ -121,3 +187,16 @@ export interface Post {
     EventLogoURL: string;
   };
   
+// types.ts
+
+export interface Player {
+  PlayerID: number;
+  Name: string;
+  // Add other relevant player fields
+}
+
+export interface GameData {
+  GameID: string;
+  // Add other relevant game fields
+}
+

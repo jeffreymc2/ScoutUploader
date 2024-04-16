@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog } from "@/components/ui/dialog";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import PlayerSearchByNameSkeleton from "@/components/PlayerSearchByNameSkeleton"; // Adjust the import path as necessary
+import PlayerSearchByNameSkeleton from "@/components/PlayerComponents/PlayerSearchByNameSkeleton"; // Adjust the import path as necessary
 
 type PlayerInfo = {
   BestRankSort: number;
@@ -24,7 +24,7 @@ type PlayerInfo = {
   TeamName: string;
 };
 
-export default function PlayerSearchByName() {
+export default function PlayerDefault() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,7 +33,7 @@ export default function PlayerSearchByName() {
 
   const fetchDefaultPlayers = async () => {
     try {
-      const response = await fetch(`/api/playername?query=&limit=30&state`);
+      const response = await fetch(`/api/playername?query=&limit=50&state`);
       const players: PlayerInfo[] = await response.json();
       if (players.length > 0) {
         setSearchResults(players);
@@ -53,77 +53,17 @@ export default function PlayerSearchByName() {
     fetchDefaultPlayers();
   }, []);
 
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) {
-      setSearchResults([]);
-      toast.info("Please enter a name to search.");
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `/api/playername?query=${encodeURIComponent(searchQuery)}`
-      );
-      const players: PlayerInfo[] = await response.json();
-      if (players.length > 0) {
-        setSearchResults(players);
-      } else {
-        setIsLoading(false); // Set to false once data is fetched
-
-        setSearchResults([]);
-        toast.info("No players found.");
-      }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "An unknown error occurred";
-      toast.error(`Error searching for players: ${errorMessage}`);
-    }
-  };
-
-  const clearSearch = () => {
-    setSearchQuery("");
-    setSearchResults([]);
-    fetchDefaultPlayers();
-  };
+  
 
   return (
-    <div className="">
+    <div className="mt-5">
       <div className="flex items-center relative">
-        <Input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search by player name"
-          className="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md text-base"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              // Check if the pressed key is Enter
-              handleSearch();
-            }
-          }}
-        />
-        {searchQuery && (
-          <button
-            onClick={() => {
-              setSearchQuery(""); // Clear the input
-              // handleSearch(); // Uncomment if you decide to trigger search immediately
-            }}
-            className="absolute right-20 top-1/2 mr-5 transform -translate-y-1/2 flex items-center justify-center text-gray-400 hover:text-gray-600"
-          >
-            <IoIosCloseCircleOutline className="w-6 h-6" />
-          </button>
-        )}
-        <Button
-          onClick={handleSearch}
-          className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
-        >
-          Search
-        </Button>
+        
       </div>
       {isLoading ? (
         <PlayerSearchByNameSkeleton />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-5">
           {searchResults.map((player) => (
             <Card
               key={player.PlayerID}
@@ -139,8 +79,8 @@ export default function PlayerSearchByName() {
                     className="w-full h-full object-cover"
                   />
                 ) : (
-                  <div className="bg-gray-200 w-full h-full flex items-center justify-center ">
-                    <span className="text-4xl font-bold text-gray-400 ">
+                  <div className="bg-gray-200 w-full h-full flex items-center justify-center">
+                    <span className="text-4xl font-bold text-gray-400">
                       {player.PlayerName[0]}
                     </span>
                   </div>
@@ -148,7 +88,7 @@ export default function PlayerSearchByName() {
               </div>
               <div className="w-2/3 md:w-1/2 p-4 flex flex-col justify-between">
                 <div>
-                  <h3 className="text-2xl font-semibold font-pgFont">{player.PlayerName}</h3>
+                  <h3 className="text-xl font-semibold">{player.PlayerName}</h3>
                   <p className="text-sm text-gray-500">
                     Player ID: {player.PlayerID}
                   </p>

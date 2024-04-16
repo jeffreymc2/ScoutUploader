@@ -93,24 +93,12 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       if (file.type?.startsWith("video/")) {
         const videoPath = `players/${user?.id}/${player_id}/${file.name}`;
         try {
-          const edgeFunctionUrl = process.env.NEXT_PUBLIC_SUPABASE_EDGE_PROCESS_VIDEO as string;
-          const { data, error } = await supabase.auth.getSession();
-  
-          if (error) {
-            console.error("Error retrieving session:", error);
-            toast.error("Failed to initiate video processing");
-            return;
-          }
-  
-          const accessToken = data.session?.access_token;
-  
-          const response = await fetch(edgeFunctionUrl, {
+          const response = await fetch("https://mediaconverter-gf6n.onrender.com", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${accessToken}`,
             },
-            body: JSON.stringify({ videoPath }),
+            body: JSON.stringify({ videoPath, user_id: user?.id, player_id }),
           });
   
           console.log("Video processing response:", response);

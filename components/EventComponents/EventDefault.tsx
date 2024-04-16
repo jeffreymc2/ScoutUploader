@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import { Team, LiveEventSearch } from "@/lib/types/types";
-import PlayerSearchByNameSkeleton from "@/components/PlayerSearchByNameSkeleton";
+import PlayerSearchByNameSkeleton from "@/components/PlayerComponents/PlayerSearchByNameSkeleton";
 
 import {
   Select,

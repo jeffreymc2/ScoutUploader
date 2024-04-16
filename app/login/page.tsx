@@ -1,4 +1,4 @@
-import PerfectGameIcon from "@/components/PGIcon";
+import PerfectGameIcon from "@/components/UtilityComponents/PGIcon";
 import {
   Card,
   CardHeader,
