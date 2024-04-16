@@ -9,7 +9,7 @@ import Link from 'next/link';
 
 
 
-export const fetchArticle = async (articleId: string): Promise<Article> => {
+ const fetchArticle = async (articleId: string): Promise<Article> => {
     const supabase = supabaseServer();
     const { data, error } = await supabase
         .from('articles')
