@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import redis from 'redis';
+import { createClient } from 'redis';
 
 // Initialize Redis client
-const redisClient = redis.createClient({
+const redisClient = createClient({
   url: process.env.REDIS_URL,
 });
 
