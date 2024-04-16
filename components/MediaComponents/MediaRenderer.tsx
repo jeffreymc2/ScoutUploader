@@ -32,52 +32,63 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState("");
 
+  // useEffect(() => {
+  //   if (file.isVideo) {
+  //     const video = document.createElement("video");
+  //     video.src = file.image;
+  //     video.crossOrigin = "anonymous"; // Ensure CORS policies allow this
+  //     video.preload = "metadata";
+  //     video.style.position = "absolute";
+  //     video.style.width = "0";
+  //     video.style.height = "0";
+  //     video.style.top = "0";
+  //     video.style.left = "-10000px"; // Off-screen
+
+  //     // Append the video to the body to ensure it's part of the DOM
+  //     document.body.appendChild(video);
+
+  //     video.onloadedmetadata = () => {
+  //       // After metadata loads, seek to a frame
+  //       video.currentTime = 1;
+  //     };
+
+  //     video.onseeked = () => {
+  //       // Introduce a slight delay before capturing the thumbnail
+  //       setTimeout(() => {
+  //         const canvas = document.createElement("canvas");
+  //         canvas.width = video.videoWidth;
+  //         canvas.height = video.videoHeight;
+  //         const ctx = canvas.getContext("2d");
+  //         ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
+  //         const thumbnail = canvas.toDataURL("image/png");
+  //         setThumbnailUrl(thumbnail);
+
+  //         // Remove the video element after capturing the thumbnail
+  //         document.body.removeChild(video);
+  //       }, 1000); // Adjust delay as necessary
+  //     };
+
+  //     video.onerror = () => {
+  //       console.error("Error loading video for thumbnail generation");
+  //       // Consider removing the video element in case of error as well
+  //       document.body.removeChild(video);
+  //     };
+  //   } else {
+  //     // Directly set the thumbnailUrl for non-video files
+  //     setThumbnailUrl(file.image);
+  //   }
+  // }, [file.image, file.isVideo]);
+
   useEffect(() => {
     if (file.isVideo) {
-      const video = document.createElement("video");
-      video.src = file.image;
-      video.crossOrigin = "anonymous"; // Ensure CORS policies allow this
-      video.preload = "metadata";
-      video.style.position = "absolute";
-      video.style.width = "0";
-      video.style.height = "0";
-      video.style.top = "0";
-      video.style.left = "-10000px"; // Off-screen
-
-      // Append the video to the body to ensure it's part of the DOM
-      document.body.appendChild(video);
-
-      video.onloadedmetadata = () => {
-        // After metadata loads, seek to a frame
-        video.currentTime = 1;
-      };
-
-      video.onseeked = () => {
-        // Introduce a slight delay before capturing the thumbnail
-        setTimeout(() => {
-          const canvas = document.createElement("canvas");
-          canvas.width = video.videoWidth;
-          canvas.height = video.videoHeight;
-          const ctx = canvas.getContext("2d");
-          ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
-          const thumbnail = canvas.toDataURL("image/png");
-          setThumbnailUrl(thumbnail);
-
-          // Remove the video element after capturing the thumbnail
-          document.body.removeChild(video);
-        }, 1000); // Adjust delay as necessary
-      };
-
-      video.onerror = () => {
-        console.error("Error loading video for thumbnail generation");
-        // Consider removing the video element in case of error as well
-        document.body.removeChild(video);
-      };
+      // Construct the thumbnail URL based on the video filename
+      const thumbnailUrl = file.image.replace(/\.[^.]+$/, "_thumbnail.jpg");
+      setThumbnailUrl(thumbnailUrl);
     } else {
-      // Directly set the thumbnailUrl for non-video files
       setThumbnailUrl(file.image);
     }
   }, [file.image, file.isVideo]);
+  
 
   const handleDownload = () => {
     fetch(file.image)
