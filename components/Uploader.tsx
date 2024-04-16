@@ -6,6 +6,7 @@
 
 import React, { useRef, useState, useEffect } from "react"; 
 import Uppy from "@uppy/core"; 
+import Queue from 'bull';
 import { Dashboard } from "@uppy/react"; 
 import "@uppy/core/dist/style.css"; import "@uppy/dashboard/dist/style.css"; 
 import { Button } from "./ui/button"; 
@@ -137,22 +138,20 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       if (file.type?.startsWith("video/")) {
         const videoPath = `players/${user?.id}/${player_id}/${file.name}`;
         try {
-          const response = await fetch("https://mediaconverter-n8y5.onrender.com", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ videoPath, user_id: user?.id, player_id }),
+          const videoQueue = new Queue('video-processing', 'redis://red-cofcc98l6cac73cditpg:6379');
+          
+          const job = await videoQueue.add('process_video_job', {
+            videoPath,
+            user_id: user?.id,
+            player_id,
           });
-  
-          console.log("Video processing response:", response);
-          if (!response.ok) {
-            throw new Error("Failed to process video");
-          }
-          toast.success("Video processing initiated");
+          
+          console.log("Video processing job enqueued:", job.id);
+          
+          toast.success("Video processing job enqueued");
         } catch (error) {
           console.error(error);
-          toast.error("Failed to initiate video processing");
+          toast.error("Failed to enqueue video processing job");
         }
       }
     });

@@ -51,6 +51,7 @@
     "ably": "^2.0.1",
     "ai": "^3.0.22",
     "axios": "^1.6.8",
+    "bull": "^4.12.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "date-fns": "^3.6.0",
