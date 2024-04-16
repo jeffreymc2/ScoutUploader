@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { OpenAI } from 'openai';
-import { OpenAIStream, StreamingTextResponse } from 'ai';
 import { supabaseServer } from '@/lib/supabase/server';
 import { GameData, Article, PlayerGameProfile } from '@/lib/types/types';
 
@@ -8,7 +7,6 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY, // Your OpenAI key
 });
 
-export const runtime = 'edge';
 
 export async function POST(req: NextRequest) {
   try {
