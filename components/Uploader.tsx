@@ -137,7 +137,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       if (file.type?.startsWith("video/")) {
         const videoPath = `players/${user?.id}/${player_id}/${file.name}`;
         try {
-          const response = await fetch("https://mediaconverter-gf6n.onrender.com", {
+          const response = await fetch("https://mediaconverter-fprb.onrender.com", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -161,7 +161,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       window.location.reload();
     }
   });
-  
+
   const handleUpload = () => {
     if (!selectedPlayer) {
       toast.error("Please select a player.");
