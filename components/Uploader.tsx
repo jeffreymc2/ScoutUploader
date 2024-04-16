@@ -137,7 +137,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       if (file.type?.startsWith("video/")) {
         const videoPath = `players/${user?.id}/${player_id}/${file.name}`;
         try {
-          const response = await fetch("https://mediaconverter-fprb.onrender.com", {
+          const response = await fetch("https://mediaconverter-n8y5.onrender.com", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
