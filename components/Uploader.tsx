@@ -6,7 +6,7 @@
 
 import React, { useRef, useState, useEffect } from "react"; 
 import Uppy from "@uppy/core"; 
-import Queue from 'bull';
+import { createClient } from 'redis';
 import { Dashboard } from "@uppy/react"; 
 import "@uppy/core/dist/style.css"; import "@uppy/dashboard/dist/style.css"; 
 import { Button } from "./ui/button"; 
@@ -138,16 +138,22 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       if (file.type?.startsWith("video/")) {
         const videoPath = `players/${user?.id}/${player_id}/${file.name}`;
         try {
-          const videoQueue = new Queue('video-processing', 'redis://red-cofcc98l6cac73cditpg:6379');
-          
-          const job = await videoQueue.add('process_video_job', {
+          const redisClient = createClient({
+            url: 'redis://red-cofcc98l6cac73cditpg:6379',
+          });
+          await redisClient.connect();
+  
+          const jobData = {
             videoPath,
             user_id: user?.id,
             player_id,
-          });
-          
-          console.log("Video processing job enqueued:", job.id);
-          
+          };
+  
+          await redisClient.lPush('video-processing-queue', JSON.stringify(jobData));
+          console.log("Video processing job enqueued");
+  
+          await redisClient.disconnect();
+  
           toast.success("Video processing job enqueued");
         } catch (error) {
           console.error(error);
