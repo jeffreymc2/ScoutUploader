@@ -1,32 +1,27 @@
-import { createClient, RedisClientType } from 'redis';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import redis from 'redis';
 
-let redisClient: RedisClientType;
+// Initialize Redis client
+const redisClient = redis.createClient({
+  url: process.env.REDIS_URL,
+});
 
-export const POST = async (req: Request) => {
-  if (!redisClient) {
-    redisClient = createClient({
-      url: 'rediss://red-cofcc98l6cac73cditpg:3d9S1DAsyWJlyaeXe3orkpLkAyljje8n@ohio-redis.render.com:6379',
-    });
-    await redisClient.connect();
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === 'POST') {
+    const { videoPath, user_id, player_id } = req.body;
+
+    // Construct the job data
+    const jobData = {
+      videoPath,
+      user_id,
+      player_id,
+    };
+
+    // Enqueue the job in Redis
+    await redisClient.lPush('video-processing-queue', JSON.stringify(jobData));
+
+    res.status(200).json({ message: 'Video processing job enqueued' });
+  } else {
+    res.status(405).json({ message: 'Method not allowed' });
   }
-
-  const { videoPath, user_id, player_id } = await req.json();
-  const jobData = { videoPath, user_id, player_id };
-  await redisClient.lPush('video-processing-queue', JSON.stringify(jobData));
-
-  return new Response(JSON.stringify({ message: 'Video processing job enqueued' }), {
-    status: 200,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-};
-
-export const GET = async (req: Request) => {
-  return new Response(JSON.stringify({ message: 'Method not allowed' }), {
-    status: 405,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-};
+}
