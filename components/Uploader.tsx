@@ -1,32 +1,52 @@
-
 "use client";
 
-import React, { useState } from "react";
-import Uppy from "@uppy/core";
-import { Dashboard } from "@uppy/react";
-import "@uppy/core/dist/style.css";
-import "@uppy/dashboard/dist/style.css";
-import { Button } from "./ui/button";
-import Tus from "@uppy/tus";
-import useUser from "@/app/hook/useUser";
-import { supabaseBrowser } from "@/lib/supabase/browser";
-import { toast } from "sonner";
+import React, { useRef, useState, useEffect } from "react"; 
+import Uppy from "@uppy/core"; 
+import { createClient } from 'redis';
+import { Dashboard } from "@uppy/react"; 
+import "@uppy/core/dist/style.css"; import "@uppy/dashboard/dist/style.css"; 
+import { Button } from "./ui/button"; 
+import Tus from "@uppy/tus"; 
+import useUser from "@/app/hook/useUser"; 
+import { supabaseBrowser } from "@/lib/supabase/browser"; 
+import { toast } from "sonner"; 
+import { useRouter } from "next/navigation"; 
 
-interface UploaderProps {
-  playerid: number;
-  FullName: string;
-}
+
+export interface PlayerResponse {
+  PlayerID: string;
+  LastName: string;
+  FirstName: string;
+  PlayerName: string;
+  DOB: string;
+} 
+
+
+interface UploaderProps { playerid: number; FullName: string; } 
 
 const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   const { data: user } = useUser();
   const supabase = supabaseBrowser();
-  const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(null);
+  const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(
+    null
+  );
+  console.log('User data:', user); // Log user data
 
-  useState(() => {
+  useEffect(() => {
     setSelectedPlayer({ playerid, FullName });
-  });
+  }, [playerid, FullName]);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+  
+  const onBeforeRequest = async (req: any) => {
+    const { data } = await supabase.auth.getSession();
+    console.log('Supabase session data:', data); // Log session data
+    req.setHeader("Authorization", `Bearer ${data?.session?.access_token}`);
+  };
+  
   const player_id = playerid.toString();
+  console.log('Player ID:', player_id); // Log player ID
 
   const [uppy] = useState(() =>
     new Uppy({
@@ -36,14 +56,24 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         maxFileSize: 5 * 10000 * 10000,
       },
       debug: true,
-    }).use(Tus, {
+    })
+    .use(Tus, {
       endpoint: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/upload/resumable`,
+      onBeforeRequest,
+      limit: 20,
       chunkSize: 15 * 1024 * 1024,
+      allowedMetaFields: [
+        "bucketName",
+        "objectName",
+        "contentType",
+        "cacheControl",
+      ],
     })
   );
 
-  uppy.on("file-added", (file) => {
+  uppy.on('file-added', (file) => {
     const fileNameWithUUID = `${player_id}_${file.name}`;
+    console.log('File added:', fileNameWithUUID);
     file.meta = {
       ...file.meta,
       bucketName: "media",
