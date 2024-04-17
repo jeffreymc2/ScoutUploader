@@ -21,6 +21,13 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   const supabase = supabaseBrowser();
   const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(null);
 
+  const onBeforeRequest = async (req: any) => {
+    const { data } = await supabase.auth.getSession();
+    if (data.session) {
+      req.setHeader("Authorization", `Bearer ${data.session.access_token}`);
+    }
+  };
+
   useEffect(() => {
     setSelectedPlayer({ playerid, FullName });
   }, [playerid, FullName]);
@@ -38,15 +45,11 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     }).use(Tus, {
       endpoint: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/upload/resumable`,
       chunkSize: 15 * 1024 * 1024,
+      onBeforeRequest
     })
   );
 
-  const onBeforeRequest = async (req: any) => {
-    const { data } = await supabase.auth.getSession();
-    if (data.session) {
-      req.setHeader("Authorization", `Bearer ${data.session.access_token}`);
-    }
-  };
+
 
   uppy.on("file-added", (file) => {
     const fileNameWithUUID = `${player_id}_${file.name}`;
