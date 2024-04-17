@@ -70,10 +70,15 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   });
 
   uppy.on("complete", async (result) => {
+    
     result.successful.forEach(async (file) => {
+
+      const fileNameWithUUID = `${player_id}_${file.name}`;
+
       if (file.type?.startsWith("video/")) {
-        const videoPath = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${user?.id}/${player_id}/${player_id}_${file.name}`;        const name = file.name;
-        if (user && user.id && selectedPlayer) {
+        const videoPath = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${user?.id}/${player_id}/${fileNameWithUUID}`;        
+        const name = file.name;
+        if (user && selectedPlayer) {
           try {
             const response = await fetch("/api/redis", {
               method: "POST",
@@ -82,8 +87,8 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
               },
               body: JSON.stringify({
                 videoPath,
-                user_id: user.id,
-                player_id: selectedPlayer.playerid,
+                user_id: user?.id,
+                player_id: selectedPlayer?.playerid,
                 name,
               }),
             });
@@ -140,6 +145,9 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
 };
 
 export default Uploader;
+
+
+
 // // // app/components/Uploader.tsx
 
 
