@@ -28,6 +28,21 @@ export interface Player {
     ProfilePic: string | null;
   }
 
+  // Add the PlayerResponse interface
+export interface PlayerResponse {
+  PlayerID: number;
+  FirstName: string;
+  LastName: string;
+  PlayerName: string;
+  DOB: string;
+  BatsThrows: string;
+  PrimaryPos: string;
+  CommittedTo: string;
+  GraduationYear: string;
+  ProfileURL: string;
+  FullName: string; 
+  // Add other relevant fields as needed
+}
   
   export interface GameData {
     EventName: string;
@@ -91,6 +106,8 @@ export interface Player {
     Weight: number | null;
     id: string | null;
   }
+
+  
   
 export interface Post {
   id: string;
@@ -200,17 +217,3 @@ export interface GameData {
   // Add other relevant game fields
 }
 
-// Add the PlayerResponse interface
-export interface PlayerResponse {
-  PlayerID: string;
-  FirstName: string;
-  LastName: string;
-  PlayerName: string;
-  DOB: string;
-  BatsThrows: string;
-  PrimaryPos: string;
-  CommittedTo: string;
-  GraduationYear: string;
-  ProfileURL: string;
-  // Add other relevant fields as needed
-}
