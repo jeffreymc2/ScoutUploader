@@ -88,7 +88,6 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
       setThumbnailUrl(file.image);
     }
   }, [file.image, file.isVideo]);
-  
 
   const handleDownload = () => {
     fetch(file.image)
