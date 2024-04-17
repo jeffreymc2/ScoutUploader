@@ -66,7 +66,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     result.successful.forEach(async (file) => {
       if (file.type?.startsWith("video/")) {
         const videoPath = `https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/media/players/${user?.id}/${player_id}/${player_id}_${file.name}`;
-        const name = file.name.split(".")[0]; // Extract the name without the file extension
+        const name = file.name; // Extract the name without the file extension
         if (user && user.id) {
           try {
             const response = await fetch("/api/redis", {
