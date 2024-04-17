@@ -1,39 +1,36 @@
-import { NextResponse } from 'next/server';
-import { createClient } from 'redis';
+import { NextApiRequest, NextApiResponse } from "next";
+import { createClient } from "redis";
 
-// Initialize Redis client
 const redisClient = createClient({
   url: process.env.REDIS_URL,
 });
 
-// Connect to Redis
-redisClient.on('error', (err) => {
-  console.error('Redis connection error:', err);
-});
+redisClient.on("error", (err) => console.log("Redis Client Error", err));
 
-redisClient.connect();
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === "POST") {
+    const { videoPath, user_id, player_id } = req.body;
 
-export async function POST(req: Request) {
-  try {
-    const { videoPath, user_id, player_id } = await req.json();
+    try {
+      await redisClient.connect();
 
-    // Construct the job data
-    const jobData = {
-      videoPath,
-      user_id,
-      player_id,
-    };
+      const jobData = {
+        videoPath,
+        user_id,
+        player_id,
+      };
 
-    // Enqueue the job in Redis
-    await redisClient.lPush('video-processing-queue', JSON.stringify(jobData));
+      await redisClient.lPush("video-processing-queue", JSON.stringify(jobData));
+      console.log("Video processing job enqueued");
 
-    return NextResponse.json({ message: 'Video processing job enqueued' });
-  } catch (error) {
-    console.error('Error enqueueing video processing job:', error);
-    return NextResponse.json({ error: 'Failed to enqueue video processing job' }, { status: 500 });
+      await redisClient.disconnect();
+
+      res.status(200).json({ message: "Video processing job enqueued" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Failed to enqueue video processing job" });
+    }
+  } else {
+    res.status(405).json({ message: "Method not allowed" });
   }
-}
-
-export async function GET() {
-  return NextResponse.json({ message: 'Method not allowed' }, { status: 405 });
 }
