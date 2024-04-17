@@ -54,12 +54,12 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   useEffect(() => {
     if (file.isVideo) {
       // Construct the thumbnail URL based on the video filename
-      const thumbnailFilename = `thumbnail_${file.name.split(".")[0]}.jpg`;
+      const thumbnailFilename = `${file.name.split(".")[0]}.jpg`;
       const thumbnailUrl = `${file.image.split("/").slice(0, -1).join("/")}/${thumbnailFilename}`;
       setThumbnailUrl(supabase.storage.from("media").getPublicUrl(thumbnailUrl).data.publicUrl);
   
       // Construct the compressed video URL based on the video filename
-      const compressedVideoFilename = `compressed_${file.name}`;
+      const compressedVideoFilename = `${file.name}`;
       const compressedVideoUrl = `${file.image.split("/").slice(0, -1).join("/")}/${compressedVideoFilename}`;
       setCompressedVideoUrl(supabase.storage.from("media").getPublicUrl(compressedVideoUrl).data.publicUrl);
     } else {
