@@ -135,33 +135,33 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     console.log("Upload result:", result);
     toast.success("Upload complete!");
     result.successful.forEach(async (file) => {
-      if (file.type?.startsWith('video/')) {
-        const videoPath = `players/${user?.id}/${player_id}/${file.name}`;
-        try {
-          const response = await fetch('/api/redis', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              videoPath,
-              user_id: user?.id,
-              player_id,
-            }),
-          });
-  
-          if (response.ok) {
-            console.log('Video processing job enqueued');
-            toast.success('Video processing job enqueued');
-          } else {
-            throw new Error('Failed to enqueue video processing job');
-          }
-        } catch (error) {
-          console.error(error);
-          toast.error('Failed to enqueue video processing job');
+    if (file.type?.startsWith('video/')) {
+      const videoPath = `players/${user?.id}/${player_id}/${file.name}`;
+      try {
+        const response = await fetch('/api/redis', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            videoPath,
+            user_id: user?.id,
+            player_id,
+          }),
+        });
+
+        if (response.ok) {
+          console.log('Video processing job enqueued');
+          toast.success('Video processing job enqueued');
+        } else {
+          throw new Error('Failed to enqueue video processing job');
         }
+      } catch (error) {
+        console.error(error);
+        toast.error('Failed to enqueue video processing job');
       }
-    });
+    }
+  });
     if (window.location.pathname.includes("/players")) {
       window.location.reload();
     }
