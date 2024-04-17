@@ -47,19 +47,25 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
 
   useEffect(() => {
     if (file.isCompressed) {
-      if (file.compressed_thumbnail) {
-        setThumbnailUrl(supabase.storage.from("media").getPublicUrl(file.compressed_thumbnail).data.publicUrl);
-      }
-      if (file.compressed_gif) {
-        setHoverGifUrl(supabase.storage.from("media").getPublicUrl(file.compressed_gif).data.publicUrl);
-      }
-      if (file.compressed_video) {
-        setCompressedVideoUrl(supabase.storage.from("media").getPublicUrl(file.compressed_video).data.publicUrl);
-      }
+      setThumbnailUrl(
+        supabase.storage.from("media").getPublicUrl(file.compressed_thumbnail ?? "").data.publicUrl
+      );
+      setHoverGifUrl(
+        supabase.storage.from("media").getPublicUrl(file.compressed_gif ?? "").data.publicUrl
+      );
+      setCompressedVideoUrl(
+        supabase.storage.from("media").getPublicUrl(file.compressed_video ?? "").data.publicUrl
+      );
     } else {
       setThumbnailUrl(file.image);
     }
-  }, [file.compressed_thumbnail, file.compressed_gif, file.compressed_video, file.isCompressed, file.image]);
+  }, [
+    file.compressed_thumbnail,
+    file.compressed_gif,
+    file.compressed_video,
+    file.isCompressed,
+    file.image,
+  ]);
 
   const handleDownload = () => {
     fetch(file.image)
