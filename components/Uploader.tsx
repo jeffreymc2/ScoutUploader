@@ -77,8 +77,8 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
               body: JSON.stringify({
                 videoPath,
                 user_id: user.id,
-                player_id: player_id,
-                name: file.name, // Include the 'name' property
+                player_id,
+                name, // Include the 'name' property
               }),
             });
   
