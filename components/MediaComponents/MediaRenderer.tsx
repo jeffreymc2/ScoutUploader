@@ -27,7 +27,6 @@ interface MediaRendererProps {
     compressed_video?: string;
     compressed_gif?: string;
     compressed_thumbnail?: string;
-    is_compressed?: boolean;
   };
 }
 
@@ -40,20 +39,16 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   const supabase = supabaseBrowser();
 
   useEffect(() => {
-    if (file.is_compressed) {
-      if (file.compressed_thumbnail) {
-        setThumbnailUrl(supabase.storage.from("media").getPublicUrl(file.compressed_thumbnail).data.publicUrl);
-      }
-      if (file.compressed_gif) {
-        setHoverGifUrl(supabase.storage.from("media").getPublicUrl(file.compressed_gif).data.publicUrl);
-      }
-      if (file.compressed_video) {
-        setCompressedVideoUrl(supabase.storage.from("media").getPublicUrl(file.compressed_video).data.publicUrl);
-      }
-    } else {
-      setThumbnailUrl(file.image);
+    if (file.compressed_thumbnail) {
+      setThumbnailUrl(supabase.storage.from("media").getPublicUrl(file.compressed_thumbnail).data.publicUrl);
     }
-  }, [file.compressed_thumbnail, file.compressed_gif, file.compressed_video, file.is_compressed, file.image]);
+    if (file.compressed_gif) {
+      setHoverGifUrl(supabase.storage.from("media").getPublicUrl(file.compressed_gif).data.publicUrl);
+    }
+    if (file.compressed_video) {
+      setCompressedVideoUrl(supabase.storage.from("media").getPublicUrl(file.compressed_video).data.publicUrl);
+    }
+  }, [file.compressed_thumbnail, file.compressed_gif, file.compressed_video]);
 
   const handleDownload = () => {
     fetch(file.image)
@@ -77,7 +72,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   return (
     <>
       <Dialog onOpenChange={setIsOpen}>
-        {file.is_compressed ? (
+        {file.compressed_video ? (
           <DialogContent className="sm:max-w-[66vw] flex items-center justify-center bg-transparent border-0 border-transparent">
             <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
               <Video
@@ -108,11 +103,11 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
               <div className="p-0 w-full">
                 <Image
                   src={thumbnailUrl}
-                  alt={`${file.is_compressed ? "Thumbnail" : "Image"} posted by ${file.post_by || "Unknown"}`}
+                  alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
                   fill={true}
                   className="object-cover object-top rounded-t-lg"
                 />
-                {file.is_compressed && file.compressed_gif && (
+                {file.compressed_gif && (
                   <div className="absolute inset-0">
                     <Image
                       src={hoverGifUrl}
@@ -124,7 +119,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                 )}
               </div>
             </DialogTrigger>
-            {file.is_compressed && (
+            {file.compressed_video && (
               <DialogTrigger className="z-10">
                 {file.featured_image && (
                   <div className="absolute top-4 left-4">
@@ -147,7 +142,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                 onClick={handleDownload}
               />
               <Dialog>
-                {!file.is_compressed ? (
+                {!file.compressed_video ? (
                   <div className="mt-3">
                     <MediaForm
                       postId={file.id}
@@ -190,6 +185,8 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
 };
 
 export default MediaRenderer;
+
+// ... (CameraIcon and StarIcon components remain the same)
 
 
 // ... (CameraIcon and StarIcon components remain the same)

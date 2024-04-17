@@ -2,16 +2,16 @@
 
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Uppy from "@uppy/core";
-import { Dashboard } from "@uppy/react";
-import "@uppy/core/dist/style.css";
-import "@uppy/dashboard/dist/style.css";
-import { Button } from "./ui/button";
-import Tus from "@uppy/tus";
-import useUser from "@/app/hook/useUser";
-import { supabaseBrowser } from "@/lib/supabase/browser";
-import { toast } from "sonner";
+import React, { useRef, useState, useEffect } from "react"; 
+import Uppy from "@uppy/core"; 
+import { Dashboard } from "@uppy/react"; 
+import "@uppy/core/dist/style.css"; import "@uppy/dashboard/dist/style.css"; 
+import { Button } from "./ui/button"; 
+import Tus from "@uppy/tus"; 
+import useUser from "@/app/hook/useUser"; 
+import { supabaseBrowser } from "@/lib/supabase/browser"; 
+import { toast } from "sonner"; 
+
 
 export interface PlayerResponse {
   PlayerID: string;
@@ -19,17 +19,17 @@ export interface PlayerResponse {
   FirstName: string;
   PlayerName: string;
   DOB: string;
-}
+} 
 
-interface UploaderProps {
-  playerid: number;
-  FullName: string;
-}
+
+interface UploaderProps { playerid: number; FullName: string; } 
 
 const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   const { data: user } = useUser();
   const supabase = supabaseBrowser();
-  const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(null);
+  const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(
+    null
+  );
 
   useEffect(() => {
     setSelectedPlayer({ playerid, FullName });
@@ -41,7 +41,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       req.setHeader("Authorization", `Bearer ${data.session.access_token}`);
     }
   };
-
+  
   const player_id = playerid.toString();
 
   const [uppy] = useState(() =>
@@ -52,16 +52,22 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         maxFileSize: 5 * 10000 * 10000,
       },
       debug: true,
-    }).use(Tus, {
+    })
+    .use(Tus, {
       endpoint: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/upload/resumable`,
       onBeforeRequest,
       limit: 20,
       chunkSize: 15 * 1024 * 1024,
-      allowedMetaFields: ["bucketName", "objectName", "contentType", "cacheControl"],
+      allowedMetaFields: [
+        "bucketName",
+        "objectName",
+        "contentType",
+        "cacheControl",
+      ],
     })
   );
 
-  uppy.on("file-added", (file) => {
+  uppy.on('file-added', (file) => {
     const fileNameWithUUID = `${player_id}_${file.name}`;
     file.meta = {
       ...file.meta,
@@ -73,7 +79,6 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   });
 
   uppy.on("complete", async (result) => {
-    toast.success("Upload complete!");
     result.successful.forEach(async (file) => {
       if (file.type?.startsWith("video/")) {
         const videoPath = `https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/media/players/${user?.id}/${player_id}/${player_id}_${file.name}`;
@@ -106,30 +111,6 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
           console.error("User or selected player data is missing or incomplete");
           toast.error("Failed to enqueue video processing job");
         }
-      } else {
-        // Update the posts table for non-video files
-        try {
-          const { data, error } = await supabase
-            .from("posts")
-            .insert([
-              {
-                name: `${player_id}_${file.name}`,
-                object_id: `players/${user?.id}/${player_id}/${player_id}_${file.name}`,
-                post_by: user?.id || "",
-                event_id: "", // Provide a default value or modify based on your requirements
-                team_id: "", // Provide a default value or modify based on your requirements
-              },
-            ])
-            .select("*")
-            .single();
-
-          if (error) {
-            throw new Error("Failed to update posts table");
-          }
-        } catch (error) {
-          console.error(error);
-          toast.error("Failed to update posts table");
-        }
       }
     });
   });
@@ -145,7 +126,6 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     }
     uppy.upload();
   };
-
   return (
     <div className="space-y-5">
       <div className="space-y-5">
@@ -156,7 +136,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
           </p>
         </div>
       </div>
-      <Dashboard uppy={uppy} className="w-auto" hideUploadButton />
+      <Dashboard uppy={uppy} className="w-auto" hideUploadButton /> 
       <Button
         id="upload-trigger"
         className="px-4 py-2 ml-2 w-full font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
@@ -167,7 +147,6 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     </div>
   );
 };
-
 export default Uploader;
 
 // // // app/components/Uploader.tsx
