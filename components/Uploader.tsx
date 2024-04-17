@@ -2,34 +2,26 @@
 
 "use client";
 
-import React, { useRef, useState, useEffect } from "react"; 
-import Uppy from "@uppy/core"; 
-import { Dashboard } from "@uppy/react"; 
-import "@uppy/core/dist/style.css"; import "@uppy/dashboard/dist/style.css"; 
-import { Button } from "./ui/button"; 
-import Tus from "@uppy/tus"; 
-import useUser from "@/app/hook/useUser"; 
-import { supabaseBrowser } from "@/lib/supabase/browser"; 
-import { toast } from "sonner"; 
+import React, { useRef, useState, useEffect } from "react";
+import Uppy from "@uppy/core";
+import { Dashboard } from "@uppy/react";
+import "@uppy/core/dist/style.css";
+import "@uppy/dashboard/dist/style.css";
+import { Button } from "./ui/button";
+import Tus from "@uppy/tus";
+import useUser from "@/app/hook/useUser";
+import { supabaseBrowser } from "@/lib/supabase/browser";
+import { toast } from "sonner";
 
-
-export interface PlayerResponse {
-  PlayerID: string;
-  LastName: string;
-  FirstName: string;
-  PlayerName: string;
-  DOB: string;
-} 
-
-
-interface UploaderProps { playerid: number; FullName: string; } 
+interface UploaderProps {
+  playerid: number;
+  FullName: string;
+}
 
 const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   const { data: user } = useUser();
   const supabase = supabaseBrowser();
-  const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(
-    null
-  );
+  const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(null);
 
   useEffect(() => {
     setSelectedPlayer({ playerid, FullName });
@@ -41,7 +33,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       req.setHeader("Authorization", `Bearer ${data.session.access_token}`);
     }
   };
-  
+
   const player_id = playerid.toString();
 
   const [uppy] = useState(() =>
@@ -52,8 +44,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         maxFileSize: 5 * 10000 * 10000,
       },
       debug: true,
-    })
-    .use(Tus, {
+    }).use(Tus, {
       endpoint: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/upload/resumable`,
       onBeforeRequest,
       limit: 20,
@@ -67,7 +58,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     })
   );
 
-  uppy.on('file-added', (file) => {
+  uppy.on("file-added", (file) => {
     const fileNameWithUUID = `${player_id}_${file.name}`;
     file.meta = {
       ...file.meta,
@@ -81,7 +72,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   uppy.on("complete", async (result) => {
     result.successful.forEach(async (file) => {
       if (file.type?.startsWith("video/")) {
-        const videoPath = `https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/media/players/${user?.id}/${player_id}/${player_id}_${file.name}`;
+        const videoPath = `https://${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${user?.id}/${player_id}/${player_id}_${file.name}`;
         const name = file.name;
         if (user && user.id && selectedPlayer) {
           try {
@@ -126,17 +117,18 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     }
     uppy.upload();
   };
+
   return (
     <div className="space-y-5">
       <div className="space-y-5">
-        <h1 className="font-pgFont text-2xl">Perfect Game Scout Profile Uploader</h1>
+        <h1 className="font-pgFont text-2xl">
+          Perfect Game Scout Profile Uploader
+        </h1>
         <div>
-          <p>
-            Selected Player: {FullName} | Player ID: {playerid}
-          </p>
+          <p>Selected Player: {FullName} | Player ID: {playerid}</p>
         </div>
       </div>
-      <Dashboard uppy={uppy} className="w-auto" hideUploadButton /> 
+      <Dashboard uppy={uppy} className="w-auto" hideUploadButton />
       <Button
         id="upload-trigger"
         className="px-4 py-2 ml-2 w-full font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
@@ -147,8 +139,8 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     </div>
   );
 };
-export default Uploader;
 
+export default Uploader;
 // // // app/components/Uploader.tsx
 
 

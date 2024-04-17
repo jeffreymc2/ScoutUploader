@@ -26,29 +26,35 @@ interface MediaRendererProps {
     featured_image?: boolean;
     compressed_video?: string;
     compressed_gif?: string;
-    compressed_thumbnail?: string;
+    thumbnail?: string;
   };
 }
 
 const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState("");
-  const [hoverGifUrl, setHoverGifUrl] = useState("");
+  const [gifUrl, setGifUrl] = useState("");
   const [compressedVideoUrl, setCompressedVideoUrl] = useState("");
 
   const supabase = supabaseBrowser();
 
   useEffect(() => {
-    if (file.compressed_thumbnail) {
-      setThumbnailUrl(supabase.storage.from("media").getPublicUrl(file.compressed_thumbnail).data.publicUrl);
+    if (file.thumbnail) {
+      setThumbnailUrl(
+        supabase.storage.from("media").getPublicUrl(file.thumbnail).data.publicUrl
+      );
     }
     if (file.compressed_gif) {
-      setHoverGifUrl(supabase.storage.from("media").getPublicUrl(file.compressed_gif).data.publicUrl);
+      setGifUrl(
+        supabase.storage.from("media").getPublicUrl(file.compressed_gif).data.publicUrl
+      );
     }
     if (file.compressed_video) {
-      setCompressedVideoUrl(supabase.storage.from("media").getPublicUrl(file.compressed_video).data.publicUrl);
+      setCompressedVideoUrl(
+        supabase.storage.from("media").getPublicUrl(file.compressed_video).data.publicUrl
+      );
     }
-  }, [file.compressed_thumbnail, file.compressed_gif, file.compressed_video]);
+  }, [file.thumbnail, file.compressed_gif, file.compressed_video]);
 
   const handleDownload = () => {
     fetch(file.image)
@@ -110,8 +116,8 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                 {file.compressed_gif && (
                   <div className="absolute inset-0">
                     <Image
-                      src={hoverGifUrl}
-                      alt={`Hover GIF posted by ${file.post_by || "Unknown"}`}
+                      src={gifUrl}
+                      alt={`GIF posted by ${file.post_by || "Unknown"}`}
                       fill={true}
                       className="object-cover object-top rounded-t-lg opacity-0 hover:opacity-100 transition-opacity duration-300"
                     />
@@ -172,7 +178,9 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             )}
           </div>
           {file.title && (
-            <p className="text-md mt-2 leading-loose font-bold text-gray-700">{file.title}</p>
+            <p className="text-md mt-2 leading-loose font-bold text-gray-700">
+              {file.title}
+            </p>
           )}
           {file.description && <p className="text-xs mt-1">{file.description}</p>}
           {file.event_id && (
@@ -185,9 +193,6 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
 };
 
 export default MediaRenderer;
-
-// ... (CameraIcon and StarIcon components remain the same)
-
 
 // ... (CameraIcon and StarIcon components remain the same)
 

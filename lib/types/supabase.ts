@@ -24,6 +24,10 @@ export interface Database {
           description?: string
           featured_image?: boolean
           thumbnail?: string
+          compressed_video?: string
+          compressed_gif?: string
+          compressed_thumbnail?: string
+
         }
         Insert: {
           created_at?: string
@@ -39,7 +43,9 @@ export interface Database {
           description?: string
           featured_image?: boolean
           thumbnail?: string
-
+          compressed_video?: string
+          compressed_gif?: string
+          compressed_thumbnail?: string
 
         }
         Update: {
@@ -56,7 +62,9 @@ export interface Database {
           description?: string
           featured_image?: boolean
           thumbnail?: string
-
+          compressed_video?: string
+          compressed_gif?: string
+          compressed_thumbnail?: string
 
         }
         Relationships: [
