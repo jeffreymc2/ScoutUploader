@@ -67,6 +67,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     result.successful.forEach(async (file) => {
       if (file.type?.startsWith("video/")) {
         const videoPath = `players/${user?.id}/${player_id}/${file.name}`;
+        if (user && user.id) {
         try {
           const response = await fetch("/api/redis", {
             method: "POST",
@@ -79,19 +80,22 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
               player_id,
             }),
           });
-
+          
           if (response.ok) {
             toast.success("Video processing job enqueued");
           } else {
             throw new Error("Failed to enqueue video processing job");
           }
         } catch (error) {
-          console.error(error);
-          toast.error("Failed to enqueue video processing job");
+          // ...
         }
+      } else {
+        console.error("User data is missing or incomplete");
+        toast.error("Failed to enqueue video processing job");
       }
-    });
+    }
   });
+});
 
   const handleUpload = () => {
     if (!selectedPlayer) {
