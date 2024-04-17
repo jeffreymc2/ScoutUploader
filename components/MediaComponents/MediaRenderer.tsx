@@ -1,4 +1,4 @@
-//app/components/MediaComponents/MediaRenderer.tsx
+// app/components/MediaComponents/MediaRenderer.tsx
 
 "use client";
 
@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { PlayCircleIcon } from "lucide-react";
 import { IoCloudDownloadOutline } from "react-icons/io5";
 import MediaForm from "./MediaForm";
-import {supabaseBrowser} from "@/lib/supabase/browser";
+import { supabaseBrowser } from "@/lib/supabase/browser";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "../ui/badge";
 
@@ -31,18 +31,25 @@ interface MediaRendererProps {
 const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState("");
+  const [compressedVideoUrl, setCompressedVideoUrl] = useState("");
 
   const supabase = supabaseBrowser();
 
   useEffect(() => {
     if (file.isVideo) {
       // Construct the thumbnail URL based on the video filename
-      const thumbnailUrl = file.image.replace(/\.[^.]+$/, "_thumbnail.jpg");
-      setThumbnailUrl(supabase.storage.from('media').getPublicUrl(thumbnailUrl).data.publicUrl);
+      const thumbnailFilename = `thumbnail_${file.name.split(".")[0]}.jpg`;
+      const thumbnailUrl = `${file.image.split("/").slice(0, -1).join("/")}/${thumbnailFilename}`;
+      setThumbnailUrl(supabase.storage.from("media").getPublicUrl(thumbnailUrl).data.publicUrl);
+
+      // Construct the compressed video URL based on the video filename
+      const compressedVideoFilename = `compressed_${file.name}`;
+      const compressedVideoUrl = `${file.image.split("/").slice(0, -1).join("/")}/${compressedVideoFilename}`;
+      setCompressedVideoUrl(supabase.storage.from("media").getPublicUrl(compressedVideoUrl).data.publicUrl);
     } else {
       setThumbnailUrl(file.image);
     }
-  }, [file.image, file.isVideo]);
+  }, [file.image, file.isVideo, file.name]);
 
   const handleDownload = () => {
     fetch(file.image)
@@ -71,7 +78,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
               <Video
                 className="rounded-lg absolute top-0 left-0"
-                src={file.image.replace(/\.[^.]+$/, "_optimized.mp4")}
+                src={compressedVideoUrl}
                 style={{ backgroundColor: "var(--media-range-bar-color)" }}
                 preload="metadata"
                 poster={thumbnailUrl}
@@ -159,7 +166,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                   <div className="mt-3">
                     <MediaForm
                       postId={file.id}
-                      mediaUrl={file.image.replace(/\.[^.]+$/, "_optimized.mp4")}
+                      mediaUrl={compressedVideoUrl}
                       isVideo={true}
                       thumbnailUrl={thumbnailUrl}
                     />
@@ -189,6 +196,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
 };
 
 export default MediaRenderer;
+
 
 // ... (CameraIcon and StarIcon components remain the same)
 
