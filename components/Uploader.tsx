@@ -66,22 +66,34 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     result.successful.forEach(async (file) => {
       if (file.type?.startsWith("video/")) {
         const videoPath = `https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/media/players/${user?.id}/${player_id}/${player_id}_${file.name}`;
-        try {
-          // ...
-          const response = await fetch("/api/redis", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              videoPath,
-              user_id: user?.id,
-              player_id,
-            }),
-          });
-          // ...
-        } catch (error) {
-          // ...
+        const name = file.name.split(".")[0]; // Extract the name without the file extension
+        if (user && user.id) {
+          try {
+            const response = await fetch("/api/redis", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                videoPath,
+                user_id: user.id,
+                player_id: player_id,
+                name: file.name, // Include the 'name' property
+              }),
+            });
+  
+            if (response.ok) {
+              toast.success("Video processing job enqueued");
+            } else {
+              throw new Error("Failed to enqueue video processing job");
+            }
+          } catch (error) {
+            console.error(error);
+            toast.error("Failed to enqueue video processing job");
+          }
+        } else {
+          console.error("User data is missing or incomplete");
+          toast.error("Failed to enqueue video processing job");
         }
       }
     });
