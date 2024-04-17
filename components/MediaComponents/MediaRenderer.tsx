@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { PlayCircleIcon } from "lucide-react";
 import { IoCloudDownloadOutline } from "react-icons/io5";
 import MediaForm from "./MediaForm";
-import { supabaseBrowser } from "@/lib/supabase/browser";
+import {supabaseBrowser} from "@/lib/supabase/browser";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "../ui/badge";
 
@@ -38,9 +38,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
     if (file.isVideo) {
       // Construct the thumbnail URL based on the video filename
       const thumbnailUrl = file.image.replace(/\.[^.]+$/, "_thumbnail.jpg");
-      setThumbnailUrl(
-        supabase.storage.from("media").getPublicUrl(thumbnailUrl).data.publicUrl
-      );
+      setThumbnailUrl(supabase.storage.from('media').getPublicUrl(thumbnailUrl).data.publicUrl);
     } else {
       setThumbnailUrl(file.image);
     }
@@ -73,13 +71,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
               <Video
                 className="rounded-lg absolute top-0 left-0"
-                src={
-                  supabase.storage
-                    .from("media")
-                    .getPublicUrl(
-                      file.image.replace(/\.[^.]+$/, "_optimized.mp4")
-                    ).data.publicUrl
-                }
+                src={file.image.replace(/\.[^.]+$/, "_optimized.mp4")}
                 style={{ backgroundColor: "var(--media-range-bar-color)" }}
                 preload="metadata"
                 poster={thumbnailUrl}
@@ -167,10 +159,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                   <div className="mt-3">
                     <MediaForm
                       postId={file.id}
-                      mediaUrl={file.image.replace(
-                        /\.[^.]+$/,
-                        "_optimized.mp4"
-                      )}
+                      mediaUrl={file.image.replace(/\.[^.]+$/, "_optimized.mp4")}
                       isVideo={true}
                       thumbnailUrl={thumbnailUrl}
                     />
@@ -187,17 +176,11 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             )}
           </div>
           {file.title && (
-            <p className="text-md mt-2 leading-loose font-bold text-gray-700">
-              {file.title}
-            </p>
+            <p className="text-md mt-2 leading-loose font-bold text-gray-700">{file.title}</p>
           )}
-          {file.description && (
-            <p className="text-xs mt-1">{file.description}</p>
-          )}
+          {file.description && <p className="text-xs mt-1">{file.description}</p>}
           {file.event_id && (
-            <p className="text-sm mt-5">
-              Uploaded from Event ID: {file.event_id}
-            </p>
+            <p className="text-sm mt-5">Uploaded from Event ID: {file.event_id}</p>
           )}
         </div>
       </Dialog>
