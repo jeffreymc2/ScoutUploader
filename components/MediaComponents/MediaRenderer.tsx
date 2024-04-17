@@ -24,6 +24,9 @@ interface MediaRendererProps {
     title?: string;
     description?: string;
     featured_image?: boolean;
+    compressed_video?: string;
+    compressed_thumbnail?: string;
+    compressed_gif?: string;
   };
 }
 
@@ -98,7 +101,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
               <Video
                 className="rounded-lg absolute top-0 left-0"
-                src={compressedVideoUrl}
+                src={file.name.startsWith("compressed_") ? compressedVideoUrl : file.image}
                 style={{ backgroundColor: "var(--media-range-bar-color)" }}
                 preload="metadata"
                 poster={thumbnailUrl}
@@ -108,7 +111,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
         ) : (
           <DialogContent className="min-h-[50vh] sm:min-h-[66vh] bg-transparent border-0 border-transparent">
             <Image
-              src={file.image}
+              src={file.compressed_thumbnail || file.image}
               alt={`Media posted by ${file.post_by || "Unknown"}`}
               fill={true}
               className="rounded-lg object-contain relative"
@@ -123,7 +126,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             <DialogTrigger>
               <div className="p-0 w-full">
                 <Image
-                  src={thumbnailUrl}
+                  src={thumbnailUrl || file.compressed_thumbnail || ""}
                   alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
                   fill={true}
                   className="object-cover object-top rounded-t-lg"
@@ -131,7 +134,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                 {isVideo && (
                   <div className="absolute inset-0">
                     <Image
-                      src={hoverGifUrl}
+                      src={hoverGifUrl || file.compressed_gif || ""}
                       alt={`Hover GIF posted by ${file.post_by || "Unknown"}`}
                       fill={true}
                       className="object-cover object-top rounded-t-lg opacity-0 hover:opacity-100 transition-opacity duration-300"
