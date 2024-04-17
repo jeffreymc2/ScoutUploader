@@ -78,7 +78,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       if (file.type?.startsWith("video/")) {
         const videoPath = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${user?.id}/${player_id}/${fileNameWithUUID}`;        
         const name = file.name;
-        if (user && selectedPlayer) {
+        if (selectedPlayer) {
           try {
             const response = await fetch("/api/redis", {
               method: "POST",

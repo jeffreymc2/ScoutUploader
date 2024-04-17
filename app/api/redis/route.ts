@@ -47,7 +47,7 @@ export async function POST(request: Request) {
       player_id,
       name
     };
-
+console.log("jobData", jobData)
     await redisClient.lPush("video-processing-queue", JSON.stringify(jobData));
     console.log("Video processing job enqueued");
 
