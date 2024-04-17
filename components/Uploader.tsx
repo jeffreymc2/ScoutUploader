@@ -68,6 +68,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         const videoPath = `https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/media/players/${user?.id}/${player_id}/${player_id}_${file.name}`;
         const name = file.name; // Extract the name without the file extension
         if (user && user.id) {
+
           try {
             const response = await fetch("/api/redis", {
               method: "POST",
@@ -81,6 +82,8 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
                 name, // Include the 'name' property
               }),
             });
+
+            
   
             if (response.ok) {
               toast.success("Video processing job enqueued");
