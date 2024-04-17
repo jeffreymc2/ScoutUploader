@@ -87,6 +87,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                 style={{ backgroundColor: "var(--media-range-bar-color)" }}
                 preload="metadata"
                 poster={thumbnailUrl}
+                controls
               />
             </div>
           </DialogContent>
@@ -106,7 +107,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
         >
           <div className="absolute inset-0 flex items-center justify-center">
             <DialogTrigger>
-              <div className="p-0 w-full">
+              <div className="p-0 w-full relative">
                 <Image
                   src={thumbnailUrl}
                   alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
@@ -114,12 +115,12 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                   className="object-cover object-top rounded-t-lg"
                 />
                 {file.compressed_gif && (
-                  <div className="absolute inset-0">
+                  <div className="absolute inset-0 opacity-0 hover:opacity-100 transition-opacity duration-300">
                     <Image
                       src={gifUrl}
                       alt={`GIF posted by ${file.post_by || "Unknown"}`}
                       fill={true}
-                      className="object-cover object-top rounded-t-lg opacity-0 hover:opacity-100 transition-opacity duration-300"
+                      className="object-cover object-top rounded-t-lg"
                     />
                   </div>
                 )}
@@ -193,7 +194,6 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
 };
 
 export default MediaRenderer;
-
 // ... (CameraIcon and StarIcon components remain the same)
 
 function CameraIcon(
