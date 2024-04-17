@@ -8,7 +8,7 @@ const redisClient = createClient({
 redisClient.on("error", (err) => console.log("Redis Client Error", err));
 
 export async function POST(request: Request) {
-  const { videoPath, user_id, player_id } = await request.json();
+  const { videoPath, user_id, player_id, name } = await request.json();
 
   try {
     await redisClient.connect();
@@ -17,6 +17,7 @@ export async function POST(request: Request) {
       videoPath,
       user_id,
       player_id,
+      name
     };
 
     await redisClient.lPush("video-processing-queue", JSON.stringify(jobData));
