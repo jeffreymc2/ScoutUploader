@@ -25,7 +25,6 @@ interface MediaRendererProps {
     title?: string;
     description?: string;
     featured_image?: boolean;
-    optimizedVideoUrl?: string;
   };
 }
 
@@ -72,14 +71,19 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
         {file.isVideo ? (
           <DialogContent className="sm:max-w-[66vw] flex items-center justify-center bg-transparent border-0 border-transparent">
             <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
-            // Assuming you have a new `file` property called `optimizedVideoUrl`
-<Video
-  className="rounded-lg absolute top-0 left-0"
-  src={file.optimizedVideoUrl}
-  style={{ backgroundColor: "var(--media-range-bar-color)" }}
-  preload="metadata"
-  poster={thumbnailUrl}
-/>
+              <Video
+                className="rounded-lg absolute top-0 left-0"
+                src={
+                  supabase.storage
+                    .from("media")
+                    .getPublicUrl(
+                      file.image.replace(/\.[^.]+$/, "_optimized.mp4")
+                    ).data.publicUrl
+                }
+                style={{ backgroundColor: "var(--media-range-bar-color)" }}
+                preload="metadata"
+                poster={thumbnailUrl}
+              />
             </div>
           </DialogContent>
         ) : (
