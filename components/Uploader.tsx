@@ -1,25 +1,39 @@
+// app/components/Uploader.tsx
+
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Uppy from "@uppy/core";
-import { Dashboard } from "@uppy/react";
-import "@uppy/core/dist/style.css";
-import "@uppy/dashboard/dist/style.css";
-import { Button } from "./ui/button";
-import Tus from "@uppy/tus";
-import useUser from "@/app/hook/useUser";
-import { supabaseBrowser } from "@/lib/supabase/browser";
-import { toast } from "sonner";
+import React, { useRef, useState, useEffect } from "react"; 
+import Uppy from "@uppy/core"; 
+import { Dashboard } from "@uppy/react"; 
+import "@uppy/core/dist/style.css"; import "@uppy/dashboard/dist/style.css"; 
+import { Button } from "./ui/button"; 
+import Tus from "@uppy/tus"; 
+import useUser from "@/app/hook/useUser"; 
+import { supabaseBrowser } from "@/lib/supabase/browser"; 
+import { toast } from "sonner"; 
 
-interface UploaderProps {
-  playerid: number;
-  FullName: string;
-}
+
+export interface PlayerResponse {
+  PlayerID: string;
+  LastName: string;
+  FirstName: string;
+  PlayerName: string;
+  DOB: string;
+} 
+
+
+interface UploaderProps { playerid: number; FullName: string; } 
 
 const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   const { data: user } = useUser();
   const supabase = supabaseBrowser();
-  const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(null);
+  const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(
+    null
+  );
+
+  useEffect(() => {
+    setSelectedPlayer({ playerid, FullName });
+  }, [playerid, FullName]);
 
   const onBeforeRequest = async (req: any) => {
     const { data } = await supabase.auth.getSession();
@@ -27,11 +41,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       req.setHeader("Authorization", `Bearer ${data.session.access_token}`);
     }
   };
-
-  useEffect(() => {
-    setSelectedPlayer({ playerid, FullName });
-  }, [playerid, FullName]);
-
+  
   const player_id = playerid.toString();
 
   const [uppy] = useState(() =>
@@ -42,16 +52,22 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         maxFileSize: 5 * 10000 * 10000,
       },
       debug: true,
-    }).use(Tus, {
+    })
+    .use(Tus, {
       endpoint: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/upload/resumable`,
+      onBeforeRequest,
+      limit: 20,
       chunkSize: 15 * 1024 * 1024,
-      onBeforeRequest
+      allowedMetaFields: [
+        "bucketName",
+        "objectName",
+        "contentType",
+        "cacheControl",
+      ],
     })
   );
 
-
-
-  uppy.on("file-added", (file) => {
+  uppy.on('file-added', (file) => {
     const fileNameWithUUID = `${player_id}_${file.name}`;
     file.meta = {
       ...file.meta,
@@ -66,9 +82,8 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     result.successful.forEach(async (file) => {
       if (file.type?.startsWith("video/")) {
         const videoPath = `https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/media/players/${user?.id}/${player_id}/${player_id}_${file.name}`;
-        const name = file.name; // Extract the name without the file extension
-        if (user && user.id) {
-
+        const name = file.name;
+        if (user && user.id && selectedPlayer) {
           try {
             const response = await fetch("/api/redis", {
               method: "POST",
@@ -78,13 +93,11 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
               body: JSON.stringify({
                 videoPath,
                 user_id: user.id,
-                player_id,
-                name, // Include the 'name' property
+                player_id: selectedPlayer.playerid,
+                name,
               }),
             });
 
-            
-  
             if (response.ok) {
               toast.success("Video processing job enqueued");
             } else {
@@ -95,7 +108,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
             toast.error("Failed to enqueue video processing job");
           }
         } else {
-          console.error("User data is missing or incomplete");
+          console.error("User or selected player data is missing or incomplete");
           toast.error("Failed to enqueue video processing job");
         }
       }
@@ -113,7 +126,6 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     }
     uppy.upload();
   };
-
   return (
     <div className="space-y-5">
       <div className="space-y-5">
@@ -124,7 +136,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
           </p>
         </div>
       </div>
-      <Dashboard uppy={uppy} className="w-auto" hideUploadButton />
+      <Dashboard uppy={uppy} className="w-auto" hideUploadButton /> 
       <Button
         id="upload-trigger"
         className="px-4 py-2 ml-2 w-full font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
@@ -135,9 +147,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     </div>
   );
 };
-
 export default Uploader;
-
 
 // // // app/components/Uploader.tsx
 
