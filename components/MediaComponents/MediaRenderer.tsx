@@ -33,6 +33,7 @@ interface MediaRendererProps {
     compressed_video?: string;
     compressed_gif?: string;
     compressed_thumbnail?: string;
+    isCompressed?: boolean;
   };
 }
 
@@ -45,16 +46,20 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   const supabase = supabaseBrowser();
 
   useEffect(() => {
-    if (file.compressed_thumbnail) {
-      setThumbnailUrl(supabase.storage.from("media").getPublicUrl(file.compressed_thumbnail).data.publicUrl);
+    if (file.isCompressed) {
+      if (file.compressed_thumbnail) {
+        setThumbnailUrl(supabase.storage.from("media").getPublicUrl(file.compressed_thumbnail).data.publicUrl);
+      }
+      if (file.compressed_gif) {
+        setHoverGifUrl(supabase.storage.from("media").getPublicUrl(file.compressed_gif).data.publicUrl);
+      }
+      if (file.compressed_video) {
+        setCompressedVideoUrl(supabase.storage.from("media").getPublicUrl(file.compressed_video).data.publicUrl);
+      }
+    } else {
+      setThumbnailUrl(file.image);
     }
-    if (file.compressed_gif) {
-      setHoverGifUrl(supabase.storage.from("media").getPublicUrl(file.compressed_gif).data.publicUrl);
-    }
-    if (file.compressed_video) {
-      setCompressedVideoUrl(supabase.storage.from("media").getPublicUrl(file.compressed_video).data.publicUrl);
-    }
-  }, [file.compressed_thumbnail, file.compressed_gif, file.compressed_video]);
+  }, [file.compressed_thumbnail, file.compressed_gif, file.compressed_video, file.isCompressed, file.image]);
 
   const handleDownload = () => {
     fetch(file.image)
@@ -78,7 +83,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   return (
     <>
       <Dialog onOpenChange={setIsOpen}>
-        {file.compressed_video ? (
+        {file.isCompressed ? (
           <DialogContent className="sm:max-w-[66vw] flex items-center justify-center bg-transparent border-0 border-transparent">
             <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
               <Video
@@ -109,11 +114,11 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
               <div className="p-0 w-full">
                 <Image
                   src={thumbnailUrl}
-                  alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
+                  alt={`${file.isCompressed ? "Thumbnail" : "Image"} posted by ${file.post_by || "Unknown"}`}
                   fill={true}
                   className="object-cover object-top rounded-t-lg"
                 />
-                {file.compressed_gif && (
+                {file.isCompressed && file.compressed_gif && (
                   <div className="absolute inset-0">
                     <Image
                       src={hoverGifUrl}
@@ -125,7 +130,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                 )}
               </div>
             </DialogTrigger>
-            {file.compressed_video && (
+            {file.isCompressed && (
               <DialogTrigger className="z-10">
                 {file.featured_image && (
                   <div className="absolute top-4 left-4">
@@ -148,7 +153,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                 onClick={handleDownload}
               />
               <Dialog>
-                {!file.compressed_video ? (
+                {!file.isCompressed ? (
                   <div className="mt-3">
                     <MediaForm
                       postId={file.id}
@@ -191,6 +196,49 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
 };
 
 export default MediaRenderer;
+
+function CameraIcon(
+  props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>
+) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
+      <circle cx="12" cy="13" r="3" />
+    </svg>
+  );
+}
+
+function StarIcon(
+  props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>
+) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+    </svg>
+  );
+}
 
 // ... (CameraIcon and StarIcon components remain the same)
 
@@ -609,45 +657,3 @@ export default MediaRenderer;
 
 // ... (CameraIcon and StarIcon components remain the same)
 
-function CameraIcon(
-  props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>
-) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z" />
-      <circle cx="12" cy="13" r="3" />
-    </svg>
-  );
-}
-
-function StarIcon(
-  props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>
-) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-    </svg>
-  );
-}
