@@ -1,6 +1,7 @@
-"use client";
+// app/components/Uploader.tsx
 
-import React, { useState, useEffect } from "react";
+"use client";
+import React, { useRef, useState } from "react";
 import Uppy from "@uppy/core";
 import { Dashboard } from "@uppy/react";
 import "@uppy/core/dist/style.css";
@@ -10,16 +11,16 @@ import Tus from "@uppy/tus";
 import useUser from "@/app/hook/useUser";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
+import { PlayerResponse } from "@/lib/types/types";
 
 interface UploaderProps {
-  playerid: number;
-  FullName: string;
+  selectedPlayer: PlayerResponse | null;
 }
 
-const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
+const Uploader: React.FC<UploaderProps> = ({ selectedPlayer }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
   const { data: user } = useUser();
   const supabase = supabaseBrowser();
-  const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(null);
 
   const onBeforeRequest = async (req: any) => {
     const { data } = await supabase.auth.getSession();
@@ -28,47 +29,41 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     }
   };
 
-  useEffect(() => {
-    setSelectedPlayer({ playerid, FullName });
-  }, [playerid, FullName]);
-
-  const player_id = playerid.toString();
-
   const [uppy] = useState(() =>
     new Uppy({
       restrictions: {
         maxNumberOfFiles: 50,
         allowedFileTypes: ["image/*", "video/*"],
-        maxFileSize: 5 * 10000 * 10000,
+        maxFileSize: 5 * 10000 * 1000,
       },
       debug: true,
     }).use(Tus, {
       endpoint: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/upload/resumable`,
-      chunkSize: 15 * 1024 * 1024,
-      onBeforeRequest
+      onBeforeRequest,
+      limit: 10,
+      chunkSize: 6 * 1024 * 1024,
+      allowedMetaFields: ["bucketName", "objectName", "contentType", "cacheControl"],
     })
   );
 
-
-
   uppy.on("file-added", (file) => {
-    const fileNameWithUUID = `${player_id}_${file.name}`;
     file.meta = {
       ...file.meta,
       bucketName: "media",
-      objectName: `players/${user?.id}/${player_id}/${fileNameWithUUID}`,
+      objectName: selectedPlayer
+        ? `players/${user?.id}/${selectedPlayer.PlayerID}/${file.name}`
+        : file.name,
       contentType: file.type,
-      cacheControl: "undefined",
     };
   });
 
   uppy.on("complete", async (result) => {
+    toast.success("Upload complete!");
     result.successful.forEach(async (file) => {
       if (file.type?.startsWith("video/")) {
-        const videoPath = `https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/media/players/${user?.id}/${player_id}/${player_id}_${file.name}`;
-        const name = file.name; // Extract the name without the file extension
-        if (user && user.id) {
-
+        const videoPath = `https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/media/players/${user?.id}/${selectedPlayer?.PlayerID}/${file.name}`;
+        const name = file.name;
+        if (user && user.id && selectedPlayer) {
           try {
             const response = await fetch("/api/redis", {
               method: "POST",
@@ -78,13 +73,11 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
               body: JSON.stringify({
                 videoPath,
                 user_id: user.id,
-                player_id,
-                name, // Include the 'name' property
+                player_id: selectedPlayer.PlayerID,
+                name,
               }),
             });
 
-            
-  
             if (response.ok) {
               toast.success("Video processing job enqueued");
             } else {
@@ -95,7 +88,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
             toast.error("Failed to enqueue video processing job");
           }
         } else {
-          console.error("User data is missing or incomplete");
+          console.error("User or selected player data is missing or incomplete");
           toast.error("Failed to enqueue video processing job");
         }
       }
@@ -107,10 +100,12 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       toast.error("Please select a player.");
       return;
     }
+
     if (uppy.getFiles().length === 0) {
       toast.error("Please select a file to upload.");
       return;
     }
+
     uppy.upload();
   };
 
@@ -118,18 +113,12 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     <div className="space-y-5">
       <div className="space-y-5">
         <h1 className="font-pgFont text-2xl">Perfect Game Scout Profile Uploader</h1>
-        <div>
-          <p>
-            Selected Player: {FullName} | Player ID: {playerid}
-          </p>
-        </div>
+        {selectedPlayer && (
+          <p>Selected Player: {selectedPlayer.PlayerName} (ID: {selectedPlayer.PlayerID})</p>
+        )}
       </div>
       <Dashboard uppy={uppy} className="w-auto" hideUploadButton />
-      <Button
-        id="upload-trigger"
-        className="px-4 py-2 ml-2 w-full font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
-        onClick={handleUpload}
-      >
+      <Button id="upload-trigger" className="w-full" onClick={handleUpload}>
         Upload
       </Button>
     </div>

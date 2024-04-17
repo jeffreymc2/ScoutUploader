@@ -200,3 +200,17 @@ export interface GameData {
   // Add other relevant game fields
 }
 
+// Add the PlayerResponse interface
+export interface PlayerResponse {
+  PlayerID: string;
+  FirstName: string;
+  LastName: string;
+  PlayerName: string;
+  DOB: string;
+  BatsThrows: string;
+  PrimaryPos: string;
+  CommittedTo: string;
+  GraduationYear: string;
+  ProfileURL: string;
+  // Add other relevant fields as needed
+}
