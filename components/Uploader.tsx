@@ -65,7 +65,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   uppy.on("complete", async (result) => {
     result.successful.forEach(async (file) => {
       if (file.type?.startsWith("video/")) {
-        const videoPath = `https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/media/players/${user?.id}/${player_id}/${file.name}`;
+        const videoPath = `https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/media/players/${user?.id}/${player_id}/${player_id}_${file.name}`;
         try {
           // ...
           const response = await fetch("/api/redis", {
