@@ -4,10 +4,9 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import Video from 'next-video';
+import Video from "next-video";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { PlayCircleIcon } from "lucide-react";
-
 import { IoCloudDownloadOutline } from "react-icons/io5";
 import MediaForm from "./MediaForm";
 import { Separator } from "@/components/ui/separator";
@@ -31,53 +30,6 @@ interface MediaRendererProps {
 const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState("");
-
-  // useEffect(() => {
-  //   if (file.isVideo) {
-  //     const video = document.createElement("video");
-  //     video.src = file.image;
-  //     video.crossOrigin = "anonymous"; // Ensure CORS policies allow this
-  //     video.preload = "metadata";
-  //     video.style.position = "absolute";
-  //     video.style.width = "0";
-  //     video.style.height = "0";
-  //     video.style.top = "0";
-  //     video.style.left = "-10000px"; // Off-screen
-
-  //     // Append the video to the body to ensure it's part of the DOM
-  //     document.body.appendChild(video);
-
-  //     video.onloadedmetadata = () => {
-  //       // After metadata loads, seek to a frame
-  //       video.currentTime = 1;
-  //     };
-
-  //     video.onseeked = () => {
-  //       // Introduce a slight delay before capturing the thumbnail
-  //       setTimeout(() => {
-  //         const canvas = document.createElement("canvas");
-  //         canvas.width = video.videoWidth;
-  //         canvas.height = video.videoHeight;
-  //         const ctx = canvas.getContext("2d");
-  //         ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
-  //         const thumbnail = canvas.toDataURL("image/png");
-  //         setThumbnailUrl(thumbnail);
-
-  //         // Remove the video element after capturing the thumbnail
-  //         document.body.removeChild(video);
-  //       }, 1000); // Adjust delay as necessary
-  //     };
-
-  //     video.onerror = () => {
-  //       console.error("Error loading video for thumbnail generation");
-  //       // Consider removing the video element in case of error as well
-  //       document.body.removeChild(video);
-  //     };
-  //   } else {
-  //     // Directly set the thumbnailUrl for non-video files
-  //     setThumbnailUrl(file.image);
-  //   }
-  // }, [file.image, file.isVideo]);
 
   useEffect(() => {
     if (file.isVideo) {
@@ -108,25 +60,18 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
       });
   };
 
-  // const imageStyle = {
-  //   width: "100%",
-  //   height: "auto",
-  //   position: "relative!important",
-  // };
-
   return (
     <>
       <Dialog onOpenChange={setIsOpen}>
         {file.isVideo ? (
-          <DialogContent className="sm:max-w-[66vw]  flex items-center justify-center bg-transparent border-0 border-transparent">
+          <DialogContent className="sm:max-w-[66vw] flex items-center justify-center bg-transparent border-0 border-transparent">
             <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
               <Video
                 className="rounded-lg absolute top-0 left-0"
-                src={file.image}
+                src={file.image.replace(/\.[^.]+$/, "_optimized.mp4")}
                 style={{ backgroundColor: "var(--media-range-bar-color)" }}
                 preload="metadata"
                 poster={thumbnailUrl}
-              
               />
             </div>
           </DialogContent>
@@ -141,19 +86,19 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
           </DialogContent>
         )}
         <div
-          className="relative w-full h-48 shadow-sm rounded-lg cursor-pointer "
+          className="relative w-full h-48 shadow-sm rounded-lg cursor-pointer"
           onClick={() => setIsOpen(true)}
         >
           {file.isVideo ? (
             thumbnailUrl ? (
-              <div className="absolute inset-0 flex items-center justify-center ">
+              <div className="absolute inset-0 flex items-center justify-center">
                 <DialogTrigger>
                   <div className="p-0 w-full">
                     <Image
                       src={thumbnailUrl}
                       alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
                       fill={true}
-                      className=" object-cover object-top rounded-t-lg"
+                      className="object-cover object-top rounded-t-lg"
                     />
                   </div>
                 </DialogTrigger>
@@ -187,7 +132,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
             </DialogTrigger>
           )}
         </div>
-        <div className="flex items-center justify-between gap-2 mt-0 ">
+        <div className="flex items-center justify-between gap-2 mt-0">
           <Separator />
         </div>
         <div className="px-4 pb-4 pt-2">
@@ -211,9 +156,9 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                   <div className="mt-3">
                     <MediaForm
                       postId={file.id}
-                      mediaUrl={file.image}
+                      mediaUrl={file.image.replace(/\.[^.]+$/, "_optimized.mp4")}
                       isVideo={true}
-                      thumbnailUrl={file.image}
+                      thumbnailUrl={thumbnailUrl}
                     />
                   </div>
                 )}
@@ -230,14 +175,9 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
           {file.title && (
             <p className="text-md mt-2 leading-loose font-bold text-gray-700">{file.title}</p>
           )}
-          {file.description && (
-            <p className="text-xs mt-1">{file.description}</p>
-          )}
-
+          {file.description && <p className="text-xs mt-1">{file.description}</p>}
           {file.event_id && (
-            <p className="text-sm mt-5">
-              Uploaded from Event ID: {file.event_id}
-            </p>
+            <p className="text-sm mt-5">Uploaded from Event ID: {file.event_id}</p>
           )}
         </div>
       </Dialog>
@@ -246,6 +186,8 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
 };
 
 export default MediaRenderer;
+
+// ... (CameraIcon and StarIcon components remain the same)
 
 function CameraIcon(
   props: React.JSX.IntrinsicAttributes & React.SVGProps<SVGSVGElement>
