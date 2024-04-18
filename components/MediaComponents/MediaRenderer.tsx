@@ -161,7 +161,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                   fill={true}
                   className="object-cover object-top rounded-t-lg"
                 />
-                {isVideo && (
+                {/* {isVideo && (
                   <div className="absolute inset-0">
                     <Image
                       src={hoverGifUrl || ""}
@@ -170,7 +170,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
                       className="object-cover object-top rounded-t-lg opacity-0 hover:opacity-100 transition-opacity duration-300"
                     />
                   </div>
-                )}
+                )} */}
               </div>
             </DialogTrigger>
             {isVideo && (
