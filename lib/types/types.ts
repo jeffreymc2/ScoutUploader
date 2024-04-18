@@ -29,6 +29,7 @@ export interface Player {
     ProfilePic: string | null;
   }
 
+  
   // Add the PlayerResponse interface
 export interface PlayerResponse {
   PlayerID: number;
@@ -45,6 +46,59 @@ export interface PlayerResponse {
   // Add other relevant fields as needed
 }
   
+
+export interface BoxScoreStats {
+  [key: string]: number | string;
+}
+
+export interface BoxScoreTeam {
+  name: string;
+  stats: BoxScoreStats;
+}
+
+export interface BoxScoreData {
+  [key: string]: BoxScoreTeam;
+}
+
+// types.ts
+export interface BaseRunner {
+  playerId: string;
+  basePosition: 'first' | 'second' | 'third';
+}
+
+export interface Pitch {
+  pitchNumber: number;
+  pitchResult: 'ball' | 'strike' | 'foul' | 'hit';
+  pitchType: string;
+  pitchVelocity?: number;
+}
+
+export interface AtBat {
+  batter: {
+    playerId: string;
+    handedness: 'left' | 'right';
+    playerNumber: string; // Added playerNumber property
+  };
+  pitches: Pitch[];
+  playResult: 'single' | 'double' | 'triple' | 'homerun' | 'out' | 'walk' | 'hitByPitch' | 'error' | 'sacrifice' | 'stolenBase' | 'fieldersChoice' | 'balk' | 'wildPitch' | 'incomplete'; // Added 'incomplete' option
+  playDescription: string;
+  baseRunners?: BaseRunner[];
+  rbi?: number;
+  runScored?: boolean;
+  fieldersInvolved?: string[];
+}
+
+export interface PlayData {
+  inning: number;
+  teamAtBat: string;
+  pitcher: {
+    playerId: string;
+    team: string;
+  };
+  atBats: AtBat[];
+  teamPitching: string;
+}
+
   export interface GameData {
     EventName: string;
     VisitorTeamName: string;
