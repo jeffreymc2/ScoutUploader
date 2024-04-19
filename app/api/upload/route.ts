@@ -2,13 +2,14 @@ import { supabaseServer } from '@/lib/supabase/server';
 import { NextResponse, NextRequest } from 'next/server';
 import Mux from '@mux/mux-node';
 
-const supabase = supabaseServer();
 const mux = new Mux({
   tokenId: process.env.MUX_TOKEN_ID!,
   tokenSecret: process.env.MUX_TOEKN_SECRET!,
 });
 
 export async function POST(request: NextRequest) {
+  const supabase = supabaseServer();
+
   const { files } = await request.json();
 
   for (const file of files) {
