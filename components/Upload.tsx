@@ -1,12 +1,11 @@
 'use client';
-
 import React, { useRef, useState, useEffect } from 'react';
 import Uppy from '@uppy/core';
 import { Dashboard } from '@uppy/react';
 import '@uppy/core/dist/style.css';
 import '@uppy/dashboard/dist/style.css';
 import { Button } from '../components/ui/button';
-import XHRUpload from '@uppy/xhr-upload';
+import Tus from '@uppy/tus';
 import useUser from '@/app/hook/useUser';
 import { supabaseBrowser } from '@/lib/supabase/browser';
 import { toast } from 'sonner';
@@ -37,30 +36,47 @@ const UploadPage: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  const [uppy] = useState(() =>
-    new Uppy({
+  const [uppy] = useState(() => {
+    const uppyInstance = new Uppy({
       restrictions: {
         maxNumberOfFiles: 50,
         allowedFileTypes: ['image/*', 'video/*'],
         maxFileSize: 5 * 10000 * 10000,
       },
       debug: true,
-    }).use(XHRUpload, {
-      endpoint: '/api/upload',
-      fieldName: 'files',
-    })
-  );
-
-  uppy.on('file-added', async (file) => {
+    });
+  
+    uppyInstance.use(Tus, {
+      endpoint: '/api/upload/prepare',
+      retryDelays: [0, 1000, 3000, 5000],
+      limit: 10,
+      overridePatchMethod: true,
+    });
+  
+    return uppyInstance;
+  });
+  
+  uppy.on('upload-success', async (file, response) => {
     const player_id = playerid.toString();
-    const fileNameWithUUID = `${player_id}_${file.name}`;
-
+    const fileNameWithUUID = `${player_id}_${file?.name ?? ''}`;
+  
     await supabase.storage
       .from('media')
-      .upload(`players/${user?.id}/${player_id}/${fileNameWithUUID}`, file.data, {
+      .upload(`players/${user?.id}/${player_id}/${fileNameWithUUID}`, file?.data ?? '', {
         cacheControl: '3600',
         upsert: false,
       });
+
+    const { assetId } = response.uploadURL as unknown as { assetId: string };
+
+    await supabase.from('posts').insert({
+      name: file?.name,
+      post_type: file?.type,
+      mux_asset_id: assetId,
+      mux_playback_id: assetId,
+    });
+  
+    console.log('File uploaded and details inserted into Supabase');
   });
 
   uppy.on('complete', (result) => {
