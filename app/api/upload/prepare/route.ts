@@ -3,7 +3,7 @@ import Mux from '@mux/mux-node';
 
 const mux = new Mux({
   tokenId: process.env.MUX_TOKEN_ID!,
-  tokenSecret: process.env.MUX_TOEKN_SECRET!,
+  tokenSecret: process.env.MUX_TOKEN_SECRET!,
 });
 
 export async function POST() {
@@ -15,9 +15,11 @@ export async function POST() {
       cors_origin: '*',
     });
 
+    const uploadUrl = `https://api.mux.com/video/v1/uploads/${upload.id}`;
+
     return NextResponse.json({
-      uploadId: upload.id,
-      url: upload.url,
+      uploadUrl,
+      assetId: upload.asset_id,
     });
   } catch (error) {
     console.error('Error creating Mux upload:', error);
