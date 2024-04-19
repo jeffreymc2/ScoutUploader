@@ -52,7 +52,7 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
       image: post.event_id
         ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`
         : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players${post.post_by}/${post.player_id}/${post.name}`,
-      isVideo: isVideoFile(post.name),
+      isVideo: isVideoFile(post.name ?? ""),
     })),
     players: [],
     eventId: "",
@@ -105,7 +105,7 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <DeletePost
-                      post_by={post.post_by}
+                      post_by={post.post_by || ""}
                       image={post.image}
                       event_id={post.event_id || ""}
                       team_id={post.team_id || ""}
