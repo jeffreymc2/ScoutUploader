@@ -67,14 +67,14 @@ const UploadPage: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         upsert: false,
       });
 
-    const { assetId } = response.uploadURL as unknown as { assetId: string };
+      const { assetId } = JSON.parse(response.body);
 
-    await supabase.from('posts').insert({
-      name: file?.name,
-      post_type: file?.type,
-      mux_asset_id: assetId,
-      mux_playback_id: assetId,
-    });
+      await supabase.from('posts').insert({
+        name: file?.name,
+        post_type: file?.type,
+        mux_asset_id: assetId,
+        mux_playback_id: assetId,
+      });
   
     console.log('File uploaded and details inserted into Supabase');
   });
