@@ -10,19 +10,17 @@ const mux = new Mux({
 
 export async function POST() {
     try {
-      const upload = await mux.video.uploads.create({
-        new_asset_settings: {
-          playback_policy: ['public'],
-        },
-        cors_origin: '*',
-      });
-  
-      const uploadUrl = upload.url;
-      return NextResponse.json({ uploadUrl }, {
-        headers: {
-          'Location': uploadUrl,
-        },
-      });
+        const upload = await mux.video.uploads.create({
+            new_asset_settings: {
+                playback_policy: ['public'],
+            },
+            cors_origin: '*',
+        });
+
+        const uploadUrl = upload.url;
+        return NextResponse.json({ upload }, {
+        
+        });
     } catch (error) {
       console.error('Error creating Mux upload:', error);
       return NextResponse.json({ error: 'Failed to create Mux upload' }, { status: 500 });
