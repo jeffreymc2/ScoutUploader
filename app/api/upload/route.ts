@@ -1,5 +1,5 @@
 import { supabaseServer } from '@/lib/supabase/server';
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import Mux from '@mux/mux-node';
 
 const supabase = supabaseServer();
@@ -9,7 +9,7 @@ const mux = new Mux({
     tokenSecret: process.env.MUX_TOEKN_SECRET!, // This is the default and can be omitted
   });
 
-  export async function POST(request: Request) {
+  export async function POST(request: NextRequest) {
   const { files } = await request.json();
 
   for (const file of files) {
@@ -31,16 +31,16 @@ const mux = new Mux({
 
     await supabase.from('posts')
     .insert({
-        name: file.name,
-        post_type: file.type,
-        mux_asset_id: asset.id,
-        mux_playback_id: asset.playback_ids?.[0]?.id,
+        name: file?.name,
+        post_type: file?.type,
+        mux_asset_id: asset?.id,
+        mux_playback_id: asset?.playback_ids?.[0]?.id,
     });
     } else {
       await supabase.from('posts')
       .insert({
-        name: file.name,
-        post_type: file.type,
+        name: file?.name,
+        post_type: file?.type,
       });
     }
   }
