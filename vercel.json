@@ -1,0 +1,13 @@
+{
+    "build": {
+      "env": {
+        "NEXT_PUBLIC_MAX_PAYLOAD_SIZE": "500mb" // Adjust the size limit as needed
+      }
+    },
+    "functions": {
+      "api/upload.js": {
+        "maxDuration": 60,
+        "memory": 3008
+      }
+    }
+  }
