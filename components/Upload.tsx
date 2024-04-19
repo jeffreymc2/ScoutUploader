@@ -29,7 +29,6 @@ const UploadPage: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   const { data: user } = useUser();
   const supabase = supabaseBrowser();
   const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(null);
-  console.log('User data:', user);
 
   useEffect(() => {
     setSelectedPlayer({ playerid, FullName });
@@ -55,7 +54,6 @@ const UploadPage: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   uppy.on('file-added', async (file) => {
     const player_id = playerid.toString();
     const fileNameWithUUID = `${player_id}_${file.name}`;
-    console.log('File added:', fileNameWithUUID);
 
     await supabase.storage
       .from('media')

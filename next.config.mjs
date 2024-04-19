@@ -43,6 +43,11 @@ const nextConfig = {
 			  },
 		],
 	},
+	api: {
+		bodyParser: {
+		  sizeLimit: '5gb', // Adjust the size limit as needed
+		},
+	  },
 	// images: {
 	// 	loader: 'custom',
 	// 	loaderFile: '@/lib/supabase/loader',
