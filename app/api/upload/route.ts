@@ -13,7 +13,7 @@ export async function POST(request: NextRequest) {
   const { files } = await request.json();
 
   for (const file of files) {
-    if (file.type.startsWith('video/')) {
+    
       const upload = await mux.video.uploads.create({
         cors_origin: '*',
         new_asset_settings: { playback_policy: ['public'] },
@@ -35,13 +35,7 @@ export async function POST(request: NextRequest) {
         mux_asset_id: asset?.id,
         mux_playback_id: asset?.playback_ids?.[0]?.id,
       });
-    } else {
-      await supabase.from('posts').insert({
-        name: file?.name,
-        post_type: file?.type,
-      });
-    }
-  }
+    } 
 
   return NextResponse.json({ message: 'Files uploaded successfully' });
 }
