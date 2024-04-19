@@ -1,3 +1,5 @@
+
+//app/api/upload/prepare/route.ts
 import { NextResponse } from 'next/server';
 import Mux from '@mux/mux-node';
 
@@ -15,7 +17,7 @@ export async function POST() {
       cors_origin: '*',
     });
 
-    const uploadUrl = `https://api.mux.com/video/v1/uploads/${upload.id}`;
+    const uploadUrl = `https://api.mux.com/video/v1/assets`;
 
     return NextResponse.json({
       uploadUrl,
