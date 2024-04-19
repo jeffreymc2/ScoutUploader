@@ -1,15 +1,16 @@
-"use client";
-import React, { useRef, useState, useEffect } from "react";
-import Uppy from "@uppy/core";
-import { Dashboard } from "@uppy/react";
-import "@uppy/core/dist/style.css";
-import "@uppy/dashboard/dist/style.css";
-import { Button } from "../components/ui/button";
-import Tus from "@uppy/tus";
-import useUser from "@/app/hook/useUser";
-import { supabaseBrowser } from "@/lib/supabase/browser";
-import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+'use client';
+
+import React, { useRef, useState, useEffect } from 'react';
+import Uppy from '@uppy/core';
+import { Dashboard } from '@uppy/react';
+import '@uppy/core/dist/style.css';
+import '@uppy/dashboard/dist/style.css';
+import { Button } from '../components/ui/button';
+import XHRUpload from '@uppy/xhr-upload';
+import useUser from '@/app/hook/useUser';
+import { supabaseBrowser } from '@/lib/supabase/browser';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export interface PlayerResponse {
   PlayerID: string;
@@ -28,8 +29,7 @@ const UploadPage: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   const { data: user } = useUser();
   const supabase = supabaseBrowser();
   const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(null);
-
-  console.log('User data:', user); // Log user data
+  console.log('User data:', user);
 
   useEffect(() => {
     setSelectedPlayer({ playerid, FullName });
@@ -38,59 +38,48 @@ const UploadPage: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
-  const onBeforeRequest = async (req: any) => {
-    const { data } = await supabase.auth.getSession();
-    console.log('Supabase session data:', data); // Log session data
-    req.setHeader("Authorization", `Bearer ${data?.session?.access_token}`);
-  };
-
-  const player_id = playerid.toString();
-  console.log('Player ID:', player_id); // Log player ID
-
   const [uppy] = useState(() =>
     new Uppy({
       restrictions: {
         maxNumberOfFiles: 50,
-        allowedFileTypes: ["image/*", "video/*"],
+        allowedFileTypes: ['image/*', 'video/*'],
         maxFileSize: 5 * 10000 * 10000,
       },
       debug: true,
-    }).use(Tus, {
-      endpoint: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/upload/resumable`,
-      onBeforeRequest,
-      limit: 20,
-      chunkSize: 15 * 1024 * 1024,
-      allowedMetaFields: ["bucketName", "objectName", "contentType", "cacheControl"],
+    }).use(XHRUpload, {
+      endpoint: '/api/upload',
+      fieldName: 'files',
     })
   );
 
-  uppy.on('file-added', (file) => {
+  uppy.on('file-added', async (file) => {
+    const player_id = playerid.toString();
     const fileNameWithUUID = `${player_id}_${file.name}`;
     console.log('File added:', fileNameWithUUID);
-    file.meta = {
-      ...file.meta,
-      bucketName: "media",
-      objectName: `players/${user?.id}/${player_id}/${fileNameWithUUID}`,
-      contentType: file.type,
-      cacheControl: "undefined",
-    };
+
+    await supabase.storage
+      .from('media')
+      .upload(`players/${user?.id}/${player_id}/${fileNameWithUUID}`, file.data, {
+        cacheControl: '3600',
+        upsert: false,
+      });
   });
 
-  uppy.on("complete", (result) => {
-    console.log('Upload result:', result); // Log upload result
-    toast.success("Upload complete!");
-    if (window.location.pathname.includes("/players")) {
+  uppy.on('complete', (result) => {
+    console.log('Upload result:', result);
+    toast.success('Upload complete!');
+    if (window.location.pathname.includes('/players')) {
       window.location.reload();
     }
   });
 
   const handleUpload = () => {
     if (!selectedPlayer) {
-      toast.error("Please select a player.");
+      toast.error('Please select a player.');
       return;
     }
     if (uppy.getFiles().length === 0) {
-      toast.error("Please select a file to upload.");
+      toast.error('Please select a file to upload.');
       return;
     }
     uppy.upload();
