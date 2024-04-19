@@ -17,7 +17,7 @@ export async function POST() {
       cors_origin: '*',
     });
 
-    const uploadUrl = `https://api.mux.com/video/v1/assets`;
+    const uploadUrl = `https://api.mux.com/video/v1/assets/${upload.asset_id}`;
 
     return NextResponse.json({
       uploadUrl,
