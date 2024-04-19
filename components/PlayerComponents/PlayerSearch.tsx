@@ -13,16 +13,16 @@ import { IoIosCloseCircleOutline } from "react-icons/io";
 import { toast } from "sonner";
 
 interface Post {
-  created_at: string;
-  player_id: string | null;
-  id: string;
-  name: string;
-  object_id: string;
-  post_by: string;
-  profile: {
+  created_at?: string;
+  player_id?: string | null;
+  id?: string;
+  name?: string;
+  object_id?: string;
+  post_by?: string;
+  profile?: {
     display_name: string | null;
   } | null;
-  image: string;
+  image?: string;
 }
 
 interface PlayerSearchProps {
