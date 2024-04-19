@@ -45,7 +45,7 @@ const nextConfig = {
 	},
 	api: {
 		bodyParser: {
-		  sizeLimit: '5gb', // Adjust the size limit as needed
+		  sizeLimit: '500mb', // Adjust the size limit as needed
 		},
 	  },
 	// images: {
