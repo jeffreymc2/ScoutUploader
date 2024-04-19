@@ -17,21 +17,21 @@ export default async function Feed() {
   }
 
   const media: Post[] = data.map((item) => ({
-    id: item.id,
+    id: item.id || '', // Assign an empty string if 'id' is undefined
     created_at: item.created_at,
-    player_id: item.player_id,
-    name: item.name,
-    object_id: item.object_id,
-    post_by: item.post_by,
+    player_id: item?.player_id,
+    name: item?.name,
+    object_id: item?.object_id,
+    post_by: item?.post_by,
     profile: null,
     image: constructImageUrl(item) ?? '', // Provide a default value of an empty string if 'image' is undefined
-    event_id: item.event_id,
-    featured_image: item.featured_image,
-    team_id: item.team_id,
-    isVideo: item.post_type === "video",
-    post_type: item.post_type,
-    title: item.title,
-    description: item.description,
+    event_id: item?.event_id,
+    featured_image: item?.featured_image,
+    team_id: item?.team_id,
+    isVideo: item?.post_type === "video",
+    post_type: item?.post_type,
+    title: item?.title,
+    description: item?.description,
   }));
 
 
