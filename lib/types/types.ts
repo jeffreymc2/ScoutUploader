@@ -164,25 +164,31 @@ export interface PlayData {
 
   
   
-export interface Post {
-  id: string;
-  created_at: string;
-  player_id: string | null;
-  name: string;
-  object_id: string;
-  post_by: string;
-  profile: {
-    display_name: string | null;
-  } | null;
-  image: string;
-  event_id?: string;
-  featured_image?: boolean;
-  team_id?: string;
-  isVideo?: boolean;
-  post_type?: string;
-  title?: string;
-  description?: string;
-}
+  export interface Post {
+    id: string;
+    created_at: string;
+    player_id?: string | null;
+    name?: string;
+    object_id?: string;
+    post_by?: string;
+    event_id?: string;
+    team_id?: string;
+    profile: {
+      display_name: string | null;
+    } | null;
+    image: string;
+    isVideo: boolean;
+    post_type?: string;
+    title?: string;
+    description?: string;
+    featured_image?: boolean;
+    thumbnail?: string;
+    compressed_video?: string;
+    compressed_gif?: string;
+    compressed_thumbnail?: string;
+    mux_asset_id?: string | null;
+    mux_playback_id?: string | null;
+  }
 
   export interface EventData {
     EventID: string;

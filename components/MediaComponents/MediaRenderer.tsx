@@ -14,17 +14,28 @@ import { Badge } from "../ui/badge";
 interface MediaRendererProps {
   file: {
     id: string;
-    image: string;
-    post_by: string;
-    name: string;
+    created_at: string;
+    player_id?: string | null;
+    name?: string;
+    object_id?: string;
+    post_by?: string;
     event_id?: string;
-    post_type: string;
+    team_id?: string;
+    profile: {
+      display_name: string | null;
+    } | null;
+    image: string;
+    isVideo: boolean;
+    post_type?: string;
     title?: string;
     description?: string;
     featured_image?: boolean;
+    thumbnail?: string;
     compressed_video?: string;
-    compressed_thumbnail?: string;
     compressed_gif?: string;
+    compressed_thumbnail?: string;
+    mux_asset_id?: string | null;
+    mux_playback_id?: string | null;
   };
 }
 
@@ -37,7 +48,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
   const supabase = supabaseBrowser();
 
   useEffect(() => {
-    const fileExtension = file.name.split(".").pop()?.toLowerCase();
+    const fileExtension = file.name?.split(".").pop()?.toLowerCase();
     const isVideo = fileExtension === "mp4" || fileExtension === "mov" || fileExtension === "avi";
 
     if (isVideo) {
@@ -88,7 +99,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
         setHoverGifUrl(supabase.storage.from("media").getPublicUrl(file.compressed_gif).data.publicUrl);
       } else {
         // Construct the hover GIF URL based on the video filename
-        const hoverGifFilename = `hover_${file.name.split(".")[0]}.gif`;
+        const hoverGifFilename = `hover_${file.name?.split(".")[0]}.gif`;
         const hoverGifUrl = `${file.image.split("/").slice(0, -1).join("/")}/${hoverGifFilename}`;
         setHoverGifUrl(supabase.storage.from("media").getPublicUrl(hoverGifUrl).data.publicUrl);
       }
@@ -108,7 +119,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
         const url = window.URL.createObjectURL(new Blob([blob]));
         const link = document.createElement("a");
         link.href = url;
-        link.download = file.name;
+        link.download = file.name || "download";
         link.style.display = "none";
         document.body.appendChild(link);
         link.click();
@@ -120,7 +131,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file }) => {
       });
   };
 
-  const fileExtension = file.name.split(".").pop()?.toLowerCase();
+  const fileExtension = file.name?.split(".").pop()?.toLowerCase();
   const isVideo = fileExtension === "mp4" || fileExtension === "mov" || fileExtension === "avi";
 
   return (

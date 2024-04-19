@@ -50,6 +50,7 @@
     "@uppy/react": "^3.2.2",
     "@uppy/status-bar": "^3.3.0",
     "@uppy/tus": "^3.5.0",
+    "@uppy/xhr-upload": "^3.6.4",
     "ably": "^2.0.1",
     "ai": "^3.0.22",
     "axios": "^1.6.8",

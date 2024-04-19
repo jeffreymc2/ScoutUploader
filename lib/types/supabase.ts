@@ -12,13 +12,13 @@ export interface Database {
       posts: {
         Row: {
           created_at: string
-          player_id: string | null
-          id: string
-          name: string
-          object_id: string
-          post_by: string
-          event_id: string
-          team_id: string
+          player_id?: string | null
+          id?: string
+          name?: string
+          object_id?: string
+          post_by?: string
+          event_id?: string
+          team_id?: string
           post_type?: string
           title?: string
           description?: string
@@ -27,17 +27,19 @@ export interface Database {
           compressed_video?: string
           compressed_gif?: string
           compressed_thumbnail?: string
+          mux_asset_id?: string | null;
+          mux_playback_id?: string | null;
 
         }
         Insert: {
           created_at?: string
           player_id?: string | null
           id?: string
-          name: string
-          object_id: string
-          post_by: string
-          event_id: string
-          team_id: string
+          name?: string
+          object_id?: string
+          post_by?: string
+          event_id?: string
+          team_id?: string
           post_type?: string
           title?: string
           description?: string
@@ -46,6 +48,8 @@ export interface Database {
           compressed_video?: string
           compressed_gif?: string
           compressed_thumbnail?: string
+          mux_asset_id?: string | null;
+          mux_playback_id?: string | null;
 
         }
         Update: {
@@ -65,6 +69,9 @@ export interface Database {
           compressed_video?: string
           compressed_gif?: string
           compressed_thumbnail?: string
+          mux_asset_id?: string | null;
+          mux_playback_id?: string | null;
+          
 
         }
         Relationships: [

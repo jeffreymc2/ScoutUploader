@@ -3,7 +3,8 @@
 
 import { supabaseServer } from "@/lib/supabase/server";
 import Image from "next/image";
-import Uploader from "@/components/Uploader";
+// Remove the duplicate import statement
+// import UploadPage from "@/components/Upload";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import DeletePost from "@/components/UtilityComponents/DeletePost";
 import { Button } from "@/components/ui/button";
@@ -33,6 +34,9 @@ import { Label } from "@/components/ui/label";
 import MediaRenderer from "@/components/MediaComponents/MediaRenderer";
 import { Suspense } from "react";
 import { Player } from "@/lib/types/types";
+import UploadPage from "@/components/Upload";
+import { Post } from "@/lib/types/types";
+import { string } from "zod";
 // import DiamondKastVideo from "@/components/DiamondKastVideo";
 
 interface PlayerData {
@@ -58,21 +62,21 @@ interface PlayerData {
   ProfilePic: string | null;
 }
 
-interface Post {
-  id: string;
-  created_at: string;
-  player_id: string | null;
-  name: string;
-  object_id: string;
-  post_by: string;
-  profile: {
-    display_name: string | null;
-  } | null;
-  image: string;
-  event_id?: string;
-  team_id?: string;
-  isVideo?: boolean;
-}
+// interface Post {
+//   id: string;
+//   created_at: string;
+//   player_id: string | null;
+//   name: string;
+//   object_id: string;
+//   post_by: string;
+//   profile: {
+//     display_name: string | null;
+//   } | null;
+//   image: string;
+//   event_id?: string;
+//   team_id?: string;
+//   isVideo?: boolean;
+// }
 
 interface PlayerSearchProps {
   posts: Post[] | null;
@@ -111,10 +115,12 @@ export default async function PlayerPage({
       image: post.event_id
         ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`
         : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`,
-      isVideo: isVideoFile(post.name),
+      isVideo: isVideoFile(post?.name ?? ""),
+      id: post?.id || "", // Ensure id is always a string
     })),
     players: [],
     eventId: "",
+    
   };
 
   const url = new URL(
@@ -158,7 +164,7 @@ export default async function PlayerPage({
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
-                    <Uploader
+                    <UploadPage
                       playerid={playerData.PlayerID}
                       FullName={playerData.PlayerName}
                     />
@@ -291,7 +297,7 @@ export default async function PlayerPage({
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
-                  <Uploader
+                  <UploadPage
                     playerid={playerData.PlayerID}
                     FullName={playerData.PlayerName}
                   />
@@ -304,7 +310,7 @@ export default async function PlayerPage({
               {playerSearchProps.posts?.map((post) => (
                 <Card key={post.id} className="m-0 p-0 shadow-md">
                 <div className="relative p-0">
-                  <MediaRenderer file={{ ...post, post_type: "" }} />
+                  <MediaRenderer file={{ ...post, isVideo: post.isVideo }} />
                   <div className="absolute top-2 ml-4">
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
@@ -323,7 +329,7 @@ export default async function PlayerPage({
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <DeletePost
-                            post_by={post.post_by}
+                            post_by={post.post_by?.toString() || ""}
                             image={post.image}
                             event_id={post.event_id || ""}
                           />
