@@ -10,13 +10,13 @@ export default async function Page({ searchParams }: { searchParams: any }) {
   let posts:
     | {
         created_at: string;
-        player_id: string | null;
-        id: string;
-        name: string;
-        object_id: string;
-        post_by: string;
-        profile: { display_name: string | null } | null;
-        image: string;
+        player_id?: string | null;
+        id?: string;
+        name?: string;
+        object_id?: string;
+        post_by?: string;
+        profile?: { display_name: string | null } | null;
+        image?: string;
       }[]
     | undefined = [];
 
