@@ -11,22 +11,32 @@ export async function POST(request: NextRequest) {
   const supabase = supabaseServer();
   const { files } = await request.json();
 
-  for (const file of files) {
+  console.log('Received files:', files);
+
+  const uploadPromises = files.map(async (file: any) => {
     if (file.type.startsWith('video/')) {
+      console.log('Processing video file:', file.name);
+
       const upload = await mux.video.uploads.create({
+        new_asset_settings: {
+          playback_policy: ['public'],
+          encoding_tier: 'baseline',
+        },
         cors_origin: '*',
-        new_asset_settings: { playback_policy: ['public'] },
       });
+
+      console.log('Created Mux upload:', upload);
 
       await fetch(upload.url, {
         method: 'PUT',
         body: file,
       });
 
-      const asset = await mux.video.assets.create({
-        input: [{ url: upload.url }],
-        playback_policy: ['public'],
-      });
+      console.log('Uploaded file to Mux');
+
+      const asset = await mux.video.assets.retrieve(upload.asset_id!);
+
+      console.log('Retrieved Mux asset:', asset);
 
       await supabase.from('posts').insert({
         name: file?.name,
@@ -34,13 +44,25 @@ export async function POST(request: NextRequest) {
         mux_asset_id: asset?.id,
         mux_playback_id: asset?.playback_ids?.[0]?.id,
       });
+
+      console.log('Inserted file details into Supabase');
+
+      return asset;
     } else {
+      console.log('Processing non-video file:', file.name);
+
       await supabase.from('posts').insert({
         name: file?.name,
         post_type: file?.type,
       });
-    }
-  }
 
-  return NextResponse.json({ message: 'Files uploaded successfully' });
+      console.log('Inserted file details into Supabase');
+    }
+  });
+
+  const assets = await Promise.all(uploadPromises);
+
+  console.log('All uploads completed');
+
+  return NextResponse.json({ message: 'Files uploaded successfully', assets });
 }
