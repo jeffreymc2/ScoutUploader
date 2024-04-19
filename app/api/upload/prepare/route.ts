@@ -16,8 +16,13 @@ export async function POST() {
         },
         cors_origin: '*',
       });
-      const uploadUrl = `https://api.mux.com/video/v1/assets/${upload.asset_id}`;
-      return NextResponse.json({ uploadUrl, assetId: upload.asset_id });
+  
+      const uploadUrl = upload.url;
+      return NextResponse.json({ uploadUrl }, {
+        headers: {
+          'Location': uploadUrl,
+        },
+      });
     } catch (error) {
       console.error('Error creating Mux upload:', error);
       return NextResponse.json({ error: 'Failed to create Mux upload' }, { status: 500 });
