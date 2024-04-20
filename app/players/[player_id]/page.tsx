@@ -34,9 +34,8 @@ import { Label } from "@/components/ui/label";
 import MediaRenderer from "@/components/MediaComponents/MediaRenderer";
 import { Suspense } from "react";
 import { Player } from "@/lib/types/types";
-import UploadPage from "@/components/Upload";
+import Uploader from "@/components/Uploader";
 import { Post } from "@/lib/types/types";
-import { string } from "zod";
 // import DiamondKastVideo from "@/components/DiamondKastVideo";
 
 interface PlayerData {
@@ -164,7 +163,7 @@ export default async function PlayerPage({
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
-                    <UploadPage
+                    <Uploader
                       playerid={playerData.PlayerID}
                       FullName={playerData.PlayerName}
                     />
@@ -297,7 +296,7 @@ export default async function PlayerPage({
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
-                  <UploadPage
+                  <Uploader
                     playerid={playerData.PlayerID}
                     FullName={playerData.PlayerName}
                   />

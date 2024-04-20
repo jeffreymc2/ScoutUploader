@@ -60,35 +60,6 @@ const UploadPage: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         } else {
           console.log('File uploaded to Supabase storage');
         }
-
-        // Upload file to Mux
-        const formData = new FormData();
-        formData.append('file', file.data);
-
-        const muxResponse = await fetch('/api/upload', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (!muxResponse.ok) {
-          console.error('Error uploading file to Mux:', muxResponse.statusText);
-        } else {
-          const muxData = await muxResponse.json();
-
-          // Insert asset details into Supabase
-          const { error: insertError } = await supabase.from('posts').insert({
-            name: file.name,
-            post_type: file.type,
-            mux_asset_id: muxData.data.id,
-            mux_playback_id: muxData.data.playback_ids[0].id,
-          });
-
-          if (insertError) {
-            console.error('Error inserting asset details into Supabase:', insertError);
-          } else {
-            console.log('Asset details inserted into Supabase');
-          }
-        }
       } catch (error) {
         console.error('Error processing file:', error);
       }
@@ -130,7 +101,7 @@ const UploadPage: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         {isDragActive ? (
           <p>Drop the files here ...</p>
         ) : (
-          <p>Drag and drop some files here, or click to select files</p>
+          <p>Drag 'n' drop some files here, or click to select files</p>
         )}
       </div>
       {isUploading && <p>Uploading...</p>}
