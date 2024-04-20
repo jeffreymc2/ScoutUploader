@@ -1,15 +1,10 @@
 'use client';
-import React, { useRef, useState, useEffect } from 'react';
-import Uppy from '@uppy/core';
-import { Dashboard } from '@uppy/react';
-import '@uppy/core/dist/style.css';
-import '@uppy/dashboard/dist/style.css';
-import { Button } from '../components/ui/button';
-import Tus from '@uppy/tus';
-import useUser from '@/app/hook/useUser';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase/browser';
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
+import useUser from '@/app/hook/useUser';
+import Mux from '@mux/mux-node';
 
 export interface PlayerResponse {
   PlayerID: string;
@@ -28,75 +23,70 @@ const UploadPage: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   const { data: user } = useUser();
   const supabase = supabaseBrowser();
   const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setSelectedPlayer({ playerid, FullName });
   }, [playerid, FullName]);
 
-  const inputRef = useRef<HTMLInputElement>(null);
-  const router = useRouter();
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (!files || files.length === 0) return;
 
-  const [uppy] = useState(() => {
-    const uppyInstance = new Uppy({
-      restrictions: {
-        maxNumberOfFiles: 50,
-        allowedFileTypes: ['image/*', 'video/*'],
-        maxFileSize: 5 * 10000 * 10000,
-      },
-      debug: true,
-    });
-  
-    uppyInstance.use(Tus, {
-      endpoint: '/api/upload/prepare',
-      retryDelays: [0, 1000, 3000, 5000],
-      limit: 10,
-      overridePatchMethod: true,
-    });
-  
-    return uppyInstance;
-  });
-  
-  uppy.on('upload-success', async (file, response) => {
-    const player_id = playerid.toString();
-    const fileNameWithUUID = `${player_id}_${file?.name ?? ''}`;
-  
-    await supabase.storage
-      .from('media')
-      .upload(`players/${user?.id}/${player_id}/${fileNameWithUUID}`, file?.data ?? '', {
-        cacheControl: '3600',
-        upsert: false,
-      });
+    setIsUploading(true);
 
-      const { assetId } = JSON.parse(response.body);
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const player_id = playerid.toString();
+      const fileNameWithUUID = `${player_id}_${file.name}`;
 
-      await supabase.from('posts').insert({
-        name: file?.name,
-        post_type: file?.type,
-        mux_asset_id: assetId,
-        mux_playback_id: assetId,
-      });
-  
-    console.log('File uploaded and details inserted into Supabase');
-  });
+      try {
+        // Upload file to Supabase storage
+        const { error: uploadError } = await supabase.storage
+          .from('media')
+          .upload(`players/${user?.id}/${player_id}/${fileNameWithUUID}`, file, {
+            cacheControl: '3600',
+            upsert: false,
+          });
 
-  uppy.on('complete', (result) => {
-    console.log('Upload result:', result);
+        if (uploadError) {
+          console.error('Error uploading file to Supabase:', uploadError);
+          continue;
+        }
+
+        // Create Mux asset
+        const mux = new Mux({
+          tokenId: process.env.NEXT_PUBLIC_MUX_TOKEN_ID!,
+          tokenSecret: process.env.NEXT_PUBLIC_MUX_TOKEN_SECRET!,
+        });
+
+        const insertError = null; // Declare the variable insertError
+
+        const upload = await mux.video.uploads.create({
+          new_asset_settings: {
+            playback_policy: ['public'],
+          },
+          cors_origin: '*',
+        });
+
+        const asset = await mux.video.assets.retrieve(upload.asset_id ?? '');
+
+        if (insertError) {
+          console.error('Error inserting asset details into Supabase:', insertError);
+        }
+
+        console.log('File uploaded and details inserted into Supabase');
+      } catch (error) {
+        console.error('Error processing file:', error);
+      }
+    }
+
+    setIsUploading(false);
     toast.success('Upload complete!');
     if (window.location.pathname.includes('/players')) {
       window.location.reload();
     }
-  });
-
-  const handleUpload = () => {
-    if (!selectedPlayer) {
-      toast.error('Please select a player.');
-      return;
-    }
-    if (uppy.getFiles().length === 0) {
-      toast.error('Please select a file to upload.');
-      return;
-    }
-    uppy.upload();
   };
 
   return (
@@ -107,14 +97,14 @@ const UploadPage: React.FC<UploaderProps> = ({ playerid, FullName }) => {
           <p>Selected Player: {FullName} | Player ID: {playerid}</p>
         </div>
       </div>
-      <Dashboard uppy={uppy} className="w-auto" hideUploadButton />
-      <Button
-        id="upload-trigger"
-        className="px-4 py-2 ml-2 w-full font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
-        onClick={handleUpload}
-      >
-        Upload
-      </Button>
+      <input
+        type="file"
+        multiple
+        accept="image/*, video/*"
+        onChange={handleFileChange}
+        disabled={isUploading}
+      />
+      {isUploading && <p>Uploading...</p>}
     </div>
   );
 };
