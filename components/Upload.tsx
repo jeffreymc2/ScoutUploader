@@ -1,10 +1,11 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
 import { useRouter } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase/browser';
 import { toast } from 'sonner';
 import useUser from '@/app/hook/useUser';
-import Mux from '@mux/mux-node';
+import MuxUploader from '@mux/mux-uploader-react';
 
 export interface PlayerResponse {
   PlayerID: string;
@@ -26,18 +27,13 @@ const UploadPage: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   const [isUploading, setIsUploading] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    setSelectedPlayer({ playerid, FullName });
-  }, [playerid, FullName]);
-
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (!files || files.length === 0) return;
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    if (acceptedFiles.length === 0) return;
 
     setIsUploading(true);
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
+    for (let i = 0; i < acceptedFiles.length; i++) {
+      const file = acceptedFiles[i];
       const player_id = playerid.toString();
       const fileNameWithUUID = `${player_id}_${file.name}`;
 
@@ -55,28 +51,7 @@ const UploadPage: React.FC<UploaderProps> = ({ playerid, FullName }) => {
           continue;
         }
 
-        // Create Mux asset
-        const mux = new Mux({
-          tokenId: process.env.NEXT_PUBLIC_MUX_TOKEN_ID!,
-          tokenSecret: process.env.NEXT_PUBLIC_MUX_TOKEN_SECRET!,
-        });
-
-        const insertError = null; // Declare the variable insertError
-
-        const upload = await mux.video.uploads.create({
-          new_asset_settings: {
-            playback_policy: ['public'],
-          },
-          cors_origin: '*',
-        });
-
-        const asset = await mux.video.assets.retrieve(upload.asset_id ?? '');
-
-        if (insertError) {
-          console.error('Error inserting asset details into Supabase:', insertError);
-        }
-
-        console.log('File uploaded and details inserted into Supabase');
+        console.log('File uploaded to Supabase storage');
       } catch (error) {
         console.error('Error processing file:', error);
       }
@@ -86,6 +61,28 @@ const UploadPage: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     toast.success('Upload complete!');
     if (window.location.pathname.includes('/players')) {
       window.location.reload();
+    }
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+  const handleMuxUploadSuccess = async (upload: any) => {
+    try {
+      // Insert asset details into Supabase
+      const { error: insertError } = await supabase.from('posts').insert({
+        name: upload.file.name,
+        post_type: upload.file.type,
+        mux_asset_id: upload.asset.id,
+        mux_playback_id: upload.asset.playback_ids[0].id,
+      });
+
+      if (insertError) {
+        console.error('Error inserting asset details into Supabase:', insertError);
+      }
+
+      console.log('Asset details inserted into Supabase');
+    } catch (error) {
+      console.error('Error processing Mux upload:', error);
     }
   };
 
@@ -97,14 +94,24 @@ const UploadPage: React.FC<UploaderProps> = ({ playerid, FullName }) => {
           <p>Selected Player: {FullName} | Player ID: {playerid}</p>
         </div>
       </div>
-      <input
-        type="file"
-        multiple
-        accept="image/*, video/*"
-        onChange={handleFileChange}
-        disabled={isUploading}
-      />
+      <div
+        {...getRootProps()}
+        className={`border-2 border-dashed p-4 ${
+          isDragActive ? 'border-blue-500' : 'border-gray-400'
+        }`}
+      >
+        <input {...getInputProps()} />
+        {isDragActive ? (
+          <p>Drop the files here ...</p>
+        ) : (
+          <p>Drag 'n' drop some files here, or click to select files</p>
+        )}
+      </div>
       {isUploading && <p>Uploading...</p>}
+      <MuxUploader
+        endpoint={process.env.NEXT_PUBLIC_MUX_UPLOAD_URL!}
+        onSuccess={handleMuxUploadSuccess}
+      />
     </div>
   );
 };
