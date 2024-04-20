@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import { supabaseBrowser } from '@/lib/supabase/browser';
 import { toast } from 'sonner';
 import useUser from '@/app/hook/useUser';
-import MuxUploader from '@mux/mux-uploader-react';
+import Uppy from '@uppy/core';
+import Tus from '@uppy/tus';
 
 export interface PlayerResponse {
   PlayerID: string;
@@ -32,8 +33,16 @@ const UploadPage: React.FC<UploaderProps> = ({ playerid, FullName }) => {
 
     setIsUploading(true);
 
-    for (let i = 0; i < acceptedFiles.length; i++) {
-      const file = acceptedFiles[i];
+    const uppy = new Uppy({
+      meta: { type: 'avatar' },
+      restrictions: { maxNumberOfFiles: 1 },
+      autoProceed: true,
+    });
+
+    uppy.use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' });
+
+    uppy.on('complete', async (result) => {
+      const file = result.successful[0];
       const player_id = playerid.toString();
       const fileNameWithUUID = `${player_id}_${file.name}`;
 
@@ -41,50 +50,67 @@ const UploadPage: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         // Upload file to Supabase storage
         const { error: uploadError } = await supabase.storage
           .from('media')
-          .upload(`players/${user?.id}/${player_id}/${fileNameWithUUID}`, file, {
+          .upload(`players/${user?.id}/${player_id}/${fileNameWithUUID}`, file.data, {
             cacheControl: '3600',
             upsert: false,
           });
 
         if (uploadError) {
           console.error('Error uploading file to Supabase:', uploadError);
-          continue;
+        } else {
+          console.log('File uploaded to Supabase storage');
         }
 
-        console.log('File uploaded to Supabase storage');
+        // Upload file to Mux
+        const formData = new FormData();
+        formData.append('file', file.data);
+
+        const muxResponse = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!muxResponse.ok) {
+          console.error('Error uploading file to Mux:', muxResponse.statusText);
+        } else {
+          const muxData = await muxResponse.json();
+
+          // Insert asset details into Supabase
+          const { error: insertError } = await supabase.from('posts').insert({
+            name: file.name,
+            post_type: file.type,
+            mux_asset_id: muxData.data.id,
+            mux_playback_id: muxData.data.playback_ids[0].id,
+          });
+
+          if (insertError) {
+            console.error('Error inserting asset details into Supabase:', insertError);
+          } else {
+            console.log('Asset details inserted into Supabase');
+          }
+        }
       } catch (error) {
         console.error('Error processing file:', error);
       }
-    }
 
-    setIsUploading(false);
-    toast.success('Upload complete!');
-    if (window.location.pathname.includes('/players')) {
-      window.location.reload();
-    }
+      uppy.close();
+      setIsUploading(false);
+      toast.success('Upload complete!');
+      if (window.location.pathname.includes('/players')) {
+        window.location.reload();
+      }
+    });
+
+    acceptedFiles.forEach((file) => {
+      uppy.addFile({
+        name: file.name,
+        type: file.type,
+        data: file,
+      });
+    });
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
-
-  const handleMuxUploadSuccess = async (upload: any) => {
-    try {
-      // Insert asset details into Supabase
-      const { error: insertError } = await supabase.from('posts').insert({
-        name: upload.file.name,
-        post_type: upload.file.type,
-        mux_asset_id: upload.asset.id,
-        mux_playback_id: upload.asset.playback_ids[0].id,
-      });
-
-      if (insertError) {
-        console.error('Error inserting asset details into Supabase:', insertError);
-      }
-
-      console.log('Asset details inserted into Supabase');
-    } catch (error) {
-      console.error('Error processing Mux upload:', error);
-    }
-  };
 
   return (
     <div className="space-y-5">
@@ -104,14 +130,10 @@ const UploadPage: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         {isDragActive ? (
           <p>Drop the files here ...</p>
         ) : (
-          <p>Drag and drop some files here, or click to select files</p>
+          <p>Drag 'n' drop some files here, or click to select files</p>
         )}
       </div>
       {isUploading && <p>Uploading...</p>}
-      <MuxUploader
-        endpoint={process.env.NEXT_PUBLIC_MUX_UPLOAD_URL!}
-        onSuccess={handleMuxUploadSuccess}
-      />
     </div>
   );
 };
