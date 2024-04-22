@@ -327,11 +327,12 @@ export default async function PlayerPage({
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <DeletePost
+                          <AlertDialogAction>
+                            <DeletePost
                             post_by={post.post_by?.toString() || ""}
                             image={post.image}
                             event_id={post.event_id || ""}
-                          />
+                          /></AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>

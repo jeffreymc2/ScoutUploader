@@ -48,7 +48,6 @@ const DeletePost: React.FC<DeletePostProps> = ({ post_by, image, event_id, team_
     }
   };
   
-
   if (isFetching) {
     return null;
   }
