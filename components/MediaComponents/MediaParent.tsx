@@ -1,12 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useParams } from "next/navigation"; // Remove this line
 import SearchComponent from "./MediaSearch";
 import MediaRenderer from "./MediaRenderer";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { Post } from "@/lib/types/types";
 import HighlightRenderer from "./HighlightRenderer";
-import { Card } from "../ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface HighlightVideo {
   id: number;
@@ -84,24 +83,23 @@ const MediaParent: React.FC<MediaParentProps> = ({ playerId }) => {
   };
 
   return (
-    <Card>
-              <SearchComponent onSearch={handleSearch} />
-    
-    <div>
+    <>
+      <SearchComponent onSearch={handleSearch} />
       <Card>
-        {filteredResults.map((file) =>
-          file.hasOwnProperty("title") ? (
-            <HighlightRenderer
-              key={`highlight-${file.id}`}
-              highlight={file as HighlightVideo}
-            />
-          ) : (
-            <MediaRenderer key={file.id} file={file as Post} />
-          )
-        )}
+        <CardContent>
+          {filteredResults.map((file) =>
+            file.hasOwnProperty("title") ? (
+              <HighlightRenderer
+                key={`highlight-${file.id}`}
+                highlight={file as HighlightVideo}
+              />
+            ) : (
+              <MediaRenderer key={file.id} file={file as Post} />
+            )
+          )}
+        </CardContent>
       </Card>
-    </div>
-    </Card>
+    </>
   );
 };
 
