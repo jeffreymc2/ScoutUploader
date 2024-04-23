@@ -67,13 +67,13 @@ export default async function PlayerPage({
   const playerData: PlayerData = await response.json();
 
   const { data: posts, error: postsError } = await supabase
-  .from("posts")
-  .select("id, name, post_by, event_id, team_id")
-  .eq("player_id", playerData.PlayerID)
-  .order("created_at", { ascending: false });
+    .from("posts")
+    .select("id, name, post_by, event_id, team_id")
+    .eq("player_id", playerData.PlayerID)
+    .order("created_at", { ascending: false });
 
-if (postsError) {
-  console.error("Error fetching posts:", postsError);
+  if (postsError) {
+    console.error("Error fetching posts:", postsError);
     // Handle the error appropriately (e.g., show an error message)
   }
 
