@@ -1,3 +1,7 @@
+//app/players/%5Bplayer_id%5D/page.tsx
+
+//app/players/[player_id]/page.tsx
+
 import { supabaseServer } from "@/lib/supabase/server";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -25,7 +29,6 @@ import { Suspense } from "react";
 import { Player } from "@/lib/types/types";
 import Uploader from "@/components/Uploader";
 import { Post } from "@/lib/types/types";
-import SearchComponent from "@/components/MediaComponents/MediaSearch";
 
 interface PlayerData {
   PlayerID: number;
@@ -50,39 +53,6 @@ interface PlayerData {
   ProfilePic: string | null;
 }
 
-interface PlayerSearchProps {
-  posts: Post[] | null;
-  players: Player[];
-  eventId?: string;
-}
-
-interface HighlightVideo {
-  id: number;
-  title: string;
-  description: string;
-  start_time: number;
-  end_time: number;
-  duration: number;
-  thumbnail: string;
-  created: string;
-  tagged_player_keys: { Key: number; Position: string }[];
-  url: string;
-  highlight_type: string;
-  drund_event_id: number;
-  game_key: string;
-  scoringapp_play_id: number;
-  play_type: string;
-  highlight_created: string;
-}
-
-interface MediaParentProps {
-  playerId: string;
-    mediaFiles: Post[];
-    highlightVideos: HighlightVideo[];
-    filteredResults: (Post | HighlightVideo)[];
-}
-
-
 export default async function PlayerPage({
   params,
 }: {
@@ -97,39 +67,22 @@ export default async function PlayerPage({
   const playerData: PlayerData = await response.json();
 
   const { data: posts, error: postsError } = await supabase
-    .from("posts")
-    .select("*")
-    .eq("player_id", playerData.PlayerID)
-    .order("created_at", { ascending: false });
+  .from("posts")
+  .select("id, name, post_by, event_id, team_id")
+  .eq("player_id", playerData.PlayerID)
+  .order("created_at", { ascending: false });
 
-  if (postsError) {
-    console.error("Error fetching images:", postsError);
-    return <div>Error fetching images</div>;
+if (postsError) {
+  console.error("Error fetching posts:", postsError);
+    // Handle the error appropriately (e.g., show an error message)
   }
-
-  const playerSearchProps: PlayerSearchProps = {
-    posts: posts.map((post) => ({
-      ...post,
-      profile: null,
-      image: post.event_id
-        ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`
-        : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`,
-      isVideo: isVideoFile(post?.name ?? ""),
-      id: post?.id || "",
-    })),
-    players: [],
-    eventId: "",
-  };
 
   const url = new URL(
     `https://dk.perfectgame.org/players/${playerData.PlayerID}?ms=638479303817445795&sk=5p030Qdbe1E=&hst=`
   );
 
-  
-  
-
   return (
-    <div className="container mx-auto p-0 ">
+    <div className="container mx-auto p-0">
       <BackButton />
 
       <Card className="mt-2">
@@ -145,7 +98,7 @@ export default async function PlayerPage({
                 {playerData.PlayerName.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1 text-center md:text-left ">
+            <div className="flex-1 text-center md:text-left">
               <h2 className="text-4xl font-pgFont md:text-6xl font-bold">
                 {playerData?.PlayerName || "N/A"}
               </h2>
@@ -259,23 +212,21 @@ export default async function PlayerPage({
 
       <Card className="min-h-[500px] xs:min-w-[300px] sm:min-w-[400px] md:min-w-[500px] lg:min-w-[600px] mt-4 rounded-md">
         <CardHeader className="mb-0 py-5 px-5 bg-gradient-to-b from-gray-100 to-white rounded-t-md">
-          <div className="flex ">
-            {" "}
-            {/* Center the image within the card header */}
+          <div className="flex">
             <Image
               src="https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_horizontal_primary%20(3).png"
               alt="DiamondKast Logo"
-              width={300} // These values should be the maximum width and height you want the image to have
-              height={500} // The image will scale down on smaller screens because of the following CSS class
-              className="object-cover object-center mb-2 max-w-full h-auto" // Make image responsive
+              width={300}
+              height={500}
+              className="object-cover object-center mb-2 max-w-full h-auto"
             />
           </div>
         </CardHeader>
         <CardContent className="mt-5 rounded-b-md">
           <iframe
             src={url.toString()}
-            style={{ minHeight: "450px" }} // Inline styles to ensure minimum height is respected
-            className="w-full h-auto" // Width is full and height is auto to maintain aspect ratio
+            style={{ minHeight: "450px" }}
+            className="w-full h-auto"
             id="ContentTopLevel_ContentPlaceHolder1_ifDesktop"
             allowFullScreen
             name="638479303817445795"
@@ -308,11 +259,10 @@ export default async function PlayerPage({
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
-              {playerSearchProps.posts?.map((post) => (
+              {posts?.map((post) => (
                 <Card key={post.id} className="m-0 p-0 shadow-md">
-
                   <div className="relative p-0">
-                    <MediaParent playerId={player_id} mediaFiles={[]} highlightVideos={[]} filteredResults={[]} />
+                    <MediaParent playerId={player_id} />
                     <div className="absolute top-2 ml-4">
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
@@ -333,8 +283,9 @@ export default async function PlayerPage({
                             <AlertDialogAction>
                               <DeletePost
                                 post_by={post.post_by?.toString() || ""}
-                                image={post.image}
+                                name={post.name || ""}
                                 event_id={post.event_id || ""}
+                                team_id={post.team_id || ""}
                               />
                             </AlertDialogAction>
                           </AlertDialogFooter>
@@ -351,23 +302,3 @@ export default async function PlayerPage({
     </div>
   );
 }
-
-// Helper function to determine if a file is a video based on its extension
-function isVideoFile(fileName: string) {
-  const videoExtensions = [
-    ".mp4",
-    ".webm",
-    ".ogg",
-    ".mov",
-    ".avi",
-    ".flv",
-    ".wmv",
-  ];
-  return videoExtensions.some((extension) =>
-    fileName.toLowerCase().endsWith(extension)
-  );
-}
-function setFilteredResults(filteredMedia: any[]) {
-  throw new Error("Function not implemented.");
-}
-

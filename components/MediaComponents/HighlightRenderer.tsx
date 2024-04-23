@@ -1,3 +1,5 @@
+//app/components/MediaComponents/HighlightRenderer.tsx
+
 import React from "react";
 import MediaRenderer from "./MediaRenderer";
 
@@ -23,7 +25,7 @@ interface Highlight {
   highlight_created: string;
   title?: string;
   description?: string;
-    
+
 }
 
 interface HighlightRendererProps {

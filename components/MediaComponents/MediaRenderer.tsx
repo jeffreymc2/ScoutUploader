@@ -1,3 +1,5 @@
+//app/components/MediaComponents/MediaRenderer.tsx
+
 "use client";
 
 import React, { useState, useEffect } from "react";
