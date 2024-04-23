@@ -9,15 +9,16 @@ export async function GET(request: NextRequest) {
   }
 
   // Construct the URL for the external API request
-  const url = `https://tpa.perfectgame.org/api/DiamondKastPlusVideoPlayer/GetPlayerHighlightsClipsFromDrundAPIv2DataFeed?playerId=${encodeURIComponent(playerID)}&type=h
-  `;
+  const url = `https://tpa.perfectgame.org/api/DiamondKastPlusVideoPlayer/GetPlayerHighlightsClipsFromDrundAPIv2DataFeed?playerId=${encodeURIComponent(playerID)}&type=h`;
+
   try {
     const response = await fetch(url, {
       headers: {
         Accept: 'application/json',
         Authorization: `Bearer ${process.env.TPA_AUTHORIZATION_HEADER || ''}`,
         'Content-Type': 'application/json',
-        'securityToken': 'CIRCLE-CIRCLE-CIRCLE-CIRCLE-CIRCLE-CIRCLE-R1-L2-L1-TRIANGLE-CIRCLE-TRIANGLE'
+        'securityToken': 'CIRCLE-CIRCLE-CIRCLE-CIRCLE-CIRCLE-CIRCLE-R1-L2-L1-TRIANGLE-CIRCLE-TRIANGLE',
+        'Cookie': 'ARRAffinity=02f71ca019ee10e62194cd2e4fc6d9375f916bdd8c894f428d08b2f66a552f4f; ARRAffinitySameSite=02f71ca019ee10e62194cd2e4fc6d9375f916bdd8c894f428d08b2f66a552f4f', // Include the required cookie here
       },
     });
 

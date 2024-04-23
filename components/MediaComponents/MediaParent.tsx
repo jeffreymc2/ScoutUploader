@@ -6,6 +6,7 @@ import MediaRenderer from "./MediaRenderer";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { Post } from "@/lib/types/types";
 import HighlightRenderer from "./HighlightRenderer";
+import { Card } from "../ui/card";
 
 interface HighlightVideo {
   id: number;
@@ -83,9 +84,11 @@ const MediaParent: React.FC<MediaParentProps> = ({ playerId }) => {
   };
 
   return (
+    <Card>
+              <SearchComponent onSearch={handleSearch} />
+    
     <div>
-      <SearchComponent onSearch={handleSearch} />
-      <div>
+      <Card>
         {filteredResults.map((file) =>
           file.hasOwnProperty("title") ? (
             <HighlightRenderer
@@ -96,8 +99,9 @@ const MediaParent: React.FC<MediaParentProps> = ({ playerId }) => {
             <MediaRenderer key={file.id} file={file as Post} />
           )
         )}
-      </div>
+      </Card>
     </div>
+    </Card>
   );
 };
 
