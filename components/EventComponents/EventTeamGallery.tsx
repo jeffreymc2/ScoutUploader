@@ -1,4 +1,5 @@
 // components/EventTeamGallery.tsx
+// components/EventTeamGallery.tsx
 "use client";
 import { useState } from "react";
 import Image from "next/image";
@@ -24,7 +25,7 @@ import {
   AlertDialogCancel,
   AlertDialogHeader,
   AlertDialogFooter,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import DeletePost from "../UtilityComponents/DeletePost";
 import Link from "next/link";
@@ -40,6 +41,8 @@ interface EventTeamGalleryProps {
 const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
   posts,
   players,
+  eventId,
+  teamId,
 }) => {
   const supabase = supabaseBrowser();
 
@@ -51,12 +54,12 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
       profile: null,
       image: post.event_id
         ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`
-        : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players${post.post_by}/${post.player_id}/${post.name}`,
+        : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`,
       isVideo: isVideoFile(post.name ?? ""),
     })),
     players: [],
-    eventId: "",
-    teamId: "",
+    eventId: eventId,
+    teamId: teamId,
     image: "",
   };
 
@@ -66,7 +69,7 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
         .from("posts")
         .update({
           player_id: playerId,
-          post_type: ""
+          post_type: "",
         })
         .eq("id", postId);
     } catch (error) {
@@ -89,10 +92,9 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
               <MediaRenderer file={{ ...post, post_type: post.post_type || "" }} />
               <AlertDialog>
                 <AlertDialogTrigger>
-                    <RiDeleteBin5Line className="w-6 h-6 text-gray-900 absolute top-[208px] left-[50px]" />
+                  <RiDeleteBin5Line className="w-6 h-6 text-gray-900 absolute top-[208px] left-[50px]" />
                 </AlertDialogTrigger>
                 <AlertDialogContent>
-                  
                   <AlertDialogHeader>
                     <AlertDialogTitle>
                       Are you absolutely sure?
@@ -105,8 +107,8 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <DeletePost
-                      post_by={post.post_by || ""}
-                      image={post.image}
+                      post_by={post.post_by?.toString() || ""}
+                      name={post.name || ""}
                       event_id={post.event_id || ""}
                       team_id={post.team_id || ""}
                     />
@@ -114,7 +116,7 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                 </AlertDialogContent>
               </AlertDialog>
             </div>
-            
+
             <div onClick={(event) => event.stopPropagation()}>
               <PlayerSelect
                 post={post}
@@ -125,7 +127,7 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
             {assignedPlayer && (
               <Link className="text-xs my-2" href={`/players/${assignedPlayer.playerid}`}>
                 Current Player Selected: <span className="text-blue-500">{assignedPlayer.FullName} | Player ID:{" "}
-                {assignedPlayer.playerid}</span>
+                  {assignedPlayer.playerid}</span>
               </Link>
             )}
             {!assignedPlayer && (
@@ -205,7 +207,9 @@ const PlayerSelect: React.FC<PlayerSelectProps> = ({
     </>
   );
 };
+
 export default EventTeamGallery;
+
 // Helper function to determine if a file is a video based on its extension
 function isVideoFile(fileName: string) {
   const videoExtensions = [
