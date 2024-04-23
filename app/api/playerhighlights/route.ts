@@ -17,6 +17,7 @@ export async function GET(request: NextRequest) {
         Accept: 'application/json',
         Authorization: `Bearer ${process.env.TPA_AUTHORIZATION_HEADER || ''}`,
         'Content-Type': 'application/json',
+        'securityToken': 'CIRCLE-CIRCLE-CIRCLE-CIRCLE-CIRCLE-CIRCLE-R1-L2-L1-TRIANGLE-CIRCLE-TRIANGLE'
       },
     });
 
