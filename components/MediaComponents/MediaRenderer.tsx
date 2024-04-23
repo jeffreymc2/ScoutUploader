@@ -2,11 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import Video from "next-video";
+import Video from 'next-video';
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { PlayCircleIcon } from "lucide-react";
+import { IoCloudDownloadOutline } from "react-icons/io5";
+import MediaForm from "./MediaForm";
 import { supabaseBrowser } from "@/lib/supabase/browser";
-import { Separator } from "../ui/separator";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "../ui/badge";
 
 interface MediaRendererProps {
   file: {
@@ -52,18 +55,37 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
       if (file.compressed_thumbnail) {
         setThumbnailUrl(supabase.storage.from("media").getPublicUrl(file.compressed_thumbnail).data.publicUrl);
       } else {
-        setThumbnailUrl(file.image); // Use the original image as the thumbnail if compressed_thumbnail is not available
+        setThumbnailUrl(file.image);
       }
 
       if (file.compressed_video) {
         setCompressedVideoUrl(supabase.storage.from("media").getPublicUrl(file.compressed_video).data.publicUrl);
       } else {
-        setCompressedVideoUrl(file.image); // Use the original image as the video if compressed_video is not available
+        setCompressedVideoUrl(file.image);
       }
     } else {
       setThumbnailUrl(file.compressed_thumbnail || file.image);
     }
   }, [file]);
+
+  const handleDownload = () => {
+    fetch(file.image)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = window.URL.createObjectURL(new Blob([blob]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = file.name || "download";
+        link.style.display = "none";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((error) => {
+        console.error("Error downloading file:", error);
+      });
+  };
 
   const fileExtension = file.name?.split(".").pop()?.toLowerCase();
   const isVideo = fileExtension === "mp4" || fileExtension === "mov" || fileExtension === "avi";
@@ -80,16 +102,18 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
                 style={{ backgroundColor: "var(--media-range-bar-color)" }}
                 preload="metadata"
                 poster={thumbnailUrl}
+                controls
               />
             </div>
           </DialogContent>
         ) : (
           <DialogContent className="min-h-[50vh] sm:min-h-[66vh] bg-transparent border-0 border-transparent">
             <Image
-              src={file.compressed_thumbnail || file.image}
+              src={thumbnailUrl}
               alt={`Media posted by ${file.post_by || "Unknown"}`}
-              fill={true}
-              className="rounded-lg object-contain relative"
+              width={640}
+              height={360}
+              className="rounded-lg object-contain"
             />
           </DialogContent>
         )}
@@ -100,12 +124,22 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
           <div className="absolute inset-0 flex items-center justify-center">
             <DialogTrigger>
               <div className="p-0 w-full">
-                <Image
-                  src={thumbnailUrl}
-                  alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
-                  fill={true}
-                  className="object-cover object-top rounded-t-lg"
-                />
+                {isVideo ? (
+                  <Video
+                    src={thumbnailUrl}
+                    width={640}
+                    height={360}
+                    className="object-cover object-top rounded-t-lg"
+                  />
+                ) : (
+                  <Image
+                    src={thumbnailUrl}
+                    alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
+                    width={640}
+                    height={360}
+                    className="object-cover object-top rounded-t-lg"
+                  />
+                )}
               </div>
             </DialogTrigger>
             {isVideo && (
@@ -115,20 +149,55 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
             )}
           </div>
         </div>
-        {isHighlight && (
+        {!isHighlight && (
           <>
             <div className="flex items-center justify-between gap-2 mt-0">
               <Separator />
             </div>
             <div className="px-4 pb-4 pt-2">
               <div className="flex items-center justify-between gap-2 mt-2">
-                {/* Add your download, delete, and other functionalities here */}
+                <div className="flex items-center gap-2">
+                  <IoCloudDownloadOutline
+                    className="cursor-pointer text-2xl text-gray-700"
+                    onClick={handleDownload}
+                  />
+                  <Dialog>
+                    {!isVideo ? (
+                      <div className="mt-3">
+                        <MediaForm
+                          postId={file.id || ""}
+                          mediaUrl={file.image}
+                          isVideo={false}
+                          thumbnailUrl={file.image}
+                        />
+                      </div>
+                    ) : (
+                      <div className="mt-3">
+                        <MediaForm
+                          postId={file.id ?? ""}
+                          mediaUrl={compressedVideoUrl}
+                          isVideo={true}
+                          thumbnailUrl={thumbnailUrl}
+                        />
+                      </div>
+                    )}
+                  </Dialog>
+                </div>
+                {file.featured_image && (
+                  <div className="mt-0">
+                    <Badge className="bg-blue-500 text-white hover:bg-blue-500 text-xs">
+                      Featured Image
+                    </Badge>
+                  </div>
+                )}
               </div>
               {file.title && (
                 <p className="text-md mt-2 leading-loose font-bold text-gray-700">{file.title}</p>
               )}
               {file.description && <p className="text-xs mt-1">{file.description}</p>}
-              {file.event_id && <p className="text-sm mt-5">Uploaded from Event ID: {file.event_id}</p>}
+              {file.event_id && (
+                <p className="text-sm mt-5">Uploaded from Event ID: {file.event_id}</p>
+              )}
             </div>
           </>
         )}
@@ -138,8 +207,6 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
 };
 
 export default MediaRenderer;
-
-
 // "use client";
 
 // import React, { useState, useEffect } from "react";
