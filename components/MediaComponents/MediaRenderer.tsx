@@ -115,7 +115,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
             )}
           </div>
         </div>
-        {!isHighlight && (
+        {isHighlight && (
           <>
             <div className="flex items-center justify-between gap-2 mt-0">
               <Separator />
