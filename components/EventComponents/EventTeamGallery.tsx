@@ -108,7 +108,7 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <DeletePost
                       post_by={post.post_by?.toString() || ""}
-                      name={post.name || ""}
+                      image={post.name || ""}
                       event_id={post.event_id || ""}
                       team_id={post.team_id || ""}
                     />
@@ -163,7 +163,7 @@ const PlayerSelect: React.FC<PlayerSelectProps> = ({
 
   const handleSave = () => {
     if (selectedPlayer) {
-      onSavePlayer(post.id, selectedPlayer.playerid.toString());
+      onSavePlayer(post.id || "", selectedPlayer.playerid.toString());
       toast.success("Player saved successfully");
     }
   };

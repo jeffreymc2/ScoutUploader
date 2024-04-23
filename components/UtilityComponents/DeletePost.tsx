@@ -1,4 +1,4 @@
-//app/components/DeletePost.tsx
+// app/components/DeletePost.tsx
 "use client";
 import React from "react";
 import { Button } from "../ui/button";
@@ -9,12 +9,17 @@ import { useRouter } from "next/navigation";
 
 interface DeletePostProps {
   post_by: string;
-  name: string;
+  image: string;
   event_id?: string;
   team_id?: string;
 }
 
-const DeletePost: React.FC<DeletePostProps> = ({ post_by, name, event_id, team_id }) => {
+const DeletePost: React.FC<DeletePostProps> = ({
+  post_by,
+  image,
+  event_id,
+  team_id,
+}) => {
   const { data: user, isFetching } = useUser();
   const router = useRouter();
 
@@ -23,16 +28,20 @@ const DeletePost: React.FC<DeletePostProps> = ({ post_by, name, event_id, team_i
     try {
       const supabase = supabaseBrowser();
 
-      let folderPath = event_id ? `events/${post_by}/${event_id}/${team_id}/` : `players/${post_by}/`;
-      let imagePath = name;
+      let folderPath = event_id
+        ? `events/${post_by}/${event_id}/${team_id}/`
+        : `players/${post_by}/`;
+      let imagePath = image.split(folderPath).pop() ?? "";
 
-      if (imagePath.startsWith('/')) {
+      if (imagePath.startsWith("/")) {
         imagePath = imagePath.substring(1);
       }
 
       const fullPath = `${folderPath}${imagePath}`;
 
-      const { data, error } = await supabase.storage.from("media").remove([fullPath]);
+      const { data, error } = await supabase.storage
+        .from("media")
+        .remove([fullPath]);
 
       if (error) {
         console.error("Failed to delete image:", error);
@@ -62,7 +71,9 @@ const DeletePost: React.FC<DeletePostProps> = ({ post_by, name, event_id, team_i
   } else {
     return (
       <div>
-        <p className="text-sm text-muted-foreground">Only the user who posted the image can delete it.</p>
+        <p className="text-sm text-muted-foreground">
+          Only the user who posted the image can delete it.
+        </p>
       </div>
     );
   }

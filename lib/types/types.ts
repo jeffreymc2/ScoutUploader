@@ -183,7 +183,7 @@ export interface PlayData {
   
   
   export interface Post {
-    id: string;
+    id?: string;
     created_at: string;
     player_id?: string | null;
     name?: string;

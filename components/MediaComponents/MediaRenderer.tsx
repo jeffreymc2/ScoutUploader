@@ -1,5 +1,3 @@
-//app/components/MediaComponents/MediaRenderer.tsx
-
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -13,11 +11,9 @@ import { supabaseBrowser } from "@/lib/supabase/browser";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "../ui/badge";
 
-
-
 interface MediaRendererProps {
   file: {
-    id: string;
+    id?: string; // Make id nullable
     created_at: string;
     player_id?: string | null;
     name?: string;
@@ -27,7 +23,7 @@ interface MediaRendererProps {
     team_id?: string;
     profile: {
       display_name: string | null;
-    } | null; // Make profile property optional
+    } | null;
     image: string;
     isVideo: boolean;
     post_type?: string;
@@ -43,7 +39,6 @@ interface MediaRendererProps {
   };
   isHighlight?: boolean;
 }
-
 const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState("");
@@ -215,7 +210,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
                 {!isVideo ? (
                   <div className="mt-3">
                     <MediaForm
-                      postId={file.id}
+                      postId={file.id || ""}
                       mediaUrl={file.image}
                       isVideo={false}
                       thumbnailUrl={file.image}
@@ -224,7 +219,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
                 ) : (
                   <div className="mt-3">
                     <MediaForm
-                      postId={file.id}
+                      postId={file.id ?? ""}
                       mediaUrl={compressedVideoUrl}
                       isVideo={true}
                       thumbnailUrl={thumbnailUrl}

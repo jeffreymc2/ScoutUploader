@@ -14,7 +14,12 @@ interface DeleteEventPostProps {
   team_id: string;
 }
 
-const DeleteEventPost: React.FC<DeleteEventPostProps> = ({ post_by, image, event_id, team_id }) => {
+const DeleteEventPost: React.FC<DeleteEventPostProps> = ({
+  post_by,
+  image,
+  event_id,
+  team_id,
+}) => {
   const { data: user, isFetching } = useUser();
   const router = useRouter();
 
@@ -22,22 +27,24 @@ const DeleteEventPost: React.FC<DeleteEventPostProps> = ({ post_by, image, event
     toast.info("Deleting event image...");
     try {
       const supabase = supabaseBrowser();
-      const bucket = 'media';
-      const imagePath = image.split(`/public/${bucket}/events/`).pop() ?? '';
+      const bucket = "media";
+      const imagePath = image.split(`/public/${bucket}/events/`).pop() ?? "";
 
-      const { data, error } = await supabase.storage.from(bucket).remove([`events/${imagePath}`]);
+      const { data, error } = await supabase.storage
+        .from(bucket)
+        .remove([`events/${imagePath}`]);
 
       if (error) {
-        console.error('Failed to delete event image:', error);
+        console.error("Failed to delete event image:", error);
         toast.error(`Failed to delete event image: ${error.message}`);
       } else {
-        console.log('Successfully removed event image with path:', imagePath, data);
-        toast.success('Successfully removed event image');
+        console.log("Successfully removed event image with path:", imagePath, data);
+        toast.success("Successfully removed event image");
         router.refresh();
       }
     } catch (error) {
-      console.error('Error during event image delete operation:', error);
-      toast.error('An error occurred while deleting the event image');
+      console.error("Error during event image delete operation:", error);
+      toast.error("An error occurred while deleting the event image");
     }
   };
 
@@ -54,7 +61,9 @@ const DeleteEventPost: React.FC<DeleteEventPostProps> = ({ post_by, image, event
   } else {
     return (
       <div>
-        <p className="text-sm text-muted-foreground">Only the user who posted the event image can delete it.</p>
+        <p className="text-sm text-muted-foreground">
+          Only the user who posted the event image can delete it.
+        </p>
       </div>
     );
   }

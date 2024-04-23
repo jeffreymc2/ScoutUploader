@@ -1,6 +1,5 @@
 //app/players/%5Bplayer_id%5D/page.tsx
 
-//app/players/[player_id]/page.tsx
 
 import { supabaseServer } from "@/lib/supabase/server";
 import Image from "next/image";
@@ -29,6 +28,9 @@ import { Suspense } from "react";
 import { Player } from "@/lib/types/types";
 import Uploader from "@/components/Uploader";
 import { Post } from "@/lib/types/types";
+import MediaRenderer from "@/components/MediaComponents/MediaRenderer";
+import SearchComponent from "@/components/MediaComponents/MediaSearch";
+import { MediaParentProps } from "@/components/MediaComponents/MediaParent";
 
 interface PlayerData {
   PlayerID: number;
@@ -68,7 +70,7 @@ export default async function PlayerPage({
 
   const { data: posts, error: postsError } = await supabase
     .from("posts")
-    .select("id, name, post_by, event_id, team_id")
+    .select("*")
     .eq("player_id", playerData.PlayerID)
     .order("created_at", { ascending: false });
 
@@ -80,6 +82,15 @@ export default async function PlayerPage({
   const url = new URL(
     `https://dk.perfectgame.org/players/${playerData.PlayerID}?ms=638479303817445795&sk=5p030Qdbe1E=&hst=`
   );
+
+  const postsWithAdditionalData = posts?.map((post) => ({
+    ...post,
+    profile: null,
+    image: post.event_id
+      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`
+      : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`,
+    isVideo: isVideoFile(post?.name ?? ""),
+  }));
 
   return (
     <div className="container mx-auto p-0">
@@ -258,47 +269,40 @@ export default async function PlayerPage({
             </div>
           </CardHeader>
           <CardContent>
+          <MediaParent playerId={player_id} posts={postsWithAdditionalData || []}>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
-              {posts?.map((post) => (
+              {postsWithAdditionalData?.map((post) => (
                 <Card key={post.id} className="m-0 p-0 shadow-md">
                   <div className="relative p-0">
-                    <MediaParent playerId={player_id} />
+                    <MediaRenderer file={post} />
                     <div className="absolute top-2 ml-4">
                       <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <RiDeleteBin5Line className="w-6 h-6 text-gray-900 absolute top-[200px] left-[35px]" />
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Are you absolutely sure?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will
-                              permanently delete this file from our servers.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction>
-                              <DeletePost
-                                post_by={post.post_by?.toString() || ""}
-                                name={post.name || ""}
-                                event_id={post.event_id || ""}
-                                team_id={post.team_id || ""}
-                              />
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
+                        {/* ... */}
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction>
+                            <DeletePost
+                              post_by={post.post_by?.toString() || ""}
+                              image={post.image || ""}
+                              event_id={post.event_id || ""}
+                              team_id={post.team_id || ""}
+                            />
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
                       </AlertDialog>
                     </div>
                   </div>
                 </Card>
               ))}
             </div>
-          </CardContent>
+          </MediaParent>
+        </CardContent>
         </Card>
       </Suspense>
     </div>
   );
 }
+function isVideoFile(arg0: string): any {
+  throw new Error("Function not implemented.");
+}
+
