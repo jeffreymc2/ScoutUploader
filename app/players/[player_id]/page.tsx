@@ -125,26 +125,7 @@ export default async function PlayerPage({
     `https://dk.perfectgame.org/players/${playerData.PlayerID}?ms=638479303817445795&sk=5p030Qdbe1E=&hst=`
   );
 
-  const handleSearch = (searchTerm: string, filterOption: string) => {
-    let filteredMedia: (Post | HighlightVideo)[] = [];
-    let mediaFiles: Post[] = []; // Declare the mediaFiles variable
-
-
-    if (filterOption === "all" || filterOption === "scoutUploads") {
-      filteredMedia = mediaFiles.filter((file) =>
-        file.name?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    if (filterOption === "all" || filterOption === "highlights") {
-      const filteredHighlights = highlightVideos.filter((video: HighlightVideo) =>
-        video.title.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      filteredMedia = [...filteredMedia, ...filteredHighlights];
-    }
-
-    setFilteredResults(filteredMedia);
-  };
+  
   
 
   return (
@@ -329,7 +310,6 @@ export default async function PlayerPage({
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
               {playerSearchProps.posts?.map((post) => (
                 <Card key={post.id} className="m-0 p-0 shadow-md">
-                            <SearchComponent onSearch={handleSearch} />
 
                   <div className="relative p-0">
                     <MediaParent playerId={player_id} mediaFiles={[]} highlightVideos={[]} filteredResults={[]} />

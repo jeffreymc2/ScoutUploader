@@ -66,10 +66,28 @@ const MediaParent: React.FC<MediaParentProps> = ({ playerId }) => {
     fetchHighlightVideos();
   }, [playerId]);
 
- 
+  const handleSearch = (searchTerm: string, filterOption: string) => {
+    let filteredMedia: (Post | HighlightVideo)[] = [];
+
+    if (filterOption === "all" || filterOption === "scoutUploads") {
+      filteredMedia = mediaFiles.filter((file) =>
+        file.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (filterOption === "all" || filterOption === "highlights") {
+      const filteredHighlights = highlightVideos.filter((video) =>
+        video.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      filteredMedia = [...filteredMedia, ...filteredHighlights];
+    }
+
+    setFilteredResults(filteredMedia);
+  };
 
   return (
     <>
+                            <SearchComponent onSearch={handleSearch} />
 
       <Card>
         <CardContent>
