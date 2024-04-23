@@ -25,12 +25,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import MediaParent from "@/components/MediaComponents/MediaParent";
 import { Suspense } from "react";
-import { Player } from "@/lib/types/types";
 import Uploader from "@/components/Uploader";
-import { Post } from "@/lib/types/types";
 import MediaRenderer from "@/components/MediaComponents/MediaRenderer";
-import SearchComponent from "@/components/MediaComponents/MediaSearch";
-import { MediaParentProps } from "@/components/MediaComponents/MediaParent";
 
 interface PlayerData {
   PlayerID: number;

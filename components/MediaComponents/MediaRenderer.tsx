@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import Video from 'next-video';
+import Video from "next-video";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { PlayCircleIcon } from "lucide-react";
 import { IoCloudDownloadOutline } from "react-icons/io5";
@@ -11,84 +11,115 @@ import { supabaseBrowser } from "@/lib/supabase/browser";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "../ui/badge";
 
+interface MediaFile {
+  id?: string;
+  created_at: string;
+  player_id?: string | null;
+  name?: string;
+  object_id?: string;
+  post_by?: string;
+  event_id?: string;
+  team_id?: string;
+  profile: {
+    display_name: string | null;
+  } | null;
+  image: string;
+  isVideo: boolean;
+  post_type?: string;
+  title?: string;
+  description?: string;
+  featured_image?: boolean;
+  thumbnail?: string;
+  compressed_video?: string;
+  compressed_gif?: string;
+  compressed_thumbnail?: string;
+  mux_asset_id?: string | null;
+  mux_playback_id?: string | null;
+}
+
+interface HighlightVideo {
+  id: number;
+  title: string;
+  description: string;
+  start_time: number;
+  end_time: number;
+  duration: number;
+  thumbnail: string;
+  created: string;
+  tagged_player_keys: { Key: number; Position: string }[];
+  url: string;
+  highlight_type: string;
+  drund_event_id: number;
+  game_key: string;
+  scoringapp_play_id: number;
+  play_type: string;
+  highlight_created: string;
+}
+
 interface MediaRendererProps {
-  file: {
-    id?: string;
-    created_at: string;
-    player_id?: string | null;
-    name?: string;
-    object_id?: string;
-    post_by?: string;
-    event_id?: string;
-    team_id?: string;
-    profile: {
-      display_name: string | null;
-    } | null;
-    image: string;
-    isVideo: boolean;
-    post_type?: string;
-    title?: string;
-    description?: string;
-    featured_image?: boolean;
-    thumbnail?: string;
-    compressed_video?: string;
-    compressed_gif?: string;
-    compressed_thumbnail?: string;
-    mux_asset_id?: string | null;
-    mux_playback_id?: string | null;
-  };
+  file: MediaFile | HighlightVideo;
   isHighlight?: boolean;
 }
 
 const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState("");
-  const [compressedVideoUrl, setCompressedVideoUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
 
   const supabase = supabaseBrowser();
 
   useEffect(() => {
-    const fileExtension = file.name?.split(".").pop()?.toLowerCase();
-    const isVideo = fileExtension === "mp4" || fileExtension === "mov" || fileExtension === "avi";
+    if ("isVideo" in file) {
+      // Regular media file from Supabase
+      const mediaFile = file as MediaFile;
+      const isVideo = mediaFile.isVideo;
 
-    if (isVideo) {
-      if (file.compressed_thumbnail) {
-        setThumbnailUrl(supabase.storage.from("media").getPublicUrl(file.compressed_thumbnail).data.publicUrl);
-      } else {
-        setThumbnailUrl(file.image);
-      }
+      if (isVideo) {
+        if (mediaFile.compressed_thumbnail) {
+          setThumbnailUrl(supabase.storage.from("media").getPublicUrl(mediaFile.compressed_thumbnail).data.publicUrl);
+        } else {
+          setThumbnailUrl(mediaFile.image);
+        }
 
-      if (file.compressed_video) {
-        setCompressedVideoUrl(supabase.storage.from("media").getPublicUrl(file.compressed_video).data.publicUrl);
+        if (mediaFile.compressed_video) {
+          setVideoUrl(supabase.storage.from("media").getPublicUrl(mediaFile.compressed_video).data.publicUrl);
+        } else {
+          setVideoUrl(mediaFile.image);
+        }
       } else {
-        setCompressedVideoUrl(file.image);
+        setThumbnailUrl(mediaFile.compressed_thumbnail || mediaFile.image);
       }
     } else {
-      setThumbnailUrl(file.compressed_thumbnail || file.image);
+      // Highlight video from API
+      const highlightVideo = file as HighlightVideo;
+      setThumbnailUrl(highlightVideo.thumbnail);
+      setVideoUrl(highlightVideo.url);
     }
   }, [file]);
 
-  const handleDownload = () => {
-    fetch(file.image)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const url = window.URL.createObjectURL(new Blob([blob]));
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = file.name || "download";
-        link.style.display = "none";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
-      })
-      .catch((error) => {
-        console.error("Error downloading file:", error);
-      });
-  };
+  const isVideo = "isVideo" in file ? file.isVideo : true;
 
-  const fileExtension = file.name?.split(".").pop()?.toLowerCase();
-  const isVideo = fileExtension === "mp4" || fileExtension === "mov" || fileExtension === "avi";
+  const handleDownload = () => {
+    if ("isVideo" in file) {
+      const mediaFile = file as MediaFile;
+      fetch(mediaFile.image)
+        .then((response) => response.blob())
+        .then((blob) => {
+          const url = window.URL.createObjectURL(new Blob([blob]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = mediaFile.name || "download";
+          link.style.display = "none";
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        })
+        .catch((error) => {
+          console.error("Error downloading file:", error);
+        });
+    }
+  };
 
   return (
     <>
@@ -98,7 +129,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
             <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
               <Video
                 className="rounded-lg absolute top-0 left-0"
-                src={compressedVideoUrl}
+                src={videoUrl}
                 style={{ backgroundColor: "var(--media-range-bar-color)" }}
                 preload="metadata"
                 poster={thumbnailUrl}
@@ -110,7 +141,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
           <DialogContent className="min-h-[50vh] sm:min-h-[66vh] bg-transparent border-0 border-transparent">
             <Image
               src={thumbnailUrl}
-              alt={`Media posted by ${file.post_by || "Unknown"}`}
+              alt={`Media posted by ${("isVideo" in file && file.post_by) || "Unknown"}`}
               width={640}
               height={360}
               className="rounded-lg object-contain"
@@ -124,22 +155,13 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
           <div className="absolute inset-0 flex items-center justify-center">
             <DialogTrigger>
               <div className="p-0 w-full">
-                {isVideo ? (
-                  <Video
-                    src={thumbnailUrl}
-                    width={640}
-                    height={360}
-                    className="object-cover object-top rounded-t-lg"
-                  />
-                ) : (
-                  <Image
-                    src={thumbnailUrl}
-                    alt={`Thumbnail posted by ${file.post_by || "Unknown"}`}
-                    width={640}
-                    height={360}
-                    className="object-cover object-top rounded-t-lg"
-                  />
-                )}
+                <Image
+                  src={thumbnailUrl}
+                  alt={`Thumbnail posted by ${("isVideo" in file && file.post_by) || "Unknown"}`}
+                  width={640}
+                  height={360}
+                  className="object-cover object-top rounded-t-lg"
+                />
               </div>
             </DialogTrigger>
             {isVideo && (
@@ -149,7 +171,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
             )}
           </div>
         </div>
-        {!isHighlight && (
+        {!isHighlight && "isVideo" in file && (
           <>
             <div className="flex items-center justify-between gap-2 mt-0">
               <Separator />
@@ -165,17 +187,17 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
                     {!isVideo ? (
                       <div className="mt-3">
                         <MediaForm
-                          postId={file.id || ""}
-                          mediaUrl={file.image}
+                          postId={(file as MediaFile).id || ""}
+                          mediaUrl={(file as MediaFile).image}
                           isVideo={false}
-                          thumbnailUrl={file.image}
+                          thumbnailUrl={(file as MediaFile).image}
                         />
                       </div>
                     ) : (
                       <div className="mt-3">
                         <MediaForm
-                          postId={file.id ?? ""}
-                          mediaUrl={compressedVideoUrl}
+                          postId={(file as MediaFile).id ?? ""}
+                          mediaUrl={videoUrl}
                           isVideo={true}
                           thumbnailUrl={thumbnailUrl}
                         />
@@ -183,7 +205,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
                     )}
                   </Dialog>
                 </div>
-                {file.featured_image && (
+                {(file as MediaFile).featured_image && (
                   <div className="mt-0">
                     <Badge className="bg-blue-500 text-white hover:bg-blue-500 text-xs">
                       Featured Image
@@ -191,12 +213,12 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
                   </div>
                 )}
               </div>
-              {file.title && (
-                <p className="text-md mt-2 leading-loose font-bold text-gray-700">{file.title}</p>
+              {(file as MediaFile).title && (
+                <p className="text-md mt-2 leading-loose font-bold text-gray-700">{(file as MediaFile).title}</p>
               )}
-              {file.description && <p className="text-xs mt-1">{file.description}</p>}
-              {file.event_id && (
-                <p className="text-sm mt-5">Uploaded from Event ID: {file.event_id}</p>
+              {(file as MediaFile).description && <p className="text-xs mt-1">{(file as MediaFile).description}</p>}
+              {(file as MediaFile).event_id && (
+                <p className="text-sm mt-5">Uploaded from Event ID: {(file as MediaFile).event_id}</p>
               )}
             </div>
           </>
@@ -207,6 +229,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
 };
 
 export default MediaRenderer;
+
 // "use client";
 
 // import React, { useState, useEffect } from "react";
