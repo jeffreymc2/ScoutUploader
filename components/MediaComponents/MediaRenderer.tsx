@@ -93,7 +93,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
       // Highlight video from API
       const highlightVideo = file as HighlightVideo;
       setThumbnailUrl(highlightVideo.thumbnail);
-      setVideoUrl(highlightVideo.url);
+      setVideoUrl(highlightVideo.url); // Use the URL directly from the API
     }
   }, [file]);
 
