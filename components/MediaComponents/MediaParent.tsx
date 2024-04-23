@@ -1,11 +1,8 @@
 //app/components/MediaComponents/MediaParent.tsx
-
-"use client";
-
+"use client"
 import React, { useState, useEffect } from "react";
 import SearchComponent from "./MediaSearch";
 import MediaRenderer from "./MediaRenderer";
-import { supabaseBrowser } from "@/lib/supabase/browser";
 import { Post, HighlightVideo } from "@/lib/types/types";
 import HighlightRenderer from "./HighlightRenderer";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,33 +13,13 @@ export interface MediaParentProps {
   posts: Post[];
 }
 
-const MediaParent: React.FC<MediaParentProps> = ({
-  playerId,
-  children,
-  posts,
-}) => {
+const MediaParent: React.FC<MediaParentProps> = ({ playerId, children, posts }) => {
   const [mediaFiles, setMediaFiles] = useState<Post[]>([]);
   const [highlightVideos, setHighlightVideos] = useState<HighlightVideo[]>([]);
-  const [filteredResults, setFilteredResults] = useState<
-    (Post | HighlightVideo)[]
-  >([]);
+  const [filteredResults, setFilteredResults] = useState<(Post | HighlightVideo)[]>([]);
 
   useEffect(() => {
     setMediaFiles(posts);
-
-    // Fetch media files from Supabase
-    const fetchMediaFiles = async () => {
-      const { data, error } = await supabaseBrowser()
-        .from("posts")
-        .select("*")
-        .eq("player_id", playerId);
-
-      if (error) {
-        console.error("Error fetching media files:", error);
-      } else {
-        setMediaFiles(data as Post[]);
-      }
-    };
 
     // Fetch highlight videos from the API endpoint
     const fetchHighlightVideos = async () => {
@@ -76,15 +53,14 @@ const MediaParent: React.FC<MediaParentProps> = ({
   return (
     <>
       <SearchComponent onSearch={handleSearch} />
-
       {filteredResults.length > 0 ? (
         <Card>
-        <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {children}
-          </div>
-        </CardContent>
-      </Card>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {children}
+            </div>
+          </CardContent>
+        </Card>
       ) : (
         <Card>
           <CardContent>
@@ -93,10 +69,7 @@ const MediaParent: React.FC<MediaParentProps> = ({
                 <MediaRenderer key={file.id} file={file} />
               ))}
               {highlightVideos.map((video) => (
-                <HighlightRenderer
-                  key={`highlight-${video.id}`}
-                  highlight={video}
-                />
+                <HighlightRenderer key={`highlight-${video.id}`} highlight={video} />
               ))}
             </div>
           </CardContent>
@@ -105,4 +78,5 @@ const MediaParent: React.FC<MediaParentProps> = ({
     </>
   );
 };
+
 export default MediaParent;
