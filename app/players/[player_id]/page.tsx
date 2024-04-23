@@ -302,7 +302,8 @@ export default async function PlayerPage({
     </div>
   );
 }
-function isVideoFile(arg0: string): any {
-  throw new Error("Function not implemented.");
+function isVideoFile(fileName: string): boolean {
+  const fileExtension = fileName.split(".").pop()?.toLowerCase();
+  const videoExtensions = ["mp4", "mov", "avi", "mkv", "webm", "flv"];
+  return videoExtensions.includes(fileExtension || "");
 }
-
