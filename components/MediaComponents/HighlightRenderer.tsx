@@ -23,6 +23,7 @@ interface Highlight {
   highlight_created: string;
   title?: string;
   description?: string;
+    
 }
 
 interface HighlightRendererProps {

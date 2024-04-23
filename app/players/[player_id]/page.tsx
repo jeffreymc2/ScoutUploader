@@ -25,6 +25,7 @@ import { Suspense } from "react";
 import { Player } from "@/lib/types/types";
 import Uploader from "@/components/Uploader";
 import { Post } from "@/lib/types/types";
+import SearchComponent from "@/components/MediaComponents/MediaSearch";
 
 interface PlayerData {
   PlayerID: number;
@@ -54,6 +55,33 @@ interface PlayerSearchProps {
   players: Player[];
   eventId?: string;
 }
+
+interface HighlightVideo {
+  id: number;
+  title: string;
+  description: string;
+  start_time: number;
+  end_time: number;
+  duration: number;
+  thumbnail: string;
+  created: string;
+  tagged_player_keys: { Key: number; Position: string }[];
+  url: string;
+  highlight_type: string;
+  drund_event_id: number;
+  game_key: string;
+  scoringapp_play_id: number;
+  play_type: string;
+  highlight_created: string;
+}
+
+interface MediaParentProps {
+  playerId: string;
+    mediaFiles: Post[];
+    highlightVideos: HighlightVideo[];
+    filteredResults: (Post | HighlightVideo)[];
+}
+
 
 export default async function PlayerPage({
   params,
@@ -96,6 +124,28 @@ export default async function PlayerPage({
   const url = new URL(
     `https://dk.perfectgame.org/players/${playerData.PlayerID}?ms=638479303817445795&sk=5p030Qdbe1E=&hst=`
   );
+
+  const handleSearch = (searchTerm: string, filterOption: string) => {
+    let filteredMedia: (Post | HighlightVideo)[] = [];
+    let mediaFiles: Post[] = []; // Declare the mediaFiles variable
+
+
+    if (filterOption === "all" || filterOption === "scoutUploads") {
+      filteredMedia = mediaFiles.filter((file) =>
+        file.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    if (filterOption === "all" || filterOption === "highlights") {
+      const filteredHighlights = highlightVideos.filter((video: HighlightVideo) =>
+        video.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      filteredMedia = [...filteredMedia, ...filteredHighlights];
+    }
+
+    setFilteredResults(filteredMedia);
+  };
+  
 
   return (
     <div className="container mx-auto p-0 ">
@@ -279,8 +329,10 @@ export default async function PlayerPage({
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
               {playerSearchProps.posts?.map((post) => (
                 <Card key={post.id} className="m-0 p-0 shadow-md">
+                            <SearchComponent onSearch={handleSearch} />
+
                   <div className="relative p-0">
-                    <MediaParent playerId={player_id} />
+                    <MediaParent playerId={player_id} mediaFiles={[]} highlightVideos={[]} filteredResults={[]} />
                     <div className="absolute top-2 ml-4">
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
@@ -335,3 +387,7 @@ function isVideoFile(fileName: string) {
     fileName.toLowerCase().endsWith(extension)
   );
 }
+function setFilteredResults(filteredMedia: any[]) {
+  throw new Error("Function not implemented.");
+}
+

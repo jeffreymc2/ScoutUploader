@@ -42,7 +42,7 @@ interface MediaRendererProps {
   isHighlight?: boolean;
 }
 
-const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight = false }) => {
+const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState("");
   const [hoverGifUrl, setHoverGifUrl] = useState("");
