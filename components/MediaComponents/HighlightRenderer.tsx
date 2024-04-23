@@ -41,8 +41,8 @@ const HighlightRenderer: React.FC<HighlightRendererProps> = ({ highlight }) => {
         description: highlight.description,
         thumbnail: highlight.thumbnail,
         profile: null,
-        compressed_video: highlight.url, // Pass the highlight URL as the compressed_video
-        compressed_thumbnail: highlight.thumbnail, // Pass the highlight thumbnail as the compressed_thumbnail
+        compressed_video: highlight.url,
+        compressed_thumbnail: highlight.thumbnail,
       }}
       isHighlight={true}
     />

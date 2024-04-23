@@ -1,5 +1,5 @@
-//app/components/MediaComponents/MediaParent.tsx
-"use client"
+"use client";
+
 import React, { useState, useEffect } from "react";
 import SearchComponent from "./MediaSearch";
 import MediaRenderer from "./MediaRenderer";
@@ -35,14 +35,18 @@ const MediaParent: React.FC<MediaParentProps> = ({ playerId, children, posts }) 
     let filteredMedia: (Post | HighlightVideo)[] = [];
 
     if (filterOption === "all" || filterOption === "scoutUploads") {
-      filteredMedia = mediaFiles.filter((file) =>
-        file.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      filteredMedia = mediaFiles.filter(
+        (file) =>
+          file.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (file.description?.toLowerCase().includes(searchTerm.toLowerCase()) || false)
       );
     }
 
     if (filterOption === "all" || filterOption === "highlights") {
-      const filteredHighlights = highlightVideos.filter((video) =>
-        video.title.toLowerCase().includes(searchTerm.toLowerCase())
+      const filteredHighlights = highlightVideos.filter(
+        (video) =>
+          video.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (video.description?.toLowerCase().includes(searchTerm.toLowerCase()) || false)
       );
       filteredMedia = [...filteredMedia, ...filteredHighlights];
     }

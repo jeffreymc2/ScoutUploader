@@ -1,6 +1,5 @@
 //app/players/%5Bplayer_id%5D/page.tsx
 
-
 import { supabaseServer } from "@/lib/supabase/server";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -265,39 +264,40 @@ export default async function PlayerPage({
             </div>
           </CardHeader>
           <CardContent>
-          <MediaParent playerId={player_id} posts={postsWithAdditionalData || []}>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
-              {postsWithAdditionalData?.map((post) => (
-                <Card key={post.id} className="m-0 p-0 shadow-md">
-                  <div className="relative p-0">
-                    <MediaRenderer file={post} />
-                    <div className="absolute top-2 ml-4">
-                      <AlertDialog>
-                        {/* ... */}
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction>
-                            <DeletePost
-                              post_by={post.post_by?.toString() || ""}
-                              image={post.image || ""}
-                              event_id={post.event_id || ""}
-                              team_id={post.team_id || ""}
-                            />
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialog>
+            <MediaParent playerId={player_id} posts={postsWithAdditionalData || []}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
+                {postsWithAdditionalData?.map((post) => (
+                  <Card key={post.id} className="m-0 p-0 shadow-md">
+                    <div className="relative p-0">
+                      <MediaRenderer file={post} />
+                      <div className="absolute top-2 ml-4">
+                        <AlertDialog>
+                          {/* ... */}
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction>
+                              <DeletePost
+                                post_by={post.post_by?.toString() || ""}
+                                image={post.image || ""}
+                                event_id={post.event_id || ""}
+                                team_id={post.team_id || ""}
+                              />
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialog>
+                      </div>
                     </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </MediaParent>
-        </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </MediaParent>
+          </CardContent>
         </Card>
       </Suspense>
     </div>
   );
 }
+
 function isVideoFile(fileName: string): boolean {
   const fileExtension = fileName.split(".").pop()?.toLowerCase();
   const videoExtensions = ["mp4", "mov", "avi", "mkv", "webm", "flv"];

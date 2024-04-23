@@ -223,6 +223,18 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
             </div>
           </>
         )}
+        {isHighlight && (
+          <>
+            <div className="px-4 pb-4 pt-2">
+              {(file as HighlightVideo).title && (
+                <p className="text-md mt-2 leading-loose font-bold text-gray-700">{(file as HighlightVideo).title}</p>
+              )}
+              {(file as HighlightVideo).description && (
+                <p className="text-xs mt-1">{(file as HighlightVideo).description}</p>
+              )}
+            </div>
+          </>
+        )}
       </Dialog>
     </>
   );
