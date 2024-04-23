@@ -1,5 +1,3 @@
-//app/components/MediaComponents/HighlightRenderer.tsx
-
 import React from "react";
 import MediaRenderer from "./MediaRenderer";
 
@@ -9,7 +7,7 @@ interface TaggedPlayerKey {
 }
 
 interface Highlight {
-  id: number; // Change the id type to number
+  id: number;
   start_time: number;
   end_time: number;
   duration: number;
@@ -25,7 +23,6 @@ interface Highlight {
   highlight_created: string;
   title?: string;
   description?: string;
-
 }
 
 interface HighlightRendererProps {
@@ -36,14 +33,16 @@ const HighlightRenderer: React.FC<HighlightRendererProps> = ({ highlight }) => {
   return (
     <MediaRenderer
       file={{
-        id: `${highlight.id}`,
+        id: `highlight-${highlight.id}`,
         created_at: highlight.created,
         image: highlight.url,
         isVideo: true,
         title: highlight.title,
         description: highlight.description,
         thumbnail: highlight.thumbnail,
-        profile: null, // Add a dummy profile property
+        profile: null,
+        compressed_video: highlight.url, // Pass the highlight URL as the compressed_video
+        compressed_thumbnail: highlight.thumbnail, // Pass the highlight thumbnail as the compressed_thumbnail
       }}
       isHighlight={true}
     />
