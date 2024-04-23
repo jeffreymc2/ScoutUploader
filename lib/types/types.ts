@@ -188,6 +188,7 @@ export interface PlayData {
     compressed_thumbnail?: string;
     mux_asset_id?: string | null;
     mux_playback_id?: string | null;
+    isHighlight?: boolean;
   }
 
   export interface EventData {

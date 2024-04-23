@@ -41,7 +41,6 @@ const DKPlayer: React.FC = () => {
             'E': 0,
           },
         },
-        // Add more teams here
       };
 
       const playData: PlayData[] = [
