@@ -1,5 +1,6 @@
+"use client";
 import React, { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
+import { useParams } from "next/navigation"; // Remove this line
 import SearchComponent from "./MediaSearch";
 import MediaRenderer from "./MediaRenderer";
 import { supabaseBrowser } from "@/lib/supabase/browser";
@@ -25,8 +26,11 @@ interface HighlightVideo {
   highlight_created: string;
 }
 
-const MediaParent: React.FC = () => {
-  const { player_id } = useParams<{ player_id: string }>();
+interface MediaParentProps {
+  playerId: string;
+}
+
+const MediaParent: React.FC<MediaParentProps> = ({ playerId }) => {
   const [mediaFiles, setMediaFiles] = useState<Post[]>([]);
   const [highlightVideos, setHighlightVideos] = useState<HighlightVideo[]>([]);
   const [filteredResults, setFilteredResults] = useState<
@@ -39,7 +43,7 @@ const MediaParent: React.FC = () => {
       const { data, error } = await supabaseBrowser()
         .from("posts")
         .select("*")
-        .eq("player_id", player_id);
+        .eq("player_id", playerId);
 
       if (error) {
         console.error("Error fetching media files:", error);
@@ -50,14 +54,14 @@ const MediaParent: React.FC = () => {
 
     // Fetch highlight videos from the API endpoint
     const fetchHighlightVideos = async () => {
-      const response = await fetch(`/api/highlights?playerID=${player_id}`);
+      const response = await fetch(`/api/highlights?playerID=${playerId}`);
       const data = await response.json();
       setHighlightVideos(data.highlightsList);
     };
 
     fetchMediaFiles();
     fetchHighlightVideos();
-  }, [player_id]);
+  }, [playerId]);
 
   const handleSearch = (searchTerm: string, filterOption: string) => {
     let filteredMedia: (Post | HighlightVideo)[] = [];

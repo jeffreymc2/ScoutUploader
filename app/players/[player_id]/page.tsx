@@ -1,10 +1,5 @@
-// //app/players/%5Bplayer_id%5D/page.tsx
-
-
 import { supabaseServer } from "@/lib/supabase/server";
 import Image from "next/image";
-// Remove the duplicate import statement
-// import UploadPage from "@/components/Upload";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import DeletePost from "@/components/UtilityComponents/DeletePost";
 import { Button } from "@/components/ui/button";
@@ -23,20 +18,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import MediaRenderer from "@/components/MediaComponents/MediaRenderer";
+import MediaParent from "@/components/MediaComponents/MediaParent";
 import { Suspense } from "react";
 import { Player } from "@/lib/types/types";
 import Uploader from "@/components/Uploader";
 import { Post } from "@/lib/types/types";
-// import DiamondKastVideo from "@/components/DiamondKastVideo";
 
 interface PlayerData {
   PlayerID: number;
@@ -60,22 +48,6 @@ interface PlayerData {
   Age: string;
   ProfilePic: string | null;
 }
-
-// interface Post {
-//   id: string;
-//   created_at: string;
-//   player_id: string | null;
-//   name: string;
-//   object_id: string;
-//   post_by: string;
-//   profile: {
-//     display_name: string | null;
-//   } | null;
-//   image: string;
-//   event_id?: string;
-//   team_id?: string;
-//   isVideo?: boolean;
-// }
 
 interface PlayerSearchProps {
   posts: Post[] | null;
@@ -115,11 +87,10 @@ export default async function PlayerPage({
         ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`
         : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`,
       isVideo: isVideoFile(post?.name ?? ""),
-      id: post?.id || "", // Ensure id is always a string
+      id: post?.id || "",
     })),
     players: [],
     eventId: "",
-    
   };
 
   const url = new URL(
@@ -308,37 +279,38 @@ export default async function PlayerPage({
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
               {playerSearchProps.posts?.map((post) => (
                 <Card key={post.id} className="m-0 p-0 shadow-md">
-                <div className="relative p-0">
-                  <MediaRenderer file={{ ...post, isVideo: post.isVideo }} />
-                  <div className="absolute top-2 ml-4">
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <RiDeleteBin5Line className="w-6 h-6 text-gray-900 absolute top-[200px] left-[35px]" />
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Are you absolutely sure?
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This will permanently
-                            delete this file from our servers.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction>
-                            <DeletePost
-                            post_by={post.post_by?.toString() || ""}
-                            image={post.image}
-                            event_id={post.event_id || ""}
-                          /></AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                  <div className="relative p-0">
+                    <MediaParent playerId={player_id} />
+                    <div className="absolute top-2 ml-4">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <RiDeleteBin5Line className="w-6 h-6 text-gray-900 absolute top-[200px] left-[35px]" />
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Are you absolutely sure?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will
+                              permanently delete this file from our servers.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction>
+                              <DeletePost
+                                post_by={post.post_by?.toString() || ""}
+                                image={post.image}
+                                event_id={post.event_id || ""}
+                              />
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
                   </div>
-                </div>
-              </Card>
+                </Card>
               ))}
             </div>
           </CardContent>
