@@ -36,7 +36,7 @@ const HighlightRenderer: React.FC<HighlightRendererProps> = ({ highlight }) => {
   return (
     <MediaRenderer
       file={{
-        id: `highlight-${highlight.id}`,
+        id: `${highlight.id}`,
         created_at: highlight.created,
         image: highlight.url,
         isVideo: true,
