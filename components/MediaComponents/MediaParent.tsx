@@ -11,15 +11,21 @@ import HighlightRenderer from "./HighlightRenderer";
 import { Card, CardContent } from "@/components/ui/card";
 
 export interface MediaParentProps {
-    playerId: string;
-    children: React.ReactNode;
-    posts: Post[];
-  }
+  playerId: string;
+  children: React.ReactNode;
+  posts: Post[];
+}
 
-  const MediaParent: React.FC<MediaParentProps> = ({ playerId, children, posts }) => {
-    const [mediaFiles, setMediaFiles] = useState<Post[]>([]);
+const MediaParent: React.FC<MediaParentProps> = ({
+  playerId,
+  children,
+  posts,
+}) => {
+  const [mediaFiles, setMediaFiles] = useState<Post[]>([]);
   const [highlightVideos, setHighlightVideos] = useState<HighlightVideo[]>([]);
-  const [filteredResults, setFilteredResults] = useState<(Post | HighlightVideo)[]>([]);
+  const [filteredResults, setFilteredResults] = useState<
+    (Post | HighlightVideo)[]
+  >([]);
 
   useEffect(() => {
     setMediaFiles(posts);
@@ -38,26 +44,26 @@ export interface MediaParentProps {
       }
     };
 
-   // Fetch highlight videos from the API endpoint
-   const fetchHighlightVideos = async () => {
-    const response = await fetch(`/api/highlights?playerID=${playerId}`);
-    const data = await response.json();
-    setHighlightVideos(data.highlightsList);
-  };
+    // Fetch highlight videos from the API endpoint
+    const fetchHighlightVideos = async () => {
+      const response = await fetch(`/api/highlights?playerID=${playerId}`);
+      const data = await response.json();
+      setHighlightVideos(data.highlightsList);
+    };
 
-  fetchHighlightVideos();
-}, [playerId, posts]);
+    fetchHighlightVideos();
+  }, [playerId, posts]);
 
   const handleSearch = (searchTerm: string, filterOption: string) => {
     let filteredMedia: (Post | HighlightVideo)[] = [];
 
-    if (filterOption === 'all' || filterOption === 'scoutUploads') {
+    if (filterOption === "all" || filterOption === "scoutUploads") {
       filteredMedia = mediaFiles.filter((file) =>
         file.name?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
-    if (filterOption === 'all' || filterOption === 'highlights') {
+    if (filterOption === "all" || filterOption === "highlights") {
       const filteredHighlights = highlightVideos.filter((video) =>
         video.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
@@ -73,17 +79,26 @@ export interface MediaParentProps {
 
       {filteredResults.length > 0 ? (
         <Card>
-          <CardContent>{children}</CardContent>
-        </Card>
+        <CardContent>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {children}
+          </div>
+        </CardContent>
+      </Card>
       ) : (
         <Card>
           <CardContent>
-            {mediaFiles.map((file) => (
-              <MediaRenderer key={file.id} file={file} />
-            ))}
-            {highlightVideos.map((video) => (
-              <HighlightRenderer key={`highlight-${video.id}`} highlight={video} />
-            ))}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {mediaFiles.map((file) => (
+                <MediaRenderer key={file.id} file={file} />
+              ))}
+              {highlightVideos.map((video) => (
+                <HighlightRenderer
+                  key={`highlight-${video.id}`}
+                  highlight={video}
+                />
+              ))}
+            </div>
           </CardContent>
         </Card>
       )}
