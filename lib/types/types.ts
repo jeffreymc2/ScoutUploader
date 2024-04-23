@@ -297,3 +297,13 @@ export interface GameData {
   // Add other relevant game fields
 }
 
+
+export interface MediaFile {
+  id: string | number;
+  title?: string;
+  description?: string;
+  thumbnail?: string;
+  url?: string;
+  isVideo?: boolean;
+}
+

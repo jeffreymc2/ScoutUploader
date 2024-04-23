@@ -1,10 +1,15 @@
-// app/components/MediaComponents/MediaSearch.tsx
-
 "use client";
+
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface SearchComponentProps {
   onSearch: (searchTerm: string, filterOption: string) => void;

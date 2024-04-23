@@ -20,6 +20,9 @@ export async function GET(request: NextRequest) {
         Accept: 'application/json',
         'securityToken': 'CIRCLE-CIRCLE-CIRCLE-CIRCLE-CIRCLE-CIRCLE-R1-L2-L1-TRIANGLE-CIRCLE-TRIANGLE',
         'Cookie': 'ARRAffinity=02f71ca019ee10e62194cd2e4fc6d9375f916bdd8c894f428d08b2f66a552f4f; ARRAffinitySameSite=02f71ca019ee10e62194cd2e4fc6d9375f916bdd8c894f428d08b2f66a552f4f',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
       },
       
     });
@@ -28,6 +31,8 @@ export async function GET(request: NextRequest) {
 
     if (response.ok) {
       const data = await response.json();
+
+
       return NextResponse.json(data);
     } else {
       const errorData = await response.text();
