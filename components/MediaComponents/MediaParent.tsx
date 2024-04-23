@@ -23,7 +23,7 @@ const MediaParent: React.FC<MediaParentProps> = ({ playerId, children, posts }) 
 
     // Fetch highlight videos from the API endpoint
     const fetchHighlightVideos = async () => {
-      const response = await fetch(`/api/highlights?playerID=${playerId}`);
+      const response = await fetch(`/api/playerhighlights?playerID=${playerId}`);
       const data = await response.json();
       setHighlightVideos(data.highlightsList);
     };
