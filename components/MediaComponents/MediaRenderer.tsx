@@ -88,7 +88,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({
         } else {
           // Generate thumbnail for Supabase video files
           const video = document.createElement("video");
-          video.src = mediaFile.image;
+          video.src = `/api/drundproxy?path=${encodeURIComponent(mediaFile.image)}`;
           video.crossOrigin = "anonymous";
           video.preload = "metadata";
           video.onloadedmetadata = () => {
@@ -105,13 +105,15 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({
           };
         }
 
-        setVideoUrl(mediaFile.image);
+        setVideoUrl(`/api/drundproxy?path=${encodeURIComponent(mediaFile.image)}`);
       } else {
         setThumbnailUrl(mediaFile.image);
       }
     } else if (highlight) {
       setThumbnailUrl(highlight.thumbnail);
-      setVideoUrl(highlight.url);
+      
+      const videoPath = new URL(highlight.url).pathname;
+      setVideoUrl(`/api/drundproxy?path=${encodeURIComponent(videoPath)}`);
     }
   }, [file, highlight]);
 
@@ -155,7 +157,7 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({
             />
             {isVideo && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <PlayCircleIcon className="w-12 h-12 text-white z-10" />
+                {/* <PlayCircleIcon className="w-12 h-12 text-white z-10" /> */}
               </div>
             )}
           </>
@@ -202,64 +204,8 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({
                 start={highlight?.start_time}
                 duration={highlight?.duration}
               />
-              
             </div>
-            
           )}
-          
-        {file && !isHighlight && (
-          <>
-            <div className="flex items-center justify-between gap-2 mt-0">
-              <Separator />
-            </div>
-            <div className="px-4 pb-4 pt-2">
-              <div className="flex items-center justify-between gap-2 mt-2">
-                <div className="flex items-center gap-2">
-                  <IoCloudDownloadOutline
-                    className="cursor-pointer text-2xl text-gray-700"
-                    onClick={handleDownload}
-                  />
-                  <Dialog>
-                    <div className="mt-3">
-                      <MediaForm
-                        postId={file.id || ""}
-                        mediaUrl={file.image}
-                        isVideo={isVideo}
-                        thumbnailUrl={thumbnailUrl}
-                      />
-                    </div>
-                  </Dialog>
-                </div>
-                {file.featured_image && (
-                  <div className="mt-0">
-                    <Badge className="bg-blue-500 text-white hover:bg-blue-500 text-xs">
-                      Featured Image
-                    </Badge>
-                  </div>
-                )}
-              </div>
-              {file.title && (
-                <p className="text-md mt-2 leading-3 font-bold text-gray-700">{file.title}</p>
-              )}
-              {file.description && <p className="text-xs mt-1">{file.description}</p>}
-              {file.event_id && (
-                <p className="text-sm mt-5">Uploaded from Event ID: {file.event_id}</p>
-              )}
-            </div>
-          </>
-        )}
-        {highlight && (
-          <>
-            <div className="px-4 pb-4 pt-2">
-              {highlight.title && (
-                <p className="text-md mt-2 leading-3 font-bold text-gray-700">{highlight.title}</p>
-              )}
-              {highlight.description && (
-                <p className="text-xs mt-1">{highlight.description}</p>
-              )}
-            </div>
-          </>
-        )}
         </DialogContent>
       </Dialog>
     </>
