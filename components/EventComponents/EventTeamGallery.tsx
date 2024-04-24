@@ -89,7 +89,7 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
           // This div wraps each post's content, ensuring they're grouped
           <div key={post.id} className="flex flex-col">
             <div key={post.id} className="relative">
-              <MediaRenderer file={{ ...post, post_type: post.post_type || "" }} />
+              <MediaRenderer file={{ ...post, id: post.id || "", post_type: post.post_type || "" }} />
               <AlertDialog>
                 <AlertDialogTrigger>
                   <RiDeleteBin5Line className="w-6 h-6 text-gray-900 absolute top-[208px] left-[50px]" />
