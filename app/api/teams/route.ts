@@ -11,7 +11,6 @@ export async function GET(request: NextRequest) {
   const url = `https://tpa.perfectgame.org/api/ScoutNotes/EventTeams?eventID=${encodeURIComponent(
     eventId || ''
   )}`;
-  // ...rest of your code remains the same
 
   
   try {
