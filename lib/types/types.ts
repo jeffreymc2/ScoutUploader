@@ -287,11 +287,33 @@ export interface MediaFile {
   description?: string;
   thumbnail?: string;
   url?: string;
-  isVideo?: boolean;
+  created_at: string;
+  player_id?: string | null;
+  name?: string;
+  object_id?: string;
+  post_by?: string;
+  event_id?: string;
+  team_id?: string;
+  profile: {
+    display_name: string | null;
+  } | null;
+  image: string;
+  isVideo: boolean;
+  post_type?: string;
+  featured_image?: boolean;
+  compressed_video?: string;
+  compressed_gif?: string;
+  compressed_thumbnail?: string;
+  mux_asset_id?: string | null;
+  mux_playback_id?: string | null;
+  isHighlight?: boolean;
 }
+
+// lib/types/types.ts
 
 export interface HighlightVideo {
   id: number;
+  stream_id: number;
   title: string;
   description: string;
   start_time: number;
@@ -299,7 +321,7 @@ export interface HighlightVideo {
   duration: number;
   thumbnail: string;
   created: string;
-  tagged_player_keys: { Key: number; Position: string }[];
+  tagged_player_keys: { key: number; position: string }[];
   url: string;
   highlight_type: string;
   drund_event_id: number;
@@ -307,4 +329,6 @@ export interface HighlightVideo {
   scoringapp_play_id: number;
   play_type: string;
   highlight_created: string;
+  thumbnailUrl: string;
+
 }

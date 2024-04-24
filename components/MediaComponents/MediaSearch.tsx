@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import React, { useState } from "react";
@@ -42,11 +40,6 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ onSearch }) => {
         <SelectTrigger>
           <SelectValue placeholder="Filter" />
         </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All</SelectItem>
-          <SelectItem value="highlights">Highlights</SelectItem>
-          <SelectItem value="scoutUploads">Scout Uploads</SelectItem>
-        </SelectContent>
       </Select>
       <Button onClick={handleSearch}>Search</Button>
     </div>

@@ -1,4 +1,4 @@
-//app/players/%5Bplayer_id%5D/page.tsx
+// app/players/%5Bplayer_id%5D/page.tsx
 
 import { supabaseServer } from "@/lib/supabase/server";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
@@ -7,26 +7,12 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import BackButton from "@/components/UtilityComponents/BackButton";
 import { RiVideoUploadLine } from "react-icons/ri";
-import { RiDeleteBin5Line } from "react-icons/ri";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Suspense } from "react";
 import Uploader from "@/components/Uploader";
 import MediaParent from "@/components/MediaComponents/MediaParent";
-import MediaRenderer from "@/components/MediaComponents/MediaRenderer";
 import { MediaFile, HighlightVideo } from "@/lib/types/types";
-
 
 interface PlayerData {
   PlayerID: number;
@@ -77,55 +63,51 @@ export default async function PlayerPage({
     // Handle the error appropriately (e.g., show an error message)
   }
 
-  const postsWithAdditionalData = posts?.map((post) => ({
-    ...post,
-    profile: null,
-    image: post.event_id
-      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`
-      : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`,
-    isVideo: isVideoFile(post?.name ?? ""),
-    url: post.event_id
-      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`
-      : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`,
-  }));
-
-  function isVideoFile(fileName: string): boolean {
-    const fileExtension = fileName?.split(".").pop()?.toLowerCase();
-    const videoExtensions = ["mp4", "mov", "avi", "mkv", "webm", "flv"];
-    return videoExtensions.includes(fileExtension || "");
-  }
-
-
-  const supabaseMediaFiles = posts?.map((post) => ({
-    id: post.id || "",
-    title: post.title,
-    description: post.description,
-    thumbnail: post.thumbnail
-    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`
-    : "",
-  url: post.name
-    ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`
-    : "",
-  isVideo: isVideoFile(post?.name ?? ""),
-  })) || [];
+  const supabaseMediaFiles: MediaFile[] =
+    posts?.map((post) => ({
+      id: post.id || "",
+      title: post.title || "", // Add a default value for title
+      description: post.description || "", // Add a default value for description
+      thumbnail: post.thumbnail
+        ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`
+        : "",
+      url: post.name
+        ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`
+        : "",
+      isVideo: isVideoFile(post?.name ?? ""),
+      created_at: "", // Add a default value for created_at
+      profile: { display_name: "" }, // Update the type definition of profile
+      image: "", // Add a default value for image
+    })) || [];
 
   // Fetch highlight videos from the PlayerHighlights API
   const highlightsResponse = await fetch(
-   process.env.NEXT_PUBLIC_URL + `/api/playerhighlights?playerID=${player_id}`
+    process.env.NEXT_PUBLIC_URL + `/api/playerhighlights?playerID=${player_id}`
   );
   const highlightsData = await highlightsResponse.json();
 
-  const highlightVideos: MediaFile[] = highlightsData.highlightsList.map((highlight: any) => ({
-    id: highlight.id.toString(),
-    title: highlight.title || "",
-    description: highlight.description || "",
-    thumbnail: highlight.thumbnail || "",
-    url: highlight.url || "",
-    isVideo: true,
-  }));
-  
+  const highlightVideos: HighlightVideo[] = highlightsData.results?.map((result: any) => ({
+    id: result.id,
+    stream_id: result.stream_id,
+    title: result.title || "",
+    description: result.description || "",
+    start_time: result.start_time,
+    end_time: result.end_time,
+    duration: result.duration,
+    thumbnailUrl: result.thumbnail || "",
+    url: result.url || "",    
+    created: result.created,
+    tagged_player_keys: result.tagged_player_keys,
+    highlight_type: result.highlight_type,
+    drund_event_id: result.drund_event_id,
+    game_key: result.game_key,
+    scoringapp_play_id: result.scoringapp_play_id,
+    play_type: result.play_type,
+    highlight_created: result.highlight_created,
+  })) || [];
 
   return (
+
     <div className="container mx-auto p-0">
       <BackButton />
 
@@ -254,8 +236,6 @@ export default async function PlayerPage({
         </Card>
       </div>
 
-     
-
       <Suspense fallback={<div>Loading...</div>}>
         <Card className="mt-4">
           <CardHeader className="bg-gradient-to-b from-gray-100 to-white">
@@ -280,40 +260,19 @@ export default async function PlayerPage({
             </div>
           </CardHeader>
           <CardContent>
-          <MediaParent
-            supabaseMediaFiles={supabaseMediaFiles}
-            highlightVideos={highlightVideos as HighlightVideo[]}
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
-              {postsWithAdditionalData?.map((post) => (
-                <Card key={post.id} className="m-0 p-0 shadow-md">
-                  <div className="relative p-0">
-               
-                    <MediaRenderer file={post} highlight={highlightVideos as unknown as HighlightVideo} />
-                    <div className="absolute top-2 ml-4">
-                      <AlertDialog>
-                        {/* ... */}
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction>
-                            <DeletePost
-                              post_by={post.post_by?.toString() || ""}
-                              image={post.image || ""}
-                              event_id={post.event_id || ""}
-                              team_id={post.team_id || ""}
-                            />
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialog>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </MediaParent>
-        </CardContent>
+            <MediaParent
+              supabaseMediaFiles={supabaseMediaFiles}
+              highlightVideos={highlightVideos}
+            />
+          </CardContent>
         </Card>
       </Suspense>
     </div>
   );
+}
+
+function isVideoFile(fileName: string): boolean {
+  const fileExtension = fileName?.split(".").pop()?.toLowerCase();
+  const videoExtensions = ["mp4", "mov", "avi", "mkv", "webm", "flv"];
+  return videoExtensions.includes(fileExtension || "");
 }
