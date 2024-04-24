@@ -1,8 +1,10 @@
+// app/components/MediaComponents/MediaRenderer.tsx
+
 "use client";
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import Video from "react-player";
+import ReactPlayer from "react-player";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { PlayCircleIcon } from "lucide-react";
 import { IoCloudDownloadOutline } from "react-icons/io5";
@@ -57,11 +59,18 @@ interface HighlightVideo {
 }
 
 interface MediaRendererProps {
-  file: MediaFile | HighlightVideo;
+  file?: MediaFile;
+  highlight?: HighlightVideo;
   isHighlight?: boolean;
+
 }
 
-const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
+const MediaRenderer: React.FC<MediaRendererProps> = ({ 
+  file, 
+  highlight, 
+  isHighlight, 
+
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [thumbnailUrl, setThumbnailUrl] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
@@ -69,11 +78,10 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
   const supabase = supabaseBrowser();
 
   useEffect(() => {
-    if ("isVideo" in file) {
-      // Regular media file from Supabase
+    if (file) {
       const mediaFile = file as MediaFile;
-      const isVideo = mediaFile.isVideo;
-  
+      const isVideo = isVideoFile(mediaFile.name || "");
+
       if (isVideo) {
         if (mediaFile.thumbnail) {
           setThumbnailUrl(mediaFile.thumbnail);
@@ -96,23 +104,21 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
             setThumbnailUrl(thumbnail);
           };
         }
-  
+
         setVideoUrl(mediaFile.image);
       } else {
         setThumbnailUrl(mediaFile.image);
       }
-    } else {
-      // Highlight video from API
-      const highlightVideo = file as HighlightVideo;
-      setThumbnailUrl(highlightVideo.thumbnail);
-      setVideoUrl(highlightVideo.url);
+    } else if (highlight) {
+      setThumbnailUrl(highlight.thumbnail);
+      setVideoUrl(highlight.url);
     }
-  }, [file]);
+  }, [file, highlight]);
 
-  const isVideo = isVideoFile(file.thumbnail || "");
+  const isVideo = file ? file.isVideo : true;
 
   const handleDownload = () => {
-    if (isVideo) {
+    if (file && isVideo) {
       const mediaFile = file as MediaFile;
       fetch(mediaFile.image)
         .then((response) => response.blob())
@@ -135,54 +141,73 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
 
   return (
     <>
-      <Dialog onOpenChange={setIsOpen}>
-        {isVideo && !isHighlight ? (
-          <DialogContent className="sm:max-w-[66vw] flex items-center justify-center bg-transparent border-0 border-transparent">
-            <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
-              <Video
-                className="rounded-lg absolute top-0 left-0"
-                src={videoUrl}
-                style={{ backgroundColor: "var(--media-range-bar-color)" }}
-                preload="metadata"
-                poster={thumbnailUrl}
-                controls
-              />
-            </div>
-          </DialogContent>
-        ) : (
-          <DialogContent className="min-h-[50vh] sm:min-h-[66vh] bg-transparent border-0 border-transparent">
+      <div
+        className="relative w-full h-48 shadow-sm rounded-lg cursor-pointer"
+        onClick={() => setIsOpen(true)}
+      >
+        {!isOpen ? (
+          <>
             <Image
-              src={file.thumbnail ?? ""}
-              alt={`Media posted by ${("isVideo" in file && file.post_by) || "Unknown"}`}
-              width={640}
-              height={360}
-              className="rounded-lg object-contain"
+              src={thumbnailUrl || "/placeholder.png"}
+              alt={`Thumbnail for ${highlight?.title || file?.title || "Media"}`}
+              fill
+              className="object-cover object-top rounded-t-lg"
             />
-          </DialogContent>
-        )}
-        <div
-          className="relative w-full h-48 shadow-sm rounded-lg cursor-pointer"
-          onClick={() => setIsOpen(true)}
-        >
-          <div className="absolute inset-0 flex items-center justify-center">
-            <DialogTrigger>
-              <div className="p-0 w-full">
-                <Video
-                  src={videoUrl}
-                  width={640}
-                  height={360}
-                  className="object-cover object-top rounded-t-lg"
-                />
-              </div>
-            </DialogTrigger>
             {isVideo && (
-              <DialogTrigger className="z-10">
+              <div className="absolute inset-0 flex items-center justify-center">
                 <PlayCircleIcon className="w-12 h-12 text-white z-10" />
-              </DialogTrigger>
+              </div>
             )}
+          </>
+        ) : (
+          <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
+            <ReactPlayer
+              className="rounded-lg absolute top-0 left-0"
+              url={videoUrl}
+              width="100%"
+              height="100%"
+              controls={true}
+              config={{
+                file: {
+                  attributes: {
+                    crossOrigin: "anonymous",
+                  },
+                },
+              }}
+              playing={isOpen}
+              start={highlight?.start_time}
+              duration={highlight?.duration}
+            />
           </div>
-        </div>
-        {!isHighlight && isVideo && (
+        )}
+      </div>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogContent className="min-h-[50vh] sm:min-h-[66vh] bg-transparent border-0 border-transparent">
+          {isOpen && (
+            <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
+              <ReactPlayer
+                className="rounded-lg absolute top-0 left-0"
+                url={videoUrl}
+                width="100%"
+                height="100%"
+                controls={true}
+                config={{
+                  file: {
+                    attributes: {
+                      crossOrigin: "anonymous",
+                    },
+                  },
+                }}
+                playing={isOpen}
+                start={highlight?.start_time}
+                duration={highlight?.duration}
+              />
+              
+            </div>
+            
+          )}
+          
+        {file && !isHighlight && (
           <>
             <div className="flex items-center justify-between gap-2 mt-0">
               <Separator />
@@ -195,29 +220,17 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
                     onClick={handleDownload}
                   />
                   <Dialog>
-                    {!isVideo ? (
-                      <div className="mt-3">
-                        
-                        <MediaForm
-                          postId={(file as MediaFile).id || ""}
-                          mediaUrl={(file as MediaFile).image}
-                          isVideo={false}
-                          thumbnailUrl={(file as MediaFile).image}
-                        />
-                      </div>
-                    ) : (
-                      <div className="mt-3">
-                        <MediaForm
-                          postId={(file as MediaFile).id ?? ""}
-                          mediaUrl={videoUrl}
-                          isVideo={true}
-                          thumbnailUrl={thumbnailUrl}
-                        />
-                      </div>
-                    )}
+                    <div className="mt-3">
+                      <MediaForm
+                        postId={file.id || ""}
+                        mediaUrl={file.image}
+                        isVideo={isVideo}
+                        thumbnailUrl={thumbnailUrl}
+                      />
+                    </div>
                   </Dialog>
                 </div>
-                {(file as MediaFile).featured_image && (
+                {file.featured_image && (
                   <div className="mt-0">
                     <Badge className="bg-blue-500 text-white hover:bg-blue-500 text-xs">
                       Featured Image
@@ -225,28 +238,29 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
                   </div>
                 )}
               </div>
-              {(file as MediaFile).title && (
-                <p className="text-md mt-2 leading-3 font-bold text-gray-700">{(file as MediaFile).title}</p>
+              {file.title && (
+                <p className="text-md mt-2 leading-3 font-bold text-gray-700">{file.title}</p>
               )}
-              {(file as MediaFile).description && <p className="text-xs mt-1">{(file as MediaFile).description}</p>}
-              {(file as MediaFile).event_id && (
-                <p className="text-sm mt-5">Uploaded from Event ID: {(file as MediaFile).event_id}</p>
+              {file.description && <p className="text-xs mt-1">{file.description}</p>}
+              {file.event_id && (
+                <p className="text-sm mt-5">Uploaded from Event ID: {file.event_id}</p>
               )}
             </div>
           </>
         )}
-        {isHighlight && (
+        {highlight && (
           <>
             <div className="px-4 pb-4 pt-2">
-              {(file as HighlightVideo).title && (
-                <p className="text-md mt-2 leading-3 font-bold text-gray-700">{(file as HighlightVideo).title}</p>
+              {highlight.title && (
+                <p className="text-md mt-2 leading-3 font-bold text-gray-700">{highlight.title}</p>
               )}
-              {(file as HighlightVideo).description && (
-                <p className="text-xs mt-1">{(file as HighlightVideo).description}</p>
+              {highlight.description && (
+                <p className="text-xs mt-1">{highlight.description}</p>
               )}
             </div>
           </>
         )}
+        </DialogContent>
       </Dialog>
     </>
   );
@@ -254,12 +268,12 @@ const MediaRenderer: React.FC<MediaRendererProps> = ({ file, isHighlight }) => {
 
 export default MediaRenderer;
 
-
 function isVideoFile(fileName: string): boolean {
   const fileExtension = fileName?.split(".").pop()?.toLowerCase();
-  const videoExtensions = ["mp4", "mov", "avi", "mkv", "webm", "flv"];
+  const videoExtensions = ["mp4", "mov", "avi", "mkv", "webm", "flv", "m3u8"];
   return videoExtensions.includes(fileExtension || "");
 }
+
 
 // "use client";
 

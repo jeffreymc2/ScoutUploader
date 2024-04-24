@@ -25,7 +25,7 @@ import { Suspense } from "react";
 import Uploader from "@/components/Uploader";
 import MediaParent from "@/components/MediaComponents/MediaParent";
 import MediaRenderer from "@/components/MediaComponents/MediaRenderer";
-import { MediaFile } from "@/lib/types/types";
+import { MediaFile, HighlightVideo } from "@/lib/types/types";
 
 
 interface PlayerData {
@@ -282,13 +282,14 @@ export default async function PlayerPage({
           <CardContent>
           <MediaParent
             supabaseMediaFiles={supabaseMediaFiles}
-            highlightVideos={highlightVideos}
+            highlightVideos={highlightVideos as HighlightVideo[]}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4">
               {postsWithAdditionalData?.map((post) => (
                 <Card key={post.id} className="m-0 p-0 shadow-md">
                   <div className="relative p-0">
-                    <MediaRenderer file={post} />
+               
+                    <MediaRenderer file={post} highlight={highlightVideos as unknown as HighlightVideo} />
                     <div className="absolute top-2 ml-4">
                       <AlertDialog>
                         {/* ... */}

@@ -45,6 +45,11 @@ const nextConfig = {
 				protocol: 'https',
 				hostname: 'safe-images-cdn.drund.com',
 			  },
+			  {	
+				protocol: 'https',
+				hostname: 'ivs-cdn.drund.com',
+			  },
+			  
 			 
 		],
 	},

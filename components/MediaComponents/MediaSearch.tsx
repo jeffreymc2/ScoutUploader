@@ -1,3 +1,5 @@
+
+
 "use client";
 
 import React, { useState } from "react";
@@ -25,6 +27,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ onSearch }) => {
 
   return (
     <div className="flex items-center gap-4">
+
       <Input
         type="text"
         value={searchTerm}

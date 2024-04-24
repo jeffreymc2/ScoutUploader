@@ -1,23 +1,6 @@
 // app/lib/types/types.ts
 
-export interface HighlightVideo {
-  id: number;
-  title: string;
-  description: string;
-  start_time: number;
-  end_time: number;
-  duration: number;
-  thumbnail: string;
-  created: string;
-  tagged_player_keys: { Key: number; Position: string }[];
-  url: string;
-  highlight_type: string;
-  drund_event_id: number;
-  game_key: string;
-  scoringapp_play_id: number;
-  play_type: string;
-  highlight_created: string;
-}
+
 
 export interface Player {
     CollegeCommit: any;
@@ -307,3 +290,21 @@ export interface MediaFile {
   isVideo?: boolean;
 }
 
+export interface HighlightVideo {
+  id: number;
+  title: string;
+  description: string;
+  start_time: number;
+  end_time: number;
+  duration: number;
+  thumbnail: string;
+  created: string;
+  tagged_player_keys: { Key: number; Position: string }[];
+  url: string;
+  highlight_type: string;
+  drund_event_id: number;
+  game_key: string;
+  scoringapp_play_id: number;
+  play_type: string;
+  highlight_created: string;
+}

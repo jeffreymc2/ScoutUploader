@@ -6,18 +6,19 @@ import React, { useState, useEffect } from "react";
 import MediaGrid from "./MediaGrid";
 import SearchComponent from "./MediaSearch";
 import { Card, CardContent } from "@/components/ui/card";
-import { MediaFile } from "@/lib/types/types";
+import { MediaFile, HighlightVideo } from "@/lib/types/types";
 
 
 interface MediaParentProps {
   supabaseMediaFiles: MediaFile[];
-  highlightVideos: MediaFile[];
-  children?: React.ReactNode;
+  highlightVideos: HighlightVideo[];
+  children?:React.ReactNode;
 }
 const MediaParent: React.FC<MediaParentProps> = ({
   supabaseMediaFiles,
   highlightVideos,
 }) => {
+
   const [filteredMediaFiles, setFilteredMediaFiles] = useState<MediaFile[]>([]);
 
   useEffect(() => {
@@ -27,15 +28,19 @@ const MediaParent: React.FC<MediaParentProps> = ({
 
   const handleSearch = (searchTerm: string, filterOption: string) => {
     let filteredMedia: MediaFile[] = [];
-
+  
     if (filterOption === "all" || filterOption === "scoutUploads") {
-      filteredMedia = supabaseMediaFiles.filter(
+      filteredMedia = [...supabaseMediaFiles]; 
+    }
+  
+    if (filterOption === "all" || filterOption === "scoutUploads") {
+      filteredMedia = filteredMedia.filter(
         (file) =>
           file.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           file.description?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
-
+  
     if (filterOption === "all" || filterOption === "highlights") {
       const filteredHighlights = highlightVideos.filter(
         (video) =>
@@ -44,7 +49,7 @@ const MediaParent: React.FC<MediaParentProps> = ({
       );
       filteredMedia = [...filteredMedia, ...filteredHighlights];
     }
-
+  
     setFilteredMediaFiles(filteredMedia);
   };
 
