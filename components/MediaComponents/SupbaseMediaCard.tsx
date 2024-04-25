@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { MediaFile } from "@/lib/types/types";
 import Video from "next-video";
+import ReactPlayer from "react-player";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { FaDownload } from "react-icons/fa";
 import MediaForm from "@/components/MediaComponents/MediaForm";
@@ -31,11 +32,9 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
     setIsOpen(true);
   };
 
-
   const handlePopoverOpen = () => {
     setIsOpen(true);
   };
-
 
   const handleDownload = () => {
     fetch(file.url || "")
@@ -65,15 +64,14 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
             onClick={handleDialogOpen}
           >
             {file.isVideo ? (
-              <Video
-                src={file.url}
-                className="rounded-t-lg  object-cover"
-                preload="auto"
-                controls={true}
-                placeholder={file.url}
-                autoPlay={false}
-                style={{ objectFit: "fill" }}
-              />
+             <ReactPlayer
+             url={file.url}
+             className="rounded-t-lg object-cover"
+             width="100%"
+             height="100%"
+             controls={true}
+             light={file.thumbnail}
+           />
             ) : (
               <Image
                 src={file.url || ""}
@@ -94,14 +92,19 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
             </PopoverTrigger>
             <PopoverContent>
               <>
-                <div className="flex items-center mb-4" onClick={handlePopoverOpen}>
-                  <MediaForm
-                    postId={file.id.toString() || ""}
-                    mediaUrl={file.url || ""}
-                    isVideo={file.isVideo}
-                    thumbnailUrl={file.thumbnail || ""}
-                  />
-                </div>
+                {user?.id === file.post_by && (
+                  <div
+                    className="flex items-center mb-4"
+                    onClick={handlePopoverOpen}
+                  >
+                    <MediaForm
+                      postId={file.id.toString() || ""}
+                      mediaUrl={file.url || ""}
+                      isVideo={file.isVideo}
+                      thumbnailUrl={file.thumbnail || ""}
+                    />
+                  </div>
+                )}
                 <div className="flex items-center mb-4">
                   <span className="text-sm flex items-center cursor-pointer">
                     <FaDownload
@@ -113,15 +116,18 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
                 </div>
               </>
               {user?.id === file.post_by && (
-              <div className="flex items-center mb-4" onClick={handlePopoverOpen}>
-                <DeletePost
-                  post_by={file.post_by || ""}
-                  image={file.name || ""}
-                  event_id={file.event_id}
-                  team_id={file.team_id}
-                />
-              </div>
-            )}
+                <div
+                  className="flex items-center mb-4"
+                  onClick={handlePopoverOpen}
+                >
+                  <DeletePost
+                    post_by={file.post_by || ""}
+                    image={file.name || ""}
+                    event_id={file.event_id}
+                    team_id={file.team_id}
+                  />
+                </div>
+              )}
             </PopoverContent>
           </Popover>
         </CardFooter>
@@ -130,11 +136,12 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
         {file.isVideo ? (
           <DialogContent className="sm:max-w-[66vw] ">
             <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
-              <Video
-                src={file.url}
+            <ReactPlayer
+                url={file.url}
                 className="rounded-lg absolute top-0 left-0"
-                autoPlay={false}
-                preload="auto"
+                width="100%"
+                height="100%"
+                controls={true}
               />
             </div>
           </DialogContent>

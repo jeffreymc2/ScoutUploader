@@ -61,40 +61,31 @@ const MediaParent: React.FC<MediaParentProps> = ({
 
   return (
     <>
-    
-    {filteredSupabaseFiles.length > 0 && (
-      <Card>
-        <CardHeader>
-          <CardTitle>Featured Media</CardTitle>
-          {/* <SearchComponent onSearch={handleSupabaseSearch} /> */}
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredSupabaseFiles.map((file) => (
-              <>
-              <SupabaseMediaCard key={file.id} file={file} />
-              </>             
-            ))}
-          </div>
-        </CardContent>
-        
-      </Card>
-    )}
-
+      {filteredSupabaseFiles.length > 0 && (
+        <Card key={supabaseMediaFiles[0].id} className="mt-8">
+          <CardHeader>
+            <CardTitle>Featured Media</CardTitle>
+            {/* <SearchComponent onSearch={handleSupabaseSearch} /> */}
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {filteredSupabaseFiles.map((file) => (
+                <SupabaseMediaCard key={file.id} file={file} />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
       <Card className="mt-8">
         <CardHeader>
           <CardTitle>Player Highlight Videos</CardTitle>
           <SearchComponent onSearch={handleHighlightSearch} />
         </CardHeader>
         <CardContent>
-
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredHighlightVideos.map((highlight) => (
-              
               <HighlightMediaCard key={highlight.id} highlight={highlight} />
-              
             ))}
-            
           </div>
         </CardContent>
       </Card>
