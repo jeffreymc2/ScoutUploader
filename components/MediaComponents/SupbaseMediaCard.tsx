@@ -115,7 +115,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
               <Video
                 src={file.url}
                 className="rounded-lg absolute top-0 left-0"
-                autoPlay={true}
+                autoPlay={false}
                 preload="auto"
                 // playIcon={
                 //   <div className="absolute inset-0 flex items-center justify-center">

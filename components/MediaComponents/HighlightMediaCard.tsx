@@ -133,6 +133,7 @@ export const HighlightMediaCard: React.FC<HighlightMediaCardProps> = ({
               src={highlight.url}
               autoPlay={true}
               preload="auto"
+              crossOrigin="anonymous"
               startTime={highlight.start_time}
               placeholder={highlight.thumbnailUrl || "/placeholder.png"}
             />
