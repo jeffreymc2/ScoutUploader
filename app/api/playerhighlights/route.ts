@@ -5,12 +5,13 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const playerID = searchParams.get('playerID');
 
+
   if (!playerID) {
     return NextResponse.json({ message: 'Missing playerID parameter' }, { status: 400 });
   }
 
   // Construct the URL for the external API request
-  const url = `https://perfectgame.drund.com/~/highlights/${encodeURIComponent(playerID)}/?page=1&limit=10&type=h&version=v2&start_date=06-01-2023&end_date=04-16-2024&position=b`;
+  const url = `https://perfectgame.drund.com/~/highlights/${encodeURIComponent(playerID)}/?page=1&limit=10&type=h&version=v2&start_date=06-01-2023&end_date=04-16-2024&position=`;
 
   try {
     const response = await fetch(url, {

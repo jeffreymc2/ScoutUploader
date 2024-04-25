@@ -46,6 +46,29 @@
 	body {
 		@apply bg-background text-foreground;
 	}
+	.next-video-container {
+		position: relative;
+		width: 100%;
+		aspect-ratio: 16 / 9;
+		object-fit: cover;
+	
+	  }
+	
+	  .data-next-video {
+		position: relative;
+		width: 100%;
+		height: 100%;
+		display: inline-block;
+		object-fit: cover;
+		line-height: 0;
+	  }
+	
+	  .data-next-video img {
+		background: center  cover no-repeat transparent;
+		object-fit: cover;
+		width: 100%;
+		height: 100%;
+	  }
 }
 
 .glowBox {
@@ -75,3 +98,4 @@ main {
 		overflow: hidden;
 
 }
+

@@ -54,10 +54,11 @@ const MediaParent: React.FC<MediaParentProps> = ({
 
   return (
     <>
+    {filteredSupabaseFiles.length > 0 && (
       <Card>
         <CardHeader>
-          <CardTitle>Supabase Media Files</CardTitle>
-          <SearchComponent onSearch={handleSupabaseSearch} />
+          <CardTitle>Featured Media</CardTitle>
+          {/* <SearchComponent onSearch={handleSupabaseSearch} /> */}
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -67,6 +68,7 @@ const MediaParent: React.FC<MediaParentProps> = ({
           </div>
         </CardContent>
       </Card>
+    )}
 
       <Card className="mt-8">
         <CardHeader>

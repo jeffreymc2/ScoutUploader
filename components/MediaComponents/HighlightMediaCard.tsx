@@ -1,9 +1,15 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { HighlightVideo } from "@/lib/types/types";
-import ReactPlayer from "react-player";
 import Video from "next-video";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import Image from "next/image";
@@ -17,14 +23,10 @@ export const HighlightMediaCard: React.FC<HighlightMediaCardProps> = ({
   highlight,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const playerRef = useRef<ReactPlayer>(null);
   // const [isReady, setIsReady] = useState(false);
-
-
 
   const handleDialogOpen = () => {
     setIsOpen(true);
-   
   };
 
   const getTitleWithoutBrackets = (title: string) => {
@@ -48,19 +50,26 @@ export const HighlightMediaCard: React.FC<HighlightMediaCardProps> = ({
     );
   };
 
+  const filterDescription = (description: string | undefined) => {
+    if (description) {
+      return description.replace(/9999/g, "");
+    }
+    return description;
+  };
+
   return (
     <>
       <Card className="m-0 p-0 rounded-lg">
-        <CardContent className="object-cover rounded-lg m-0 p-0 relative">
+        <CardContent className="object-cover  m-0 p-0 relative rounded-t-lg">
           <div
-            className="relative w-full h-48 shadow-sm rounded-lg cursor-pointer"
+            className="relative w-full sm:h-36 h-48 shadow-sm rounded-lg cursor-pointer"
             onClick={handleDialogOpen}
           >
             <Image
               src={highlight.thumbnailUrl || "/placeholder.png"}
               alt={`Thumbnail for ${highlight.title || "Highlight"}`}
               fill={true}
-              className="rounded-lg object-cover"
+              className="rounded-t-lg object-cover"
             />
             <div className="absolute inset-0 flex items-center justify-center">
               <svg
@@ -88,22 +97,38 @@ export const HighlightMediaCard: React.FC<HighlightMediaCardProps> = ({
         </CardContent>
         <CardFooter>
           <div>
-          {highlight.title && (
+            {highlight.title && (
               <p className="text-sm leading-4 font-bold text-gray-600 mt-2">
                 {getTitle(highlight.title)}
               </p>
             )}
-             {highlight.description && (
-              <p className="text-xs mt-1">{highlight.description}</p>
+           {filterDescription(highlight.description) && (
+              <p className="text-xs mt-1">
+                {filterDescription(highlight.description)}
+              </p>
             )}
           </div>
         </CardFooter>
       </Card>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-[66vw] flex items-center justify-center bg-white border-0 border-transparent">
+        <DialogContent className="sm:max-w-[66vw] ">
+          <DialogHeader>
+            <DialogTitle>{highlight.title && (
+                <p className="text-lg leading-4 font-bold text-gray-600 mt-2">
+                  {getTitle(highlight.title)}
+                </p>
+              )}</DialogTitle>
+            <DialogDescription>
+            
+            {filterDescription(highlight.description) && (
+              <p className="text-xs mt-1">
+                {filterDescription(highlight.description)}
+              </p>
+            )}
+            </DialogDescription>
+          </DialogHeader>
           <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
             <Video
-              ref={playerRef}
               className="rounded-lg absolute top-0 left-0"
               src={highlight.url}
               autoPlay={true}
@@ -111,8 +136,12 @@ export const HighlightMediaCard: React.FC<HighlightMediaCardProps> = ({
               startTime={highlight.start_time}
               placeholder={highlight.thumbnailUrl || "/placeholder.png"}
             />
-           
           </div>
+          <DialogFooter>
+            <div>
+             
+            </div>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
