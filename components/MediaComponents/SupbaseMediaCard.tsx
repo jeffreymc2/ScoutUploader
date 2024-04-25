@@ -27,6 +27,8 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { data: user } = useUser();
+  console.log("User:", user?.id);
+  console.log("File Post By:", file.post_by);
 
   const handleDialogOpen = () => {
     setIsOpen(true);
@@ -92,7 +94,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
             </PopoverTrigger>
             <PopoverContent>
   <>
-    {user === file.post_by && (
+    {user && (
       <div
         className="flex items-center mb-4"
         onClick={handlePopoverOpen}
