@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
       headers: {
         'Drund-Api-Key': `${process.env.DRUND_API_KEY}`,
         'Accept': 'application/json',
-        // 'Access-Control-Allow-Origin': '*',  
+        'Access-Control-Allow-Origin': '*',  
 
       },
     });
