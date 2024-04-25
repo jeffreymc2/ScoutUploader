@@ -26,6 +26,8 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
   file,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isClosed, setIsClosed] = useState(false);
+
   const { data: user } = useUser();
   console.log("User:", user?.id);
   console.log("File Post By:", file.post_by);
@@ -35,7 +37,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
   };
 
   const handlePopoverOpen = () => {
-    setIsOpen(true);
+    setIsClosed(true);
   };
 
   const handleDownload = () => {

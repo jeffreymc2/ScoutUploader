@@ -27,6 +27,7 @@ export default function MediaForm({
   mediaUrl,
   thumbnailUrl,
   isVideo,
+  
 }: MediaFormProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -91,8 +92,8 @@ export default function MediaForm({
     <>
       <Dialog>
         <DialogTrigger onClick={handleDialogOpen}>
-          <span className="text-sm flex items-center cursor-pointer">
-            <FaEdit className="text-xl mr-2" />
+          <span className="text-sm flex items-center cursor-pointer" onClick={handleDialogOpen}>
+            <FaEdit className="text-xl mr-2"  />
             Edit Content
           </span>
         </DialogTrigger>
