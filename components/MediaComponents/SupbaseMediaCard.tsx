@@ -92,7 +92,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
             </PopoverTrigger>
             <PopoverContent>
               <>
-                {user?.id === file.post_by && (
+                {user?.id && file.post_by && (
                   <div
                     className="flex items-center mb-4"
                     onClick={handlePopoverOpen}
@@ -105,17 +105,17 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
                     />
                   </div>
                 )}
-                <div className="flex items-center mb-4">
+                <div className="flex items-center mb-4" onClick={handleDownload}>
                   <span className="text-sm flex items-center cursor-pointer">
                     <FaDownload
                       className="cursor-pointer text-xl text-gray-700 mr-2"
-                      onClick={handleDownload}
+                      
                     />{" "}
                     Download
                   </span>
                 </div>
               </>
-              {user?.id === file.post_by && (
+              {user?.id && file.post_by && (
                 <div
                   className="flex items-center mb-4"
                   onClick={handlePopoverOpen}
