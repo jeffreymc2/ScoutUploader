@@ -31,6 +31,12 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
     setIsOpen(true);
   };
 
+
+  const handlePopoverOpen = () => {
+    setIsOpen(true);
+  };
+
+
   const handleDownload = () => {
     fetch(file.url || "")
       .then((response) => response.blob())
@@ -88,7 +94,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
             </PopoverTrigger>
             <PopoverContent>
               <>
-                <div className="flex items-center mb-4">
+                <div className="flex items-center mb-4" onClick={handlePopoverOpen}>
                   <MediaForm
                     postId={file.id.toString() || ""}
                     mediaUrl={file.url || ""}
@@ -107,7 +113,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
                 </div>
               </>
               {user?.id === file.post_by && (
-                <div className="flex items-center mb-4">
+                <div className="flex items-center mb-4" onClick={handlePopoverOpen}>
                   <DeletePost
                     post_by={file.post_by || ""}
                     image={file.image || ""}
