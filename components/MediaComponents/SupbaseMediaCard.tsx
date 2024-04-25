@@ -57,6 +57,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
         console.error("Error downloading file:", error);
       });
   };
+  console.log("File Post By:", file.post_by);
 
   return (
     <>
@@ -97,7 +98,8 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
             </PopoverTrigger>
             <PopoverContent>
   <>
-    {user && (
+    {user && file.post_by && (
+      
       <div
         className="flex items-center mb-4"
         onClick={handlePopoverOpen}
@@ -118,7 +120,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
         Download
       </span>
     </div>
-    {user === file.name && (
+    {user === file.post_by && (
       <div
         className="flex items-center mb-4"
         onClick={handlePopoverOpen}
