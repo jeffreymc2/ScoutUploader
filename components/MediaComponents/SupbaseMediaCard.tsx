@@ -87,6 +87,8 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
         </CardContent>
 
         <CardFooter className="flex justify-end items-center mt-4">
+        <p className="flex justify-start items-center text-sm text-gray-700"> {file.title} </p>
+
           <Popover>
             <PopoverTrigger>
               <div className="flex justify-end">
@@ -126,13 +128,13 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
           image={file.name || ""}
           event_id={file.event_id}
           team_id={file.team_id}
-          id={user || ""}
         />
       </div>
     )}
   </>
 </PopoverContent>
           </Popover>
+
         </CardFooter>
       </Card>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
