@@ -76,7 +76,7 @@ const DeletePost: React.FC<DeletePostProps> = ({
       <AlertDialog>
         <AlertDialogTrigger>
           <span className="text-sm flex items-center cursor-pointer">
-            <RiDeleteBin6Line className="text-xl mr-4" />
+            <RiDeleteBin6Line className="text-xl mr-2" />
             Delete Media File
           </span>{" "}
         </AlertDialogTrigger>
