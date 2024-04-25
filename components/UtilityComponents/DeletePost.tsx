@@ -71,12 +71,12 @@ const DeletePost: React.FC<DeletePostProps> = ({
     return null;
   }
 
-  if (user?.id === post_by) {
+  if (user?.id && post_by) {
     return (
       <AlertDialog>
         <AlertDialogTrigger>
           <span className="text-sm flex items-center cursor-pointer">
-            <RiDeleteBin6Line className="text-xl mr-2" />
+            <RiDeleteBin6Line className="text-xl mr-4" />
             Delete Media File
           </span>{" "}
         </AlertDialogTrigger>
