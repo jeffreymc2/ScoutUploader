@@ -163,7 +163,7 @@ export default async function PlayerPage({
               Player Details
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent >
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>Height</Label>
@@ -259,7 +259,7 @@ export default async function PlayerPage({
               </Dialog>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0 bg-gradient-to-b from-gray-100 to-white">
             <MediaParent
               supabaseMediaFiles={supabaseMediaFiles}
               highlightVideos={highlightVideos}
