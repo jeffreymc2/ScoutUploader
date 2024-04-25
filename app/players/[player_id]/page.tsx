@@ -237,8 +237,8 @@ export default async function PlayerPage({
       </div>
 
       <Suspense fallback={<div>Loading...</div>}>
-        <Card className="mt-4">
-          <CardHeader className="bg-gradient-to-b from-gray-100 to-white">
+        <div className="mt-4 bg-white">
+          <CardHeader className="">
             <CardTitle className="font-pgFont text-4xl">
               {`${playerData.PlayerName}'s`} Media Content
             </CardTitle>
@@ -265,7 +265,7 @@ export default async function PlayerPage({
               highlightVideos={highlightVideos}
             />
           </CardContent>
-        </Card>
+        </div>
       </Suspense>
     </div>
   );

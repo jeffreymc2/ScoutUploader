@@ -45,7 +45,7 @@ export const HighlightMediaCard: React.FC<HighlightMediaCardProps> = ({
     const titleWithoutBrackets = getTitleWithoutBrackets(title);
     return (
       <div className="absolute top-2 left-2">
-        <Badge variant="secondary">{titleWithoutBrackets}</Badge>
+        <Badge variant="default">{titleWithoutBrackets}</Badge>
       </div>
     );
   };
@@ -93,6 +93,9 @@ export const HighlightMediaCard: React.FC<HighlightMediaCardProps> = ({
               </svg>
             </div>
             {renderOverlayBadge(highlight.title)}
+            <div className="absolute bottom-2 left-2">
+              <Badge variant="secondary">0:{highlight.duration}</Badge>
+            </div>
           </div>
         </CardContent>
         <CardFooter>
@@ -102,7 +105,7 @@ export const HighlightMediaCard: React.FC<HighlightMediaCardProps> = ({
                 {getTitle(highlight.title)}
               </p>
             )}
-           {filterDescription(highlight.description) && (
+            {filterDescription(highlight.description) && (
               <p className="text-xs mt-1">
                 {filterDescription(highlight.description)}
               </p>
@@ -113,18 +116,19 @@ export const HighlightMediaCard: React.FC<HighlightMediaCardProps> = ({
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="sm:max-w-[66vw] ">
           <DialogHeader>
-            <DialogTitle>{highlight.title && (
+            <DialogTitle>
+              {highlight.title && (
                 <p className="text-lg leading-4 font-bold text-gray-600 mt-2">
                   {getTitle(highlight.title)}
                 </p>
-              )}</DialogTitle>
+              )}
+            </DialogTitle>
             <DialogDescription>
-            
-            {filterDescription(highlight.description) && (
-              <p className="text-xs mt-1">
-                {filterDescription(highlight.description)}
-              </p>
-            )}
+              {filterDescription(highlight.description) && (
+                <p className="text-xs mt-1">
+                  {filterDescription(highlight.description)}
+                </p>
+              )}
             </DialogDescription>
           </DialogHeader>
           <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
@@ -139,9 +143,7 @@ export const HighlightMediaCard: React.FC<HighlightMediaCardProps> = ({
             />
           </div>
           <DialogFooter>
-            <div>
-             
-            </div>
+            <div></div>
           </DialogFooter>
         </DialogContent>
       </Dialog>

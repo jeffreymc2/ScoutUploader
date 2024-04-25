@@ -30,6 +30,29 @@ export interface Player {
     ProfilePic: string | null;
   }
 
+  export interface PlayerData {
+    PlayerID: number;
+    PlayerName: string;
+    GradYear: string;
+    CityState: string;
+    Height: string;
+    Weight: number;
+    BatsThrows: string;
+    PrimaryPos: string;
+    Commitment: string | null;
+    BestRankSort: number | null;
+    bestPGGrade: number | null;
+    NationalRank: number | null;
+    NationalPosRank: number | null;
+    StateRank: number | null;
+    StatePosRank: number | null;
+    Note: string | null;
+    HighSchool: string;
+    LastTeamPlayedFor: string | null;
+    Age: string;
+    ProfilePic: string | null;
+  }
+  
   
   // Add the PlayerResponse interface
 export interface PlayerResponse {

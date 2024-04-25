@@ -9,12 +9,25 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { FaDownload, FaTrash } from "react-icons/fa";
 import MediaForm from "@/components/MediaComponents/MediaForm";
 import BackgroundVideo from "next-video/background-video";
-
+import { PiDotsThreeOutlineVerticalLight } from "react-icons/pi";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import DeletePost from "@/components/UtilityComponents/DeletePost";
 import useUser from "@/app/hook/useUser";
+import { BsThreeDots } from "react-icons/bs";
 
 interface SupabaseMediaCardProps {
   file: MediaFile;
+}
+
+interface DeletePostProps {
+  post_by: string;
+  image: string;
+  event_id?: string;
+  team_id?: string;
 }
 
 export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
@@ -67,7 +80,6 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
                 style={{ objectFit: "fill" }}
               />
             ) : (
-              // </div>
               <Image
                 src={file.url || ""}
                 alt={file.title || "Image"}
@@ -78,34 +90,46 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
           </div>
         </CardContent>
 
-        <CardFooter className="flex justify-between items-center mt-5">
-          <FaDownload
-            className="cursor-pointer text-xl text-gray-700"
-            onClick={handleDownload}
-          />
-          {user?.id === file.post_by && (
-            <>
-              <DeletePost
-                post_by={file.post_by || ""}
-                image={file.url || ""}
-                event_id={file.event_id}
-                team_id={file.team_id}
-              />
-              <Dialog>
-                <DialogTrigger>
-                  <FaTrash />
-                </DialogTrigger>
-                <DialogContent>
+        <CardFooter className="flex justify-end items-center mt-4">
+          <Popover>
+            <PopoverTrigger>
+              {" "}
+              <div className="flex justify-end">
+                <BsThreeDots className="cursor-pointer text-xl text-gray-700" />
+              </div>
+            </PopoverTrigger>
+            <PopoverContent>
+             
+              <>
+                <div className="flex items-center mb-4">
                   <MediaForm
                     postId={file.id.toString() || ""}
                     mediaUrl={file.url || ""}
                     isVideo={file.isVideo}
                     thumbnailUrl={file.thumbnail || ""}
                   />
-                </DialogContent>
-              </Dialog>
-            </>
-          )}
+                </div>
+                <div className="flex items-center mb-4">
+                  {" "}
+                  <span className="text-sm flex items-center cursor-pointer">
+                    <FaDownload
+                      className="cursor-pointer text-xl text-gray-700 mr-2"
+                      onClick={handleDownload}
+                    />{" "}
+                    Download
+                  </span>
+                </div>
+              </>
+              <div className="flex items-center mb-4">
+                <DeletePost
+                  post_by={file.post_by || ""} // Provide a default value for post_by
+                  image={file.url || ""}
+                  event_id={file.event_id || ""}
+                  team_id={file.team_id || ""}
+                />
+              </div>
+            </PopoverContent>
+          </Popover>
         </CardFooter>
       </Card>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -117,29 +141,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
                 className="rounded-lg absolute top-0 left-0"
                 autoPlay={false}
                 preload="auto"
-                // playIcon={
-                //   <div className="absolute inset-0 flex items-center justify-center">
-                //     <svg
-                //       className="w-12 h-12 text-white"
-                //       fill="none"
-                //       viewBox="0 0 24 24"
-                //       stroke="currentColor"
-                //     >
-                //       <path
-                //         strokeLinecap="round"
-                //         strokeLinejoin="round"
-                //         strokeWidth={1.4}
-                //         d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
-                //       />
-                //       <path
-                //         strokeLinecap="round"
-                //         strokeLinejoin="round"
-                //         strokeWidth={1.4}
-                //         d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                //       />
-                //     </svg>
-                //   </div>
-                // }
+                crossOrigin="anonymous"
               />
             </div>
           </DialogContent>

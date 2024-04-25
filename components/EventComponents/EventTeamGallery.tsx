@@ -90,31 +90,14 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
           <div key={post.id} className="flex flex-col">
             <div key={post.id} className="relative">
               <MediaRenderer file={{ ...post, id: post.id || "", post_type: post.post_type || "" }} />
-              <AlertDialog>
-                <AlertDialogTrigger>
-                  <RiDeleteBin5Line className="w-6 h-6 text-gray-900 absolute top-[208px] left-[50px]" />
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Are you absolutely sure?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete
-                      this file from our servers.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+             
                     <DeletePost
                       post_by={post.post_by?.toString() || ""}
                       image={post.name || ""}
                       event_id={post.event_id || ""}
                       team_id={post.team_id || ""}
                     />
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+               
             </div>
 
             <div onClick={(event) => event.stopPropagation()}>

@@ -2,13 +2,10 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
-import DeletePost from "@/components/UtilityComponents/DeletePost";
 import { useRouter } from "next/navigation"; // Corrected from 'next/navigation' to 'next/router'
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import PlayerDefault from "./PlayerDefault";
-
 import { IoIosCloseCircleOutline } from "react-icons/io";
 import { toast } from "sonner";
 

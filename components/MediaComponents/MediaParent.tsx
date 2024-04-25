@@ -11,16 +11,23 @@ import { SupabaseMediaCard } from "@/components/MediaComponents/SupbaseMediaCard
 import { HighlightMediaCard } from "@/components/MediaComponents/HighlightMediaCard";
 import SupabaseMediaRenderer from "@/components/MediaComponents/SupabaseMediaRenderer";
 import HighlightMediaRenderer from "@/components/MediaComponents/HighlightRenderer";
+import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel } from "@radix-ui/react-alert-dialog";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import DeletePost from "../UtilityComponents/DeletePost";
+import { AlertDialogHeader, AlertDialogFooter } from "../ui/alert-dialog";
 
 interface MediaParentProps {
   supabaseMediaFiles: MediaFile[];
   highlightVideos: HighlightVideo[];
-  // children?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const MediaParent: React.FC<MediaParentProps> = ({
   supabaseMediaFiles,
   highlightVideos,
+  children,
+
+
 }) => {
   const [filteredSupabaseFiles, setFilteredSupabaseFiles] = useState<
     MediaFile[]
@@ -54,6 +61,7 @@ const MediaParent: React.FC<MediaParentProps> = ({
 
   return (
     <>
+    
     {filteredSupabaseFiles.length > 0 && (
       <Card>
         <CardHeader>
@@ -63,10 +71,13 @@ const MediaParent: React.FC<MediaParentProps> = ({
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredSupabaseFiles.map((file) => (
+              <>
               <SupabaseMediaCard key={file.id} file={file} />
+              </>             
             ))}
           </div>
         </CardContent>
+        
       </Card>
     )}
 
@@ -76,10 +87,14 @@ const MediaParent: React.FC<MediaParentProps> = ({
           <SearchComponent onSearch={handleHighlightSearch} />
         </CardHeader>
         <CardContent>
+
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredHighlightVideos.map((highlight) => (
+              
               <HighlightMediaCard key={highlight.id} highlight={highlight} />
+              
             ))}
+            
           </div>
         </CardContent>
       </Card>

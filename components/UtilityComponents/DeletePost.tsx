@@ -6,7 +6,20 @@ import useUser from "@/app/hook/useUser";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { FaTrash } from "react-icons/fa6";
+import { RiDeleteBin6Line } from "react-icons/ri";
+
+import { MediaFile } from "@/lib/types/types";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface DeletePostProps {
   post_by: string;
@@ -37,7 +50,9 @@ const DeletePost: React.FC<DeletePostProps> = ({
       }
       const fullPath = `${folderPath}${imagePath}`;
 
-      const { data, error } = await supabase.storage.from("media").remove([fullPath]);
+      const { data, error } = await supabase.storage
+        .from("media")
+        .remove([fullPath]);
       if (error) {
         console.error("Failed to delete image:", error);
         toast.error(`Failed to delete image: ${error.message}`);
@@ -58,15 +73,53 @@ const DeletePost: React.FC<DeletePostProps> = ({
 
   if (user?.id === post_by) {
     return (
-      <div>
-        <FaTrash
-          className="cursor-pointer text-xl text-gray-700"
-          onClick={handleDelete}
-        />
-      </div>
+      <AlertDialog>
+        <AlertDialogTrigger>
+          <span className="text-sm flex items-center cursor-pointer">
+            <RiDeleteBin6Line className="text-xl mr-2" />
+            Delete Media File
+          </span>{" "}
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     );
   } else {
-    return null;
+    return (
+      <AlertDialog>
+        <AlertDialogTrigger>
+          <span className="text-sm flex items-center cursor-pointer">
+            <RiDeleteBin6Line className="text-xl" />
+            Delete Media File
+          </span>{" "}
+        </AlertDialogTrigger>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
   }
 };
 
