@@ -123,8 +123,8 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
       </Card>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         {file.isVideo ? (
-          <DialogContent className="sm:max-w-[66vw] flex items-center justify-center bg-transparent border-0 border-transparent">
-            <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
+          <DialogContent className="bg-white border-0 border-transparent">
+            <div className="relative w-full border rounded-b-lg p-0 h-auto">
               <ReactPlayer
                 className="rounded-lg absolute top-0 left-0"
                 url={file.url}
@@ -135,7 +135,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
             </div>
           </DialogContent>
         ) : (
-          <DialogContent className="min-h-[50vh] sm:min-h-[66vh] bg-transparent border-0 border-transparent">
+          <DialogContent className="bg-gray-600 bg-opacity-50 w-full flex items-center justify-center">
             <Image
               src={file.url || "/placeholder.png"}
               alt={file?.title || "Image"}

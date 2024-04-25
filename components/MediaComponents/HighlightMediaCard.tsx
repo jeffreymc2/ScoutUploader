@@ -1,11 +1,13 @@
-// app/components/MediaComponents/HighlightMediaCard.tsx
 "use client";
-import React, { useState, useRef } from "react";
+
+import React, { useState, useRef, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { HighlightVideo } from "@/lib/types/types";
 import ReactPlayer from "react-player";
+import Video from "next-video";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
 
 interface HighlightMediaCardProps {
   highlight: HighlightVideo;
@@ -15,33 +17,41 @@ export const HighlightMediaCard: React.FC<HighlightMediaCardProps> = ({
   highlight,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-const playerRef = useRef<ReactPlayer>(null);
-
-const [isPlaying, setIsPlaying] = React.useState(true);
-const [isReady, setIsReady] = React.useState(false);
-
-const onReady = React.useCallback(() => {
-        if (!isReady) {
-            const timeToStart = highlight.start_time || 0;
-            if (playerRef.current) {
-                playerRef.current.seekTo(timeToStart, "seconds");
-            }
-            setIsReady(true);
-        }
-    }, [isReady]);
+  const playerRef = useRef<ReactPlayer>(null);
+  // const [isReady, setIsReady] = useState(false);
 
 
-const handleDialogOpen = () => {
-        setIsOpen(true);
-        if (playerRef.current) {
-                playerRef.current.seekTo(highlight.start_time);
-        }
-};
+
+  const handleDialogOpen = () => {
+    setIsOpen(true);
+   
+  };
+
+  const getTitleWithoutBrackets = (title: string) => {
+    const bracketRegex = /\[(.*?)\]/;
+    const match = title.match(bracketRegex);
+    return match ? match[1] : title;
+  };
+
+  const getTitle = (title: string) => {
+    const bracketRegex = /\[(.*?)\]/;
+    const match = title.match(bracketRegex);
+    return match ? title.replace(match[0], "") : title;
+  };
+
+  const renderOverlayBadge = (title: string) => {
+    const titleWithoutBrackets = getTitleWithoutBrackets(title);
+    return (
+      <div className="absolute top-2 left-2">
+        <Badge variant="secondary">{titleWithoutBrackets}</Badge>
+      </div>
+    );
+  };
 
   return (
     <>
       <Card className="m-0 p-0 rounded-lg">
-        <CardContent className="object-cover rounded-lg m-0 p-0">
+        <CardContent className="object-cover rounded-lg m-0 p-0 relative">
           <div
             className="relative w-full h-48 shadow-sm rounded-lg cursor-pointer"
             onClick={handleDialogOpen}
@@ -73,34 +83,35 @@ const handleDialogOpen = () => {
                 />
               </svg>
             </div>
+            {renderOverlayBadge(highlight.title)}
           </div>
         </CardContent>
         <CardFooter>
           <div>
-            {highlight.title && (
+          {highlight.title && (
               <p className="text-sm leading-4 font-bold text-gray-600 mt-2">
-                {highlight.title}
+                {getTitle(highlight.title)}
               </p>
             )}
-            {highlight.description && (
+             {highlight.description && (
               <p className="text-xs mt-1">{highlight.description}</p>
             )}
           </div>
         </CardFooter>
       </Card>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-[66vw] flex items-center justify-center bg-transparent border-0 border-transparent">
+        <DialogContent className="sm:max-w-[66vw] flex items-center justify-center bg-white border-0 border-transparent">
           <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
-            <ReactPlayer
+            <Video
               ref={playerRef}
               className="rounded-lg absolute top-0 left-0"
-              url={highlight.url}
-              width="100%"
-              height="100%"
-              controls={true}
-              onReady={onReady}
-
+              src={highlight.url}
+              autoPlay={true}
+              preload="auto"
+              startTime={highlight.start_time}
+              placeholder={highlight.thumbnailUrl || "/placeholder.png"}
             />
+           
           </div>
         </DialogContent>
       </Dialog>
