@@ -71,7 +71,7 @@ const DeletePost: React.FC<DeletePostProps> = ({
     return null;
   }
 
-  if (user?.id && post_by) {
+  if (user?.id === post_by) {
     return (
       <AlertDialog>
         <AlertDialogTrigger>
@@ -116,6 +116,9 @@ const DeletePost: React.FC<DeletePostProps> = ({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>
+              Continue
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
