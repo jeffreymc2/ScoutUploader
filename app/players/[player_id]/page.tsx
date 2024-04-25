@@ -77,6 +77,7 @@ export default async function PlayerPage({
       isVideo: isVideoFile(post?.name ?? ""),
       created_at: "", // Add a default value for created_at
       profile: { display_name: "" }, // Update the type definition of profile
+      post_by: post.post_by,
       image: "", // Add a default value for image
     })) || [];
 

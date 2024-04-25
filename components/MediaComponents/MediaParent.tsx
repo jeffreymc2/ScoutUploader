@@ -3,18 +3,12 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import MediaGrid from "@/components/MediaComponents/MediaGrid";
 import SearchComponent from "./MediaSearch";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MediaFile, HighlightVideo } from "@/lib/types/types";
 import { SupabaseMediaCard } from "@/components/MediaComponents/SupbaseMediaCard";
 import { HighlightMediaCard } from "@/components/MediaComponents/HighlightMediaCard";
-import SupabaseMediaRenderer from "@/components/MediaComponents/SupabaseMediaRenderer";
-import HighlightMediaRenderer from "@/components/MediaComponents/HighlightRenderer";
-import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogTitle, AlertDialogDescription, AlertDialogCancel } from "@radix-ui/react-alert-dialog";
-import { RiDeleteBin5Line } from "react-icons/ri";
-import DeletePost from "../UtilityComponents/DeletePost";
-import { AlertDialogHeader, AlertDialogFooter } from "../ui/alert-dialog";
+
 
 interface MediaParentProps {
   supabaseMediaFiles: MediaFile[];
