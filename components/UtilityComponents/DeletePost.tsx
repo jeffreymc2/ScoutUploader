@@ -23,6 +23,7 @@ import {
 
 interface DeletePostProps {
   post_by: string;
+  id: string;
   image: string;
   event_id?: string;
   team_id?: string;
@@ -33,6 +34,7 @@ const DeletePost: React.FC<DeletePostProps> = ({
   image,
   event_id,
   team_id,
+  id,
 }) => {
   const { data: user, isFetching } = useUser();
   const router = useRouter();
@@ -52,6 +54,8 @@ const DeletePost: React.FC<DeletePostProps> = ({
       const { data, error } = await supabase.storage
         .from("media")
         .remove([fullPath]);
+
+        console.log("data", post_by, id, event_id, team_id, folderPath, imagePath, fullPath, data, error);
       if (error) {
         console.error("Failed to delete image:", error);
         toast.error(`Failed to delete image: ${error.message}`);

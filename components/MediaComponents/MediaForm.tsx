@@ -92,7 +92,7 @@ export default function MediaForm({
     <>
       <Dialog>
         <DialogTrigger onClick={handleDialogOpen}>
-          <span className="text-sm flex items-center cursor-pointer" onClick={handleDialogOpen}>
+          <span className="text-sm flex items-center cursor-pointer">
             <FaEdit className="text-xl mr-2"  />
             Edit Content
           </span>

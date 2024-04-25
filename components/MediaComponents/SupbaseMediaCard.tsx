@@ -30,7 +30,6 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
 
   const { data: user } = useUser();
   console.log("User:", user?.id);
-  console.log("File Post By:", file.post_by);
 
   const handleDialogOpen = () => {
     setIsOpen(true);
@@ -117,7 +116,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
         Download
       </span>
     </div>
-    {user === file.post_by && (
+    {user === file.name && (
       <div
         className="flex items-center mb-4"
         onClick={handlePopoverOpen}
@@ -127,6 +126,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
           image={file.name || ""}
           event_id={file.event_id}
           team_id={file.team_id}
+          id={user || ""}
         />
       </div>
     )}
