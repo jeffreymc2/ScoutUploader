@@ -91,44 +91,43 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
               </div>
             </PopoverTrigger>
             <PopoverContent>
-              <>
-                {user?.id && file.post_by && (
-                  <div
-                    className="flex items-center mb-4"
-                    onClick={handlePopoverOpen}
-                  >
-                    <MediaForm
-                      postId={file.id.toString() || ""}
-                      mediaUrl={file.url || ""}
-                      isVideo={file.isVideo}
-                      thumbnailUrl={file.thumbnail || ""}
-                    />
-                  </div>
-                )}
-                <div className="flex items-center mb-4" onClick={handleDownload}>
-                  <span className="text-sm flex items-center cursor-pointer">
-                    <FaDownload
-                      className="cursor-pointer text-xl text-gray-700 mr-2"
-                      
-                    />{" "}
-                    Download
-                  </span>
-                </div>
-              </>
-              {user?.id && file.post_by && (
-                <div
-                  className="flex items-center mb-4"
-                  onClick={handlePopoverOpen}
-                >
-                  <DeletePost
-                    post_by={file.post_by || ""}
-                    image={file.name || ""}
-                    event_id={file.event_id}
-                    team_id={file.team_id}
-                  />
-                </div>
-              )}
-            </PopoverContent>
+  <>
+    {user?.id === file.post_by && (
+      <div
+        className="flex items-center mb-4"
+        onClick={handlePopoverOpen}
+      >
+        <MediaForm
+          postId={file.id?.toString() || ""}
+          mediaUrl={file.url || ""}
+          isVideo={file.isVideo}
+          thumbnailUrl={file.thumbnail || ""}
+        />
+      </div>
+    )}
+    <div className="flex items-center mb-4" onClick={handleDownload}>
+      <span className="text-sm flex items-center cursor-pointer">
+        <FaDownload
+          className="cursor-pointer text-xl text-gray-700 mr-2"
+        />{" "}
+        Download
+      </span>
+    </div>
+    {user?.id === file.post_by && (
+      <div
+        className="flex items-center mb-4"
+        onClick={handlePopoverOpen}
+      >
+        <DeletePost
+          post_by={file.post_by || ""}
+          image={file.name || ""}
+          event_id={file.event_id}
+          team_id={file.team_id}
+        />
+      </div>
+    )}
+  </>
+</PopoverContent>
           </Popover>
         </CardFooter>
       </Card>

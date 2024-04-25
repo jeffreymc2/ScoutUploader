@@ -49,7 +49,6 @@ const DeletePost: React.FC<DeletePostProps> = ({
         imagePath = imagePath.substring(1);
       }
       const fullPath = `${folderPath}${imagePath}`;
-
       const { data, error } = await supabase.storage
         .from("media")
         .remove([fullPath]);
@@ -66,7 +65,7 @@ const DeletePost: React.FC<DeletePostProps> = ({
       toast.error("An error occurred while deleting the image");
     }
   };
-
+  
   if (isFetching) {
     return null;
   }
