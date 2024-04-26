@@ -68,14 +68,16 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
             onClick={handleDialogOpen}
           >
             {file.isVideo ? (
-              <BackgroundVideo
+              <Card className="rounded-t-lg">
+              <Video
                 src={file.url}
-                className="rounded-t-lg object-cover"
+                className="rounded-t-lg"
                 preload="auto"
                 controls={true}
                 autoPlay={false}
                 poster={file.thumbnail}
               />
+              </Card>
             ) : (
               <Image
                 src={file.url || ""}
