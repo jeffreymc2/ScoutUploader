@@ -69,7 +69,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
           >
             {file.isVideo ? (
               <Card className="rounded-t-lg">
-                <Video
+                <BackgroundVideo
                   src={file.url}
                   className="rounded-t-lg"
                   preload="auto"
