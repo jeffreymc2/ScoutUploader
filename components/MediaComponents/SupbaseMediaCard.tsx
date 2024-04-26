@@ -129,8 +129,9 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
         <DeletePost
           post_by={file.post_by || ""}
           image={file.url || ""}
-          event_id={file.event_id}
+          event_id={file.player_id || undefined}
           team_id={file.team_id}
+          
         />
       </div>
     )}
