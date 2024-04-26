@@ -73,6 +73,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
                   src={file.url}
                   className="rounded-t-lg"
                   preload="auto"
+                  poster="https://res.cloudinary.com/dv0xm4c4v/image/upload/v1633660134/placeholder.png"
                   controls={true}
                   autoPlay={false}
                 />
