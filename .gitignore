@@ -40,8 +40,8 @@ next-env.d.ts
 /supabase/functions/processVideo/
 
 # next-video
-videos/*
-!videos/*.json
-!videos/*.js
-!videos/*.ts
-public/_next-video
+/videos/*
+/!videos/*.json
+/!videos/*.js
+/!videos/*.ts
+/public/_next-video
