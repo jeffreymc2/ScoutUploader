@@ -67,6 +67,8 @@ const nextConfig = {
 export default withNextVideo(nextConfig, {
 	provider: 'amazon-s3',
 	providerConfig: {
-		'amazon-s3': { endpoint: 'https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/s3' }
+		'amazon-s3': { 
+			endpoint: 'https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/s3', 
+		}
 	}
   });
