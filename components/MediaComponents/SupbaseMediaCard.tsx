@@ -69,18 +69,18 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
           >
             {file.isVideo ? (
               <Card className="rounded-t-lg">
-              <Video
-                src={file.url}
-                className="rounded-t-lg"
-                preload="auto"
-                controls={true}
-                autoPlay={false}
-                poster={file.thumbnail}
-              />
+                <Video
+                  src={file.url}
+                  className="rounded-t-lg"
+                  preload="auto"
+                  controls={true}
+                  autoPlay={false}
+                  poster={file.thumbnail}
+                />
               </Card>
             ) : (
               <Image
-                src={file.url || ""}
+                src={file.url ?? (file.thumbnail || "")}
                 alt={file.title || "Image"}
                 fill={true}
                 className="rounded-t-lg  object-cover"
@@ -154,7 +154,6 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
                 src={file.url}
                 className="rounded-lg absolute top-0 left-0"
                 preload="auto"
-
                 controls={true}
               />
             </div>
@@ -163,7 +162,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
           <DialogContent className="sm:max-w-[66vw] ">
             <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
               <Image
-                src={file.url || "/placeholder.png"}
+                src={file.url ?? (file.thumbnail || "")}
                 alt={file?.title || "Image"}
                 fill={true}
                 className="rounded-lg object-cover"
