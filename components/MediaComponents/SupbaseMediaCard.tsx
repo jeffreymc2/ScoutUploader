@@ -75,7 +75,6 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
                   preload="auto"
                   controls={true}
                   autoPlay={false}
-                  poster={file.thumbnail}
                 />
               </Card>
             ) : (
@@ -153,8 +152,12 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
               <Video
                 src={file.url}
                 className="rounded-lg absolute top-0 left-0"
+                autoPlay={false}
                 preload="auto"
                 controls={true}
+                poster="https://res.cloudinary.com/dv0xm4c4v/image/upload/v1633660134/placeholder.png"
+                style={{ objectFit: "fill" }}
+           
               />
             </div>
           </DialogContent>
