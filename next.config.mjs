@@ -69,6 +69,7 @@ export default withNextVideo(nextConfig, {
 	providerConfig: {
 		'amazon-s3': { 
 			endpoint: 'https://s3.us-east-1.amazonaws.com',
+			bucket: 'scoutuploader',
 		}
 	}
   });
