@@ -29,7 +29,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
   const [isClosed, setIsClosed] = useState(false);
 
   const { data: user } = useUser();
-  console.log("User:", user?.id);
+  console.log("First User:", user?.id);
 
   const handleDialogOpen = () => {
     setIsOpen(true);
@@ -57,7 +57,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
         console.error("Error downloading file:", error);
       });
   };
-  console.log("File Post By:", file.post_by);
+  console.log("First File Post By:", file.post_by);
 
   return (
     <>
@@ -98,8 +98,9 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
             </PopoverTrigger>
             <PopoverContent>
   <>
-    {user && file.post_by && (
-      
+    {user?.id === file.post_by && (
+        console.log("Second User:", user?.id),
+        console.log("Second File Post By:", file.post_by),
       <div
         className="flex items-center mb-4"
         onClick={handlePopoverOpen}
@@ -120,7 +121,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
         Download
       </span>
     </div>
-    {user === file.post_by && (
+    {user?.id === file.post_by && (
       <div
         className="flex items-center mb-4"
         onClick={handlePopoverOpen}
