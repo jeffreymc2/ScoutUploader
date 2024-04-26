@@ -15,6 +15,7 @@ import ReactPlayer from "react-player";
 import { FaEdit } from "react-icons/fa";
 
 import Image from "next/image";
+import Video from "next-video";
 
 interface MediaFormProps {
   postId: string;
@@ -103,12 +104,16 @@ export default function MediaForm({
             {/* Media Preview */}
             {isVideo ? (
               <div className="video-preview">
-                <ReactPlayer
-                  url={mediaUrl}
-                  width="100%"
-                  height="100%"
-                  controls
-                />
+                <Video
+                src={mediaUrl}
+                className="rounded-lg absolute top-0 left-0"
+                autoPlay={true}
+                preload="auto"
+                controls={true}
+                startTime={1}
+                style={{ objectFit: "fill" }}
+           
+              />
               </div>
             ) : (
               <div className="w-full max-h-[280px] overflow-hidden">
