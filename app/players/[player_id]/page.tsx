@@ -68,12 +68,13 @@ export default async function PlayerPage({
       id: post.id || "",
       title: post.title || "", // Add a default value for title
       description: post.description || "", // Add a default value for description
+
       thumbnail: post.thumbnail
         ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`
-        : "",
+        : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`,
       url: post.name
         ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`
-        : "",
+        : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`,
       isVideo: isVideoFile(post?.name ?? ""),
       created_at: "", // Add a default value for created_at
       profile: { display_name: "" }, // Update the type definition of profile
