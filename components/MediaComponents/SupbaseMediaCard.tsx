@@ -5,7 +5,6 @@ import Image from "next/image";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { MediaFile } from "@/lib/types/types";
 import Video from "next-video";
-import ReactPlayer from "react-player";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { FaDownload } from "react-icons/fa";
 import MediaForm from "@/components/MediaComponents/MediaForm";
@@ -17,6 +16,7 @@ import {
 import DeletePost from "@/components/UtilityComponents/DeletePost";
 import useUser from "@/app/hook/useUser";
 import { BsThreeDots } from "react-icons/bs";
+import BackgroundVideo from "next-video/background-video";
 
 interface SupabaseMediaCardProps {
   file: MediaFile;
@@ -68,14 +68,14 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
             onClick={handleDialogOpen}
           >
             {file.isVideo ? (
-             <ReactPlayer
-             url={file.url}
-             className="rounded-t-lg object-cover"
-             width="100%"
-             height="100%"
-             controls={true}
-             light={file.thumbnail}
-           />
+              <BackgroundVideo
+                src={file.url}
+                className="rounded-t-lg object-cover"
+                preload="auto"
+                controls={true}
+                autoPlay={false}
+                poster={file.thumbnail}
+              />
             ) : (
               <Image
                 src={file.url || ""}
@@ -88,7 +88,10 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
         </CardContent>
 
         <CardFooter className="flex justify-end items-center mt-4">
-        <p className="flex justify-start items-center text-sm text-gray-700"> {file.title} </p>
+          <p className="flex justify-start items-center text-sm text-gray-700">
+            {" "}
+            {file.title}{" "}
+          </p>
 
           <Popover>
             <PopoverTrigger>
@@ -97,59 +100,59 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
               </div>
             </PopoverTrigger>
             <PopoverContent>
-  <>
-    {user?.id === file.post_by && (
-        console.log("Second User:", user?.id),
-        console.log("Second File Post By:", file.post_by),
-      <div
-        className="flex items-center mb-4"
-        onClick={handlePopoverOpen}
-      >
-        <MediaForm
-          postId={file.id?.toString() || ""}
-          mediaUrl={file.url || ""}
-          isVideo={file.isVideo}
-          thumbnailUrl={file.thumbnail || ""}
-        />
-      </div>
-    )}
-    <div className="flex items-center mb-4" onClick={handleDownload}>
-      <span className="text-sm flex items-center cursor-pointer">
-        <FaDownload
-          className="cursor-pointer text-xl text-gray-700 mr-2"
-        />{" "}
-        Download
-      </span>
-    </div>
-    {user?.id === file.post_by && (
-      <div
-        className="flex items-center mb-4"
-        onClick={handlePopoverOpen}
-      >
-        <DeletePost
-          post_by={file.post_by || ""}
-          image={file.url || ""}
-          event_id={file.player_id || undefined}
-          team_id={file.team_id}
-          
-        />
-      </div>
-    )}
-  </>
-</PopoverContent>
+              <>
+                {user?.id === file.post_by &&
+                  (console.log("Second User:", user?.id),
+                  console.log("Second File Post By:", file.post_by),
+                  (
+                    <div
+                      className="flex items-center mb-4"
+                      onClick={handlePopoverOpen}
+                    >
+                      <MediaForm
+                        postId={file.id?.toString() || ""}
+                        mediaUrl={file.url || ""}
+                        isVideo={file.isVideo}
+                        thumbnailUrl={file.thumbnail || ""}
+                      />
+                    </div>
+                  ))}
+                <div
+                  className="flex items-center mb-4"
+                  onClick={handleDownload}
+                >
+                  <span className="text-sm flex items-center cursor-pointer">
+                    <FaDownload className="cursor-pointer text-xl text-gray-700 mr-2" />{" "}
+                    Download
+                  </span>
+                </div>
+                {user?.id === file.post_by && (
+                  <div
+                    className="flex items-center mb-4"
+                    onClick={handlePopoverOpen}
+                  >
+                    <DeletePost
+                      post_by={file.post_by || ""}
+                      image={file.url || ""}
+                      event_id={file.player_id || undefined}
+                      team_id={file.team_id}
+                    />
+                  </div>
+                )}
+              </>
+            </PopoverContent>
           </Popover>
-
         </CardFooter>
       </Card>
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         {file.isVideo ? (
           <DialogContent className="sm:max-w-[66vw] ">
             <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
-            <ReactPlayer
-                url={file.url}
+              <Video
+                src={file.url}
                 className="rounded-lg absolute top-0 left-0"
-                width="100%"
-                height="100%"
+                preload="auto"
+
                 controls={true}
               />
             </div>
