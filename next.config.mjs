@@ -64,12 +64,4 @@ const nextConfig = {
 	//   },
 };
 
-export default withNextVideo(nextConfig, {
-	provider: 'amazon-s3',
-	providerConfig: {
-		'amazon-s3': { 
-			endpoint: 'https://s3.us-east-1.amazonaws.com',
-			bucket: 'scoutuploader',
-		}
-	}
-  });
+export default withNextVideo(nextConfig);
