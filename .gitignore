@@ -38,3 +38,10 @@ next-env.d.ts
 
 # supabase edge function
 /supabase/functions/processVideo/
+
+# next-video
+videos/*
+!videos/*.json
+!videos/*.js
+!videos/*.ts
+public/_next-video
