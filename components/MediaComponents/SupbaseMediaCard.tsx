@@ -69,13 +69,16 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
           >
             {file.isVideo ? (
               <Card className="rounded-t-lg">
-                <BackgroundVideo
+                <Video
                   src={file.url}
                   className="rounded-t-lg"
                   preload="auto"
-                  poster="https://res.cloudinary.com/dv0xm4c4v/image/upload/v1633660134/placeholder.png"
-                  controls={true}
+                  // poster="https://res.cloudinary.com/dv0xm4c4v/image/upload/v1633660134/placeholder.png"
+                  controls={false}
                   autoPlay={false}
+                  style={{ objectFit: "fill" }}
+                  storyboardSrc=""
+
                 />
               </Card>
             ) : (
@@ -84,6 +87,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
                 alt={file.title || "Image"}
                 fill={true}
                 className="rounded-t-lg  object-cover"
+
               />
             )}
           </div>
@@ -153,10 +157,10 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
               <Video
                 src={file.url}
                 className="rounded-lg absolute top-0 left-0"
-                autoPlay={false}
+                autoPlay={true}
                 preload="auto"
                 controls={true}
-                poster="https://res.cloudinary.com/dv0xm4c4v/image/upload/v1633660134/placeholder.png"
+                startTime={1}
                 style={{ objectFit: "fill" }}
            
               />
