@@ -86,7 +86,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 const Coconut = require('coconutjs')
-const coconut = new Coconut.Client(`${process.env.COCONUT_API_KEY as string}`)
+const coconut = new Coconut.Client(`${process.env.COCONUT_API_KEY}`)
 
 // coconut.notification = {
 //   'type': 'http',
