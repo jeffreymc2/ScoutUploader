@@ -353,5 +353,6 @@ export interface HighlightVideo {
   play_type: string;
   highlight_created: string;
   thumbnailUrl: string;
+  
 
 }
