@@ -20,10 +20,11 @@ import { supabaseBrowser } from "@/lib/supabase/browser";
 import useUser from "@/app/hook/useUser";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { number } from "zod";
 
 interface HighlightMediaCardProps {
   highlight: HighlightVideo;
-  player_id: string;
+  player_id: number;
 }
 
 interface TranscodePayload {
@@ -41,7 +42,7 @@ interface TranscodeResponse {
 
 
 export const HighlightMediaCard: React.FC<HighlightMediaCardProps> = ({
-  highlight,
+  highlight, 
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 

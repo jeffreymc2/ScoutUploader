@@ -78,7 +78,7 @@ const MediaParent: React.FC<MediaParentProps> = ({
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredHighlightVideos.map((highlight) => (
-              <HighlightMediaCard key={highlight.id} highlight={highlight} />
+              <HighlightMediaCard key={highlight.id} highlight={highlight} player_id={highlight.tagged_player_keys[0].key} /> 
             ))}
           </div>
         </CardContent>
