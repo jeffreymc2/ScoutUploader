@@ -295,7 +295,24 @@ export interface PlayData {
 export interface Player {
   PlayerID: number;
   Name: string;
-  // Add other relevant player fields
+  GradYear: string;
+  CityState: string;
+  Weight: number;
+  BatsThrows: string;
+  PrimaryPos: string;
+  Commitment: string | null;
+  BestRankSort: number | null;
+  bestPGGrade: number | null;
+  NationalRank: number | null;
+  NationalPosRank: number | null;
+  StateRank: number | null;
+  StatePosRank: number | null;
+  Note: string | null;
+  HighSchool: string;
+  LastTeamPlayedFor: string | null;
+  Age: string;
+  ProfilePic: string | null;
+  height: string;
 }
 
 export interface GameData {

@@ -10,9 +10,11 @@ import { RiVideoUploadLine } from "react-icons/ri";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Suspense } from "react";
+import { Player, Post } from "@/lib/types/types";
 import Uploader from "@/components/Uploader";
-import MediaParent from "@/components/MediaComponents/MediaParent";
 import { MediaFile, HighlightVideo } from "@/lib/types/types";
+import PlayerMediaGallery from "@/components/PlayerComponents/PlayerMediaGallery";
+import { HighlightMediaCard } from "@/components/MediaComponents/HighlightMediaCard";
 
 interface PlayerData {
   PlayerID: number;
@@ -37,6 +39,14 @@ interface PlayerData {
   ProfilePic: string | null;
 }
 
+interface PlayerGalleryProps {
+  posts: Post[];
+  players: Player[];
+  eventId: string;
+  teamId: string;
+  image: string;
+}
+
 export default async function PlayerPage({
   params,
 }: {
@@ -58,29 +68,23 @@ export default async function PlayerPage({
     .eq("player_id", playerData.PlayerID)
     .order("created_at", { ascending: false });
 
-  if (postsError) {
-    console.error("Error fetching posts:", postsError);
-    // Handle the error appropriately (e.g., show an error message)
-  }
-
-  const supabaseMediaFiles: MediaFile[] =
-    posts?.map((post) => ({
-      id: post.id || "",
-      title: post.title || "", // Add a default value for title
-      description: post.description || "", // Add a default value for description
-
-      thumbnail: post.thumbnail
-        ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`
-        : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`,
-      url: post.name
-        ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`
-        : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`,
-      isVideo: isVideoFile(post?.name ?? ""),
-      created_at: "", // Add a default value for created_at
-      profile: { display_name: "" }, // Update the type definition of profile
-      post_by: post.post_by,
-      image: "", // Add a default value for image
-    })) || [];
+  const supabaseMediaFiles: PlayerGalleryProps = {
+    posts: posts
+      ? posts.map((post) => ({
+          ...post,
+          profile: null,
+          image: post.event_id
+            ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`
+            : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`,
+          isVideo: isVideoFile(post.name ?? ""),
+        }))
+      : [],
+    players: [],
+    eventId: "",
+    teamId: "",
+    image: "",
+  };
+  const typedPosts = posts as Post[];
 
   // Fetch highlight videos from the PlayerHighlights API
   const highlightsResponse = await fetch(
@@ -88,33 +92,34 @@ export default async function PlayerPage({
   );
   const highlightsData = await highlightsResponse.json();
 
-  const highlightVideos: HighlightVideo[] = highlightsData.results?.map((result: any) => ({
-    id: result.id,
-    stream_id: result.stream_id,
-    title: result.title || "",
-    description: result.description || "",
-    start_time: result.start_time,
-    end_time: result.end_time,
-    duration: result.duration,
-    thumbnailUrl: result.thumbnail || "",
-    url: result.url || "",    
-    created: result.created,
-    tagged_player_keys: result.tagged_player_keys,
-    highlight_type: result.highlight_type,
-    drund_event_id: result.drund_event_id,
-    game_key: result.game_key,
-    scoringapp_play_id: result.scoringapp_play_id,
-    play_type: result.play_type,
-    highlight_created: result.highlight_created,
-  })) || [];
+  const highlightVideos: HighlightVideo[] =
+    highlightsData.results?.map((result: any) => ({
+      id: result.id,
+      stream_id: result.stream_id,
+      title: result.title || "",
+      description: result.description || "",
+      start_time: result.start_time,
+      end_time: result.end_time,
+      duration: result.duration,
+      thumbnailUrl: result.thumbnail || "",
+      url: result.url || "",
+      created: result.created,
+      tagged_player_keys: result.tagged_player_keys,
+      highlight_type: result.highlight_type,
+      drund_event_id: result.drund_event_id,
+      game_key: result.game_key,
+      scoringapp_play_id: result.scoringapp_play_id,
+      play_type: result.play_type,
+      highlight_created: result.highlight_created,
+    })) || [];
 
+    
   return (
-
     <div className="container mx-auto p-0">
       <BackButton />
 
       <Card className="mt-2">
-        <CardContent className="p-0 bg-gradient-to-b from-gray-100 to-white">
+        <CardContent className="p-0 bg-white">
           <div className="flex flex-col items-center justify-center space-y-4 md:flex-row md:space-y-0 md:space-x-8 p-0">
             <Avatar className="w-80 h-80 mt-5 md:mt-0 md:w-80 md:h-80 rounded-sm">
               <AvatarImage
@@ -160,12 +165,10 @@ export default async function PlayerPage({
 
       <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
-          <CardHeader className="bg-gradient-to-b from-gray-100 to-white">
-            <CardTitle className="font-pgFont text-4xl">
-              Player Details
-            </CardTitle>
-          </CardHeader>
-          <CardContent >
+          <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4">
+            <CardTitle className="text-sm font-bold">Player Details</CardTitle>
+          </div>
+          <CardContent>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label>Height</Label>
@@ -222,11 +225,9 @@ export default async function PlayerPage({
         </Card>
 
         <Card>
-          <CardHeader className="bg-gradient-to-b from-gray-100 to-whit1">
-            <CardTitle className="font-pgFont text-4xl">
-              Additional Info
-            </CardTitle>
-          </CardHeader>
+          <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4">
+            <CardTitle className="text-sm font-bold">Additional Info</CardTitle>
+          </div>
           <CardContent>
             <div className="grid grid-cols-1 gap-4">
               <div>
@@ -239,35 +240,46 @@ export default async function PlayerPage({
       </div>
 
       <Suspense fallback={<div>Loading...</div>}>
-        <div className="mt-4 bg-white">
-          <CardHeader className="">
-            <CardTitle className="font-pgFont text-4xl">
-              {`${playerData.PlayerName}'s`} Media Content
-            </CardTitle>
-            <div className="mt-4 mb-4">
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800">
-                    <RiVideoUploadLine className="h-6 w-6 mr-2" /> Upload Media
-                    Content
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <Uploader
-                    playerid={playerData.PlayerID}
-                    FullName={playerData.PlayerName}
-                  />
-                </DialogContent>
-              </Dialog>
-            </div>
-          </CardHeader>
-          <CardContent className="p-0 bg-gradient-to-b from-gray-100 to-white">
-            <MediaParent
-              supabaseMediaFiles={supabaseMediaFiles}
-              highlightVideos={highlightVideos}
-            />
-          </CardContent>
+        <div className="mt-4 mb-4">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800">
+                <RiVideoUploadLine className="h-6 w-6 mr-2" /> Upload Media
+                Content
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <Uploader
+                playerid={playerData.PlayerID}
+                FullName={playerData.PlayerName}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
+
+        <Card className="mt-4">
+          <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4">
+            <CardTitle className="text-sm font-bold">Media Gallery</CardTitle>
+            </div> 
+            <div className="m-2 p-4">           
+            <PlayerMediaGallery
+              posts={typedPosts}
+              events={[]}
+              playerId={playerData.PlayerID.toString()} // Convert PlayerID to string
+            />
+            </div>
+        </Card>
+
+        <Card className="mt-8">
+        <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4">
+            <CardTitle className="text-sm font-bold">DiamondKast Plus Highlights</CardTitle>
+            </div> 
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
+              {highlightVideos.map((highlight) => (
+                <HighlightMediaCard key={highlight.id} highlight={highlight} />
+              ))}
+            </div>
+        </Card>
       </Suspense>
     </div>
   );

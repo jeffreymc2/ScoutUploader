@@ -106,8 +106,10 @@ export default function EventSearchComponent({ events }: EventSearchProps) {
             <IoIosCloseCircleOutline className="w-6 h-6" />
           </button>
         )}
-        <Button onClick={handleSearch} className="px-4 py-2 m-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
->
+        <Button
+          onClick={handleSearch}
+          className="px-4 py-2 m-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
+        >
           Search
         </Button>
       </div>
@@ -121,7 +123,8 @@ export default function EventSearchComponent({ events }: EventSearchProps) {
               ) || null
             )
           }
-          value={selectedEvent?.EventID.toString() || "no_event"}    >
+          value={selectedEvent?.EventID.toString() || "no_event"}
+        >
           <p className="text-xl text-gray-900 my-2 font-pgFont">
             Select an Event
           </p>
@@ -130,8 +133,8 @@ export default function EventSearchComponent({ events }: EventSearchProps) {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="no_selection" disabled>
-                        No team selected
-                      </SelectItem>
+              No team selected
+            </SelectItem>
             {searchResults.map((event) => (
               <SelectItem key={event.EventID} value={event.EventID.toString()}>
                 {event.EventName}
@@ -158,15 +161,15 @@ export default function EventSearchComponent({ events }: EventSearchProps) {
             <SelectValue placeholder="Select a team" />
           </SelectTrigger>
           <SelectContent>
-          <SelectItem value="no_selection" disabled>
-                        No team selected
-                      </SelectItem>
+            <SelectItem value="no_selection" disabled>
+              No team selected
+            </SelectItem>
             {teams.map((team) => (
               <SelectItem
                 key={team.TournamentTeamID}
                 value={team.TournamentTeamID.toString()}
               >
-               {team.TournamentTeamName} | Team Id:{team.TournamentTeamID}
+                {team.TournamentTeamName} | Team Id:{team.TournamentTeamID}
               </SelectItem>
             ))}
           </SelectContent>

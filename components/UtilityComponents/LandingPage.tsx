@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { FaBaseball } from "react-icons/fa6";
 import { Card, CardContent } from "../ui/card";
+import Image from "next/image";
 import BackgroundImage from "./BackgroundImage";
 
 export default function LandingPage() {
@@ -49,7 +50,7 @@ export default function LandingPage() {
             <Card className="w-full md:w-1/2 lg:w-1/3 shadow-lg py-10 px-10">
               <CardContent className="flex flex-col items-center h-full">
                 <div className="flex items-center justify-center">
-                  <FaBaseball className="w-12 h-12 text-blue-500" />
+                  <Image src="https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/baseball_.png" alt={""} width={65} height={65}/>
                 </div>
                 <h2 className="mt-4 text-lg font-semibold text-center text-gray-600">
                   Search & Upload Media Content by Events

@@ -11,9 +11,7 @@ import { toast } from "sonner";
 import { updatePost } from "@/app/media/actions";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { supabaseBrowser } from "@/lib/supabase/browser";
-import ReactPlayer from "react-player";
 import { FaEdit } from "react-icons/fa";
-
 import Image from "next/image";
 import Video from "next-video";
 
@@ -60,9 +58,13 @@ export default function MediaForm({
     }
   }, [postId, supabase]);
 
+
+  
+
   const handleDialogOpen = () => {
     fetchInitialData().then(() => setIsDialogOpen(true));
   };
+
 
   useEffect(() => {
     if (isDialogOpen) {

@@ -31,16 +31,16 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ onSearch }) => {
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="Search..."
-        className="w-full max-w-xs"
+        className="w-full shadow-md border border-gray-300 rounded-md text-base px-3 py-2 mt-2"
       />
-      <Select
+      {/* <Select
         value={filterOption}
         onValueChange={(value) => setFilterOption(value)}
       >
         <SelectTrigger>
           <SelectValue placeholder="Filter" />
         </SelectTrigger>
-      </Select>
+      </Select> */}
       <Button onClick={handleSearch}>Search</Button>
     </div>
   );
