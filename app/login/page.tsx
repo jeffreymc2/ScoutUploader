@@ -8,15 +8,13 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { LoginForm } from "./login-form";
-import BackgroundVideo from "next-video/background-video";
-const bgVideo = "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/15afdd15-e0a3-4488-804f-0c551cd3bacc.mp4?t=2024-05-04T00%3A51%3A46.638Z"
-
+import BackgroundImage from "@/components/UtilityComponents/BackgroundImage";
 
 export default async function LoginPage() {
   return (
 
     <>
-        <BackgroundVideo  src={bgVideo} >
+      <BackgroundImage />
 
       <div className="flex min-h-screen items-center justify-center bg-transparent">
         <Card className="w-full max-w-lg p-8 shadow-lg rounded-lg bg-gray-100 bg-opacity-90 p-20 m-2">
@@ -52,7 +50,6 @@ export default async function LoginPage() {
           </CardFooter>
         </Card>
       </div>
-      </BackgroundVideo>
     </>
   );
 }

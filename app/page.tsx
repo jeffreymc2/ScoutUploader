@@ -9,11 +9,10 @@ export default async function Page({ searchParams }: { searchParams: any }) {
   const playerId = searchParams.player_id ?? null;
   return (
     <>
-        <BackgroundVideo  src={bgVideo} >
+      <BackgroundImage />
 
       <LandingPage />
       <div className="container mx-auto"></div>
-      </BackgroundVideo>
     </>
   );
 }
