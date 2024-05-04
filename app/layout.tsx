@@ -10,6 +10,7 @@ import localFont from "next/font/local";
 import Footer from "@/components/Footer";
 import { usePathname } from "next/navigation";
 import MainRootComponent from "@/components/MainRootComponent";
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 const pgFont = localFont({ src: "./UnitedSansSmCdBd.woff2" });
@@ -24,6 +25,12 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning className={pgFont.className}>
+       <Head>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+      </Head>
       <body
         className={`${inter.className} overflow-y-scroll flex flex-col min-h-screen`}
       >
