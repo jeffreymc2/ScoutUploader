@@ -7,7 +7,6 @@ import Link from 'next/link';
 export default async function RegisterPage() {
   return (
     <>
-      
       <div className="flex items-center justify-center bg-transparent">
       <Card className="w-full max-w-lg p-8 shadow-lg rounded-lg bg-gray-100">
         <div className="flex justify-center items-center mb-8 ">

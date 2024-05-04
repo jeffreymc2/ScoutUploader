@@ -26,11 +26,6 @@ import DeletePost from "@/components/UtilityComponents/DeletePost";
 import useUser from "@/app/hook/useUser";
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 
@@ -120,7 +115,7 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
             />
             <div className="p-2">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-500">
+                <span className="text-sm leading-4 font-bold text-gray-600 mt-2">          
                   {post.title}
                 </span>
                 <DropdownMenu>
@@ -166,7 +161,7 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-              <p className="text-sm">{post.description}</p>
+              <p className="text-sm leading-4 font-bold text-gray-600 mt-2 mb-2">{post.description}</p>
 
               <EventSelect
                 post={post}

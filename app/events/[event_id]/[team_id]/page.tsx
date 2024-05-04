@@ -314,6 +314,15 @@ export default async function EventTeamPage({ params }: EventTeamPageProps) {
                         <TableCell className="text-sm p-2">
                           {player.primarypos}
                         </TableCell>
+                        <TableCell className="text-sm p-2">
+                          {player.primarypos}
+                        </TableCell>
+                        <TableCell className="text-sm p-2">
+                          {player.jerseynumber}
+                        </TableCell>
+                        <TableCell className="text-sm p-2">
+                          {player.GradYear}
+                        </TableCell>
                         {player.Rank && (
                           <TableCell className="text-sm p-2 flex items-center">
                           <Image
