@@ -66,7 +66,7 @@ export const HighlightMediaCard: React.FC<HighlightMediaCardProps> = ({
       >
         <div className="relative">
           <Image
-            src={highlight.thumbnailUrl || "/placeholder.png"}
+            src={highlight.thumbnailUrl || "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp"}
             alt={`Thumbnail for ${highlight.title || "Highlight"}`}
             width={400}
             height={225}

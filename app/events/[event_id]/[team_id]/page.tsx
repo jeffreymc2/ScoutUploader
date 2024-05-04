@@ -184,7 +184,8 @@ export default async function EventTeamPage({ params }: EventTeamPageProps) {
                 </Card>
               }
             >
-              <Card className="mt-4 rounded-lg shadow-lg bg-white min-h-screen">
+            
+              <Card className="mt-4 rounded-lg shadow-lg bg-white sm:min-h-screen min-h-[200px]">
                 <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4 flex items-center justify-between">
                   <CardTitle className="text-sm font-bold">
                     Media Gallery
@@ -205,6 +206,8 @@ export default async function EventTeamPage({ params }: EventTeamPageProps) {
                     </DialogContent>
                   </Dialog>
                 </div>
+
+                {typedPosts.length === 0 && (
                   <CardContent>
                     <EventTeamGallery
                       posts={typedPosts}
@@ -214,7 +217,21 @@ export default async function EventTeamPage({ params }: EventTeamPageProps) {
                       image={""}
                     />
                   </CardContent>
+                )}
+                {typedPosts.length > 0 && (
+                  <CardContent>
+                    <p className="text-sm font-semibold text-gray-600">No media found</p>
+                    <EventTeamGallery
+                      posts={typedPosts}
+                      players={playersData}
+                      eventId={event_id}
+                      teamId={team_id}
+                      image={""}
+                    />
+                  </CardContent>
+                )}
                 </Card>
+
             </Suspense>
           </div>
 

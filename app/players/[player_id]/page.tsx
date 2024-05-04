@@ -240,8 +240,11 @@ export default async function PlayerPage({
       </div>
 
       <Suspense fallback={<div>Loading...</div>}>
-        <div className="mt-4 mb-4">
-          <Dialog>
+    
+        <Card className="mt-4">
+          <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4">
+            <CardTitle className="text-sm font-bold">Media Gallery</CardTitle>
+            <Dialog>
             <DialogTrigger asChild>
               <Button className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800">
                 <RiVideoUploadLine className="h-6 w-6 mr-2" /> Upload Media
@@ -255,11 +258,6 @@ export default async function PlayerPage({
               />
             </DialogContent>
           </Dialog>
-        </div>
-
-        <Card className="mt-4">
-          <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4">
-            <CardTitle className="text-sm font-bold">Media Gallery</CardTitle>
             </div> 
             <div className="m-2 p-4">           
             <PlayerMediaGallery

@@ -26,11 +26,6 @@ import DeletePost from "@/components/UtilityComponents/DeletePost";
 import useUser from "@/app/hook/useUser";
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
 
@@ -130,7 +125,7 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
           return (
             <div
               key={post.id}
-              className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden"
+              className="bg-white rounded-lg shadow-md overflow-hidden"
             >
               <SupabaseMediaCard
                 file={{
@@ -146,18 +141,19 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                   post_by: post.post_by,
                   player_id: post.player_id,
                   team_id: post.team_id,
-                  image: post.image || "", // Add the 'image' property
+                  image: post.image || "", 
                 }}
               />
               <div className="p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-gray-500 dark:text-gray-400">
-                    Location
+                  <span className="text-gray-500 text-semibold text-sm">
+                    {post.title || "No title"}
                   </span>
+                  <p className="text-gray-500 text-semibold text-xs">{post.description}</p>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
-                        className="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+                        className="text-gray-500 hover:bg-gray-100 rounded-full"
                         size="icon"
                         variant="ghost"
                       >
@@ -248,7 +244,7 @@ const PlayerSelect: React.FC<PlayerSelectProps> = ({
         onValueChange={handleSelectChange}
         value={selectedPlayer?.playerid.toString() || ""}
       >
-        <SelectTrigger className="px-4 py-2 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 w-full">
+        <SelectTrigger className="px-4 py-2 rounded-md bg-gray-100 text-gray-700  w-full">
           <SelectValue placeholder="Select Player" />
         </SelectTrigger>
         <SelectContent>

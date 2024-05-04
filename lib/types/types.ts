@@ -189,6 +189,7 @@ export interface PlayData {
   
   
   export interface Post {
+    MediaFileURL: string;
     id?: string;
     created_at: string;
     player_id?: string | null;

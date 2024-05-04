@@ -99,7 +99,7 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
         return (
           <div
             key={post.id}
-            className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden"
+            className="bg-white rounded-lg shadow-md overflow-hidden"
           >
             <SupabaseMediaCard
               file={{
@@ -118,7 +118,7 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                 image: post.image || "",
               }}
             />
-            <div className="p-4">
+            <div className="p-2">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-gray-500">
                   {post.title}
