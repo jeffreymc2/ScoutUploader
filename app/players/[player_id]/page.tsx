@@ -77,12 +77,14 @@ export default async function PlayerPage({
             ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`
             : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`,
           isVideo: isVideoFile(post.name ?? ""),
+          MediaFileURL: "" // Add the missing property 'MediaFileURL' with an empty string value
         }))
       : [],
     players: [],
     eventId: "",
     teamId: "",
     image: "",
+
   };
   const typedPosts = posts as Post[];
 
