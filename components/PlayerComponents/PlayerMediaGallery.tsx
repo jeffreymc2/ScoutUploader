@@ -25,6 +25,7 @@ import MediaForm from "@/components/MediaComponents/MediaForm";
 import DeletePost from "@/components/UtilityComponents/DeletePost";
 import useUser from "@/app/hook/useUser";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { PiDotsThreeOutlineVerticalLight } from "react-icons/pi";
 
 interface PlayerMediaGalleryProps {
   posts: Post[];
@@ -119,18 +120,30 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
               }}
             />
             <div className="p-2">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm leading-4 font-bold text-gray-600 mt-2">
+              <div className="flex items-center justify-between mb-0">
+                {/* <span className="text-sm leading-4 font-bold text-gray-600 mt-2">
                   {post.title}
-                </span>
+                </span> */}
+                <div className="px-0 mb-4">
+                {post?.title && (
+                  <p className="text-sm leading-4 font-bold text-gray-600 mt-2">
+                    {post?.title}
+                  </p>
+                )}
+                {filterDescription(post.description) && (
+                  <p className="text-xs mt-1">
+                    {filterDescription(post.description)}
+                  </p>
+                )}
+              </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
-                      className="text-gray-500  hover:bg-gray-100 rounded-full"
+                      className="text-gray-500 hover:bg-gray-100 rounded-full outline-none ring-transparent	focus:ring-0 focus:"
                       size="icon"
                       variant="ghost"
                     >
-                      <MoveHorizontalIcon className="w-5 h-5" />
+                      <PiDotsThreeOutlineVerticalLight className="w-7 h-7"/>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
@@ -166,19 +179,8 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-              <div className="p-4">
-                {post?.title && (
-                  <p className="text-sm leading-4 font-bold text-gray-600 mt-2">
-                    {post?.title}
-                  </p>
-                )}
-                {filterDescription(post.description) && (
-                  <p className="text-xs mt-1">
-                    {filterDescription(post.description)}
-                  </p>
-                )}
-              </div>
-
+              
+              <div className="relative bottom-0 left-0 right-0 p-2 bg-white bg-opacity-80">      
               <EventSelect
                 post={post}
                 events={events}
@@ -191,6 +193,7 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                   </p>
                 </Link>
               )}
+              </div>
             </div>
           </div>
         );

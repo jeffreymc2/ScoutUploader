@@ -91,6 +91,21 @@ html {
 	overflow: visible;
 	z-index: 1000;
   }
+
+  .table-container {
+	position: relative;
+  }
+  
+  .table-container::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 30px;
+	height: 100%;
+	background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+	pointer-events: none;
+  }
   
   
 main {

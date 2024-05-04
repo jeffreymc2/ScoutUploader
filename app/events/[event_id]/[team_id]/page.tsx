@@ -206,23 +206,15 @@ export default async function EventTeamPage({ params }: EventTeamPageProps) {
                     </DialogContent>
                   </Dialog>
                 </div>
-
                 {typedPosts.length === 0 && (
-                  <CardContent>
-                    <EventTeamGallery
-                      posts={typedPosts}
-                      players={playersData}
-                      eventId={event_id}
-                      teamId={team_id}
-                      image={""}
-                    />
-                  </CardContent>
-                )}
-                {typedPosts.length > 0 && (
                   <CardContent>
                     <p className="text-sm font-semibold text-gray-600">
                       No media found
                     </p>
+                  </CardContent>
+                )}
+                {typedPosts.length > 0 && (
+                  <CardContent>
                     <EventTeamGallery
                       posts={typedPosts}
                       players={playersData}
@@ -278,7 +270,7 @@ export default async function EventTeamPage({ params }: EventTeamPageProps) {
                 </div>
               </CardContent>
             </Card>
-            <Card className="rounded-lg shadow-lg bg-white">
+            <Card className="rounded-lg shadow-lg bg-white ">
               <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4">
                 <CardTitle className="text-sm font-semibold">
                   Tournament Team Roster

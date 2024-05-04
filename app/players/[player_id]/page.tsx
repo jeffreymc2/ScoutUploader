@@ -142,14 +142,15 @@ export default async function PlayerPage({
                 Grad Year: {playerData?.GradYear || "N/A"} | Age:{" "}
                 {playerData?.Age || "N/A"}
               </p>
-              <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4 flex items-center justify-between">
-                <CardTitle className="text-sm font-bold">
-                  Media Gallery
-                </CardTitle>
+               
                 <Dialog>
                   <DialogTrigger className="text-sm font-bold flex items-center space-x-1 ">
-                    <RiVideoUploadLine className="h-5 w-5" />
-                    <span>Upload Media</span>
+                  <Button className="bg-blue-500 text-white rounded-t-lg py-2 px-4 ">
+
+                    <RiVideoUploadLine className="h-5 w-5 mr-2" />
+                    <span >Upload Media</span>
+                    </Button>
+
                   </DialogTrigger>
                   <DialogContent>
                     <Uploader
@@ -158,7 +159,6 @@ export default async function PlayerPage({
                     />
                   </DialogContent>
                 </Dialog>
-              </div>
             </div>
           </div>
         </CardContent>

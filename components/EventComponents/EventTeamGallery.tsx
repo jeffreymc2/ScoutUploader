@@ -25,6 +25,7 @@ import MediaForm from "@/components/MediaComponents/MediaForm";
 import DeletePost from "@/components/UtilityComponents/DeletePost";
 import useUser from "@/app/hook/useUser";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { PiDotsThreeOutlineVerticalLight } from "react-icons/pi";
 
 interface EventTeamGalleryProps {
   posts: Post[];
@@ -142,21 +143,24 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                 }}
               />
               <div className="p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="p-4">
+                <div className="flex items-center justify-between mb-0">
+                  {/* <span className="text-sm leading-4 font-bold text-gray-600 mt-2">
+                  {post.title}
+                </span> */}
+                  <div className="px-0 mb-4">
                     <p className="text-sm leading-4 font-bold text-gray-600 mt-2">
                       {post?.title}
                     </p>
-                    <p className="text-xs mt-1">{post?.description}</p>
+                    <p className="text-xs mt-1"></p>
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
-                        className="text-gray-500 hover:bg-gray-100 rounded-full"
+                        className="text-gray-500 hover:bg-gray-100 rounded-full outline-none ring-transparent	focus:ring-0 focus:"
                         size="icon"
                         variant="ghost"
                       >
-                        <MoveHorizontalIcon className="w-5 h-5" />
+                        <PiDotsThreeOutlineVerticalLight className="w-7 h-7" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
