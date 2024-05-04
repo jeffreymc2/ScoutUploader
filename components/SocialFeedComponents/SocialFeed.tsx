@@ -32,6 +32,7 @@ export default async function Feed() {
     post_type: item?.post_type,
     title: item?.title,
     description: item?.description,
+    MediaFileURL: '' // Add the missing 'MediaFileURL' property
   }));
 
 
