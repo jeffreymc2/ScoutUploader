@@ -60,6 +60,7 @@ const RosterTable: React.FC<RosterTableProps> = ({ roster }) => {
     {
       header: "Rank",
       accessorKey: "Rank",
+      size: 70,
       cell: ({ row }) =>
         row.original.Rank && (
           <div className="flex items-center">

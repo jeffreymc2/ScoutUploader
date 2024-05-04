@@ -22,7 +22,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
   return (
     <>
       <div
-        className="relative w-full h-48 sm:h-36 shadow-sm rounded-lg cursor-pointer"
+        className="relative w-full h-48 sm:h-72 shadow-sm rounded-lg cursor-pointer"
         onClick={handleDialogOpen}
       >
         {file.isVideo ? (

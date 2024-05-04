@@ -117,7 +117,6 @@ export default async function PlayerPage({
   return (
     <div className="container mx-auto p-0">
       <BackButton />
-
       <Card className="mt-2">
         <CardContent className="p-0 bg-white">
           <div className="flex flex-col items-center justify-center space-y-4 md:flex-row md:space-y-0 md:space-x-8 p-0">
@@ -142,15 +141,13 @@ export default async function PlayerPage({
                 Grad Year: {playerData?.GradYear || "N/A"} | Age:{" "}
                 {playerData?.Age || "N/A"}
               </p>
-               
+              <div className="flex justify-center mb-4 md:justify-start">
                 <Dialog>
-                  <DialogTrigger className="text-sm font-bold flex items-center space-x-1 ">
-                  <Button className="bg-blue-500 text-white rounded-t-lg py-2 px-4 ">
-
-                    <RiVideoUploadLine className="h-5 w-5 mr-2" />
-                    <span >Upload Media</span>
+                  <DialogTrigger className="text-sm font-bold flex items-center space-x-1">
+                    <Button className="bg-blue-500 text-white rounded-t-lg py-2 px-4 ">
+                      <RiVideoUploadLine className="h-5 w-5 mr-2" />
+                      <span>Upload Media</span>
                     </Button>
-
                   </DialogTrigger>
                   <DialogContent>
                     <Uploader
@@ -159,6 +156,7 @@ export default async function PlayerPage({
                     />
                   </DialogContent>
                 </Dialog>
+              </div>
             </div>
           </div>
         </CardContent>

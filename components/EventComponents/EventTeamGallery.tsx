@@ -197,7 +197,10 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-                <PlayerSelect
+                
+              </div>
+              <div className="m-4">
+              <PlayerSelect
                   post={post}
                   players={players}
                   onSavePlayer={handleSavePlayer}
@@ -209,7 +212,7 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                     </p>
                   </Link>
                 )}
-              </div>
+                </div>
             </div>
           );
         })}

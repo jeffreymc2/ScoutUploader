@@ -180,7 +180,9 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                 </DropdownMenu>
               </div>
               
-              <div className="relative bottom-0 left-0 right-0 p-2 bg-white bg-opacity-80">      
+              
+            </div>
+            <div className="relative bottom-0 left-0 right-0 p-2 bg-white bg-opacity-80">      
               <EventSelect
                 post={post}
                 events={events}
@@ -194,7 +196,6 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                 </Link>
               )}
               </div>
-            </div>
           </div>
         );
       })}
