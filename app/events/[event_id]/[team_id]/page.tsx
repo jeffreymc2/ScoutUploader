@@ -38,6 +38,8 @@ import {
 import { RiVideoUploadLine } from "react-icons/ri";
 import UploaderEvents from "@/components/UploaderEvents";
 
+import RosterTable from "@/app/events/[event_id]/[team_id]/components/RosterTableComponent";
+
 interface EventTeamPageProps {
   params: {
     event_id: string;
@@ -61,7 +63,6 @@ export default async function EventTeamPage({ params }: EventTeamPageProps) {
     return <div>Error fetching images</div>;
   }
 
-  
   const typedPosts = posts as Post[];
 
   const playersResponse = await fetch(
@@ -89,7 +90,7 @@ export default async function EventTeamPage({ params }: EventTeamPageProps) {
   const team = teamsData.find(
     (team) => team.TournamentTeamID === parseInt(team_id)
   );
-  
+
   const playersData: Player[] = team?.Roster || [];
 
   if (!team) {
@@ -184,7 +185,6 @@ export default async function EventTeamPage({ params }: EventTeamPageProps) {
                 </Card>
               }
             >
-            
               <Card className="mt-4 rounded-lg shadow-lg bg-white sm:min-h-screen min-h-[200px]">
                 <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4 flex items-center justify-between">
                   <CardTitle className="text-sm font-bold">
@@ -220,7 +220,9 @@ export default async function EventTeamPage({ params }: EventTeamPageProps) {
                 )}
                 {typedPosts.length > 0 && (
                   <CardContent>
-                    <p className="text-sm font-semibold text-gray-600">No media found</p>
+                    <p className="text-sm font-semibold text-gray-600">
+                      No media found
+                    </p>
                     <EventTeamGallery
                       posts={typedPosts}
                       players={playersData}
@@ -230,8 +232,7 @@ export default async function EventTeamPage({ params }: EventTeamPageProps) {
                     />
                   </CardContent>
                 )}
-                </Card>
-
+              </Card>
             </Suspense>
           </div>
 
@@ -284,61 +285,7 @@ export default async function EventTeamPage({ params }: EventTeamPageProps) {
                 </CardTitle>
               </div>
               <CardContent>
-                <Table className="w-full">
-                  <TableHeader className="text-sm font-semibold ">
-                    <TableRow>
-                      <TableHead className="text-sm font-semibold p-2">
-                        Name
-                      </TableHead>
-                      <TableHead className="text-sm font-semibold p-2">
-                        Position
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {Roster.map((player) => (
-                      <TableRow key={player.playerid} className="text-sm">
-                        <Link href={`/players/${player.playerid}`}>
-                          <TableCell className="text-sm p-2">
-                            {player.ProfilePic && (
-                              <Image
-                                src={player.ProfilePic}
-                                alt={player.FirstName}
-                                width={25}
-                                height={25}
-                              />
-                            )}
-                            {player.FirstName} {player.LastName}
-                          </TableCell>
-                        </Link>
-                        <TableCell className="text-sm p-2">
-                          {player.primarypos}
-                        </TableCell>
-                        <TableCell className="text-sm p-2">
-                          {player.primarypos}
-                        </TableCell>
-                        <TableCell className="text-sm p-2">
-                          {player.jerseynumber}
-                        </TableCell>
-                        <TableCell className="text-sm p-2">
-                          {player.GradYear}
-                        </TableCell>
-                        {player.Rank && (
-                          <TableCell className="text-sm p-2 flex items-center">
-                          <Image
-                            src="https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/CROSSCHECKET_ICON_1.png"
-                            alt=""
-                            width={25}
-                            height={25}
-                            className="mr-2"
-                          />
-                          <span>{player.Rank}</span>
-                        </TableCell>
-                        )}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <RosterTable roster={Roster} />
               </CardContent>
             </Card>
 

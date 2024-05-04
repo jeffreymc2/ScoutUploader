@@ -17,10 +17,12 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import SearchComponent from "../SearchComponent";
 
+// HighlightMediaCardProps type
 interface HighlightMediaCardProps {
   highlight: HighlightVideo;
 }
 
+// HighlightMediaCard component that displays a highlight video card
 export const HighlightMediaCard: React.FC<HighlightMediaCardProps> = ({
   highlight,
 }) => {
@@ -30,11 +32,15 @@ export const HighlightMediaCard: React.FC<HighlightMediaCardProps> = ({
     setIsOpen(true);
   };
 
+  // Get the title of the highlight without the brackets
   const getTitleWithoutBrackets = (title: string) => {
     const bracketRegex = /\[(.*?)\]/;
     const match = title.match(bracketRegex);
     return match ? match[1] : title;
   };
+
+
+  // Get the title of the highlight without the brackets
 
   const getTitle = (title: string) => {
     const bracketRegex = /\[(.*?)\]/;
@@ -42,6 +48,7 @@ export const HighlightMediaCard: React.FC<HighlightMediaCardProps> = ({
     return match ? title.replace(match[0], "") : title;
   };
 
+  // Render the badge with the title of the highlight
   const renderOverlayBadge = (title: string) => {
     const titleWithoutBrackets = getTitleWithoutBrackets(title);
     return (
@@ -51,6 +58,7 @@ export const HighlightMediaCard: React.FC<HighlightMediaCardProps> = ({
     );
   };
 
+  // Filter out the 9999 from the description
   const filterDescription = (description: string | undefined) => {
     if (description) {
       return description.replace(/9999/g, "");

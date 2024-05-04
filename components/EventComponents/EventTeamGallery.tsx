@@ -24,10 +24,7 @@ import {
 import MediaForm from "@/components/MediaComponents/MediaForm";
 import DeletePost from "@/components/UtilityComponents/DeletePost";
 import useUser from "@/app/hook/useUser";
-import {
-  Dialog,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 
 interface EventTeamGalleryProps {
   posts: Post[];
@@ -141,15 +138,17 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                   post_by: post.post_by,
                   player_id: post.player_id,
                   team_id: post.team_id,
-                  image: post.image || "", 
+                  image: post.image || "",
                 }}
               />
               <div className="p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-gray-500 text-semibold text-sm">
-                    {post.title || "No title"}
-                  </span>
-                  <p className="text-gray-500 text-semibold text-xs">{post.description}</p>
+                  <div className="p-4">
+                    <p className="text-sm leading-4 font-bold text-gray-600 mt-2">
+                      {post?.title}
+                    </p>
+                    <p className="text-xs mt-1">{post?.description}</p>
+                  </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
@@ -161,30 +160,31 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                       {user?.id === post.post_by && ( 
-                        <><DropdownMenuItem>
-
-                        </DropdownMenuItem><Dialog>
+                      {user?.id === post.post_by && (
+                        <>
+                          <DropdownMenuItem></DropdownMenuItem>
+                          <Dialog>
                             <DialogTrigger asChild>
                               <MediaForm
                                 postId={post.id?.toString() || ""}
                                 mediaUrl={post.image || ""}
                                 isVideo={post.isVideo}
-                                thumbnailUrl={post.thumbnail || ""} />
+                                thumbnailUrl={post.thumbnail || ""}
+                              />
                             </DialogTrigger>
-
-                          </Dialog></>
+                          </Dialog>
+                        </>
                       )}
                       {user?.id === post.post_by && (
-                      <div className="mt-3">
-                      <DeletePost
+                        <div className="mt-3">
+                          <DeletePost
                             post_by={post.post_by || ""}
                             image={post.image || ""}
                             event_id={post.player_id || undefined}
                             team_id={post.team_id}
                           />
-                          </div>
-                    )} 
+                        </div>
+                      )}
                       <DropdownMenuItem
                         onClick={() => handleDownload(post.image || "")}
                       >

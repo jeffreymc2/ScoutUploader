@@ -77,14 +77,13 @@ export default async function PlayerPage({
             ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`
             : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`,
           isVideo: isVideoFile(post.name ?? ""),
-          MediaFileURL: "" // Add the missing property 'MediaFileURL' with an empty string value
+          MediaFileURL: "", // Add the missing property 'MediaFileURL' with an empty string value
         }))
       : [],
     players: [],
     eventId: "",
     teamId: "",
     image: "",
-
   };
   const typedPosts = posts as Post[];
 
@@ -115,7 +114,6 @@ export default async function PlayerPage({
       highlight_created: result.highlight_created,
     })) || [];
 
-    
   return (
     <div className="container mx-auto p-0">
       <BackButton />
@@ -144,13 +142,14 @@ export default async function PlayerPage({
                 Grad Year: {playerData?.GradYear || "N/A"} | Age:{" "}
                 {playerData?.Age || "N/A"}
               </p>
-              <div className="mt-4 mb-4">
+              <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4 flex items-center justify-between">
+                <CardTitle className="text-sm font-bold">
+                  Media Gallery
+                </CardTitle>
                 <Dialog>
-                  <DialogTrigger asChild>
-                    <Button className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800">
-                      <RiVideoUploadLine className="h-6 w-6 mr-2" /> Upload
-                      Media Content
-                    </Button>
+                  <DialogTrigger className="text-sm font-bold flex items-center space-x-1 ">
+                    <RiVideoUploadLine className="h-5 w-5" />
+                    <span>Upload Media</span>
                   </DialogTrigger>
                   <DialogContent>
                     <Uploader
@@ -242,43 +241,42 @@ export default async function PlayerPage({
       </div>
 
       <Suspense fallback={<div>Loading...</div>}>
-    
         <Card className="mt-4">
-          <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4">
+          <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4 flex items-center justify-between">
             <CardTitle className="text-sm font-bold">Media Gallery</CardTitle>
             <Dialog>
-            <DialogTrigger asChild>
-              <Button className="px-4 py-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800">
-                <RiVideoUploadLine className="h-6 w-6 mr-2" /> Upload Media
-                Content
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <Uploader
-                playerid={playerData.PlayerID}
-                FullName={playerData.PlayerName}
-              />
-            </DialogContent>
-          </Dialog>
-            </div> 
-            <div className="m-2 p-4">           
+              <DialogTrigger className="text-sm font-bold flex items-center space-x-1 ">
+                <RiVideoUploadLine className="h-5 w-5" />
+                <span>Upload Media</span>
+              </DialogTrigger>
+              <DialogContent>
+                <Uploader
+                  playerid={playerData.PlayerID}
+                  FullName={playerData.PlayerName}
+                />
+              </DialogContent>
+            </Dialog>
+          </div>
+          <div className="m-2 p-4">
             <PlayerMediaGallery
               posts={typedPosts}
               events={[]}
               playerId={playerData.PlayerID.toString()} // Convert PlayerID to string
             />
-            </div>
+          </div>
         </Card>
 
         <Card className="mt-8">
-        <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4">
-            <CardTitle className="text-sm font-bold">DiamondKast Plus Highlights</CardTitle>
-            </div> 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
-              {highlightVideos.map((highlight) => (
-                <HighlightMediaCard key={highlight.id} highlight={highlight} />
-              ))}
-            </div>
+          <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4">
+            <CardTitle className="text-sm font-bold">
+              DiamondKast Plus Highlights
+            </CardTitle>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
+            {highlightVideos.map((highlight) => (
+              <HighlightMediaCard key={highlight.id} highlight={highlight} />
+            ))}
+          </div>
         </Card>
       </Suspense>
     </div>

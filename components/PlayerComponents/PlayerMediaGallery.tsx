@@ -24,10 +24,7 @@ import {
 import MediaForm from "@/components/MediaComponents/MediaForm";
 import DeletePost from "@/components/UtilityComponents/DeletePost";
 import useUser from "@/app/hook/useUser";
-import {
-  Dialog,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 
 interface PlayerMediaGalleryProps {
   posts: Post[];
@@ -36,10 +33,10 @@ interface PlayerMediaGalleryProps {
 }
 
 interface EventSelectProps {
-    post: Post;
-    events: EventSearch[];
-    onSaveEvent: (postId: string, eventId: string) => void;
-  }
+  post: Post;
+  events: EventSearch[];
+  onSaveEvent: (postId: string, eventId: string) => void;
+}
 
 const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
   posts,
@@ -84,6 +81,14 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
     }
   };
 
+  // Filter out the 9999 from the description
+  const filterDescription = (description: string | undefined) => {
+    if (description) {
+      return description.replace(/9999/g, "");
+    }
+    return description;
+  };
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       {playerSearchProps.posts?.map((post) => {
@@ -115,7 +120,7 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
             />
             <div className="p-2">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm leading-4 font-bold text-gray-600 mt-2">          
+                <span className="text-sm leading-4 font-bold text-gray-600 mt-2">
                   {post.title}
                 </span>
                 <DropdownMenu>
@@ -161,7 +166,18 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-              <p className="text-sm leading-4 font-bold text-gray-600 mt-2 mb-2">{post.description}</p>
+              <div className="p-4">
+                {post?.title && (
+                  <p className="text-sm leading-4 font-bold text-gray-600 mt-2">
+                    {post?.title}
+                  </p>
+                )}
+                {filterDescription(post.description) && (
+                  <p className="text-xs mt-1">
+                    {filterDescription(post.description)}
+                  </p>
+                )}
+              </div>
 
               <EventSelect
                 post={post}
@@ -182,8 +198,6 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
     </div>
   );
 };
-
-
 
 const EventSelect: React.FC<EventSelectProps> = ({
   post,
