@@ -46,21 +46,20 @@ const DeletePost: React.FC<DeletePostProps> = ({
       let folderPath = event_id
         ? `events/${post_by}/${event_id}/${team_id}/`
         : `players/${post_by}/${player_id}/`;
-
-      // Get the image path relative to the folder path
-      const imagePath = image.replace(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/${folderPath}`, '');
-
-      const fullPath = `${folderPath}${imagePath}`;
+  
+      // Get the image path relative to the storage bucket
+      const imagePath = image.replace(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/`, '');
+  
       const { data, error } = await supabase.storage
         .from("media")
-        .remove([fullPath]);
-
-      console.log("data", post_by, event_id, team_id, folderPath, imagePath, fullPath, data, error);
+        .remove([imagePath]);
+  
+      console.log("data", post_by, event_id, team_id, folderPath, imagePath, data, error);
       if (error) {
         console.error("Failed to delete image:", error);
         toast.error(`Failed to delete image: ${error.message}`);
       } else {
-        console.log("Successfully removed image with path:", fullPath, data);
+        console.log("Successfully removed image with path:", imagePath, data);
         toast.success("Successfully removed image");
         router.refresh();
       }
