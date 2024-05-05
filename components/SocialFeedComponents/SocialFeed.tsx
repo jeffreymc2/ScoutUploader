@@ -4,6 +4,8 @@ import { supabaseServer } from "@/lib/supabase/server";
 import MediaCard from "./MediaCard";
 import SearchBar from "./SearchBar";
 import { Post } from "@/lib/types/types";
+import { HighlightMediaCard } from "@/components/MediaComponents/HighlightMediaCard";
+import { SupabaseMediaCard } from "@/components/MediaComponents/SupbaseMediaCard";
 
 export default async function Feed() {
   const supabase = supabaseServer();
@@ -32,8 +34,9 @@ export default async function Feed() {
     post_type: item?.post_type,
     title: item?.title,
     description: item?.description,
-    MediaFileURL: '' // Add the missing 'MediaFileURL' property
-  }));
+    MediaFileURL: '', // Add the missing 'MediaFileURL' property        
+  
+    }));
 
 
   return (

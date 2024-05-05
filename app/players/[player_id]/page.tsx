@@ -15,6 +15,15 @@ import Uploader from "@/components/Uploader";
 import { MediaFile, HighlightVideo } from "@/lib/types/types";
 import PlayerMediaGallery from "@/components/PlayerComponents/PlayerMediaGallery";
 import { HighlightMediaCard } from "@/components/MediaComponents/HighlightMediaCard";
+import PlayerStatsSummary from "@/components/PlayerComponents/PlayerStatsSummary";
+import { GameStatsTable } from "@/components/PlayerComponents/PlayerStatsTable";
+import {
+  FaMedal,
+  FaMapMarkerAlt,
+  FaBasketballBall,
+  FaRulerVertical,
+  FaWeight,
+} from "react-icons/fa";
 
 interface PlayerData {
   PlayerID: number;
@@ -117,9 +126,9 @@ export default async function PlayerPage({
   return (
     <div className="container mx-auto p-0">
       <BackButton />
-      <Card className="mt-2">
+      <Card className="mt-2 ">
         <CardContent className="p-0 bg-white">
-          <div className="flex flex-col items-center justify-center space-y-4 md:flex-row md:space-y-0 md:space-x-8 p-0">
+          <div className="flex flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0 md:space-x-8 p-0">
             <Avatar className="w-80 h-80 mt-5 md:mt-0 md:w-80 md:h-80 rounded-sm">
               <AvatarImage
                 src={playerData.ProfilePic ?? ""}
@@ -158,6 +167,7 @@ export default async function PlayerPage({
                 </Dialog>
               </div>
             </div>
+            
           </div>
         </CardContent>
       </Card>
@@ -225,9 +235,19 @@ export default async function PlayerPage({
 
         <Card>
           <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4">
-            <CardTitle className="text-sm font-bold">Additional Info</CardTitle>
+            <CardTitle className="text-sm font-bold">
+              Statistics & Notes
+            </CardTitle>
           </div>
           <CardContent>
+            <div className="w-full my-4">
+              <PlayerStatsSummary playerId={player_id.toString()} />
+            </div>
+
+            <div className="w-full my-4">
+              <GameStatsTable playerId={player_id.toString()} />
+            </div>
+
             <div className="grid grid-cols-1 gap-4">
               <div>
                 <Label>Notes</Label>

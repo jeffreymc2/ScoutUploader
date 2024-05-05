@@ -26,6 +26,7 @@ interface DeletePostProps {
   image: string;
   event_id?: string;
   team_id?: string;
+  player_id?: string;
 }
 
 const DeletePost: React.FC<DeletePostProps> = ({
@@ -33,6 +34,7 @@ const DeletePost: React.FC<DeletePostProps> = ({
   image,
   event_id,
   team_id,
+  player_id
 }) => {
   const { data: user, isFetching } = useUser();
   const router = useRouter();
@@ -43,7 +45,7 @@ const DeletePost: React.FC<DeletePostProps> = ({
       const supabase = supabaseBrowser();
       let folderPath = event_id
         ? `events/${post_by}/${event_id}/${team_id}/`
-        : `players/${post_by}/`;
+        : `players/${post_by}/${player_id}/`;
       let imagePath = image.split(folderPath).pop() ?? "";
       if (imagePath.startsWith("/")) {
         imagePath = imagePath.substring(1);

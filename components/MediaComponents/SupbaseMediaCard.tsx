@@ -32,6 +32,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
             preload="auto"
             controls={false}
             autoPlay={false}
+            
           />
         ) : (
           <Image
