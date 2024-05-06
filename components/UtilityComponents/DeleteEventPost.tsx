@@ -24,29 +24,31 @@ const DeleteEventPost: React.FC<DeleteEventPostProps> = ({
   const router = useRouter();
 
   const handleDelete = async () => {
+    toast.info("Deleting image...");
     try {
       const supabase = supabaseBrowser();
-      const bucket = "media";
-      const imagePath = image.split(`/public/${bucket}/events/`).pop() ?? "";
-
+      
+      // Extract the storage path from the image URL
+      const storagePath = image.replace(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/`, '');
+      
+      // Delete the image from storage
       const { data, error } = await supabase.storage
-        .from(bucket)
-        .remove([`events/${imagePath}`]);
-
+        .from('media')
+        .remove([storagePath]);
+      
       if (error) {
-        console.error("Failed to delete event image:", error);
-        toast.error(`Failed to delete event image: ${error.message}`);
+        console.error("Failed to delete image:", error);
+        toast.error(`Failed to delete image: ${error.message}`);
       } else {
-        console.log("Successfully removed event image with path:", imagePath, data);
-        toast.success("Successfully removed event image");
+        console.log("Successfully removed image");
+        toast.success("Successfully removed image");
         router.refresh();
       }
     } catch (error) {
-      console.error("Error during event image delete operation:", error);
-      toast.error("An error occurred while deleting the event image");
+      console.error("Error during delete operation:", error);
+      toast.error("An error occurred while deleting the image");
     }
   };
-
   if (isFetching) {
     return null;
   }
