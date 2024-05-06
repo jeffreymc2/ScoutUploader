@@ -1,1 +1,1 @@
-// / <reference types="next-video/video-types/global" />
+/// <reference types="next-video/video-types/global" />
