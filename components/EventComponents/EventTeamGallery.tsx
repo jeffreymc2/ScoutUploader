@@ -147,11 +147,11 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                   {/* <span className="text-sm leading-4 font-bold text-gray-600 mt-2">
                   {post.title}
                 </span> */}
-                  <div className="px-0 mb-4">
+                  <div className="px-0 mb-2">
                     <p className="text-sm leading-4 font-bold text-gray-600 mt-2">
                       {post?.title}
                     </p>
-                    <p className="text-xs mt-1"></p>
+                    <p className="text-xs mt-1">{post?.description}</p>
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -160,7 +160,7 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                         size="icon"
                         variant="ghost"
                       >
-                        <PiDotsThreeOutlineVerticalLight className="w-7 h-7" />
+                        <PiDotsThreeOutlineVerticalLight className="w-6 h-6" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -197,7 +197,6 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-                
               </div>
               <div className="m-4">
               <PlayerSelect
