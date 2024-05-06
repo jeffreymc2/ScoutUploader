@@ -24,7 +24,6 @@ const DeleteEventPost: React.FC<DeleteEventPostProps> = ({
   const router = useRouter();
 
   const handleDelete = async () => {
-    toast.info("Deleting event image...");
     try {
       const supabase = supabaseBrowser();
       const bucket = "media";
