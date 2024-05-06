@@ -4,7 +4,6 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const playerID = searchParams.get("playerID");
 
-  console.log("Received playerID:", playerID);
 
 
   if (!playerID) {
@@ -27,7 +26,6 @@ export async function GET(request: NextRequest) {
         "Content-Type": "application/json",
       },
     });
-    console.log(response);
     if (response.ok) {
       const data = await response.json();
       return NextResponse.json(data);
