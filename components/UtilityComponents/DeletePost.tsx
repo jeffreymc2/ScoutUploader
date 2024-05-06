@@ -29,13 +29,7 @@ interface DeletePostProps {
   player_id?: string;
 }
 
-const DeletePost: React.FC<DeletePostProps> = ({
-  post_by,
-  image,
-  event_id,
-  team_id,
-  player_id
-}) => {
+const DeletePost: React.FC<DeletePostProps> = ({ post_by, image, event_id, team_id, player_id }) => {
   const { data: user, isFetching } = useUser();
   const router = useRouter();
 
@@ -43,31 +37,29 @@ const DeletePost: React.FC<DeletePostProps> = ({
     toast.info("Deleting image...");
     try {
       const supabase = supabaseBrowser();
-      
-      // Determine the storage path based on whether it's a player or event upload
-      const storagePath = event_id
-        ? `events/${post_by}/${event_id}/${team_id}`
-        : `players/${post_by}/${player_id}`;
-      
-      // Extract the image name from the URL
-      const imageName = image.split('/').pop();
-      
-      // Delete the image from storage
-      const { error } = await supabase.storage
-        .from("media")
-        .remove([`${storagePath}/${imageName}`]);
-      
+  
+      let imagePath;
+      let folderPath = image.includes('/events/') ? '/public/media/events/' : '/public/media/players/';
+      imagePath = image.split(folderPath).pop() ?? '';
+  
+      // Ensure no leading slash
+      if (imagePath.startsWith('/')) {
+        imagePath = imagePath.substring(1);
+      }
+  
+      const { data, error } = await supabase.storage.from('media').remove([`events/${imagePath}`, `players/${imagePath}`]);
+  
       if (error) {
-        console.error("Failed to delete image:", error);
+        console.error('Failed to delete image:', error);
         toast.error(`Failed to delete image: ${error.message}`);
       } else {
-        console.log("Successfully removed image");
-        toast.success("Successfully removed image");
+        console.log('Successfully removed image with path:', imagePath, data);
+        toast.success('Successfully removed image');
         router.refresh();
       }
     } catch (error) {
-      console.error("Error during delete operation:", error);
-      toast.error("An error occurred while deleting the image");
+      console.error('Error during delete operation:', error);
+      toast.error('An error occurred while deleting the image');
     }
   };
   
