@@ -590,11 +590,8 @@ export function PlaylistBuilder({ initialVideos }: PlaylistBuilderProps) {
          </SortableContext>
        </div>
        <div>
-         {savedPlaylist.length > 0 ? (
            <DroppablePlaylist playlist={playlist} setPlaylist={setPlaylist} />
-         ) : (
-           <p>No saved playlist found.</p>
-         )}
+        
          <button onClick={savePlaylist}>Save Playlist</button>
        </div>
      </div>
