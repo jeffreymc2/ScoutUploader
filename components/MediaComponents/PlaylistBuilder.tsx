@@ -485,8 +485,8 @@ export function PlaylistBuilder({ initialVideos }: PlaylistBuilderProps) {
        const { data: playlistData, error } = await supabaseBrowser()
          .from("playlists")
          .select("playlist")
-        //  .eq("user_id", user.id)
-         .eq("user_id", user2)
+         .eq("user_id", user.id)
+        //  .eq("user_id", user2)
 
          .single();
 
@@ -563,8 +563,8 @@ export function PlaylistBuilder({ initialVideos }: PlaylistBuilderProps) {
      const { error } = await supabaseBrowser()
        .from("playlists")
        .upsert({ 
-        user_id: user3, 
-        // user_id: user.id, 
+        // user_id: user3, 
+        user_id: user.id, 
 
         name: "My Playlist", 
         playlist: playlist as any[] })

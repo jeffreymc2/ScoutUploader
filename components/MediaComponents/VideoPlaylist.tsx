@@ -34,8 +34,8 @@ const VideoPlayer: React.FC = () => {
         const { data: playlistData, error } = await supabaseBrowser()
           .from("playlists")
           .select("playlist")
-          // .eq("user_id", user.id)
-          .eq("user_id", user2)
+          .eq("user_id", user.id)
+          // .eq("user_id", user2)
 
           .single();
         if (error) {
@@ -75,8 +75,8 @@ const VideoPlayer: React.FC = () => {
       const { data: playlistData, error: fetchError } = await supabaseBrowser()
         .from("playlists")
         .select("playlist")
-        // .eq("user_id", user?.id || "")
-        .eq("user_id", user2 || "")
+        .eq("user_id", user?.id || "")
+        // .eq("user_id", user2 || "")
 
         .single();
 
@@ -92,8 +92,8 @@ const VideoPlayer: React.FC = () => {
       const { error: updateError } = await supabaseBrowser()
         .from("playlists")
         .update({ playlist: updatedPlaylist })
-        // .eq("user_id", user?.id || "")
-        .eq("user_id", user2 || "")
+        .eq("user_id", user?.id || "")
+        // .eq("user_id", user2 || "")
 
         .single();
 
