@@ -1,5 +1,4 @@
 "use client";
-
 import { CSSProperties, forwardRef, HTMLAttributes } from "react";
 import { HighlightVideo } from "@/lib/types/types";
 import { Card } from "../ui/card";
@@ -22,7 +21,10 @@ type Props = {
 } & HTMLAttributes<HTMLDivElement>;
 
 const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
-  ({ video, isOpacityEnabled, isDragging, style, ...props }, ref) => {
+  function HighlightVideoItem(
+    { video, isOpacityEnabled, isDragging, style, ...props },
+    ref
+  ) {
     const [isOpen, setIsOpen] = useState(false);
 
     const handleDialogOpen = () => {
@@ -45,7 +47,6 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
       return match ? title.replace(match[0], "") : title;
     };
 
-
     const filterDescription = (description: string | undefined) => {
       if (description) {
         return description.replace(/9999/g, "");
@@ -62,9 +63,9 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
 
     return (
       <>
-        <div className="grid ">
+        <div className="grid">
           <Card
-            className="flex items-center gap-4 rounded-lg bg-white "
+            className="flex items-center gap-4 rounded-lg bg-white"
             onClick={handleDialogOpen}
             ref={ref}
             style={styles}
@@ -78,13 +79,9 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
               alt="Image"
               className="rounded-md object-cover"
               height="128"
-              style={{
-                aspectRatio: "128/128",
-                objectFit: "cover",
-              }}
+              style={{ aspectRatio: "128/128", objectFit: "cover" }}
               width="128"
             />
-
             <div className="flex-1">
               {video.title && (
                 <p className="text-sm leading-4 font-bold text-gray-600 mt-2">
@@ -97,8 +94,7 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
                 </p>
               )}
             </div>
-            <RiDraggable className="text-3xl text-gray-400"/>
-
+            <RiDraggable className="text-3xl text-gray-400" />
           </Card>
         </div>
       </>
