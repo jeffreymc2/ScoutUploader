@@ -33,7 +33,7 @@ const VideoPlayer: React.FC = () => {
         const { data: playlistData, error } = await supabaseBrowser()
           .from("playlists")
           .select("playlist")
-          .eq("user_id", user2)
+          .eq("user_id", user.id)
           .single();
         if (error) {
           console.error("Error fetching playlist:", error);
@@ -76,7 +76,7 @@ const VideoPlayer: React.FC = () => {
       const { data, error } = await supabaseBrowser()
         .from("playlists")
         .update({ playlist: updatedPlaylist })
-        .eq("user_id", user2)
+        .eq("user_id", user?.id || "")
         .single();
       
         toast.success("Video updated successfully", { data } as ExternalToast);
