@@ -8,6 +8,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { ExternalToast, toast } from "sonner";
+import { VideoSkeleton } from "@/components/ui/skeletons";
 
 interface Video {
   id: number;
@@ -33,7 +34,9 @@ const VideoPlayer: React.FC = () => {
         const { data: playlistData, error } = await supabaseBrowser()
           .from("playlists")
           .select("playlist")
-          .eq("user_id", user.id)
+          // .eq("user_id", user.id)
+          .eq("user_id", user2)
+
           .single();
         if (error) {
           console.error("Error fetching playlist:", error);
@@ -67,34 +70,50 @@ const VideoPlayer: React.FC = () => {
     }
   };
 
-  const handleUpdateVideo = async (videoId: number) => {
+  const handleUpdateVideo = async () => {
     try {
-      const updatedPlaylist = playlist.map((video) =>
-        video.id === videoId ? { ...video, start_time: newStartTime } : video
+      const { data: playlistData, error: fetchError } = await supabaseBrowser()
+        .from("playlists")
+        .select("playlist")
+        // .eq("user_id", user?.id || "")
+        .eq("user_id", user2 || "")
+
+        .single();
+
+      if (fetchError) {
+        console.error("Error fetching playlist:", fetchError);
+        return;
+      }
+
+      const updatedPlaylist = (playlistData?.playlist as { [key: string]: Json }[]).map((video, index) =>
+        index === currentVideoIndex ? { ...video, start_time: newStartTime, duration: newDuration } : video
       );
-  
-      const { data, error } = await supabaseBrowser()
+
+      const { error: updateError } = await supabaseBrowser()
         .from("playlists")
         .update({ playlist: updatedPlaylist })
-        .eq("user_id", user?.id || "")
+        // .eq("user_id", user?.id || "")
+        .eq("user_id", user2 || "")
+
         .single();
-      
-        toast.success("Video updated successfully", { data } as ExternalToast);
-      if (error) {
-        console.error("Error updating playlist:", error);
+
+      if (updateError) {
+        console.error("Error updating playlist:", updateError);
+        toast.error("Failed to update video", { error: updateError } as ExternalToast);
       } else {
-        setPlaylist(data as { [key: string]: Json }[]);
-        setEditVideoId(null);
+        setPlaylist(updatedPlaylist);
         setNewStartTime(0);
         setNewDuration(0);
+        toast.success("Video updated successfully");
       }
     } catch (error) {
       console.error("Error updating playlist:", error);
+      toast.error("An error occurred while updating the video");
     }
   };
-
+  
   if (playlist.length === 0) {
-    return <div>Loading...</div>;
+    return <VideoSkeleton />;
   }
 
   const currentVideo = playlist[currentVideoIndex];
@@ -122,15 +141,15 @@ const VideoPlayer: React.FC = () => {
             />
           </Label>
           <Label>
-            New Duration:
-            <Input
-              type="number"
-              placeholder={(currentVideo.duration as number).toString()}
-              value={newDuration}
-              onChange={(e) => setNewDuration(Number(e.target.value))}
-            />
-          </Label>
-          <Button onClick={() => editVideoId !== null && handleUpdateVideo(editVideoId)}>Save</Button>
+          New Duration:
+          <Input
+            type="number"
+            placeholder={(currentVideo.duration as number).toString()}
+            value={newDuration}
+            onChange={(e) => setNewDuration(Number(e.target.value))}
+          />
+        </Label>
+        <Button onClick={handleUpdateVideo}>Save</Button>
         </div>
       {/* )} */}
     </div>

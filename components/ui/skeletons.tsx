@@ -269,3 +269,30 @@ export function InvoicesTableSkeleton() {
     </div>
   );
 }
+
+
+export function VideoSkeleton() {
+
+  return (
+    <div className="max-w-2xl">
+        <div className="bg-gray-200 rounded-lg p-4">
+          <div className="skeleton-player h-64 bg-gray-300 rounded-lg animate-pulse"></div>
+          <div className="mt-4 flex justify-between">
+            <div className="skeleton-play-button h-10 w-10 bg-gray-300 rounded-full animate-pulse"></div>
+            <div className="skeleton-progress-bar flex-grow h-2 bg-gray-400 rounded-full overflow-hidden">
+              <div className="skeleton-progress h-full bg-gray-600 w-1/3 animate-progress"></div>
+            </div>
+            <div className="flex items-center">
+              <div className="skeleton-volume-icon h-6 w-6 bg-gray-300 rounded-full animate-pulse mr-2"></div>
+              <div className="skeleton-volume-bar h-2 w-16 bg-gray-400 rounded-full overflow-hidden">
+                <div className="skeleton-volume-progress h-full bg-gray-600 w-1/2 animate-progress"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <strong className="font-bold">Must be logged in to DiamondKast Plus to view and create playlists</strong>
+        </div>
+    </div>
+  );
+};
