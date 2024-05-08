@@ -108,24 +108,24 @@ export default async function PlayerPage({
   const highlightsData = await highlightsResponse.json();
 
   const highlightVideos: HighlightVideo[] =
-    highlightsData.results?.map((result: any) => ({
-      id: result.id,
-      stream_id: result.stream_id,
-      title: result.title || "",
-      description: result.description || "",
-      start_time: result.start_time,
-      end_time: result.end_time,
-      duration: result.duration,
-      thumbnailUrl: result.thumbnail || "",
-      url: result.url || "",
-      created: result.created,
-      tagged_player_keys: result.tagged_player_keys,
-      highlight_type: result.highlight_type,
-      drund_event_id: result.drund_event_id,
-      game_key: result.game_key,
-      scoringapp_play_id: result.scoringapp_play_id,
-      play_type: result.play_type,
-      highlight_created: result.highlight_created,
+    highlightsData.highlights?.map((highlight: any) => ({
+      id: highlight.id,
+      stream_id: highlight.stream_id,
+      title: highlight.title || '',
+      description: highlight.description || '',
+      start_time: highlight.start_time,
+      end_time: highlight.end_time,
+      duration: highlight.duration,
+      thumbnailUrl: highlight.thumbnailUrl || '',
+      url: highlight.url || '',
+      created: highlight.created,
+      tagged_player_keys: highlight.tagged_player_keys,
+      highlight_type: highlight.highlight_type,
+      drund_event_id: highlight.drund_event_id,
+      game_key: highlight.game_key,
+      scoringapp_play_id: highlight.scoringapp_play_id,
+      play_type: highlight.play_type,
+      highlight_created: highlight.highlight_created,
     })) || [];
 
   return (
@@ -263,6 +263,28 @@ export default async function PlayerPage({
       </div>
 
       <Suspense fallback={<div>Loading...</div>}>
+
+      <Card className="mt-8">
+        <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4 flex items-center justify-between">
+            <CardTitle className="text-sm font-bold">DiamondKast Plus Highlights</CardTitle>
+            <Dialog>
+              <DialogTrigger className="text-sm font-bold flex items-center space-x-1 ">
+                <RiVideoUploadLine className="h-5 w-5" />
+                <span>Upload Media</span>
+              </DialogTrigger>
+              <DialogContent>
+                <Uploader
+                  playerid={playerData.PlayerID}
+                  FullName={playerData.PlayerName}
+                />
+              </DialogContent>
+            </Dialog>
+          </div>
+          <VideoPlayer />          
+          <PlaylistBuilder initialVideos={highlightVideos} />
+        </Card>
+
+
         <Card className="mt-4">
           <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4 flex items-center justify-between">
             <CardTitle className="text-sm font-bold">Media Gallery</CardTitle>
@@ -300,15 +322,7 @@ export default async function PlayerPage({
             ))}
           </div>
         </Card> */}
-        <Card className="mt-8">
-          <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4">
-            <CardTitle className="text-sm font-bold">
-              DiamondKast Plus Highlights
-            </CardTitle>
-          </div>
-          <VideoPlayer />          
-          <PlaylistBuilder initialVideos={highlightVideos} />
-        </Card>
+        
       </Suspense>
     </div>
   );
