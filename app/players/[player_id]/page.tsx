@@ -1,5 +1,5 @@
 // app/players/%5Bplayer_id%5D/page.tsx
-
+"use server";
 import { supabaseServer } from "@/lib/supabase/server";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import DeletePost from "@/components/UtilityComponents/DeletePost";
@@ -16,6 +16,8 @@ import { MediaFile, HighlightVideo } from "@/lib/types/types";
 import PlayerMediaGallery from "@/components/PlayerComponents/PlayerMediaGallery";
 import { HighlightMediaCard } from "@/components/MediaComponents/HighlightMediaCard";
 import PlayerStatsSummary from "@/components/PlayerComponents/PlayerStatsSummary";
+import { PlaylistBuilder } from "@/components/MediaComponents/PlaylistBuilder";
+
 import { GameStatsTable } from "@/components/PlayerComponents/PlayerStatsTable";
 import {
   FaMedal,
@@ -24,6 +26,9 @@ import {
   FaRulerVertical,
   FaWeight,
 } from "react-icons/fa";
+import { Video } from "lucide-react";
+import VideoPlaylist from "@/components/MediaComponents/VideoPlaylist";
+import VideoPlayer from "@/components/MediaComponents/VideoPlaylist";
 
 interface PlayerData {
   PlayerID: number;
@@ -167,7 +172,6 @@ export default async function PlayerPage({
                 </Dialog>
               </div>
             </div>
-            
           </div>
         </CardContent>
       </Card>
@@ -284,7 +288,7 @@ export default async function PlayerPage({
           </div>
         </Card>
 
-        <Card className="mt-8">
+        {/* <Card className="mt-8">
           <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4">
             <CardTitle className="text-sm font-bold">
               DiamondKast Plus Highlights
@@ -295,6 +299,15 @@ export default async function PlayerPage({
               <HighlightMediaCard key={highlight.id} highlight={highlight} />
             ))}
           </div>
+        </Card> */}
+        <Card className="mt-8">
+          <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4">
+            <CardTitle className="text-sm font-bold">
+              DiamondKast Plus Highlights
+            </CardTitle>
+          </div>
+          <VideoPlayer />          
+          <PlaylistBuilder initialVideos={highlightVideos} />
         </Card>
       </Suspense>
     </div>

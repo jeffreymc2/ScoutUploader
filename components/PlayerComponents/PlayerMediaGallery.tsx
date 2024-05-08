@@ -26,6 +26,10 @@ import DeletePost from "@/components/UtilityComponents/DeletePost";
 import useUser from "@/app/hook/useUser";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { PiDotsThreeOutlineVerticalLight } from "react-icons/pi";
+import {useSortable} from '@dnd-kit/sortable';
+import {CSS} from '@dnd-kit/utilities';
+
+
 
 interface PlayerMediaGalleryProps {
   posts: Post[];
@@ -33,12 +37,29 @@ interface PlayerMediaGalleryProps {
   playerId: string;
 }
 
+
 interface EventSelectProps {
   post: Post;
   events: EventSearch[];
   onSaveEvent: (postId: string, eventId: string) => void;
 }
 
+export function SortableItem(props: { id: any; }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+  } = useSortable({id: props.id});
+  
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+}
+  
 const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
   posts,
   events,
@@ -90,6 +111,8 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
     return description;
   };
 
+
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       {playerSearchProps.posts?.map((post) => {
@@ -100,7 +123,7 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
         return (
           <div
             key={post.id}
-            className="bg-white rounded-lg shadow-md overflow-hidden"
+            className="bg-white rounded-lg shadow-md overflow-hidden "
           >
             <SupabaseMediaCard
               file={{

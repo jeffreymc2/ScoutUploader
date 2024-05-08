@@ -1,3 +1,5 @@
+import { UUID } from "crypto"
+
 export type Json =
   | string
   | number
@@ -145,6 +147,43 @@ export interface Database {
           }
         ]
       }
+
+
+      playlists: {
+        Row: {
+          id: number;
+          user_id: string; // Change to string instead of UUID
+          name: string;
+          playlist: Json;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string; // Change to string instead of UUID
+          name: string;
+          playlist: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: number;
+          user_id?: string; // Change to string instead of UUID
+          name?: string;
+          playlist?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "playlists_user_id_fkey";
+            columns: ["user_id"];
+            referencedRelation: "users"; // Assuming this is a table in the 'auth' schema
+            referencedColumns: ["id"];
+          }
+        ];
+      };
+    
+      
       profile: {
         Row: {
           created_at: string
@@ -178,6 +217,9 @@ export interface Database {
         ]
       }
     }
+   
+
+
     Views: {
       [_ in never]: never
     }

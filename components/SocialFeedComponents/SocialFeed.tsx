@@ -3,7 +3,7 @@ import { CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card"
 import { supabaseServer } from "@/lib/supabase/server";
 import MediaCard from "./MediaCard";
 import SearchBar from "./SearchBar";
-import { Post } from "@/lib/types/types";
+import { HighlightVideo, Post } from "@/lib/types/types";
 import { HighlightMediaCard } from "@/components/MediaComponents/HighlightMediaCard";
 import { SupabaseMediaCard } from "@/components/MediaComponents/SupbaseMediaCard";
 
@@ -44,8 +44,14 @@ export default async function Feed() {
       <div className="flex flex-col space-y-4">
         <SearchBar />
         {media.map((item) => (
+          <>
           <MediaCard key={item.id} media={item} />
+          </>
         ))}
+        {Array.isArray(Highlight) && Highlight.map((highlight: HighlightVideo) => ( 
+          <HighlightMediaCard key={highlight.id} highlight={highlight} />
+        ))  
+        }
       </div>
     </div>
   );

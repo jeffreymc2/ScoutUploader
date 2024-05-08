@@ -352,25 +352,31 @@ export interface MediaFile {
 
 // lib/types/types.ts
 
-export interface HighlightVideo {
-  id: number;
-  stream_id: number;
+export type HighlightVideo = {
+  id: string;
+  stream_id: string;
   title: string;
   description: string;
   start_time: number;
   end_time: number;
   duration: number;
-  thumbnail: string;
-  created: string;
-  tagged_player_keys: { key: number; position: string }[];
+  thumbnailUrl: string;
   url: string;
+  created: string;
+  tagged_player_keys: string[];
   highlight_type: string;
-  drund_event_id: number;
+  drund_event_id: string;
   game_key: string;
-  scoringapp_play_id: number;
+  scoringapp_play_id: string;
   play_type: string;
   highlight_created: string;
-  thumbnailUrl: string;
-  
+};
+export type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
 
+
+export type Playlist = {
+  name: string
+  playlist: HighlightVideo[]
+  created_at: string
+  updated_at: string
 }
