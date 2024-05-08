@@ -463,6 +463,8 @@ import { HighlightVideoItem } from "@/components/MediaComponents/HighlighVideoIt
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import useUser from "@/app/hook/useUser";
 import { DroppablePlaylist } from "./DroppablePlaylist";
+import { Button } from "../ui/button";
+import { toast } from "sonner";
 
 interface PlaylistBuilderProps {
  initialVideos: HighlightVideo[];
@@ -483,7 +485,7 @@ export function PlaylistBuilder({ initialVideos }: PlaylistBuilderProps) {
        const { data: playlistData, error } = await supabaseBrowser()
          .from("playlists")
          .select("playlist")
-         .eq("user_id", user.id)
+         .eq("user_id", user2)
          .single();
 
        if (error) {
@@ -553,12 +555,17 @@ export function PlaylistBuilder({ initialVideos }: PlaylistBuilderProps) {
    setActiveVideoId(null);
  };
 
-//  const user3 = "3faf9652-84d8-4b76-8b44-8e1f3b7ff7fd";
+ const user3 = "3faf9652-84d8-4b76-8b44-8e1f3b7ff7fd";
  const savePlaylist = async () => {
    if (user) {
      const { error } = await supabaseBrowser()
        .from("playlists")
-       .upsert({ user_id: user.id, name: "My Playlist", playlist: playlist as any[] })
+       .upsert({ 
+        user_id: user3, 
+        // user_id: user.id, 
+
+        name: "My Playlist", 
+        playlist: playlist as any[] })
        .single();
 
      if (error) {
@@ -567,6 +574,7 @@ export function PlaylistBuilder({ initialVideos }: PlaylistBuilderProps) {
        console.log("Playlist saved successfully");
      }
    }
+   toast.success("Playlist saved successfully");
  };
 
  const activeVideo =
@@ -592,7 +600,7 @@ export function PlaylistBuilder({ initialVideos }: PlaylistBuilderProps) {
        <div>
            <DroppablePlaylist playlist={playlist} setPlaylist={setPlaylist} />
         
-         <button onClick={savePlaylist}>Save Playlist</button>
+         <Button onClick={savePlaylist}>Save Playlist</Button>
        </div>
      </div>
      <DragOverlay>
