@@ -1,53 +1,8 @@
 "use client";
 
-// import { CSSProperties, forwardRef, HTMLAttributes } from "react";
-// import { HighlightVideo } from "@/lib/types/types";
-// import { Card } from "../ui/card";
-
-// type Props = {
-//   video: HighlightVideo;
-//   isOpacityEnabled?: boolean;
-//   isDragging?: boolean;
-// } & HTMLAttributes<HTMLDivElement>;
-
-// const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(({ video, isOpacityEnabled, isDragging, style, ...props }, ref) => {
-//   const styles: CSSProperties = {
-//     opacity: isOpacityEnabled ? "0.4" : "1",
-//     cursor: isDragging ? "grabbing" : "grab",
-//     lineHeight: "0.5",
-//     transform: isDragging ? "scale(1.05)" : "scale(1)",
-//     ...style,
-
-//   };
-
-//   return (
-//     <Card ref={ref} style={styles} {...props} className="">
-//       <img
-//         src={video.thumbnailUrl || ""}
-//         alt={video.title}
-//         style={{
-//           borderRadius: "8px",
-//           boxShadow: isDragging ? "none" : "rgb(63 63 68 / 5%) 0px 0px 0px 1px, rgb(34 33 81 / 15%) 0px 1px 3px 0px",
-//           maxWidth: "100%",
-//           objectFit: "cover",
-//         }}
-//       />
-//       <p className="text-xs m-2">{video.title}</p>
-//       {/* Render other video details */}
-//     </Card>
-//   );
-// });
-
-// export { HighlightVideoItem };
-
-//@/components/MediaComponents/HighlightVideoItem.tsx
-
-"use client";
-
 import { CSSProperties, forwardRef, HTMLAttributes } from "react";
 import { HighlightVideo } from "@/lib/types/types";
 import { Card } from "../ui/card";
-import { Badge } from "../ui/badge";
 import Image from "next/image";
 import { useState } from "react";
 import {
@@ -90,25 +45,6 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
       return match ? title.replace(match[0], "") : title;
     };
 
-    // const renderOverlayBadge = (title: string) => {
-    //   const titleWithoutBrackets = getTitleWithoutBrackets(title);
-    //   return (
-    //     <div className="absolute top-2 left-2">
-    //       <Badge variant="secondary">
-    //         <Image
-    //           className="mr-2"
-    //           src={
-    //             "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_icon_inverse.png"
-    //           }
-    //           width={55}
-    //           height={10}
-    //           alt={""}
-    //         ></Image>{" "}
-    //         {titleWithoutBrackets}
-    //       </Badge>
-    //     </div>
-    //   );
-    // };
 
     const filterDescription = (description: string | undefined) => {
       if (description) {
