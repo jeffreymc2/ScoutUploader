@@ -1,5 +1,4 @@
 // @/components/VideoPlayer.tsx
-// @/components/VideoPlayer.tsx
 "use client";
 import React, { useEffect, useState, createContext } from "react";
 import { supabaseBrowser } from "@/lib/supabase/browser";
@@ -19,7 +18,7 @@ interface VideoPlayerContextValue {
   setCurrentVideo: (video: Video) => void;
 }
 
-const VideoPlayerContext = createContext<VideoPlayerContextValue>({
+export const VideoPlayerContext = createContext<VideoPlayerContextValue>({
   currentVideo: null,
   setCurrentVideo: () => {},
 });
@@ -92,7 +91,6 @@ const VideoPlayer: React.FC = () => {
 };
 
 export default VideoPlayer;
-export { VideoPlayerContext };
 
 // // @/components/VideoPlayer.tsx
 // "use client";
