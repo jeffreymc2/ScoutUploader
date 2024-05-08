@@ -21,6 +21,10 @@ const VideoPlayer: React.FC = () => {
 
   const user2 = "3faf9652-84d8-4b76-8b44-8e1f3b7ff7fd"
 
+
+
+
+
   useEffect(() => {
     const fetchPlaylist = async () => {
       if (user) {
@@ -41,6 +45,14 @@ const VideoPlayer: React.FC = () => {
     fetchPlaylist();
   }, [user]);
 
+  const playerRef = React.useRef<ReactPlayer | null>(null);
+
+const onReady = React.useCallback(() => {
+  if (playerRef.current) {
+    playerRef.current.seekTo(currentVideo.start_time, 'seconds');
+  }
+}, [playerRef.current]);
+
   const handleVideoEnded = () => {
     setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % playlist.length);
   };
@@ -58,14 +70,7 @@ const VideoPlayer: React.FC = () => {
         controls
         playing
         onEnded={handleVideoEnded}
-        config={{
-          file: {
-            attributes: {
-              start: currentVideo.start_time,
-              end: currentVideo.start_time + currentVideo.duration,
-            },
-          },
-        }}
+        onReady={onReady}
       />
       <h3>{currentVideo.title}</h3>
       {/* Display other video information as needed */}
