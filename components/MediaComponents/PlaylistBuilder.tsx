@@ -98,9 +98,7 @@ export function PlaylistBuilder({ initialVideos }: PlaylistBuilderProps) {
            setPlaylist([...playlist]);
            setVideos([...videos, removed]);
            setSavedPlaylist(savedPlaylist.filter((video) => video.id !== active.id));
-           router.refresh(); // Refresh the page after successful update
 
-           //LOOOK HERE TO FIX PLAYLIST
          }
        }
      } else {
@@ -119,6 +117,7 @@ export function PlaylistBuilder({ initialVideos }: PlaylistBuilderProps) {
    }
 
    setActiveVideoId(null);
+   
  };
 
  const user3 = "3faf9652-84d8-4b76-8b44-8e1f3b7ff7fd";
@@ -140,6 +139,8 @@ export function PlaylistBuilder({ initialVideos }: PlaylistBuilderProps) {
      }
    }
    toast.success("Playlist saved successfully");
+   router.refresh(); // Refresh the page after successful update
+
  };
 
  const activeVideo =
