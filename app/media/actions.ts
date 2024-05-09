@@ -10,11 +10,15 @@ export const updatePost = async (formData: FormData) => {
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const featuredImage = formData.get("featured_image") === "on";
+  const publishMedia = formData.get("publish_media") === "on";
+
 
   const updateData = {
     title,
     description,
     featured_image: featuredImage,
+    publish_media: publishMedia,
+
   };
 
   try {

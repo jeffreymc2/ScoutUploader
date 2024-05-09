@@ -33,7 +33,6 @@ export default function MediaForm({
   const [initialData, setInitialData] = useState({
     title: "",
     description: "",
-    featured_image: false,
     publish_media: false, 
     thumbnailUrl: "",
   });
@@ -43,7 +42,7 @@ export default function MediaForm({
   const fetchInitialData = useCallback(async () => {
     const { data, error } = await supabase
       .from("posts")
-      .select("title, description, publish_media, featured_image")
+      .select("title, description, publish_media")
       .eq("id", postId)
       .single();
 
@@ -53,7 +52,6 @@ export default function MediaForm({
       setInitialData({
         title: data?.title || "",
         description: data?.description || "",
-        featured_image: data?.featured_image || false,
         publish_media: data?.publish_media || false,
         thumbnailUrl: thumbnailUrl,
       });
