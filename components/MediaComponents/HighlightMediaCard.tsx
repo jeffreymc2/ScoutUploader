@@ -17,6 +17,7 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import SearchComponent from "../SearchComponent";
 import { forwardRef } from 'react';
+import ReactPlayer from "react-player";
 
 
 
@@ -142,7 +143,7 @@ export function HighlightMediaCard({ highlight }: HighlightMediaCardProps) {
             </DialogDescription>
           </DialogHeader>
           <div className="relative w-full h-full border rounded-b-lg p-0">
-            <Video
+            <ReactPlayer
               className="rounded-lg absolute top-0 left-0"
               src={highlight.url}
               autoPlay={true}

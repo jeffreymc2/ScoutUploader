@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { MediaFile } from "@/lib/types/types";
 import Video from "next-video";
+import ReactPlayer from "react-player";
 
 interface SupabaseMediaCardProps {
   file: MediaFile;
@@ -26,7 +27,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
         onClick={handleDialogOpen}
       >
         {file.isVideo ? (
-          <Video
+          <ReactPlayer
             src={file?.image ?? (file?.url || "")}
             className="rounded-lg object-cover w-full h-full"
             preload="auto"
@@ -47,7 +48,7 @@ export const SupabaseMediaCard: React.FC<SupabaseMediaCardProps> = ({
         {file.isVideo ? (
           <DialogContent className="sm:max-w-[66vw]">
             <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
-              <Video
+              <ReactPlayer
                 src={file.name ?? (file.url || "")}
                 className="rounded-lg absolute top-0 left-0"
                 autoPlay={true}
