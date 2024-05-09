@@ -6,18 +6,14 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { HighlightVideo } from "@/lib/types/types";
 import Video from "next-video";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-import SearchComponent from "../SearchComponent";
-import { forwardRef } from 'react';
-import ReactPlayer from "react-player";
+
 
 
 
@@ -143,7 +139,7 @@ export function HighlightMediaCard({ highlight }: HighlightMediaCardProps) {
             </DialogDescription>
           </DialogHeader>
           <div className="relative w-full h-full border rounded-b-lg p-0">
-            <ReactPlayer
+            <Video
               className="rounded-lg absolute top-0 left-0"
               src={highlight.url}
               autoPlay={true}

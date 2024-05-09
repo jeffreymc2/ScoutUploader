@@ -31,6 +31,7 @@ export interface Database {
           compressed_thumbnail?: string
           mux_asset_id?: string | null;
           mux_playback_id?: string | null;
+          publish_media?: boolean
 
         }
         Insert: {
@@ -52,6 +53,7 @@ export interface Database {
           compressed_thumbnail?: string
           mux_asset_id?: string | null;
           mux_playback_id?: string | null;
+          publish_media?: boolean
 
         }
         Update: {
@@ -73,7 +75,7 @@ export interface Database {
           compressed_thumbnail?: string
           mux_asset_id?: string | null;
           mux_playback_id?: string | null;
-          
+          publish_media?: boolean
 
         }
         Relationships: [

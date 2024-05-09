@@ -205,6 +205,7 @@ export interface PlayData {
     isVideo: boolean;
     post_type?: string;
     title?: string;
+    publish_media?: boolean;
     description?: string;
     featured_image?: boolean;
     thumbnail?: string;

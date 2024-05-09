@@ -100,6 +100,7 @@ export function PlaylistBuilder({ initialVideos }: PlaylistBuilderProps) {
            setSavedPlaylist(savedPlaylist.filter((video) => video.id !== active.id));
            router.refresh(); // Refresh the page after successful update
 
+           //LOOOK HERE TO FIX PLAYLIST
          }
        }
      } else {
@@ -128,7 +129,6 @@ export function PlaylistBuilder({ initialVideos }: PlaylistBuilderProps) {
        .upsert({ 
         // user_id: user3, 
         user_id: user.id, 
-
         name: "My Playlist", 
         playlist: playlist as any[] })
        .single();

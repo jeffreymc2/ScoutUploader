@@ -25,17 +25,24 @@
 //     });
 
 //     const transcodingResult = await livepeer.transcode.create({
-//       input: {
-//         url: "https://ivs-cdn.drund.com/ivs/v1/060002717437/R4y7sg20wbOF/2023/7/23/15/39/Hu0l4JT9tYMM/media/hls/master.m3u8",
-//       },
+//     input: {
+//         type: 's3',
+//         endpoint: "https://gateway.storjshare.io",
+//         credentials: {
+//             accessKeyId: "$ACCESS_KEY_ID",
+//             secretAccessKey: "$SECRET_ACCESS_KEY"
+//         },
+//         bucket: "mybucket",
+//         path: "/video/source.mp4"
+//     },
 //       storage: {
 //         type: "s3",
 //         endpoint: "https://gateway.storjshare.io",
 //         credentials: {
-//           accessKeyId: process.env.STORJ_ACCESS_KEY_ID as string,
-//           secretAccessKey: process.env.STORJ_SECRET_ACCESS_KEY as string,
+//           accessKeyId: "$ACCESS_KEY_ID",
+//           secretAccessKey: "$SECRET_ACCESS_KEY"
 //         },
-//         bucket: "testbuck",
+//         bucket: "mybucket"
 //       },
 //       outputs: {
 //         hls: {

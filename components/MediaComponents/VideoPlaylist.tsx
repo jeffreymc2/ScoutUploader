@@ -9,6 +9,7 @@ import { Label } from "../ui/label";
 import { Button } from "../ui/button";
 import { ExternalToast, toast } from "sonner";
 import { VideoSkeleton } from "@/components/ui/skeletons";
+import Video from "next-video";
 import Image from "next/image";
 import Link from "next/link";
 import { MaximizeIcon, PlayIcon, Volume2Icon } from "lucide-react";
@@ -187,13 +188,13 @@ const VideoPlayer: React.FC = () => {
         <div className="absolute text-white inset-x-0 top-0 p-4 text-lg bg-gradient-to-b from-black/50 to-transparent">
           <div className="line-clamp-1">{currentVideo.title as string}</div>
         </div>
-        <Slider className="absolute bottom-0 left-0 right-0"
+        {/* <Slider className="absolute bottom-0 left-0 right-0"
           defaultValue={[currentVideo.start_time as number]}
           max={currentVideo.duration as number + 40}
           step={1}
           value={[newDuration]} // Fix: Wrap newDuration in an array
           onChange={(e) => setNewDuration(Number((e.target as HTMLInputElement).value))}
-        />
+        /> */}
       </div>
 
       <div className="col-span-1 grid gap-2 max-h-[350px] overflow-y-auto">
@@ -220,9 +221,9 @@ const VideoPlayer: React.FC = () => {
               <div className="text-xs text-gray-500 line-clamp-1 dark:text-gray-400">
              {(typeof video.created === 'string' || typeof video.created === 'number') ? new Date(video.created).toLocaleDateString() : ""}
               </div>
-              <div className="text-xs text-gray-500 line-clamp-1 dark:text-gray-400">
+              {/* <div className="text-xs text-gray-500 line-clamp-1 dark:text-gray-400">
                 5:32 · 5 days ago
-              </div>
+              </div> */}
             </div>
           </div>
         ))}

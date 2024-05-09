@@ -34,6 +34,7 @@ export default function MediaForm({
     title: "",
     description: "",
     featured_image: false,
+    publish_media: false, 
     thumbnailUrl: "",
   });
 
@@ -42,7 +43,7 @@ export default function MediaForm({
   const fetchInitialData = useCallback(async () => {
     const { data, error } = await supabase
       .from("posts")
-      .select("title, description, featured_image")
+      .select("title, description, publish_media, featured_image")
       .eq("id", postId)
       .single();
 
@@ -53,6 +54,7 @@ export default function MediaForm({
         title: data?.title || "",
         description: data?.description || "",
         featured_image: data?.featured_image || false,
+        publish_media: data?.publish_media || false,
         thumbnailUrl: thumbnailUrl,
       });
     }
@@ -143,11 +145,11 @@ export default function MediaForm({
             </div>
             <div className="mt-4 flex items-center space-x-2">
               <Switch
-                id="featured_image"
-                name="featured_image"
-                defaultChecked={initialData.featured_image}
+                id="publish_media"
+                name="publish_media"
+                defaultChecked={initialData.publish_media}
               />
-              <Label htmlFor="featured_image">Featured Image</Label>
+              <Label htmlFor="publish_media">Publish to Profile</Label>
             </div>
             <Button className="mt-2" type="submit" disabled={isSubmitting}>
               {isSubmitting ? "Updating..." : "Save"}
