@@ -123,20 +123,26 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
 
   const savePlaylist = async () => {
     if (user) {
+      console.log("User is authenticated:", user);
+      console.log("Playlist to save:", playlist);
+  
       const { data: existingPlaylist, error: fetchError } = await supabaseBrowser()
         .from("playlists")
         .select("id")
         .eq("user_id", user.id)
         .eq("player_id", playerId)
         .single();
-
+  
       if (fetchError) {
         console.error("Error fetching existing playlist:", fetchError);
         return;
       }
-
+  
+      console.log("Existing playlist:", existingPlaylist);
+  
       if (existingPlaylist) {
         // Update the existing playlist
+        console.log("Updating existing playlist");
         const { error: updateError } = await supabaseBrowser()
           .from("playlists")
           .update({
@@ -144,7 +150,7 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
             updated_at: new Date().toISOString(),
           })
           .eq("id", existingPlaylist.id);
-
+  
         if (updateError) {
           console.error("Error updating playlist:", updateError);
           toast.error("Failed to update playlist");
@@ -154,6 +160,7 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
         }
       } else {
         // Create a new playlist
+        console.log("Creating new playlist");
         const { error: insertError } = await supabaseBrowser()
           .from("playlists")
           .insert({
@@ -163,7 +170,7 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
             playlist: playlist as any[],
           })
           .single();
-
+  
         if (insertError) {
           console.error("Error creating playlist:", insertError);
           toast.error("Failed to create playlist");
@@ -172,7 +179,7 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
           toast.success("Playlist created successfully");
         }
       }
-
+  
       router.refresh();
     } else {
       toast.error("You must be logged in to save a playlist");

@@ -186,8 +186,10 @@ export default async function PlayerPage({
               <div className="text-sm text-gray-500 dark:text-gray-400">
                 Height
               </div>
-              <div className="font-medium">{playerData?.Height || "N/A"}&quot;</div>
-                          </div>
+              <div className="font-medium">
+                {playerData?.Height || "N/A"}&quot;
+              </div>
+            </div>
             <div>
               <div className="text-sm text-gray-500 dark:text-gray-400">
                 Weight
@@ -271,7 +273,7 @@ export default async function PlayerPage({
         </Card>
       </div> */}
 
-<Suspense fallback={<div>Loading...</div>}>
+      <Suspense fallback={<div>Loading...</div>}>
         <Card className="mt-8">
           <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4 flex items-center justify-between">
             <CardTitle className="text-sm font-bold">
@@ -291,7 +293,10 @@ export default async function PlayerPage({
             </Dialog>
           </div>
           <VideoPlayer playerId={player_id} />
-          <PlaylistBuilder initialVideos={highlightVideos} playerId={player_id} />
+          <PlaylistBuilder
+            initialVideos={highlightVideos}
+            playerId={player_id}
+          />
         </Card>
 
         <Card className="mt-4">
