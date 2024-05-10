@@ -186,8 +186,8 @@ export default async function PlayerPage({
               <div className="text-sm text-gray-500 dark:text-gray-400">
                 Height
               </div>
-              <div className="font-medium">{playerData?.Height || "N/A"}"</div>
-            </div>
+              <div className="font-medium">{playerData?.Height || "N/A"}&quot;</div>
+                          </div>
             <div>
               <div className="text-sm text-gray-500 dark:text-gray-400">
                 Weight
