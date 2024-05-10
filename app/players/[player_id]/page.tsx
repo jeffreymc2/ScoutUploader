@@ -290,7 +290,7 @@ export default async function PlayerPage({
               </DialogContent>
             </Dialog>
           </div>
-          <VideoPlayer />
+          <VideoPlayer playerId={player_id} />
           <PlaylistBuilder initialVideos={highlightVideos} playerId={player_id} />
         </Card>
 
