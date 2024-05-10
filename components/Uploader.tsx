@@ -1,3 +1,4 @@
+
 // app/components/Uploader.tsx
 "use client";
 import React, { useState } from "react";
@@ -10,8 +11,7 @@ import { Button } from "./ui/button";
 import useUser from "@/app/hook/useUser";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { AssemblyParameters } from "@uppy/transloadit";
+import path from "path";
 
 export interface PlayerResponse {
   PlayerID: string;
@@ -35,6 +35,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   });
 
   const player_id = playerid.toString();
+  const user2 = "3faf9652-84d8-4b76-8b44-8e1f3b7ff7fd";
 
   const [uppy] = useState(() =>
     new Uppy({
@@ -44,113 +45,71 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         maxFileSize: 5 * 100000 * 10000,
       },
       debug: true,
+    }).use(Transloadit, {
+      service: "https://api2.transloadit.com",
+      params: {
+        auth: {
+          key: "c8bcc31673614496a3a412b4fda14767",
+        },
+        steps: {
+          thumbnail: {
+            robot: "/image/resize",
+            use: "thumbnail",
+            width: 300,
+            height: 200,
+            resize_strategy: "fillcrop",
+          },
+          hls: {
+            robot: "/video/encode",
+            use: "hls",
+            preset: "hls-1080p",
+          },
+          exported: {
+            use: ["thumbnail", "hls", ":original"],
+            robot: "/supabase/store",
+            result: true,
+            credentials: {
+              bucket: "media",
+              buckey_region: "us-west-1",
+              path: `players/${user?.id}/${player_id}`,
+              key: "23656d4df45d04d662ca503aba176fa8",
+              secret: "22d577e8553542e2d7088dbcd28c6c977d32a92dc413d334be30757157ef1afd",
+              url_prefix: "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/s3",
+            }
+            
+          }
+        },
+      },
     })
   );
 
-  const assemblyParams: AssemblyParameters = {
-    auth: {
-      key: "6dc94e959225462bacbcb6283b3c639c",
-    },
-    steps: {
-      thumbnail: {
-        robot: "/image/resize",
-        use: "original",
-        width: 300,
-        height: 200,
-        resize_strategy: "fillcrop",
-      },
-      hls: {
-        robot: "/video/encode",
-        use: "original",
-        preset: "hls-1080p",
-      },
-    },
-  };
-
-  uppy.use(Transloadit, {
-    service: "https://api2.transloadit.com",
-    params: assemblyParams,
-  });
-
-  uppy.on("upload", async (data) => {
-    const file = (data as any).files[0];
-    const fileNameWithUUID = `${player_id}_${file.name}`;
-
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from("media")
-      .upload(`players/${user?.id}/${player_id}/${fileNameWithUUID}`, await fetch(file.data).then((res) => res.blob()), {
-        cacheControl: "3600",
-        upsert: false,
-      });
-
-    if (uploadError) {
-      console.error("Error uploading file to Supabase:", uploadError);
-      return;
-    }
-
-    const { data: urlData } = await supabase.storage
-      .from("media")
-      .getPublicUrl(`players/${user?.id}/${player_id}/${fileNameWithUUID}`);
-
-    if (!urlData) {
-      console.error("Error getting public URL from Supabase:", "urlError");
-      return;
-    }
-
-    const publicURL = urlData.publicUrl;
-
-    uppy.setFileState(file.id, {
-      transloadit: {
-        key: "YOUR_TRANSLOADIT_API_KEY",
-        params: {
-          steps: {
-            original: {
-              robot: "/upload/handle",
-              url: publicURL,
-            },
-          },
-        },
-      },
-    });
-  });
-
   uppy.on("complete", async (result) => {
-    const assembly = (result as any).transloadit[0];
-    const thumbnailUrl = assembly.results?.thumbnail[0].ssl_url;
-    const hlsUrl = assembly.results?.hls[0].ssl_url;
+    const assembly = (result as any).transloadit[0].assembly;
+    const thumbnailUrl = assembly.results.thumbnail[0].ssl_url;
+    const hlsUrl = assembly.results.hls[0].ssl_url;
 
-    if (thumbnailUrl) {
-      // Save the thumbnail URL to Supabase
-      const thumbnailFilename = `thumbnail_${player_id}.png`;
-      const { data: thumbnailData, error: thumbnailError } = await supabase.storage
-        .from("media")
-        .upload(`players/${user?.id}/${player_id}/thumbnails/${thumbnailFilename}`, await fetch(thumbnailUrl).then((res) => res.blob()), {
-          cacheControl: "3600",
-          upsert: false,
-        });
+    // Save the thumbnail URL to Supabase
+    const thumbnailFilename = `thumbnail_${player_id}.png`;
+    const { data: thumbnailData, error: thumbnailError } = await supabase.storage
+      .from("media")
+      .upload(`players/${user?.id}/${player_id}/thumbnails/${thumbnailFilename}`, thumbnailUrl);
 
-      if (thumbnailError) {
-        console.error("Error saving thumbnail URL to Supabase:", thumbnailError);
-      } else {
-        console.log("Thumbnail URL saved successfully");
-      }
+    if (thumbnailError) {
+      console.error("Error saving thumbnail URL to Supabase:", thumbnailError);
+    } else {
+      console.log("Thumbnail URL saved successfully");
     }
 
-    if (hlsUrl) {
-      // Save the HLS URL to Supabase
-      const hlsFilename = `video_${player_id}.m3u8`;
-      const { data: hlsData, error: hlsError } = await supabase.storage
-        .from("media")
-        .upload(`players/${user?.id}/${player_id}/hls/${hlsFilename}`, await fetch(hlsUrl).then((res) => res.blob()), {
-          cacheControl: "3600",
-          upsert: false,
-        });
+    // Save the HLS URL to Supabase
+    const hlsFilename = `video_${player_id}.m3u8`;
+    const { data: hlsData, error: hlsError } = await supabase.storage
+      .from("media")
+      .upload(`players/${user?.id}/${player_id}/hls/${hlsFilename}`, hlsUrl);
 
-      if (hlsError) {
-        console.error("Error saving HLS URL to Supabase:", hlsError);
-      } else {
-        console.log("HLS URL saved successfully");
-      }
+    if (hlsError) {
+      console.error("Error saving HLS URL to Supabase:", hlsError);
+    } else {
+      console.log("HLS URL saved successfully");
     }
 
     toast.success("Upload and transcoding complete!");
@@ -174,7 +133,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   return (
     <div className="space-y-5">
       <div className="space-y-5">
-        <h1 className="font-pgFont text-2xl">Perfect Game Scout Profile Uploader</h1>
+        <h1 className="font-pgFont text-2xl">Perfect Game Media Uploader</h1>
         <div>
           <p>Selected Player: {selectedPlayer?.FullName} | Player ID: {selectedPlayer?.playerid}</p>
         </div>
