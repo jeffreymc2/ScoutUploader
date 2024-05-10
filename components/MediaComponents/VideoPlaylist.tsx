@@ -201,7 +201,7 @@ const VideoPlayer: React.FC = () => {
               alt="Thumbnail"
               className="aspect-video rounded-lg object-cover"
               height={94}
-              src={String(video.thumbnailUrl)}
+              src={String(video.thumbnailUrl) || "https://scouts.perfectgame.org/_next/image?url=https%3A%2F%2Favkhdvyjcweghosyfiiw.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmisc%2F638252106298352027-DKPlusHP%2520(1).webp&w=3840&q=75"}
               width={168}
             />
             {video.title && renderOverlayBadge(video.title as string)}
