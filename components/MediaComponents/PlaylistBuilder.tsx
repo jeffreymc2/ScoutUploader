@@ -135,24 +135,56 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
   const user3 = "3faf9652-84d8-4b76-8b44-8e1f3b7ff7fd";
   const savePlaylist = async () => {
     if (user) {
-      const { error } = await supabaseBrowser()
+      const { data: existingPlaylist, error: fetchError } = await supabaseBrowser()
         .from("playlists")
-        .upsert({
-          user_id: user.id,
-          player_id: playerId,
-          name: "My Playlist",
-          playlist: playlist as any[],
-        })
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("player_id", playerId)
         .single();
-
-      if (error) {
-        console.error("Error saving playlist:", error);
-      } else {
-        console.log("Playlist saved successfully");
+  
+      if (fetchError) {
+        console.error("Error fetching existing playlist:", fetchError);
+        return;
       }
+  
+      if (existingPlaylist) {
+        // Update the existing playlist
+        const { error: updateError } = await supabaseBrowser()
+          .from("playlists")
+          .update({
+            playlist: playlist as any[],
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", existingPlaylist.id);
+  
+        if (updateError) {
+          console.error("Error updating playlist:", updateError);
+        } else {
+          console.log("Playlist updated successfully");
+          toast.success("Playlist updated successfully");
+        }
+      } else {
+        // Create a new playlist
+        const { error: insertError } = await supabaseBrowser()
+          .from("playlists")
+          .insert({
+            user_id: user.id,
+            player_id: playerId,
+            name: "My Playlist",
+            playlist: playlist as any[],
+          })
+          .single();
+  
+        if (insertError) {
+          console.error("Error creating playlist:", insertError);
+        } else {
+          console.log("Playlist created successfully");
+          toast.success("Playlist created successfully");
+        }
+      }
+  
+      router.refresh();
     }
-    toast.success("Playlist saved successfully");
-    router.refresh(); // Refresh the page after successful update
   };
 
   const activeVideo =
