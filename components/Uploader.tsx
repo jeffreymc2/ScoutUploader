@@ -70,14 +70,14 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
             result: true,
             credentials: {
               bucket: "media",
-              buckey_region: "us-west-1",
+              bucket_region: "us-west-1",
               path: `players/${user?.id}/${player_id}`,
               key: "23656d4df45d04d662ca503aba176fa8",
               secret: "22d577e8553542e2d7088dbcd28c6c977d32a92dc413d334be30757157ef1afd",
               url_prefix: "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/s3",
             }
             
-          }
+          },
         },
       },
     })
