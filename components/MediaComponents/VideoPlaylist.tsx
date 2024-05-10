@@ -1,41 +1,25 @@
+// app/components/MediaComponents/VideoPlayer.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import useUser from "@/app/hook/useUser";
 import ReactPlayer from "react-player";
 import { Json } from "@/lib/types/types";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import { Button } from "../ui/button";
-import { ExternalToast, toast } from "sonner";
+import { toast } from "sonner";
 import { VideoSkeleton } from "@/components/ui/skeletons";
-import Video from "next-video";
 import Image from "next/image";
-import Link from "next/link";
-import { MaximizeIcon, PlayIcon, Volume2Icon } from "lucide-react";
-import { Slider } from "@/components/ui/slider";
 import { useRouter } from "next/navigation";
 import { Badge } from "../ui/badge";
 
-interface Video {
-  id: number;
-  url: string;
-  title: string;
-  start_time: number;
-  duration: number;
-  thumbnailUrl?: string;
-  created?: string | number;
+interface VideoPlayerProps {
+  playerId: string;
 }
 
-const VideoPlayer: React.FC = () => {
+const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const [playlist, setPlaylist] = useState<{ [key: string]: Json }[]>([]);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const { data: user } = useUser();
-  const user2 = "3faf9652-84d8-4b76-8b44-8e1f3b7ff7fd";
-  const [editVideoId, setEditVideoId] = useState<number | null>(null);
-  const [newStartTime, setNewStartTime] = useState<number>(0);
-  const [newDuration, setNewDuration] = useState<number>(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -45,16 +29,23 @@ const VideoPlayer: React.FC = () => {
           .from("playlists")
           .select("playlist")
           .eq("user_id", user?.id)
+          .eq("player_id", playerId)
           .single();
         if (error) {
           console.error("Error fetching playlist:", error);
+          // If no playlist found for the user, fetch highlights from the API
+          const highlightsResponse = await fetch(
+            process.env.NEXT_PUBLIC_URL + `/api/playerhighlights?playerID=${playerId}`
+          );
+          const highlightsData = await highlightsResponse.json();
+          setPlaylist(highlightsData.highlights || []);
         } else {
           setPlaylist(playlistData?.playlist as { [key: string]: Json }[]);
         }
       }
     };
     fetchPlaylist();
-  }, [user]);
+  }, [user, playerId]);
 
   const playerRef = React.useRef<ReactPlayer | null>(null);
 
@@ -75,55 +66,6 @@ const VideoPlayer: React.FC = () => {
     ) {
       setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % playlist.length);
       setCurrentTime(0);
-    }
-  };
-
-  const handleUpdateVideo = async () => {
-    try {
-      const { data: playlistData, error: fetchError } = await supabaseBrowser()
-        .from("playlists")
-        .select("playlist")
-        .eq("user_id", user?.id || "")
-
-        // .eq("user_id", user2 || "")
-        .single();
-
-      if (fetchError) {
-        console.error("Error fetching playlist:", fetchError);
-        return;
-      }
-
-      const updatedPlaylist = (
-        playlistData?.playlist as { [key: string]: Json }[]
-      ).map((video, index) =>
-        index === currentVideoIndex
-          ? { ...video, start_time: newStartTime, duration: newDuration }
-          : video
-      );
-
-      const { error: updateError } = await supabaseBrowser()
-        .from("playlists")
-        .update({ playlist: updatedPlaylist })
-        // .eq("user_id", user2 || "")
-        .eq("user_id", user?.id || "")
-        .single();
-
-      if (updateError) {
-        console.error("Error updating playlist:", updateError);
-        toast.error("Failed to update video", {
-          error: updateError,
-        } as ExternalToast);
-      } else {
-        setPlaylist(updatedPlaylist);
-        setNewStartTime(0);
-        setNewDuration(0);
-        router.refresh();
-
-        toast.success("Video updated successfully");
-      }
-    } catch (error) {
-      console.error("Error updating playlist:", error);
-      toast.error("An error occurred while updating the video");
     }
   };
 
@@ -162,7 +104,6 @@ const VideoPlayer: React.FC = () => {
     );
   };
 
-  // Get the title of the highlight without the brackets
   const getTitleWithoutBrackets = (title: string) => {
     const bracketRegex = /\[(.*?)\]/;
     const match = title.match(bracketRegex);
@@ -212,14 +153,12 @@ const VideoPlayer: React.FC = () => {
               alt="Thumbnail"
               className="aspect-video rounded-lg object-cover"
               height={94}
-              src={
-                String(video.thumbnailUrl) ||
-                "https://scouts.perfectgame.org/_next/image?url=https%3A%2F%2Favkhdvyjcweghosyfiiw.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmisc%2F638252106298352027-DKPlusHP%2520(1).webp&w=3840&q=75"
-              }
+              src={String(video.thumbnailUrl)}
               width={168}
-              priority
-              placeholder="blur"
-              blurDataURL="https://scouts.perfectgame.org/_next/image?url=https%3A%2F%2Favkhdvyjcweghosyfiiw.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmisc%2F638252106298352027-DKPlusHP%2520(1).webp&w=3840&q=75"
+              onError={(e) => {
+                e.currentTarget.src =
+                  "https://scouts.perfectgame.org/_next/image?url=https%3A%2F%2Favkhdvyjcweghosyfiiw.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmisc%2F638252106298352027-DKPlusHP%2520(1).webp&w=3840&q=75";
+              }}
             />
 
             {video.title && renderOverlayBadge(video.title as string)}

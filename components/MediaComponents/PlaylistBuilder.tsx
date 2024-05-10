@@ -11,7 +11,6 @@ import {
   DragEndEvent,
   TouchSensor,
   closestCenter,
-  MeasuringStrategy,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -26,9 +25,8 @@ import useUser from "@/app/hook/useUser";
 import { DroppablePlaylist } from "./DroppablePlaylist";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation"; // Import useRouter
+import { useRouter } from "next/navigation";
 import { Card } from "../ui/card";
-import { strict } from "assert";
 import Image from "next/image";
 
 interface PlaylistBuilderProps {
@@ -39,12 +37,9 @@ interface PlaylistBuilderProps {
 export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProps) {
   const [videos, setVideos] = useState<HighlightVideo[]>(initialVideos);
   const [playlist, setPlaylist] = useState<HighlightVideo[]>([]);
-  const [savedPlaylist, setSavedPlaylist] = useState<HighlightVideo[]>([]);
   const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
   const { data: user } = useUser();
-  const router = useRouter(); // Get the router instance
-
-  const user2 = "3faf9652-84d8-4b76-8b44-8e1f3b7ff7fd";
+  const router = useRouter();
 
   useEffect(() => {
     const fetchSavedPlaylist = async () => {
@@ -60,7 +55,6 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
           console.error("Error fetching saved playlist:", error);
         } else {
           const fetchedPlaylist = playlistData?.playlist as HighlightVideo[];
-          setSavedPlaylist(fetchedPlaylist || []);
           setPlaylist(fetchedPlaylist || []);
           setVideos(
             initialVideos.filter(
@@ -105,13 +99,9 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
           if (activeContainer === "videos") {
             setVideos([...videos]);
             setPlaylist([...playlist, removed]);
-            setSavedPlaylist([...savedPlaylist, removed]);
           } else {
             setPlaylist([...playlist]);
             setVideos([...videos, removed]);
-            setSavedPlaylist(
-              savedPlaylist.filter((video) => video.id !== active.id)
-            );
           }
         }
       } else {
@@ -119,12 +109,11 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
         const oldIndex = items.findIndex((video) => video.id === active.id);
         const newIndex = items.findIndex((video) => video.id === over?.id);
 
-        if (oldIndex !== 1 && newIndex !== 1) {
+        if (oldIndex !== -1 && newIndex !== -1) {
           const reorderedItems = arrayMove(items, oldIndex, newIndex);
           activeContainer === "videos"
             ? setVideos(reorderedItems)
             : setPlaylist(reorderedItems);
-          activeContainer === "playlist" && setSavedPlaylist(reorderedItems);
         }
       }
     }
@@ -132,7 +121,6 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
     setActiveVideoId(null);
   };
 
-  const user3 = "3faf9652-84d8-4b76-8b44-8e1f3b7ff7fd";
   const savePlaylist = async () => {
     if (user) {
       const { data: existingPlaylist, error: fetchError } = await supabaseBrowser()
@@ -141,12 +129,12 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
         .eq("user_id", user.id)
         .eq("player_id", playerId)
         .single();
-  
+
       if (fetchError) {
         console.error("Error fetching existing playlist:", fetchError);
         return;
       }
-  
+
       if (existingPlaylist) {
         // Update the existing playlist
         const { error: updateError } = await supabaseBrowser()
@@ -156,9 +144,10 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
             updated_at: new Date().toISOString(),
           })
           .eq("id", existingPlaylist.id);
-  
+
         if (updateError) {
           console.error("Error updating playlist:", updateError);
+          toast.error("Failed to update playlist");
         } else {
           console.log("Playlist updated successfully");
           toast.success("Playlist updated successfully");
@@ -174,16 +163,19 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
             playlist: playlist as any[],
           })
           .single();
-  
+
         if (insertError) {
           console.error("Error creating playlist:", insertError);
+          toast.error("Failed to create playlist");
         } else {
           console.log("Playlist created successfully");
           toast.success("Playlist created successfully");
         }
       }
-  
+
       router.refresh();
+    } else {
+      toast.error("You must be logged in to save a playlist");
     }
   };
 
@@ -228,7 +220,9 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
                 playlist={playlist}
                 setPlaylist={setPlaylist}
               />
-              <Button onClick={savePlaylist}>Save Playlist</Button>
+              <Button onClick={savePlaylist} disabled={!user}>
+                Save Playlist
+              </Button>
             </div>
           </div>
         </Card>
