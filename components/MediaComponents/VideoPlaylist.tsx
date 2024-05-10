@@ -147,18 +147,27 @@ const VideoPlayer: React.FC = () => {
     const titleWithoutBrackets = getTitleWithoutBrackets(title);
     return (
       <div className="absolute top-2 left-2">
-        <Badge variant="secondary"><Image className="mr-2" src={"https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_icon_inverse.png"} width={55} height={10} alt={""}></Image> </Badge>
+        <Badge variant="secondary">
+          <Image
+            className="mr-2"
+            src={
+              "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_icon_inverse.png"
+            }
+            width={55}
+            height={10}
+            alt={""}
+          ></Image>{" "}
+        </Badge>
       </div>
     );
   };
 
-   // Get the title of the highlight without the brackets
-   const getTitleWithoutBrackets = (title: string) => {
+  // Get the title of the highlight without the brackets
+  const getTitleWithoutBrackets = (title: string) => {
     const bracketRegex = /\[(.*?)\]/;
     const match = title.match(bracketRegex);
     return match ? match[1] : title;
   };
-
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4 p-4 lg:p-4">
@@ -179,11 +188,13 @@ const VideoPlayer: React.FC = () => {
         </div>
 
         {currentVideo.title && (
-        <div className="absolute text-white inset-x-0 top-0 p-4 w-full  overflow-hidden rounded-lg bg-gradient-to-b from-black/50 to-transparent">
-          <div className="line-clamp-1"> {getTitle(currentVideo.title as string)}</div>
-                </div>
-              )}
-
+          <div className="absolute text-white inset-x-0 top-0 p-4 w-full  overflow-hidden rounded-lg bg-gradient-to-b from-black/50 to-transparent">
+            <div className="line-clamp-1">
+              {" "}
+              {getTitle(currentVideo.title as string)}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="grid gap-2 max-h-[413px] overflow-y-auto">
@@ -201,13 +212,20 @@ const VideoPlayer: React.FC = () => {
               alt="Thumbnail"
               className="aspect-video rounded-lg object-cover"
               height={94}
-              src={String(video.thumbnailUrl) || "https://scouts.perfectgame.org/_next/image?url=https%3A%2F%2Favkhdvyjcweghosyfiiw.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmisc%2F638252106298352027-DKPlusHP%2520(1).webp&w=3840&q=75"}
+              src={
+                String(video.thumbnailUrl) ||
+                "https://scouts.perfectgame.org/_next/image?url=https%3A%2F%2Favkhdvyjcweghosyfiiw.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmisc%2F638252106298352027-DKPlusHP%2520(1).webp&w=3840&q=75"
+              }
               width={168}
+              priority
+              placeholder="blur"
+              blurDataURL="https://scouts.perfectgame.org/_next/image?url=https%3A%2F%2Favkhdvyjcweghosyfiiw.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmisc%2F638252106298352027-DKPlusHP%2520(1).webp&w=3840&q=75"
             />
+
             {video.title && renderOverlayBadge(video.title as string)}
-          <div className="absolute bottom-2 left-2 text-white text-xs">
-            0:{String(video.duration)}
-          </div>
+            <div className="absolute bottom-2 left-2 text-white text-xs">
+              0:{String(video.duration)}
+            </div>
             <div className="text-sm">
               <div className="font-medium line-clamp-2 mt-2">
                 {getTitle(video.title as string)}
