@@ -1,88 +1,114 @@
 // app/components/MediaCard.tsx
 "use client";
-
 import { Badge } from "@/components/ui/badge";
-import {
-  CardHeader,
-  CardContent,
-  CardFooter,
-  Card,
-} from "@/components/ui/card";
+import { CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  MessageSquareIcon,
-  PlayCircleIcon,
-  ShareIcon,
-  StarIcon,
-  ThumbsUpIcon,
-} from "lucide-react";
+import { MessageSquareIcon, ShareIcon, ThumbsUpIcon } from "lucide-react";
 import { useState } from "react";
-import { Post } from "@/lib/types/types";
+import Video from "next-video";
+import { Post, Playlist, HighlightVideo } from "@/lib/types/types";
 import Image from "next/image";
-import { Skeleton } from "./Skeleton"; // Assuming you have a Skeleton component
 
 interface MediaCardProps {
-  media: Post;
+  media: Post | Playlist | HighlightVideo;
 }
 
 export default function MediaCard({ media }: MediaCardProps) {
   const [isLiked, setIsLiked] = useState(false);
-  const [mediaLoaded, setMediaLoaded] = useState(false);
 
   const handleLike = () => {
     setIsLiked(!isLiked);
-    // Implement like functionality
     console.log(`Liked media with ID: ${media.id}`);
   };
 
   const handleComment = () => {
-    // Implement comment functionality
     console.log(`Commented on media with ID: ${media.id}`);
   };
 
   const handleShare = () => {
-    // Implement share functionality
     console.log(`Shared media with ID: ${media.id}`);
   };
 
+  const isHighlightVideo = (media: Post | Playlist | HighlightVideo): media is HighlightVideo => {
+    return (media as HighlightVideo).url !== undefined;
+  };
+
+  const getTitleWithoutBrackets = (title: string) => {
+    const bracketRegex = /\[(.*?)\]/;
+    const match = title.match(bracketRegex);
+    return match ? match[1] : title;
+  };
+
+
+  // Get the title of the highlight without the brackets
+
+  const getTitle = (title: string) => {
+    const bracketRegex = /\[(.*?)\]/;
+    const match = title.match(bracketRegex);
+    return match ? title.replace(match[0], "") : title;
+  };
+
+  // Render the badge with the title of the highlight
+  const renderOverlayBadge = (title: string) => {
+    const titleWithoutBrackets = getTitleWithoutBrackets(title);
+    return (
+      <div className="absolute top-2 left-2">
+        <Badge variant="secondary"><Image className="mr-2" src={"https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_icon_inverse.png"} width={55} height={10} alt={""}></Image> </Badge>
+      </div>
+    );
+  };
+
+  // Filter out the 9999 from the description
+  const filterDescription = (description: string | undefined) => {
+    if (description) {
+      return description.replace(/9999/g, "");
+    }
+    return description;
+  };
+
+
   return (
-    <Card className="w-full">
-      <CardHeader>
+    <>
+    <div className="flex items-center my-4 mx-auto">
+                <Image
+                  src="https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_horizontal_primary%20(3).png"
+                  alt="Image"
+                  height={75}
+                  width={250}
+                  className="mr-4"
+                />
+                <h2 className="font-pgFont text-2xl">Highlights</h2>
+              </div>
+    <Card className="w-full mb-4 rounded-lg shadow-lg">
+      {/* <CardHeader>
         <div className="flex justify-between items-start">
-          <Badge variant="secondary">{media.player_id || "Unknown"}</Badge>
-          {media.featured_image && <StarIcon className="text-blue-500" />}
+          <Badge variant="secondary">
+            {isHighlightVideo(media) ? media.title : "Unknown"}
+          </Badge>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="relative">
-          {media.isVideo ? (
-            <>
-              {/* Adjust height as needed */}
-              <div className={`relative ${mediaLoaded ? 'hidden' : 'block'}`}>
-              <video src={media.image} className="w-full" controls onLoad={() => setMediaLoaded(true)} />
-              <PlayCircleIcon className="text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-6xl" />
-            </div>
-            </>
-          ) : (
-            <>
-                {/* Match the aspect ratio */}
-                <Image
-                    alt={media.title ?? ""}
-                    className="w-full"
-                    height={200}
-                    src={media.image}
-                    style={{
-                        aspectRatio: "385/200",
-                        objectFit: "cover",
-                    }}
-                    width={385}
-                    onLoad={() => setMediaLoaded(true)}
-                />
-            </>
+      */}
+      <CardContent className="mt-4">
+        {isHighlightVideo(media) && (
+          <Video
+          className="rounded-lg absolute top-0 left-0"
+          src={media.url}
+          autoPlay={false}
+          preload="auto"
+          startTime={media.start_time}
+          placeholder={media.thumbnailUrl || "/placeholder.png"}
+        />
+        )}
+               {media.title && (
+            <p className="text-md leading-4 font-bold text-gray-600 mt-2">
+              {getTitle(media.title)}
+            </p>
           )}
-        </div>
-        <h3 className="text-lg font-semibold mt-3">{media.title}</h3>
-        <p className="text-sm text-gray-600">{media.description}</p>
+          {filterDescription(media.description) && (
+            <p className="text-xs mt-1">
+              {filterDescription(media.description)}
+            </p>
+          )}
       </CardContent>
       <CardFooter className="flex space-x-4">
         <Button variant="ghost" onClick={handleLike}>
@@ -99,5 +125,6 @@ export default function MediaCard({ media }: MediaCardProps) {
         </Button>
       </CardFooter>
     </Card>
+    </>
   );
 }

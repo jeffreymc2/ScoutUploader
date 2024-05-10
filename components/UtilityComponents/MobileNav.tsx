@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 const navigation = [
   { name: "Events", href: "/events" },
   { name: "Players", href: "/players" },
+  { name: "Social", href: "/social" },
+  { name: "DiamondKast Plus", href: "/diamondkast" },
 ];
 
 export default function MobileMenu({ session }: { session: any }) {

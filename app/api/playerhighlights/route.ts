@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
 
   try {
     // Fetch player highlights from the external API
-    const highlightsUrl = `https://perfectgame.drund.com/~/highlights/${encodeURIComponent(playerID)}/?page=1&limit=10&type=h&version=v2&start_date=06-01-2023&end_date=04-16-2024&position=`;
+    const highlightsUrl = `https://perfectgame.drund.com/~/highlights/${encodeURIComponent(playerID)}/?page=1&limit=20&type=h&version=v2&start_date=06-01-2023&end_date=04-16-2024&position=`;
     const highlightsResponse = await fetch(highlightsUrl, {
       method: 'GET',
       headers: {

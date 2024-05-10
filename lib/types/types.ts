@@ -186,7 +186,7 @@ export interface PlayData {
     id: string | null;
   }
 
-  
+
   
   export interface Post {
     MediaFileURL: string;
@@ -376,6 +376,10 @@ export type Json = string | number | boolean | null | Json[] | { [key: string]: 
 
 
 export type Playlist = {
+  title: string;
+  description: string;
+  id: string;
+  user_id: string;
   name: string
   playlist: HighlightVideo[]
   created_at: string

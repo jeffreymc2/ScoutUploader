@@ -13,6 +13,10 @@ import { useNavigation } from "react-day-picker";
 const navigation = [
   { name: "Events", href: "/events" },
   { name: "Players", href: "/players" },
+  { name: "Social", href: "/social" },
+  { name: "DiamondKast Plus", href: "/diamondkast" },
+
+
 ];
 
 export default async function Navbar() {

@@ -1,68 +1,35 @@
 // app/components/Feed.tsx
-import { CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card";
 import { supabaseServer } from "@/lib/supabase/server";
 import MediaCard from "./MediaCard";
 import SearchBar from "./SearchBar";
-import { HighlightVideo, Post } from "@/lib/types/types";
-import { HighlightMediaCard } from "@/components/MediaComponents/HighlightMediaCard";
-import { SupabaseMediaCard } from "@/components/MediaComponents/SupbaseMediaCard";
+import { Post, Playlist, HighlightVideo } from "@/lib/types/types";
 
 export default async function Feed() {
   const supabase = supabaseServer();
-  const { data, error } = await supabase
-    .from("posts")
-    .select("id, created_at, player_id, name, object_id, post_by, event_id, team_id, post_type, title, description, featured_image");
 
-  if (error) {
-    console.error("Error fetching media:", error);
+  const { data: playlistsData, error: playlistsError } = await supabase
+    .from("playlists")
+    .select("created_at, name, updated_at, playlist");
+
+  if (playlistsError) {
+    console.error("Error fetching playlists:", playlistsError);
     return <div>Error loading feed</div>;
   }
 
-  const media: Post[] = data.map((item) => ({
-    id: item.id || '', // Assign an empty string if 'id' is undefined
-    created_at: item.created_at,
-    player_id: item?.player_id,
-    name: item?.name,
-    object_id: item?.object_id,
-    post_by: item?.post_by,
-    profile: null,
-    image: constructImageUrl(item) ?? '', // Provide a default value of an empty string if 'image' is undefined
-    event_id: item?.event_id,
-    featured_image: item?.featured_image,
-    team_id: item?.team_id,
-    isVideo: item?.post_type === "video",
-    post_type: item?.post_type,
-    title: item?.title,
-    description: item?.description,
-    MediaFileURL: '', // Add the missing 'MediaFileURL' property        
-  
-    }));
-
+  const playlists: Playlist[] = (playlistsData as unknown as Playlist[]) || [];
 
   return (
     <div className="max-w-xl mx-auto">
       <div className="flex flex-col space-y-4">
         <SearchBar />
-        {media.map((item) => (
-          <>
-          <MediaCard key={item.id} media={item} />
-          </>
+        {playlists.map((playlist, index) => (
+          <div key={index}>
+            {playlist.playlist.map((video) => (
+              <MediaCard key={video.id} media={video} />
+            ))}
+          </div>
         ))}
-        {Array.isArray(Highlight) && Highlight.map((highlight: HighlightVideo) => ( 
-          <HighlightMediaCard key={highlight.id} highlight={highlight} />
-        ))  
-        }
       </div>
     </div>
   );
-}
-
-function constructImageUrl(post: any): string | undefined {
-  if (post.event_id && post.post_by && post.team_id && post.name) {
-    return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`;
-  } else if (post.post_by && post.player_id && post.name) {
-    return `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`;
-  }
-  
-  return undefined;
 }
