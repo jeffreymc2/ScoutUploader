@@ -61,8 +61,8 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
   };
 
   const handleSavePlayer = async (postId: string, playerId: string) => {
-    console.log("postId:", postId);
-    console.log("playerId:", playerId);
+     console.log("postId:", postId);
+  console.log("playerId:", playerId);
     try {
       const post = posts.find((post) => post.id === postId);
       const postType = post?.event_id ? "event" : "player";
@@ -241,6 +241,7 @@ const PlayerSelect: React.FC<PlayerSelectProps> = ({
   };
 
   const handleSave = () => {
+    console.log("selectedPlayer:", selectedPlayer);
     if (selectedPlayer) {
       onSavePlayer(post.id || "", selectedPlayer.playerid.toString());
     }
