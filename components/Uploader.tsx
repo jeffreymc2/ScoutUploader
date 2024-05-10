@@ -48,7 +48,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       service: "https://api2.transloadit.com",
       params: {
         auth: {
-          key: `${process.env.TRANSLOADIT_API_KEY}`,
+          key: "6dc94e959225462bacbcb6283b3c639c",
         },
         steps: {
           thumbnail: {
