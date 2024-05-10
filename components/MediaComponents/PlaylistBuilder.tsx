@@ -33,9 +33,10 @@ import Image from "next/image";
 
 interface PlaylistBuilderProps {
   initialVideos: HighlightVideo[];
+  playerId: string;
 }
 
-export function PlaylistBuilder({ initialVideos }: PlaylistBuilderProps) {
+export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProps) {
   const [videos, setVideos] = useState<HighlightVideo[]>(initialVideos);
   const [playlist, setPlaylist] = useState<HighlightVideo[]>([]);
   const [savedPlaylist, setSavedPlaylist] = useState<HighlightVideo[]>([]);
@@ -52,7 +53,7 @@ export function PlaylistBuilder({ initialVideos }: PlaylistBuilderProps) {
           .from("playlists")
           .select("playlist")
           .eq("user_id", user.id)
-          //  .eq("user_id", user2)
+          .eq("player_id", playerId)
           .single();
 
         if (error) {
@@ -74,7 +75,7 @@ export function PlaylistBuilder({ initialVideos }: PlaylistBuilderProps) {
     };
 
     fetchSavedPlaylist();
-  }, [user, initialVideos]);
+  }, [user, initialVideos, playerId]);
 
   const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor));
 
@@ -137,8 +138,8 @@ export function PlaylistBuilder({ initialVideos }: PlaylistBuilderProps) {
       const { error } = await supabaseBrowser()
         .from("playlists")
         .upsert({
-          // user_id: user3,
           user_id: user.id,
+          player_id: playerId,
           name: "My Playlist",
           playlist: playlist as any[],
         })

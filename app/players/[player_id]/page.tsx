@@ -271,7 +271,7 @@ export default async function PlayerPage({
         </Card>
       </div> */}
 
-      <Suspense fallback={<div>Loading...</div>}>
+<Suspense fallback={<div>Loading...</div>}>
         <Card className="mt-8">
           <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4 flex items-center justify-between">
             <CardTitle className="text-sm font-bold">
@@ -291,7 +291,7 @@ export default async function PlayerPage({
             </Dialog>
           </div>
           <VideoPlayer />
-          <PlaylistBuilder initialVideos={highlightVideos} />
+          <PlaylistBuilder initialVideos={highlightVideos} playerId={player_id} />
         </Card>
 
         <Card className="mt-4">
@@ -314,23 +314,10 @@ export default async function PlayerPage({
             <PlayerMediaGallery
               posts={typedPosts}
               events={[]}
-              playerId={playerData.PlayerID.toString()} // Convert PlayerID to string
+              playerId={playerData.PlayerID.toString()}
             />
           </div>
         </Card>
-
-        {/* <Card className="mt-8">
-          <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4">
-            <CardTitle className="text-sm font-bold">
-              DiamondKast Plus Highlights
-            </CardTitle>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 p-4">
-            {highlightVideos.map((highlight) => (
-              <HighlightMediaCard key={highlight.id} highlight={highlight} />
-            ))}
-          </div>
-        </Card> */}
       </Suspense>
     </div>
   );
