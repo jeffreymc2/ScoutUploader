@@ -148,11 +148,11 @@ function BattingStatsTab({ playerStats }: { playerStats: PlayerStats | null }) {
         <span className="text-lg font-semibold">{playerStats.BB}</span>
       </div>
       <div className="flex flex-col">
-        <span className="text-sm font-medium">Runs Scored</span>
+        <span className="text-sm font-medium">Runs</span>
         <span className="text-lg font-semibold">{playerStats.R}</span>
       </div>
       <div className="flex flex-col">
-        <span className="text-sm font-medium">Stolen Bases</span>
+        <span className="text-sm font-medium">SB</span>
         <span className="text-lg font-semibold">{playerStats.SB}</span>
       </div>
       <div className="flex flex-col">
@@ -256,7 +256,7 @@ export default function PlayerStatsSummary({ playerId }: { playerId: string }) {
   return (
     <Card className="w-full max-w-3xl">
       
-      <CardContent className='min-h-96'>
+      <CardContent >
         <Tabs defaultValue="batting" className="w-full mt-2">
           <TabsList>
             <TabsTrigger value="batting">Batting</TabsTrigger>

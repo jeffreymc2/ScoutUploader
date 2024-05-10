@@ -111,13 +111,13 @@ export default async function PlayerPage({
     highlightsData.highlights?.map((highlight: any) => ({
       id: highlight.id,
       stream_id: highlight.stream_id,
-      title: highlight.title || '',
-      description: highlight.description || '',
+      title: highlight.title || "",
+      description: highlight.description || "",
       start_time: highlight.start_time,
       end_time: highlight.end_time,
       duration: highlight.duration,
-      thumbnailUrl: highlight.thumbnailUrl || '',
-      url: highlight.url || '',
+      thumbnailUrl: highlight.thumbnailUrl || "",
+      url: highlight.url || "",
       created: highlight.created,
       tagged_player_keys: highlight.tagged_player_keys,
       highlight_type: highlight.highlight_type,
@@ -131,39 +131,41 @@ export default async function PlayerPage({
   return (
     <div className="container mx-auto p-0">
       <BackButton />
-      <Card className="mt-2 ">
+      <Card className="mt-2">
         <CardContent className="p-0 bg-white">
-          <div className="flex flex-col items-center justify-between space-y-4 md:flex-row md:space-y-0 md:space-x-8 p-0">
-            <Avatar className="w-80 h-80 mt-5 md:mt-0 md:w-80 md:h-80 rounded-sm">
-              <AvatarImage
-                src={playerData.ProfilePic ?? ""}
-                alt="Player Avatar"
-                className="rounded-sm object-cover object-center w-full h-full"
-              />
-              <AvatarFallback>
-                {playerData.PlayerName.slice(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 text-center md:text-left">
-              <h2 className="text-4xl font-pgFont md:text-6xl font-bold">
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_0.8fr_2fr] gap-4">
+            <div className="flex flex-col items-center">
+              <Avatar className="w-80 h-96 mt-5 md:mt-0 md:w-80 md:h-80 rounded-sm">
+                <AvatarImage
+                  src={playerData.ProfilePic ?? ""}
+                  alt="Player Avatar"
+                  className="rounded-sm object-cover items-center w-full h-full object-top"
+                />
+                <AvatarFallback>
+                  {playerData.PlayerName.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            </div>
+            <div className="flex flex-col justify-top mt-2">
+              <h2 className="text-4xl font-pgFont md:text-6xl font-bold text-center md:text-left">
                 {playerData?.PlayerName || "N/A"}
               </h2>
-              <p className="text-md text-gray-500">
+              <p className="text-md text-gray-500 text-center md:text-left">
                 Player ID: {playerData?.PlayerID || "N/A"}
               </p>
-              <p className="text-md text-gray-500">
+              <p className="text-md text-gray-500 text-center md:text-left">
                 Grad Year: {playerData?.GradYear || "N/A"} | Age:{" "}
                 {playerData?.Age || "N/A"}
               </p>
-              <div className="flex justify-center mb-4 md:justify-start">
+              <div className="flex justify-left items-center space-x-4 mt-4">
                 <Dialog>
                   <DialogTrigger className="text-sm font-bold flex items-center space-x-1">
-                    <Button className="bg-blue-500 text-white rounded-t-lg py-2 px-4 ">
+                    <Button className="bg-blue-500 text-white rounded-t-lg py-2 px-4">
                       <RiVideoUploadLine className="h-5 w-5 mr-2" />
                       <span>Upload Media</span>
                     </Button>
                   </DialogTrigger>
-                  <DialogContent>
+                  <DialogContent className="my-2">
                     <Uploader
                       playerid={playerData.PlayerID}
                       FullName={playerData.PlayerName}
@@ -172,101 +174,109 @@ export default async function PlayerPage({
                 </Dialog>
               </div>
             </div>
+            <CardContent>
+              <div className="w-full my-2">
+                <PlayerStatsSummary playerId={player_id.toString()} />
+                <GameStatsTable playerId={player_id.toString()} />
+              </div>
+            </CardContent>
           </div>
-        </CardContent>
-      </Card>
-
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card>
-          <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4">
-            <CardTitle className="text-sm font-bold">Player Details</CardTitle>
-          </div>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Height</Label>
-                <p className="text-lg">{playerData?.Height || "N/A"}</p>
+          <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+            <div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                Height
               </div>
-              <div>
-                <Label>Weight</Label>
-                <p className="text-lg">{playerData?.Weight || "N/A"} lbs</p>
+              <div className="font-medium">{playerData?.Height || "N/A"}"</div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                Weight
               </div>
-              <div>
-                <Label>City</Label>
-                <p className="text-lg">{playerData?.CityState || "N/A"}</p>
+              <div className="font-medium">
+                {playerData?.Weight || "N/A"} lbs
               </div>
-              <div>
-                <Label>College Commitment</Label>
-                <p className="text-lg">{playerData?.Commitment || "N/A"}</p>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                Hometown
               </div>
-              <div>
-                <Label>High School</Label>
-                <p className="text-lg">{playerData.HighSchool}</p>
+              <div className="font-medium">
+                {playerData?.CityState || "N/A"}
               </div>
-              <div>
-                <Label>National Pos Rank</Label>
-                <p className="text-lg">
-                  {playerData?.NationalPosRank || "N/A"}
-                </p>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                College
               </div>
-              <div>
-                <Label>State Pos Rank</Label>
-                <p className="text-lg">{playerData?.StatePosRank || "N/A"}</p>
+              <div className="font-medium">
+                {playerData?.Commitment || "N/A"}
               </div>
-              <div>
-                <Label>National Rank</Label>
-                <p className="text-lg">{playerData?.NationalRank || "N/A"}</p>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                High School
               </div>
-              <div>
-                <Label>State Rank</Label>
-                <p className="text-lg">{playerData?.StateRank || "N/A"}</p>
+              <div className="font-medium">
+                {playerData?.HighSchool || "N/A"}
               </div>
-              <div>
-                <Label>Bats/Throws</Label>
-                <p className="text-lg">{playerData?.BatsThrows || "N/A"}</p>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                National Rank
               </div>
-              <div>
-                <Label>Primary Position</Label>
-                <p className="text-lg">{playerData?.PrimaryPos || "N/A"}</p>
+              <div className="font-medium">
+                {playerData?.NationalRank || "N/A"}
               </div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                State Rank
+              </div>
+              <div className="font-medium">
+                {playerData?.StateRank || "N/A"}
+              </div>
+            </div>
+            <div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                PG Grade
+              </div>
+              <div className="font-medium">
+                {playerData?.bestPGGrade || "N/A"}
+              </div>
+            </div>
+            <div className="md:col-span-4">
               <div>
-                <Label>Best PG Grade</Label>
-                <p className="text-lg">{playerData?.bestPGGrade || "N/A"}</p>
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  Notes
+                </div>
+                <div className="font-medium">{playerData?.Note || "N/A"}</div>
               </div>
             </div>
           </CardContent>
-        </Card>
-
+        </CardContent>
+      </Card>
+      {/* <div className="mt-4">
         <Card>
-          <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4">
-            <CardTitle className="text-sm font-bold">
-              Statistics & Notes
-            </CardTitle>
-          </div>
           <CardContent>
             <div className="w-full my-4">
               <PlayerStatsSummary playerId={player_id.toString()} />
-            </div>
-
-            <div className="w-full my-4">
               <GameStatsTable playerId={player_id.toString()} />
             </div>
-
-            <div className="grid grid-cols-1 gap-4">
-              <div>
-                <Label>Notes</Label>
-                <p className="text-md">{playerData?.Note || "N/A"}</p>
-              </div>
+          
+            <div>
+              <Label>Notes</Label>
+              <p className="text-md">{playerData?.Note || "N/A"}</p>
             </div>
           </CardContent>
         </Card>
-      </div>
+      </div> */}
 
       <Suspense fallback={<div>Loading...</div>}>
-
-      <Card className="mt-8">
-        <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4 flex items-center justify-between">
-            <CardTitle className="text-sm font-bold">DiamondKast Plus Highlights</CardTitle>
+        <Card className="mt-8">
+          <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4 flex items-center justify-between">
+            <CardTitle className="text-sm font-bold">
+              DiamondKast Plus Highlights
+            </CardTitle>
             <Dialog>
               <DialogTrigger className="text-sm font-bold flex items-center space-x-1 ">
                 <RiVideoUploadLine className="h-5 w-5" />
@@ -280,10 +290,9 @@ export default async function PlayerPage({
               </DialogContent>
             </Dialog>
           </div>
-          <VideoPlayer />          
+          <VideoPlayer />
           <PlaylistBuilder initialVideos={highlightVideos} />
         </Card>
-
 
         <Card className="mt-4">
           <div className="bg-blue-500 text-white rounded-t-lg py-2 px-4 flex items-center justify-between">
@@ -322,7 +331,6 @@ export default async function PlayerPage({
             ))}
           </div>
         </Card> */}
-        
       </Suspense>
     </div>
   );

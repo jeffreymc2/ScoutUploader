@@ -11,7 +11,7 @@ interface SortableHighlightVideoItemProps {
   video: HighlightVideo;
 }
 
-const SortableHighlightVideoItem: React.FC<SortableHighlightVideoItemProps> = ({ video }) => {
+export const SortableHighlightVideoItem: React.FC<SortableHighlightVideoItemProps> = ({ video }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: video.id,
   });
@@ -19,14 +19,16 @@ const SortableHighlightVideoItem: React.FC<SortableHighlightVideoItemProps> = ({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
+    touchAction: 'none',
   };
 
   return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <HighlightVideoItem video={video} />
+    <div>
+      <HighlightVideoItem
+        video={video}
+        isDragging={isDragging}
+        dragHandleProps={{ ref: setNodeRef, ...attributes, ...listeners, style }}
+      />
     </div>
   );
 };
-
-export { SortableHighlightVideoItem };
