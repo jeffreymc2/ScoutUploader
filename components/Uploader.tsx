@@ -34,6 +34,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   });
 
   const player_id = playerid.toString();
+  const user2 = "3faf9652-84d8-4b76-8b44-8e1f3b7ff7fd";
 
   const [uppy] = useState(() =>
     new Uppy({
@@ -47,7 +48,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       service: "https://api2.transloadit.com",
       params: {
         auth: {
-          key: "TRANSLOADIT_API_KEY",
+          key: `${process.env.TRANSLOADIT_API_KEY}`,
         },
         steps: {
           thumbnail: {
