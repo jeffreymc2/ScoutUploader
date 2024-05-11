@@ -31,6 +31,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   });
 
   const player_id = playerid.toString();
+  const fileNameWithUUID = `${player_id}_${File.name}`;
 
   const [uppy] = useState(() =>
     new Uppy({
@@ -47,26 +48,28 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
           key: "c8bcc31673614496a3a412b4fda14767",
         },
         steps: {
-          thumbnail: {
-            robot: "/image/resize",
+          "thumbnailed": {
             use: ":original",
-            width: 300,
-            height: 200,
-            resize_strategy: "fillcrop",
-            path: "/thumbnails/${file.name}",
+            robot: "/video/thumbs",
+            result: true,
+            count: 1,
+            ffmpeg_stack: "v6.0.0",
+            resize_strategy: "fit",
+            width: 300
           },
           hls: {
             robot: "/video/encode",
             use: ":original",
             preset: "hls-1080p",
-            path: "/hls/${file.name}",
+            path: `/hls/${File.name}`,
           },
           exported: {
-            use: ["thumbnail", "hls"],
+            use: ["thumbnailed", "hls"],
             result: true,
             robot: "/supabase/store",
             credentials: "pgscout",
-            path: "players/${user?.id}/${player_id}",
+            bucket: "media",
+            path: `{players/${user?.id}/${player_id}`,
           },
         },
       },
