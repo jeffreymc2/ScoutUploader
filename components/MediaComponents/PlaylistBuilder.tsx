@@ -11,6 +11,7 @@ import {
   DragEndEvent,
   TouchSensor,
   closestCenter,
+  MeasuringStrategy,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -25,8 +26,9 @@ import useUser from "@/app/hook/useUser";
 import { DroppablePlaylist } from "./DroppablePlaylist";
 import { Button } from "../ui/button";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation"; // Import useRouter
 import { Card } from "../ui/card";
+import { strict } from "assert";
 import Image from "next/image";
 
 interface PlaylistBuilderProps {
@@ -34,12 +36,18 @@ interface PlaylistBuilderProps {
   playerId: string;
 }
 
-export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProps) {
+export function PlaylistBuilder({
+  initialVideos,
+  playerId,
+}: PlaylistBuilderProps) {
   const [videos, setVideos] = useState<HighlightVideo[]>(initialVideos);
   const [playlist, setPlaylist] = useState<HighlightVideo[]>([]);
+  const [savedPlaylist, setSavedPlaylist] = useState<HighlightVideo[]>([]);
   const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
   const { data: user } = useUser();
-  const router = useRouter();
+  const router = useRouter(); // Get the router instance
+
+  const user2 = "3faf9652-84d8-4b76-8b44-8e1f3b7ff7fd";
 
   useEffect(() => {
     const fetchSavedPlaylist = async () => {
@@ -49,12 +57,13 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
           .select("playlist")
           .eq("user_id", user.id)
           .eq("player_id", playerId)
-          .single();
+          .maybeSingle();
 
         if (error) {
           console.error("Error fetching saved playlist:", error);
         } else {
           const fetchedPlaylist = playlistData?.playlist as HighlightVideo[];
+          setSavedPlaylist(fetchedPlaylist || []);
           setPlaylist(fetchedPlaylist || []);
           setVideos(
             initialVideos.filter(
@@ -99,9 +108,13 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
           if (activeContainer === "videos") {
             setVideos([...videos]);
             setPlaylist([...playlist, removed]);
+            setSavedPlaylist([...savedPlaylist, removed]);
           } else {
             setPlaylist([...playlist]);
             setVideos([...videos, removed]);
+            setSavedPlaylist(
+              savedPlaylist.filter((video) => video.id !== active.id)
+            );
           }
         }
       } else {
@@ -109,11 +122,12 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
         const oldIndex = items.findIndex((video) => video.id === active.id);
         const newIndex = items.findIndex((video) => video.id === over?.id);
 
-        if (oldIndex !== -1 && newIndex !== -1) {
+        if (oldIndex !== 1 && newIndex !== 1) {
           const reorderedItems = arrayMove(items, oldIndex, newIndex);
           activeContainer === "videos"
             ? setVideos(reorderedItems)
             : setPlaylist(reorderedItems);
+          activeContainer === "playlist" && setSavedPlaylist(reorderedItems);
         }
       }
     }
@@ -121,14 +135,16 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
     setActiveVideoId(null);
   };
 
+  const user3 = "3faf9652-84d8-4b76-8b44-8e1f3b7ff7fd";
   const savePlaylist = async () => {
     if (user) {
-      const { data: existingPlaylist, error: fetchError } = await supabaseBrowser()
-        .from("playlists")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("player_id", playerId)
-        .single();
+      const { data: existingPlaylist, error: fetchError } =
+        await supabaseBrowser()
+          .from("playlists")
+          .select("id")
+          .eq("user_id", user.id)
+          .eq("player_id", playerId)
+          .maybeSingle();
 
       if (fetchError) {
         console.error("Error fetching existing playlist:", fetchError);
@@ -222,7 +238,7 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
               />
               <Button onClick={savePlaylist} disabled={!user}>
                 Save Playlist
-              </Button>
+              </Button>{" "}
             </div>
           </div>
         </Card>

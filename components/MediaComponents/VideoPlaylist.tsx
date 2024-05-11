@@ -30,7 +30,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
           .select("playlist")
           .eq("user_id", user?.id)
           .eq("player_id", playerId)
-          .single();
+          .maybeSingle();
+    
         if (error) {
           console.error("Error fetching playlist:", error);
           // If no playlist found for the user, fetch highlights from the API
@@ -40,7 +41,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
           const highlightsData = await highlightsResponse.json();
           setPlaylist(highlightsData.highlights || []);
         } else {
-          setPlaylist(playlistData?.playlist as { [key: string]: Json }[]);
+          setPlaylist(playlistData?.playlist as { [key: string]: Json }[] || []);
         }
       }
     };

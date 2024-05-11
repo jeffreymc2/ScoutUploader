@@ -24,7 +24,6 @@ export async function GET(request: NextRequest) {
       headers: {
         'Drund-Api-Key': `${process.env.DRUND_API_KEY}`,
         'Accept': 'application/json',
-        'Access-Control-Allow-Origin': '*',
       },
     });
 
@@ -88,7 +87,21 @@ export async function GET(request: NextRequest) {
       ...supabaseVideos,
     ];
 
-    return NextResponse.json({ highlights: combinedHighlights });
+    // Set CORS headers
+    const corsHeaders = {
+      'Access-Control-Allow-Origin': 'https://scouts.perfectgame.org',
+      'Access-Control-Allow-Methods': 'GET',
+      'Access-Control-Allow-Headers': 'Content-Type',
+    };
+
+    // Return the response with CORS headers
+    return new NextResponse(JSON.stringify({ highlights: combinedHighlights }), {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        ...corsHeaders,
+      },
+    });
   } catch (error) {
     console.error('Error making request:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
