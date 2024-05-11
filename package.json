@@ -79,6 +79,7 @@
     "clsx": "^2.1.0",
     "coconutjs": "^3.0.2",
     "date-fns": "^3.6.0",
+    "dns": "^0.2.2",
     "eventsource-parser": "^1.1.2",
     "ffmpeg": "^0.0.4",
     "ffmpeg-node": "^0.0.2",
