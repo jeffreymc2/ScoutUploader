@@ -1,4 +1,3 @@
-
 // app/components/Uploader.tsx
 "use client";
 import React, { useState } from "react";
@@ -9,9 +8,7 @@ import "@uppy/core/dist/style.css";
 import "@uppy/dashboard/dist/style.css";
 import { Button } from "./ui/button";
 import useUser from "@/app/hook/useUser";
-import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
-import path from "path";
 
 export interface PlayerResponse {
   PlayerID: string;
@@ -28,14 +25,12 @@ interface UploaderProps {
 
 const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   const { data: user } = useUser();
-  const supabase = supabaseBrowser();
   const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>({
     playerid,
     FullName,
   });
 
   const player_id = playerid.toString();
-  const user2 = "3faf9652-84d8-4b76-8b44-8e1f3b7ff7fd";
 
   const [uppy] = useState(() =>
     new Uppy({
@@ -79,34 +74,6 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   );
 
   uppy.on("complete", async (result) => {
-    const assembly = (result as any).transloadit[0].assembly;
-    const thumbnailUrl = assembly.results.thumbnail[0].ssl_url;
-    const hlsUrl = assembly.results.hls[0].ssl_url;
-
-    // Save the thumbnail URL to Supabase
-    const thumbnailFilename = `thumbnail_${player_id}.png`;
-    const { data: thumbnailData, error: thumbnailError } = await supabase.storage
-      .from("media")
-      .upload(`players/${user?.id}/${player_id}/thumbnails/${thumbnailFilename}`, thumbnailUrl);
-
-    if (thumbnailError) {
-      console.error("Error saving thumbnail URL to Supabase:", thumbnailError);
-    } else {
-      console.log("Thumbnail URL saved successfully");
-    }
-
-    // Save the HLS URL to Supabase
-    const hlsFilename = `video_${player_id}.m3u8`;
-    const { data: hlsData, error: hlsError } = await supabase.storage
-      .from("media")
-      .upload(`players/${user?.id}/${player_id}/hls/${hlsFilename}`, hlsUrl);
-
-    if (hlsError) {
-      console.error("Error saving HLS URL to Supabase:", hlsError);
-    } else {
-      console.log("HLS URL saved successfully");
-    }
-
     toast.success("Upload and transcoding complete!");
     if (window.location.pathname.includes("/players")) {
       window.location.reload();
