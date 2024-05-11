@@ -55,7 +55,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
             count: 1,
             ffmpeg_stack: "v6.0.0",
             resize_strategy: "fit",
-            path: `/thumbnail/${File.name}`,
+            path: `/thumbnail/${fileNameWithUUID}`,
 
             width: 300
           },
@@ -63,7 +63,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
             robot: "/video/encode",
             use: ":original",
             preset: "hls-1080p",
-            path: `/hls/${File.name}`,
+            path: `/hls/${fileNameWithUUID}`,
           },
           exported: {
             use: ["thumbnailed", "hls"],
@@ -71,7 +71,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
             robot: "/supabase/store",
             credentials: "pgscout",
             bucket: "media",
-            path: `{players/${user?.id}/${player_id}`,
+            path: `/players/${user?.id}/${player_id}`,
           },
         },
       },
