@@ -55,6 +55,8 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
             count: 1,
             ffmpeg_stack: "v6.0.0",
             resize_strategy: "fit",
+            path: `/thumbnail/${File.name}`,
+
             width: 300
           },
           hls: {
