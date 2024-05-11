@@ -54,7 +54,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         steps: {
           thumbnail: {
             robot: "/image/resize",
-            use: "thumbnail",
+            use: ":original",
             width: 300,
             height: 200,
             resize_strategy: "fillcrop",
@@ -62,12 +62,12 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
           },
           hls: {
             robot: "/video/encode",
-            use: "hls",
+            use: ":original",
             preset: "hls-1080p",
             path: "/hls/${file.name}",
           },
           exported: {
-            use: ["thumbnail", "hls", ":original"],
+            use: ["thumbnail", "hls"],
             result: true,
             robot: "/supabase/store",
             credentials: "pgscout",
