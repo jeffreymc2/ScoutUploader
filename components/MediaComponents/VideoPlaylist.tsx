@@ -24,27 +24,32 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 
   useEffect(() => {
     const fetchPlaylist = async () => {
+      let playlistData: { [key: string]: Json }[] = [];
+  
       if (user) {
-        const { data: playlistData, error } = await supabaseBrowser()
+        const { data, error } = await supabaseBrowser()
           .from("playlists")
           .select("playlist")
           .eq("user_id", user?.id)
           .eq("player_id", playerId)
           .maybeSingle();
-    
-        if (error) {
-          console.error("Error fetching playlist:", error);
-          // If no playlist found for the user, fetch highlights from the API
-          const highlightsResponse = await fetch(
-            process.env.NEXT_PUBLIC_URL + `/api/playerhighlights?playerID=${playerId}`
-          );
-          const highlightsData = await highlightsResponse.json();
-          setPlaylist(highlightsData.highlights || []);
-        } else {
-          setPlaylist(playlistData?.playlist as { [key: string]: Json }[] || []);
+  
+        if (!error && data?.playlist) {
+          playlistData = data.playlist as { [key: string]: Json }[];
         }
       }
+  
+      // Fetch highlights from the API
+      const highlightsResponse = await fetch(
+        process.env.NEXT_PUBLIC_URL + `/api/playerhighlights?playerID=${playerId}`
+      );
+      const highlightsData = await highlightsResponse.json();
+      const highlightVideos = highlightsData.highlights || [];
+  
+      // If there are saved playlists, use them; otherwise, use the highlights
+      setPlaylist(playlistData.length > 0 ? playlistData : highlightVideos);
     };
+  
     fetchPlaylist();
   }, [user, playerId]);
 
