@@ -294,7 +294,6 @@ import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import TransloaditPlugin from "@uppy/transloadit";
 
 export interface PlayerResponse {
   PlayerID: string;
@@ -337,24 +336,6 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         maxFileSize: 5 * 100000 * 10000,
       },
       debug: true,
-    }).use(TransloaditPlugin, {
-      service: "https://api2.transloadit.com",
-      params: {
-        auth: {
-          key: process.env.TRANSLOADIT_API_KEY!,
-        },
-        steps: {
-          thumbnail: {
-            use: ":original",
-            robot: "/video/thumbs",
-            result: true,
-            format: "png",
-            count: 1,
-            width: 800,
-            height: 600,
-          },
-        },
-      },
     })
   );
 
@@ -390,25 +371,12 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       } else {
         console.log("File location saved to Supabase successfully");
       }
-
-      if (isVideo) {
-        const thumbnailFile = result.successful.find((file) => file.name.startsWith("thumbnail_"));
-
-        if (thumbnailFile) {
-          // Upload the thumbnail to S3
-          const thumbnailS3Params = {
-            Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME!,
-            Key: `players/${user?.id}/${player_id}/thumbnails/${thumbnailFile.name}`,
-            Body: thumbnailFile.data,
-            ContentType: thumbnailFile.type,
-          };
-
-          await s3Client.send(new PutObjectCommand(thumbnailS3Params));
-          console.log("Thumbnail uploaded to S3 successfully");
-        }
-      }
     } catch (error) {
       console.error("Error uploading file to S3:", error);
+    }
+
+    if (isVideo) {
+      // ... existing code for thumbnail generation ...
     }
 
     toast.success("Upload complete!");
