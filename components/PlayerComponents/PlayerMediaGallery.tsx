@@ -160,7 +160,7 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                           <DialogTrigger asChild>
                             <MediaForm
                               postId={post.id?.toString() || ""}
-                              mediaUrl={post.image || ""}
+                              fileUrl={post.image || ""}
                               isVideo={post.isVideo}
                               thumbnailUrl={post.thumbnail_url || ""}
                             />

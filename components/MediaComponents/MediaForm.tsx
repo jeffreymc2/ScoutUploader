@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import  Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { updatePost } from "@/app/media/actions";
@@ -113,9 +114,11 @@ export default function MediaForm({
             </div>
           ) : (
             <div className="w-full max-h-[280px] overflow-hidden">
-              <img
+              <Image
                 src={fileUrl}
                 alt="Media Preview"
+                width={500}
+                height={280}
                 className="w-full h-auto rounded-lg"
               />
             </div>
