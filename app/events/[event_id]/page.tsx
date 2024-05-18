@@ -56,7 +56,7 @@ const playersData: Player[] = teamsData.find((team) => team.TournamentTeamID ===
               <CardTitle className="font-pgFont">Photo Gallery</CardTitle>
             </CardHeader>
             <CardContent>
-            <EventTeamGallery posts={typedPosts} players={playersData} eventId={event_id} teamId={team_id} image={""} />
+            <EventTeamGallery posts={typedPosts} players={playersData} eventId={event_id} teamId={team_id} />
             </CardContent>
           </Card>
         </Suspense>
