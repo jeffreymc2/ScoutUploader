@@ -145,7 +145,7 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                             <DialogTrigger asChild>
                               <MediaForm
                                 postId={post.id?.toString() || ""}
-                                mediaUrl={post.file_url || ""}
+                                fileUrl={post.file_url || ""}
                                 isVideo={post.isVideo}
                                 thumbnailUrl={post.thumbnail_url || ""}
                               />
