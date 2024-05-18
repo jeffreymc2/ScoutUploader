@@ -362,6 +362,7 @@ export interface MediaFile {
 // lib/types/types.ts
 
 export type HighlightVideo = {
+  videoUrl: string | undefined;
   id: string;
   stream_id: string;
   title: string;

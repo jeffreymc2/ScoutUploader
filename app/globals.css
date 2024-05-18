@@ -9,7 +9,7 @@
 	font-style: normal; /* Adjust as needed */
   }
   
-
+  
 
   @layer base {
 	:root {
@@ -125,6 +125,19 @@ html {
 	background: white;
 	padding: 30px;
 	border-radius: 4px;
+  }
+
+  @media (max-width: 640px) {
+	.grid {
+	  grid-template-columns: 1fr;
+	}
+	.sortable-video-item {
+	  margin-bottom: 16px;
+	}
+	.drag-handle {
+	  width: 100%;
+	  text-align: center;
+	}
   }
 
   /* styles.css */
