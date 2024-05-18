@@ -137,7 +137,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
             ref={playerRef}
           />
         </div>
-
+  
         {currentVideo.title && (
           <div className="absolute text-white inset-x-0 top-0 p-4 w-full overflow-hidden rounded-lg bg-gradient-to-b from-black/50 to-transparent">
             <div className="line-clamp-1">
@@ -147,8 +147,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
           </div>
         )}
       </div>
-
-      <div className="grid gap-2 max-h-[413px] overflow-y-auto">
+  
+      <div className="flex flex-col gap-2 max-h-[413px] overflow-y-auto">
         {playlist.map((video, index) => (
           <div
             key={String(video.id)}
@@ -170,7 +170,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                   "https://scouts.perfectgame.org/_next/image?url=https%3A%2F%2Favkhdvyjcweghosyfiiw.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmisc%2F638252106298352027-DKPlusHP%2520(1).webp&w=3840&q=75";
               }}
             />
-
+  
             {video.title && renderOverlayBadge(video.title as string)}
             <div className="absolute bottom-2 left-2 text-white text-xs">
               0:{String(video.duration)}

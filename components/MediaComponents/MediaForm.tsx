@@ -12,19 +12,18 @@ import { updatePost } from "@/app/media/actions";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { FaEdit } from "react-icons/fa";
-import Image from "next/image";
-import Video from "next-video";
+import ReactPlayer from "react-player";
 
 interface MediaFormProps {
   postId: string;
-  mediaUrl: string;
+  fileUrl: string;
   isVideo: boolean;
   thumbnailUrl: string;
 }
 
 export default function MediaForm({
   postId,
-  mediaUrl,
+  fileUrl,
   thumbnailUrl,
   isVideo,
 }: MediaFormProps) {
@@ -33,7 +32,7 @@ export default function MediaForm({
   const [initialData, setInitialData] = useState({
     title: "",
     description: "",
-    publish_media: false, 
+    publish_media: false,
     thumbnailUrl: "",
   });
 
@@ -101,23 +100,23 @@ export default function MediaForm({
           {/* Media Preview */}
           {isVideo ? (
             <div className="video-preview">
-              <Video
-                src={mediaUrl}
+              <ReactPlayer
+                url={fileUrl}
                 className="rounded-lg absolute top-0 left-0"
-                autoPlay={true}
-                preload="auto"
+                playing={false}
                 controls={true}
-                startTime={1}
-                style={{ objectFit: "fill" }}
+                width="100%"
+                height="100%"
+                style={{ objectFit: "cover" }}
+                light={thumbnailUrl || true}
               />
             </div>
           ) : (
             <div className="w-full max-h-[280px] overflow-hidden">
-              <Image
-                src={mediaUrl}
+              <img
+                src={fileUrl}
                 alt="Media Preview"
-                width={500}
-                height={280}
+                className="w-full h-auto rounded-lg"
               />
             </div>
           )}
