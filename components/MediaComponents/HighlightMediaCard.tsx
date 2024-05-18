@@ -1,4 +1,3 @@
-// app/components/MediaComponents/HighlightMediaCard.tsx
 "use client";
 
 import React, { useState } from "react";
@@ -10,12 +9,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { HighlightVideo } from "@/lib/types/types";
-import Video from "next-video";
+import ReactPlayer from "react-player";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
-
-
-
 
 // HighlightMediaCardProps type
 interface HighlightMediaCardProps {
@@ -33,6 +29,7 @@ export function HighlightMediaCard({ highlight }: HighlightMediaCardProps) {
   const handleDialogClose = () => {
     setIsOpen(false);
   };
+
   // Get the title of the highlight without the brackets
   const getTitleWithoutBrackets = (title: string) => {
     const bracketRegex = /\[(.*?)\]/;
@@ -40,9 +37,7 @@ export function HighlightMediaCard({ highlight }: HighlightMediaCardProps) {
     return match ? match[1] : title;
   };
 
-
   // Get the title of the highlight without the brackets
-
   const getTitle = (title: string) => {
     const bracketRegex = /\[(.*?)\]/;
     const match = title.match(bracketRegex);
@@ -54,7 +49,18 @@ export function HighlightMediaCard({ highlight }: HighlightMediaCardProps) {
     const titleWithoutBrackets = getTitleWithoutBrackets(title);
     return (
       <div className="absolute top-2 left-2">
-        <Badge variant="secondary"><Image className="mr-2" src={"https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_icon_inverse.png"} width={55} height={10} alt={""}></Image> {titleWithoutBrackets}</Badge>
+        <Badge variant="secondary">
+          <Image
+            className="mr-2"
+            src={
+              "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_icon_inverse.png"
+            }
+            width={55}
+            height={10}
+            alt={""}
+          ></Image>{" "}
+          {titleWithoutBrackets}
+        </Badge>
       </div>
     );
   };
@@ -73,9 +79,12 @@ export function HighlightMediaCard({ highlight }: HighlightMediaCardProps) {
         className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer"
         onClick={handleDialogOpen}
       >
-        <div className="relative" >
+        <div className="relative">
           <Image
-            src={highlight.thumbnailUrl || "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp"}
+            src={
+              highlight.thumbnailUrl ||
+              "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp"
+            }
             alt={`Thumbnail for ${highlight.title || "Highlight"}`}
             width={400}
             height={225}
@@ -138,14 +147,15 @@ export function HighlightMediaCard({ highlight }: HighlightMediaCardProps) {
               )}
             </DialogDescription>
           </DialogHeader>
-          <div className="relative w-full h-full border rounded-b-lg p-0">
-            <Video
+          <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
+            <ReactPlayer
               className="rounded-lg absolute top-0 left-0"
-              src={highlight.url}
-              autoPlay={true}
-              preload="auto"
-              startTime={highlight.start_time}
-              placeholder={highlight.thumbnailUrl || "/placeholder.png"}
+              url={highlight.url}
+              playing={true}
+              controls={true}
+              width={"100%"}
+              height={"100%"}
+              style={{ objectFit: "fill" }}
             />
           </div>
         </DialogContent>
@@ -153,6 +163,7 @@ export function HighlightMediaCard({ highlight }: HighlightMediaCardProps) {
     </>
   );
 }
+
 
 // // HighlightMediaCard.tsx
 // "use client";

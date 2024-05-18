@@ -25,8 +25,9 @@ export interface Database {
           title?: string
           description?: string
           featured_image?: boolean
-          thumbnail?: string
-          compressed_video?: string
+          thumbnail_url: string | null | undefined;
+          file_url?: string
+          is_video?: boolean
           compressed_gif?: string
           compressed_thumbnail?: string
           mux_asset_id?: string | null;
@@ -47,8 +48,9 @@ export interface Database {
           title?: string
           description?: string
           featured_image?: boolean
-          thumbnail?: string
-          compressed_video?: string
+          thumbnail_url?: string | null;
+          file_url?: string
+          is_video?: boolean
           compressed_gif?: string
           compressed_thumbnail?: string
           mux_asset_id?: string | null;
@@ -69,8 +71,9 @@ export interface Database {
           title?: string
           description?: string
           featured_image?: boolean
-          thumbnail?: string
-          compressed_video?: string
+          thumbnail_url?: string | null;
+          file_url?: string
+          is_video?: boolean
           compressed_gif?: string
           compressed_thumbnail?: string
           mux_asset_id?: string | null;

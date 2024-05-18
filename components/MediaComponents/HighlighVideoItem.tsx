@@ -12,7 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import Video from "next-video";
+import ReactPlayer from "react-player";
 import { RiDraggable } from "react-icons/ri";
 
 type Props = {
@@ -28,6 +28,7 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
     ref
   ) {
     const [isOpen, setIsOpen] = useState(false);
+    const [player, setPlayer] = useState<ReactPlayer | null>(null);
 
     const handleDialogOpen = () => {
       setIsOpen(true);
@@ -87,11 +88,23 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
                     {filterDescription(video.description)}
                   </DialogDescription>
                 </DialogHeader>
-                <Video 
-                    src={video.url} 
-                    className="object-cover rounded-md" 
-                    startTime={video.start_time}
-                    />
+                <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
+                  <ReactPlayer
+                    ref={setPlayer}
+                    className="rounded-lg absolute top-0 left-0"
+                    url={video.url}
+                    playing={true}
+                    controls={true}
+                    width={"100%"}
+                    height={"100%"}
+                    style={{ objectFit: "fill" }}
+                    onReady={() => {
+                      if (player) {
+                        player.seekTo(video.start_time);
+                      }
+                    }}
+                  />
+                </div>
               </DialogContent>
             </Dialog>
             <div className="flex-1">

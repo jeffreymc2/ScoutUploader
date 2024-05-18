@@ -1,122 +1,3 @@
-// // app/components/Uploader.tsx
-// "use client";
-// import React, { useState } from "react";
-// import Uppy from "@uppy/core";
-// import Transloadit from "@uppy/transloadit";
-// import { Dashboard } from "@uppy/react";
-// import "@uppy/core/dist/style.css";
-// import "@uppy/dashboard/dist/style.css";
-// import { Button } from "./ui/button";
-// import useUser from "@/app/hook/useUser";
-// import { toast } from "sonner";
-
-// export interface PlayerResponse {
-//   PlayerID: string;
-//   LastName: string;
-//   FirstName: string;
-//   PlayerName: string;
-//   DOB: string;
-// }
-
-// interface UploaderProps {
-//   playerid: number;
-//   FullName: string;
-// }
-
-// const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
-//   const { data: user } = useUser();
-//   const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>({
-//     playerid,
-//     FullName,
-//   });
-
-//   const player_id = playerid.toString();
-//   const fileNameWithUUID = `${player_id}_${File.name}`;
-
-//   const [uppy] = useState(() =>
-//     new Uppy({
-//       restrictions: {
-//         maxNumberOfFiles: 50,
-//         allowedFileTypes: ["image/*", "video/*"],
-//         maxFileSize: 5 * 100000 * 10000,
-//       },
-//       debug: true,
-//     }).use(Transloadit, {
-//       service: "https://api2.transloadit.com",
-//       params: {
-//         auth: {
-//           key: "c8bcc31673614496a3a412b4fda14767",
-//         },
-//         steps: {
-//           "thumbnailed": {
-//             use: ":original",
-//             robot: "/video/thumbs",
-//             result: true,
-//             count: 1,
-//             ffmpeg_stack: "v6.0.0",
-//             resize_strategy: "fit",
-//             width: 300
-//           },
-//           hls: {
-//             robot: "/video/encode",
-//             use: ":original",
-//             preset: "hls-1080p",
-//           },
-//           exported: {
-//             use: ["thumbnailed", "hls"],
-//             result: true,
-//             robot: "/supabase/store",
-//             credentials: "pgscout",
-//             bucket: "media",
-//             path: `/players/${user?.id}/${player_id}/${fileNameWithUUID} `,
-//           },
-//         },
-//       },
-//     })
-//   );
-
-//   uppy.on("complete", async (result) => {
-//     toast.success("Upload and transcoding complete!");
-//     if (window.location.pathname.includes("/players")) {
-//       window.location.reload();
-//     }
-//   });
-
-//   const handleUpload = () => {
-//     if (!selectedPlayer) {
-//       toast.error("Please select a player.");
-//       return;
-//     }
-//     if (uppy.getFiles().length === 0) {
-//       toast.error("Please select a file to upload.");
-//       return;
-//     }
-//     uppy.upload();
-//   };
-
-//   return (
-//     <div className="space-y-5">
-//       <div className="space-y-5">
-//         <h1 className="font-pgFont text-2xl">Perfect Game Media Uploader</h1>
-//         <div>
-//           <p>Selected Player: {selectedPlayer?.FullName} | Player ID: {selectedPlayer?.playerid}</p>
-//         </div>
-//       </div>
-//       <Dashboard uppy={uppy} className="w-auto" hideUploadButton />
-//       <Button
-//         id="upload-trigger"
-//         className="px-4 py-2 ml-2 w-full font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
-//         onClick={handleUpload}
-//       >
-//         Upload
-//       </Button>
-//     </div>
-//   );
-// };
-
-// export default Uploader;
-
-// // app/components/Uploader.tsx
 "use client";
 import React, { useState, useEffect } from "react";
 import Uppy from "@uppy/core";
@@ -124,11 +5,10 @@ import { Dashboard } from "@uppy/react";
 import "@uppy/core/dist/style.css";
 import "@uppy/dashboard/dist/style.css";
 import { Button } from "./ui/button";
-import Tus from "@uppy/tus";
+import Transloadit, { AssemblyOptions } from "@uppy/transloadit";
 import useUser from "@/app/hook/useUser";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 
 export interface PlayerResponse {
   PlayerID: string;
@@ -143,17 +23,28 @@ interface UploaderProps {
   FullName: string;
 }
 
+interface UploadedFile {
+  filePath: string;
+  thumbnailPath: string | null;
+  isVideo: boolean;
+  name?: string;
+}
+
 const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
   const { data: user } = useUser();
   const supabase = supabaseBrowser();
   const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(null);
 
+  // const user?.id = "3faf9652-84d8-4b76-8b44-8e1f3b7ff7fd";
+
   useEffect(() => {
     setSelectedPlayer({ playerid, FullName });
   }, [playerid, FullName]);
 
-  const router = useRouter();
   const player_id = playerid.toString();
+
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [uploadCompleted, setUploadCompleted] = useState(false);
 
   const [uppy] = useState(() =>
     new Uppy({
@@ -163,88 +54,106 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         maxFileSize: 5 * 100000 * 10000,
       },
       debug: true,
-    }).use(Tus, {
-      endpoint: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/upload/resumable`,
-      onBeforeRequest: async (req: any) => {
-        const { data } = await supabase.auth.getSession();
-        console.log('Supabase session data:', data); // Log session data
-        req.setHeader("Authorization", `Bearer ${data?.session?.access_token}`);
+    }).use(Transloadit, {
+      waitForEncoding: true,
+      assemblyOptions: (file) => {
+        const isVideo = file?.type?.includes("video") ?? false;
+        const filePath = `players/${user?.id}/${player_id}/${file?.name}`;
+        let thumbnailPath = null;
+
+        if (isVideo) {
+          thumbnailPath = `players/${user?.id}/${player_id}/thumbnails/${file?.name}_thumbnail.jpg`;
+        }
+
+        setUploadedFiles((prevFiles) => [
+          ...prevFiles,
+          { filePath, thumbnailPath, isVideo, name: file?.name },
+        ]);
+
+        const params: AssemblyOptions["params"] = {
+          auth: {
+            key: process.env.NEXT_PUBLIC_TRANSLOADIT_AUTH_KEY || "",
+          },
+          steps: {
+            ":original": {
+              robot: "/upload/handle",
+              result: true,
+            },
+            uploaded: {
+              use: ":original",
+              robot: "/s3/store",
+              credentials: "scoutuploads",
+              bucket: "scoutuploads",
+              path: filePath,
+            },
+          },
+        };
+
+        if (isVideo) {
+          params.steps = {
+            ...params.steps,
+            thumbnail: {
+              use: ":original",
+              robot: "/video/thumbs",
+              width: 800,
+              height: 600,
+              resize_strategy: "pad",
+              ffmpeg_stack: "v6.0.0",
+              count: 1,
+              format: "jpg",
+              result: true,
+            },
+            uploadedThumbnail: {
+              use: "thumbnail",
+              robot: "/s3/store",
+              credentials: "scoutuploads",
+              bucket: "scoutuploads",
+              path: thumbnailPath,
+            },
+          };
+        }
+
+        return {
+          params,
+          fields: {
+            user_id: user?.id ?? "",
+            player_id,
+            file_name: file?.name,
+          } as { [name: string]: string },
+        };
       },
-      limit: 20,
-      chunkSize: 15 * 1024 * 1024,
-      allowedMetaFields: ["bucketName", "objectName", "contentType", "cacheControl"],
     })
   );
 
-  uppy.on('file-added', (file) => {
-    const fileNameWithUUID = `${player_id}_${file.name}`;
-    file.meta = {
-      ...file.meta,
-      bucketName: "media",
-      objectName: `players/${user?.id}/${player_id}/${fileNameWithUUID}`,
-      contentType: file.type,
-      cacheControl: "undefined",
-    };
-  });
+  const handlePostToSupabase = async (file: UploadedFile) => {
+    try {
+      const { data: insertedPost, error: insertError } = await supabase
+        .from("posts")
+        .insert({
+          post_by: user?.id,
+          player_id,
+          file_url: `https://d3v9c4w2c7wrqu.cloudfront.net/${file.filePath}`,
+          thumbnail_url: file.isVideo ? `https://d3v9c4w2c7wrqu.cloudfront.net/${file.thumbnailPath}` : null,
+          is_video: file.isVideo,
+          name: file.name,
+        })
+        .single();
 
-  uppy.on("complete", async (result) => {
+      if (insertError) {
+        console.error("Error inserting post:", insertError);
+      } else {
+        console.log("Post inserted successfully");
+        toast.success("Upload complete!");
 
-    const uploadedFile = result.successful[0];
-    const fileExtension = uploadedFile.extension?.toLowerCase();
-    const isVideo = fileExtension === "mp4" || fileExtension === "mov" || fileExtension === "avi";
-
-    if (isVideo) {
-      const videoUrl = uploadedFile.uploadURL;
-
-      // Create a video element to load the uploaded video
-      const video = document.createElement("video");
-      video.src = videoUrl;
-      video.crossOrigin = "anonymous";
-      video.preload = "metadata";
-
-      video.onloadedmetadata = () => {
-        // After metadata loads, seek to a frame
-        video.currentTime = 1;
-      };
-
-      video.onseeked = async () => {
-        // Capture the thumbnail from the video
-        const canvas = document.createElement("canvas");
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const ctx = canvas.getContext("2d");
-        ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-        // Convert the canvas to a Blob
-        canvas.toBlob(async (blob) => {
-          if (blob) {
-            // Generate a unique filename for the thumbnail
-            const thumbnailFilename = `thumbnail_${uploadedFile.id}.png`;
-
-            // Upload the thumbnail to Supabase storage
-            const { data, error } = await supabase.storage
-              .from("media")
-              .upload(`players/${user?.id}/${player_id}/thumbnails/${thumbnailFilename}`, blob);
-
-            if (error) {
-              console.error("Error uploading thumbnail to Supabase:", error);
-            } else {
-              console.log("Thumbnail uploaded successfully");
-            }
-          }
-        }, "image/png");
-      };
-
-      video.onerror = () => {
-        console.error("Error loading video for thumbnail generation");
-      };
+        if (window.location.pathname.includes("/players")) {
+          window.location.reload();
+        }
+      }
+    } catch (error) {
+      console.error("Error processing uploaded file:", error);
+      toast.error("An error occurred while processing the uploaded file.");
     }
-
-    toast.success("Upload complete!");
-    if (window.location.pathname.includes("/players")) {
-      window.location.reload();
-    }
-  });
+  };
 
   const handleUpload = () => {
     if (!selectedPlayer) {
@@ -257,6 +166,37 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
     }
     uppy.upload();
   };
+
+  useEffect(() => {
+    const onComplete = (result: any) => {
+      if (!uploadCompleted) {
+        uploadedFiles.forEach((file) => {
+          handlePostToSupabase(file);
+        });
+        setUploadCompleted(true);
+      }
+    };
+
+    const onError = (error: any) => {
+      console.error("Upload error:", error);
+
+      if (error.message.includes("AuthorizationHeaderMalformed")) {
+        toast.error(
+          "Invalid AWS credentials. Please check your access key ID and secret access key."
+        );
+      } else {
+        toast.error("An error occurred during upload.");
+      }
+    };
+
+    uppy.on("complete", onComplete);
+    uppy.on("error", onError);
+
+    return () => {
+      uppy.off("complete", onComplete);
+      uppy.off("error", onError);
+    };
+  }, [uploadCompleted, uploadedFiles]);
 
   return (
     <div className="space-y-5">
@@ -289,11 +229,186 @@ export default Uploader;
 // import "@uppy/core/dist/style.css";
 // import "@uppy/dashboard/dist/style.css";
 // import { Button } from "./ui/button";
+// import Transloadit, { Assembly } from "@uppy/transloadit";
 // import useUser from "@/app/hook/useUser";
 // import { supabaseBrowser } from "@/lib/supabase/browser";
 // import { toast } from "sonner";
 // import { useRouter } from "next/navigation";
-// import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+
+// export interface PlayerResponse {
+//   PlayerID: string;
+//   LastName: string;
+//   FirstName: string;
+//   PlayerName: string;
+//   DOB: string;
+// }
+
+// interface UploaderProps {
+//   playerid: number;
+//   FullName: string;
+// }
+
+
+// const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
+//   const { data: user } = useUser();
+//   const supabase = supabaseBrowser();
+//   const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(null);
+// const user?.id = "3faf9652-84d8-4b76-8b44-8e1f3b7ff7fd";
+
+//   useEffect(() => {
+//     setSelectedPlayer({ playerid, FullName });
+//   }, [playerid, FullName]);
+
+//   const router = useRouter();
+//   const player_id = playerid.toString();
+
+//   const [uppy] = useState(() =>
+//     new Uppy({
+//       restrictions: {
+//         maxNumberOfFiles: 50,
+//         allowedFileTypes: ["image/*", "video/*"],
+//         maxFileSize: 5 * 100000 * 10000,
+//       },
+//       debug: true,
+//     }).use(Transloadit, {
+//       waitForEncoding: true,
+//       assemblyOptions: {
+//         params: {
+//           auth: {
+//             key: process.env.NEXT_PUBLIC_TRANSLOADIT_AUTH_KEY || "",
+//           },
+//           steps: {
+//             ":original": {
+//               robot: "/upload/handle",
+//               result: true,
+//             },
+//             thumbnail: {
+//               use: ":original",
+//               robot: "/video/thumbs",
+//               width: 800,
+//               height: 600,
+//               resize_strategy: "pad",
+//               ffmpeg_stack: "v6.0.0",
+//               count: 1,
+//               format: "jpg",
+//             },
+//             uploaded: {
+//               use: [":original", "thumbnail"],
+//               robot: "/s3/store",
+//               credentials: "scoutuploads",
+//               bucket: "scoutuploads",
+//               path: `players/${user?.id}/${player_id}/${":original.metadata.filename"}`,
+//             },
+//           },
+//         },
+//         fields: {
+//           user_id: user?.id,
+//           // user_id: user?.id ?? "",
+//           player_id,
+//           file_name: ":original.name",
+//         },
+//       },
+//     })
+//   );
+
+//   uppy.on("transloadit:complete", async (assembly: Assembly) => {
+//     try {
+//       const { results } = assembly;
+
+//       const uploadedResult = results?.uploaded;
+
+//       if (uploadedResult && Array.isArray(uploadedResult)) {
+//         for (const item of uploadedResult) {
+//           const fileUrl = item.ssl_url;
+//           const thumbnailUrl = item.ssl_url.replace(/\/([^/]+)$/, "/thumbnails/$1_thumbnail.jpg");
+//           const isVideo = item.type.includes("video");
+
+//           const { error } = await supabase.from("posts").insert({
+//             user_id: user?.id,
+//             player_id: player_id,
+//             file_url: fileUrl,
+//             thumbnail_url: thumbnailUrl,
+//             is_video: isVideo,
+//           });
+
+//           if (error) {
+//             console.error("Error saving file location to Supabase:", error);
+//           } else {
+//             console.log("File location saved to Supabase successfully");
+//           }
+//         }
+//       }
+
+//       toast.success("Upload complete!");
+
+//       if (window.location.pathname.includes("/players")) {
+//         window.location.reload();
+//       }
+//     } catch (error) {
+//       console.error("Error processing upload:", error);
+//       toast.error("An error occurred during upload.");
+//     }
+//   });
+
+//   uppy.on("error", (error) => {
+//     console.error("Upload error:", error);
+
+//     if (error.message.includes("AccessControlListNotSupported")) {
+//       toast.error(
+//         "S3 bucket does not allow ACLs. Please update the bucket configuration or remove the 'acl' parameter from the S3 upload step.",
+//       );
+//     } else {
+//       toast.error("An error occurred during upload.");
+//     }
+//   });
+
+//   const handleUpload = () => {
+//     if (!selectedPlayer) {
+//       toast.error("Please select a player.");
+//       return;
+//     }
+//     if (uppy.getFiles().length === 0) {
+//       toast.error("Please select a file to upload.");
+//       return;
+//     }
+//     uppy.upload();
+//   };
+
+//   return (
+//     <div className="space-y-5">
+//       <div className="space-y-5">
+//         <h1 className="font-pgFont text-2xl">Perfect Game Scout Profile Uploader</h1>
+//         <div>
+//           <p>Selected Player: {FullName} | Player ID: {playerid}</p>
+//         </div>
+//       </div>
+//       <Dashboard uppy={uppy} className="w-auto" hideUploadButton />
+//       <Button
+//         id="upload-trigger"
+//         className="px-4 py-2 ml-2 w-full font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
+//         onClick={handleUpload}
+//       >
+//         Upload
+//       </Button>
+//     </div>
+//   );
+// };
+
+// export default Uploader;
+
+// // // app/components/Uploader.tsx
+// "use client";
+// import React, { useState, useEffect } from "react";
+// import Uppy from "@uppy/core";
+// import { Dashboard } from "@uppy/react";
+// import "@uppy/core/dist/style.css";
+// import "@uppy/dashboard/dist/style.css";
+// import { Button } from "./ui/button";
+// import Tus from "@uppy/tus";
+// import useUser from "@/app/hook/useUser";
+// import { supabaseBrowser } from "@/lib/supabase/browser";
+// import { toast } from "sonner";
+// import { useRouter } from "next/navigation";
 
 // export interface PlayerResponse {
 //   PlayerID: string;
@@ -320,14 +435,6 @@ export default Uploader;
 //   const router = useRouter();
 //   const player_id = playerid.toString();
 
-//   const s3Client = new S3Client({
-//     region: process.env.NEXT_PUBLIC_AWS_REGION,
-//     credentials: {
-//       accessKeyId: process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID!,
-//       secretAccessKey: process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY!,
-//     },
-//   });
-
 //   const [uppy] = useState(() =>
 //     new Uppy({
 //       restrictions: {
@@ -336,47 +443,81 @@ export default Uploader;
 //         maxFileSize: 5 * 100000 * 10000,
 //       },
 //       debug: true,
+//     }).use(Tus, {
+//       endpoint: `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/upload/resumable`,
+//       onBeforeRequest: async (req: any) => {
+//         const { data } = await supabase.auth.getSession();
+//         console.log('Supabase session data:', data); // Log session data
+//         req.setHeader("Authorization", `Bearer ${data?.session?.access_token}`);
+//       },
+//       limit: 20,
+//       chunkSize: 15 * 1024 * 1024,
+//       allowedMetaFields: ["bucketName", "objectName", "contentType", "cacheControl"],
 //     })
 //   );
 
+//   uppy.on('file-added', (file) => {
+//     const fileNameWithUUID = `${player_id}_${file.name}`;
+//     file.meta = {
+//       ...file.meta,
+//       bucketName: "media",
+//       objectName: `players/${user?.id}/${player_id}/${fileNameWithUUID}`,
+//       contentType: file.type,
+//       cacheControl: "undefined",
+//     };
+//   });
+
 //   uppy.on("complete", async (result) => {
+
 //     const uploadedFile = result.successful[0];
 //     const fileExtension = uploadedFile.extension?.toLowerCase();
 //     const isVideo = fileExtension === "mp4" || fileExtension === "mov" || fileExtension === "avi";
 
-//     // Upload the file to S3
-//     const s3Params = {
-//       Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME!,
-//       Key: `players/${user?.id}/${player_id}/${uploadedFile.name}`,
-//       Body: uploadedFile.data,
-//       ContentType: uploadedFile.type,
-//     };
-
-//     try {
-//       await s3Client.send(new PutObjectCommand(s3Params));
-//       console.log("File uploaded to S3 successfully");
-
-//       // Save the file location in the Supabase posts table
-//       const { data, error } = await supabase.from("posts").insert({
-//         player_id: player_id,
-//         object_id: uploadedFile.name,
-//         post_by: user?.id,
-//         title: uploadedFile.name,
-//         description: "",
-//         publish_media: true,
-//       });
-
-//       if (error) {
-//         console.error("Error saving file location to Supabase:", error);
-//       } else {
-//         console.log("File location saved to Supabase successfully");
-//       }
-//     } catch (error) {
-//       console.error("Error uploading file to S3:", error);
-//     }
-
 //     if (isVideo) {
-//       // ... existing code for thumbnail generation ...
+//       const videoUrl = uploadedFile.uploadURL;
+
+//       // Create a video element to load the uploaded video
+//       const video = document.createElement("video");
+//       video.src = videoUrl;
+//       video.crossOrigin = "anonymous";
+//       video.preload = "metadata";
+
+//       video.onloadedmetadata = () => {
+//         // After metadata loads, seek to a frame
+//         video.currentTime = 1;
+//       };
+
+//       video.onseeked = async () => {
+//         // Capture the thumbnail from the video
+//         const canvas = document.createElement("canvas");
+//         canvas.width = video.videoWidth;
+//         canvas.height = video.videoHeight;
+//         const ctx = canvas.getContext("2d");
+//         ctx?.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+//         // Convert the canvas to a Blob
+//         canvas.toBlob(async (blob) => {
+//           if (blob) {
+//             // Generate a unique filename for the thumbnail
+//             const thumbnailFilename = `thumbnail_${uploadedFile.id}.png`;
+
+//             // Upload the thumbnail to Supabase storage
+//             const { data, error } = await supabase.storage
+//               .from("media")
+//               .upload(`players/${user?.id}/${player_id}/thumbnails/${thumbnailFilename}`, blob);
+
+//             if (error) {
+//               console.error("Error uploading thumbnail to Supabase:", error);
+//             } else {
+//               console.log("Thumbnail uploaded successfully");
+//             }
+//           }
+//         }, "image/png");
+//       };
+
+//       video.onerror = () => {
+//         console.error("Error loading video for thumbnail generation");
+//       };
 //     }
 
 //     toast.success("Upload complete!");
@@ -418,3 +559,5 @@ export default Uploader;
 // };
 
 // export default Uploader;
+
+

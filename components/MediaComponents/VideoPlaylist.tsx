@@ -1,11 +1,9 @@
-// app/components/MediaComponents/VideoPlayer.tsx
 "use client";
 import React, { useEffect, useState } from "react";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import useUser from "@/app/hook/useUser";
 import ReactPlayer from "react-player";
 import { Json } from "@/lib/types/types";
-import { toast } from "sonner";
 import { VideoSkeleton } from "@/components/ui/skeletons";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -60,7 +58,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
       const currentVideo = playlist[currentVideoIndex];
       playerRef.current.seekTo(currentVideo.start_time as number, "seconds");
     }
-  }, [playerRef.current, currentVideoIndex, playlist]);
+  }, [currentVideoIndex, playlist]);
 
   const handleProgress = (state: { playedSeconds: number }) => {
     setCurrentTime(state.playedSeconds);
@@ -70,13 +68,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
       state.playedSeconds >=
       (currentVideo.start_time as number) + (currentVideo.duration as number)
     ) {
-      setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % playlist.length);
-      setCurrentTime(0);
+      handleNextVideo();
     }
+  };
+
+  const handleNextVideo = () => {
+    setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % playlist.length);
+    setCurrentTime(0);
   };
 
   const handleThumbnailClick = (index: number) => {
     setCurrentVideoIndex(index);
+    setCurrentTime(0);
   };
 
   if (playlist.length === 0) {
@@ -89,6 +92,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     const bracketRegex = /\[(.*?)\]/;
     const match = title.match(bracketRegex);
     return match ? title.replace(match[0], "") : title;
+  };
+
+  const getTitleWithoutBrackets = (title: string) => {
+    const bracketRegex = /\[(.*?)\]/;
+    const match = title.match(bracketRegex);
+    return match ? match[1] : title;
   };
 
   const renderOverlayBadge = (title: string) => {
@@ -110,12 +119,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     );
   };
 
-  const getTitleWithoutBrackets = (title: string) => {
-    const bracketRegex = /\[(.*?)\]/;
-    const match = title.match(bracketRegex);
-    return match ? match[1] : title;
-  };
-
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4 p-4 lg:p-4">
       <div className="w-full overflow-hidden rounded-lg relative">
@@ -129,13 +132,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
             height={"100%"}
             onProgress={handleProgress}
             onReady={onReady}
+            onEnded={handleNextVideo}
             className="w-full h-full rounded-lg object-cover"
             ref={playerRef}
           />
         </div>
 
         {currentVideo.title && (
-          <div className="absolute text-white inset-x-0 top-0 p-4 w-full  overflow-hidden rounded-lg bg-gradient-to-b from-black/50 to-transparent">
+          <div className="absolute text-white inset-x-0 top-0 p-4 w-full overflow-hidden rounded-lg bg-gradient-to-b from-black/50 to-transparent">
             <div className="line-clamp-1">
               {" "}
               {getTitle(currentVideo.title as string)}
@@ -148,7 +152,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         {playlist.map((video, index) => (
           <div
             key={String(video.id)}
-            className={`flex items-start gap-4 relative cursor-pointer ${
+            className={`flex items-start gap-4 relative cursor-pointer h-24 ${
               index === currentVideoIndex
                 ? "border border-gray-800 rounded-lg p-0"
                 : ""
@@ -157,7 +161,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
           >
             <Image
               alt="Thumbnail"
-              className="aspect-video rounded-lg object-cover"
+              className="aspect-video rounded-lg object-cover h-full w-auto"
               height={94}
               src={String(video.thumbnailUrl)}
               width={168}
@@ -190,81 +194,3 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 };
 
 export default VideoPlayer;
-
-// // @/components/VideoPlayer.tsx
-// "use client";
-// import React, { useEffect, useState } from "react";
-// import { supabaseBrowser } from "@/lib/supabase/browser";
-// import useUser from "@/app/hook/useUser";
-// import ReactPlayer from "react-player";
-
-// interface Video {
-//   id: number;
-//   url: string;
-//   title: string;
-//   start_time: number;
-//   duration: number;
-//   // Add other properties as needed
-// }
-
-// const VideoPlayer: React.FC = () => {
-//   const [playlist, setPlaylist] = useState<Video[]>([]);
-//   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-//   const { data: user } = useUser();
-
-//   const user2 = "3faf9652-84d8-4b76-8b44-8e1f3b7ff7fd"
-
-//   useEffect(() => {
-//     const fetchPlaylist = async () => {
-//       if (user) {
-//         const { data: playlistData, error } = await supabaseBrowser()
-//           .from("playlists")
-//           .select("playlist")
-//           .eq("user_id", user2)
-//           .single();
-
-//         if (error) {
-//           console.error("Error fetching playlist:", error);
-//         } else {
-//           setPlaylist(playlistData?.playlist as unknown as Video[]);
-//         }
-//       }
-//     };
-
-//     fetchPlaylist();
-//   }, [user]);
-
-//   const playerRef = React.useRef<ReactPlayer | null>(null);
-
-// const onReady = React.useCallback(() => {
-//   if (playerRef.current) {
-//     playerRef.current.seekTo(currentVideo.start_time, 'seconds');
-//   }
-// }, [playerRef.current]);
-
-//   const handleVideoEnded = () => {
-//     setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % playlist.length);
-//   };
-
-//   if (playlist.length === 0) {
-//     return <div>Loading...</div>;
-//   }
-
-//   const currentVideo = playlist[currentVideoIndex];
-
-//   return (
-//     <div>
-//       <ReactPlayer
-//         url={currentVideo.url}
-//         controls
-//         playing
-//         onEnded={handleVideoEnded}
-//         onReady={onReady}
-//       />
-//       <h3>{currentVideo.title}</h3>
-//       {/* Display other video information as needed */}
-//     </div>
-//   );
-// };
-
-// export default VideoPlayer;

@@ -1,3 +1,4 @@
+// app/events/[event_id]/[team_id]/page.tsx
 import { supabaseServer } from "@/lib/supabase/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Suspense } from "react";
@@ -46,7 +47,6 @@ interface EventTeamPageProps {
     team_id: string;
   };
 }
-
 export default async function EventTeamPage({ params }: EventTeamPageProps) {
   const { event_id, team_id } = params;
   const supabase = supabaseServer();
@@ -62,6 +62,7 @@ export default async function EventTeamPage({ params }: EventTeamPageProps) {
     console.error("Error fetching images:", postsError);
     return <div>Error fetching images</div>;
   }
+
 
   const typedPosts = posts as Post[];
 
@@ -220,7 +221,6 @@ export default async function EventTeamPage({ params }: EventTeamPageProps) {
                       players={playersData}
                       eventId={event_id}
                       teamId={team_id}
-                      image={""}
                     />
                   </CardContent>
                 )}

@@ -1,4 +1,3 @@
-// components/PlayerMediaGallery.tsx
 "use client";
 import { useState } from "react";
 import { Player, Post, EventSearch } from "@/lib/types/types";
@@ -26,10 +25,8 @@ import DeletePost from "@/components/UtilityComponents/DeletePost";
 import useUser from "@/app/hook/useUser";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { PiDotsThreeOutlineVerticalLight } from "react-icons/pi";
-import {useSortable} from '@dnd-kit/sortable';
-import {CSS} from '@dnd-kit/utilities';
-
-
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 interface PlayerMediaGalleryProps {
   posts: Post[];
@@ -37,29 +34,22 @@ interface PlayerMediaGalleryProps {
   playerId: string;
 }
 
-
 interface EventSelectProps {
   post: Post;
   events: EventSearch[];
   onSaveEvent: (postId: string, eventId: string) => void;
 }
 
-export function SortableItem(props: { id: any; }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({id: props.id});
-  
+export function SortableItem(props: { id: any }) {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: props.id });
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
   };
-
 }
-  
+
 const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
   posts,
   events,
@@ -73,10 +63,8 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
     posts: posts.map((post) => ({
       ...post,
       profile: null,
-      image: post.event_id
-        ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`
-        : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`,
-      isVideo: isVideoFile(post.name ?? ""),
+      image: post.is_video ? post.thumbnail_url || "" : post.file_url || "",
+      isVideo: post.is_video || false, // Fix: Ensure isVideo is always of type boolean
     })),
     events: [],
     playerId: playerId,
@@ -111,8 +99,6 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
     return description;
   };
 
-
-
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       {playerSearchProps.posts?.map((post) => {
@@ -132,10 +118,11 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                 profile: { display_name: "" },
                 name: post.image || "",
                 isVideo: post.isVideo,
-                url: post.image || "",
+                url: post.file_url || "",
                 title: post.title || "",
                 description: post.description || "",
-                thumbnail: post.thumbnail || "",
+                thumbnail: post.thumbnail_url || "",
+                file_url: post.file_url || "",
                 post_by: post.post_by,
                 player_id: post.player_id,
                 team_id: post.team_id,
@@ -144,21 +131,18 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
             />
             <div className="p-2">
               <div className="flex items-center justify-between mb-0">
-                {/* <span className="text-sm leading-4 font-bold text-gray-600 mt-2">
-                  {post.title}
-                </span> */}
                 <div className="px-0 mb-4">
-                {post?.title && (
-                  <p className="text-sm leading-4 font-bold text-gray-600 mt-2">
-                    {post?.title}
-                  </p>
-                )}
-                {filterDescription(post.description) && (
-                  <p className="text-xs mt-1">
-                    {filterDescription(post.description)}
-                  </p>
-                )}
-              </div>
+                  {post?.title && (
+                    <p className="text-sm leading-4 font-bold text-gray-600 mt-2">
+                      {post?.title}
+                    </p>
+                  )}
+                  {filterDescription(post.description) && (
+                    <p className="text-xs mt-1">
+                      {filterDescription(post.description)}
+                    </p>
+                  )}
+                </div>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -166,7 +150,7 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                       size="icon"
                       variant="ghost"
                     >
-                      <PiDotsThreeOutlineVerticalLight className="w-7 h-7"/>
+                      <PiDotsThreeOutlineVerticalLight className="w-7 h-7" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
@@ -178,7 +162,7 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                               postId={post.id?.toString() || ""}
                               mediaUrl={post.image || ""}
                               isVideo={post.isVideo}
-                              thumbnailUrl={post.thumbnail || ""}
+                              thumbnailUrl={post.thumbnail_url || ""}
                             />
                           </DialogTrigger>
                         </Dialog>
@@ -187,10 +171,13 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                     {user?.id === post.post_by && (
                       <div className="mt-3">
                         <DeletePost
+                          postId={post.id?.toString() || ""}
                           post_by={post.post_by || ""}
-                          image={post.image || ""}
-                          event_id={post.player_id || undefined}
-                          team_id={post.team_id}
+                          filePath={`media/${
+                            post.event_id ? "events" : "players"
+                          }/${post.post_by}/${
+                            post.event_id || post.player_id
+                          }/${post.name}`}
                         />
                       </div>
                     )}
@@ -202,10 +189,8 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-              
-              
             </div>
-            <div className="relative bottom-0 left-0 right-0 p-2 bg-white bg-opacity-80">      
+            <div className="relative bottom-0 left-0 right-0 p-2 bg-white bg-opacity-80">
               <EventSelect
                 post={post}
                 events={events}
@@ -218,7 +203,7 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                   </p>
                 </Link>
               )}
-              </div>
+            </div>
           </div>
         );
       })}

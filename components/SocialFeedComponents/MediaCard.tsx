@@ -42,6 +42,10 @@ export default function MediaCard({ media }: MediaCardProps) {
     return (media as HighlightVideo).url !== undefined;
   };
 
+  const isPost = (media: Post | Playlist | HighlightVideo): media is Post => {
+    return (media as Post).file_url !== undefined;
+  };
+
   const getTitleWithoutBrackets = (title: string) => {
     const bracketRegex = /\[(.*?)\]/;
     const match = title.match(bracketRegex);
@@ -122,6 +126,31 @@ export default function MediaCard({ media }: MediaCardProps) {
               className="w-full h-full rounded-lg object-cover"
               ref={playerRef}
             />
+          )}
+          {isPost(media) && (
+            <div className="relative">
+              {media.is_video ? (
+                <ReactPlayer
+                  url={media.file_url as string}
+                  controls={true}
+                  playing={false}
+                  muted={true}
+                  volume={0}
+                  width={"100%"}
+                  height={"100%"}
+                  className="w-full h-full rounded-lg object-cover"
+                  light={media.thumbnail_url || true}
+                />
+              ) : (
+                <Image
+                  src={media.file_url as string}
+                  alt={media.title || "Image"}
+                  width={500}
+                  height={500}
+                  className="w-full h-auto rounded-lg object-cover"
+                />
+              )}
+            </div>
           )}
           {media.title && (
             <p className="text-md leading-4 font-bold text-gray-600 mt-2">

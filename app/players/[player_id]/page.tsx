@@ -58,7 +58,9 @@ interface PlayerGalleryProps {
   players: Player[];
   eventId: string;
   teamId: string;
+  thumbnail_url: string;
   image: string;
+  
 }
 
 export default async function PlayerPage({
@@ -76,30 +78,32 @@ export default async function PlayerPage({
   const playerData: PlayerData = await response.json();
 
   // Fetch media files from Supabase
-  const { data: posts, error: postsError } = await supabase
-    .from("posts")
-    .select("*")
-    .eq("player_id", playerData.PlayerID)
-    .order("created_at", { ascending: false });
 
-  const supabaseMediaFiles: PlayerGalleryProps = {
-    posts: posts
-      ? posts.map((post) => ({
+      const { data: posts, error: postsError } = await supabase
+      .from("posts")
+      .select("*")
+      .eq("player_id", playerData.PlayerID)
+      .order("created_at", { ascending: false });
+  
+    const supabaseMediaFiles: PlayerGalleryProps = {
+      posts: posts
+        ? posts.map((post) => ({
           ...post,
           profile: null,
-          image: post.event_id
-            ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`
-            : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`,
-          isVideo: isVideoFile(post.name ?? ""),
-          MediaFileURL: "", // Add the missing property 'MediaFileURL' with an empty string value
+          isVideo: post.is_video ?? false,
+          file_url: post.file_url ?? "",
+          thumbnail_url: post.thumbnail_url ?? "",
+          MediaFileURL: "", // Add the missing property
+          image: "", // Add the missing property
         }))
-      : [],
-    players: [],
-    eventId: "",
-    teamId: "",
-    image: "",
-  };
-  const typedPosts = posts as Post[];
+        : [],
+      players: [],
+      eventId: "",
+      teamId: "",
+      thumbnail_url: "",
+      image: ""
+    };
+    const typedPosts = posts as Post[];
 
   // Fetch highlight videos from the PlayerHighlights API
   const highlightsResponse = await fetch(

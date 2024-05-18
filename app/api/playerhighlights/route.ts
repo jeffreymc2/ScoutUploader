@@ -1,4 +1,3 @@
-// app/api/playerhighlights/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
@@ -49,18 +48,15 @@ export async function GET(request: NextRequest) {
     }
 
     const supabaseVideos = posts
-      ? posts
-          .filter((post) => isVideoFile(post.name ?? ''))
-          .map((post) => ({
-            id: post.id,
-            title: post.title || '',
-            description: post.description || '',
-            thumbnailUrl: post.thumbnail_url || '',
-            url: post.event_id
-              ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/events/${post.post_by}/${post.event_id}/${post.team_id}/${post.name}`
-              : `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/players/${post.post_by}/${post.player_id}/${post.name}`,
-            created: post.created_at,
-          }))
+      ? posts.filter((post) => isVideoFile(post.file_url ?? '')).map((post) => ({
+          id: post.id,
+          title: post.title || '',
+          description: post.description || '',
+          thumbnailUrl: post.thumbnail_url || '',
+          url: post.file_url || '',
+          created: post.created_at,
+          is_video: true,
+        }))
       : [];
 
     // Combine the highlights data and Supabase videos
@@ -109,9 +105,9 @@ export async function GET(request: NextRequest) {
 }
 
 // Helper function to check if a file is a video
-function isVideoFile(filename: string): boolean {
-  const videoExtensions = ['.mp4', '.mov', '.avi', '.webm'];
-  const extension = filename.slice(filename.lastIndexOf('.')).toLowerCase();
+function isVideoFile(url: string): boolean {
+  const videoExtensions = ['.mp4', '.mov', '.avi', '.wmv', '.flv', '.mkv'];
+  const extension = url.slice(url.lastIndexOf('.')).toLowerCase();
   return videoExtensions.includes(extension);
 }
 

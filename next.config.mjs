@@ -49,6 +49,11 @@ const nextConfig = {
 				protocol: 'https',
 				hostname: 'ivs-cdn.drund.com',
 			  },
+			  {	
+				protocol: 'https',
+				hostname: 'd3v9c4w2c7wrqu.cloudfront.net',
+			  },
+			  
 			  
 			 
 		],
