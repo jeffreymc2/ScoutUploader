@@ -23,7 +23,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   useEffect(() => {
     const fetchPlaylist = async () => {
       let playlistData: { [key: string]: Json }[] = [];
-  
+
       if (user) {
         const { data, error } = await supabaseBrowser()
           .from("playlists")
@@ -31,23 +31,23 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
           .eq("user_id", user?.id)
           .eq("player_id", playerId)
           .maybeSingle();
-  
+
         if (!error && data?.playlist) {
           playlistData = data.playlist as { [key: string]: Json }[];
         }
       }
-  
+
       // Fetch highlights from the API
       const highlightsResponse = await fetch(
         process.env.NEXT_PUBLIC_URL + `/api/playerhighlights?playerID=${playerId}`
       );
       const highlightsData = await highlightsResponse.json();
       const highlightVideos = highlightsData.highlights || [];
-  
+
       // If there are saved playlists, use them; otherwise, use the highlights
       setPlaylist(playlistData.length > 0 ? playlistData : highlightVideos);
     };
-  
+
     fetchPlaylist();
   }, [user, playerId]);
 
@@ -124,6 +124,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
       <div className="w-full overflow-hidden rounded-lg relative">
         <div className="aspect-w-16 aspect-h-9">
           <ReactPlayer
+            key={currentVideoIndex} // Force ReactPlayer to reinitialize
             url={currentVideo.url as string}
             controls={true}
             playing={true}
@@ -137,7 +138,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
             ref={playerRef}
           />
         </div>
-  
+
         {currentVideo.title && (
           <div className="absolute text-white inset-x-0 top-0 p-4 w-full overflow-hidden rounded-lg bg-gradient-to-b from-black/50 to-transparent">
             <div className="line-clamp-1">
@@ -147,7 +148,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
           </div>
         )}
       </div>
-  
+
       <div className="flex flex-col gap-2 max-h-[413px] overflow-y-auto">
         {playlist.map((video, index) => (
           <div
@@ -170,7 +171,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                   "https://scouts.perfectgame.org/_next/image?url=https%3A%2F%2Favkhdvyjcweghosyfiiw.supabase.co%2Fstorage%2Fv1%2Fobject%2Fpublic%2Fmisc%2F638252106298352027-DKPlusHP%2520(1).webp&w=3840&q=75";
               }}
             />
-  
+
             {video.title && renderOverlayBadge(video.title as string)}
             <div className="absolute bottom-2 left-2 text-white text-xs">
               0:{String(video.duration)}

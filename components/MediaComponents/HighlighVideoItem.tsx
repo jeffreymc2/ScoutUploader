@@ -1,9 +1,8 @@
 "use client";
-import { CSSProperties, forwardRef, HTMLAttributes, useEffect } from "react";
+import { CSSProperties, forwardRef, HTMLAttributes, useEffect, useRef, useState } from "react";
 import { HighlightVideo } from "@/lib/types/types";
 import { Card } from "../ui/card";
 import Image from "next/image";
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -33,14 +32,15 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
   ) {
     const [isOpen, setIsOpen] = useState(false);
     const [player, setPlayer] = useState<ReactPlayer | null>(null);
+    const playerRef = useRef<ReactPlayer | null>(null);
 
     useEffect(() => {
       let timeoutId: NodeJS.Timeout | null = null;
 
-      if (isOpen && player && duration) {
-        player.seekTo(startTime, "seconds");
+      if (isOpen && playerRef.current && duration) {
+        playerRef.current.seekTo(startTime, "seconds");
         timeoutId = setTimeout(() => {
-          player.getInternalPlayer().pause();
+          playerRef.current?.getInternalPlayer()?.pause();
         }, duration * 1000);
       }
 
@@ -49,7 +49,7 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
           clearTimeout(timeoutId);
         }
       };
-    }, [isOpen, player, startTime, duration]);
+    }, [isOpen, startTime, duration]);
 
     const handleDialogOpen = () => {
       setIsOpen(true);
@@ -112,7 +112,7 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
                 </DialogHeader>
                 <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
                   <ReactPlayer
-                    ref={setPlayer}
+                    ref={playerRef}
                     className="rounded-lg absolute top-0 left-0"
                     url={video.url}
                     playing={isOpen}
@@ -120,6 +120,11 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
                     width={"100%"}
                     height={"100%"}
                     style={{ objectFit: "fill" }}
+                    onReady={() => {
+                      if (playerRef.current) {
+                        playerRef.current.seekTo(startTime, "seconds");
+                      }
+                    }}
                   />
                 </div>
               </DialogContent>
