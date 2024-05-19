@@ -103,7 +103,7 @@ export default function MediaForm({
             <div className="video-preview">
               <ReactPlayer
                 url={fileUrl}
-                className="rounded-lg absolute top-0 left-0"
+                className="rounded-lg"
                 playing={false}
                 controls={true}
                 width="100%"
