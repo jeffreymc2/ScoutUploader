@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -29,7 +28,10 @@ interface PlaylistBuilderProps {
   playerId: string;
 }
 
-export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProps) {
+export function PlaylistBuilder({
+  initialVideos,
+  playerId,
+}: PlaylistBuilderProps) {
   const [videos, setVideos] = useState<HighlightVideo[]>(initialVideos);
   const [playlist, setPlaylist] = useState<HighlightVideo[]>([]);
   const [savedPlaylist, setSavedPlaylist] = useState<HighlightVideo[]>([]);
@@ -55,7 +57,10 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
           setPlaylist(fetchedPlaylist?.filter(Boolean) || []);
           setVideos(
             initialVideos.filter(
-              (video) => !fetchedPlaylist?.some((savedVideo) => savedVideo.id === video.id)
+              (video) =>
+                !fetchedPlaylist?.some(
+                  (savedVideo) => savedVideo.id === video.id
+                )
             )
           );
         }
@@ -65,7 +70,10 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
     fetchSavedPlaylist();
   }, [user, initialVideos, playerId]);
 
-  const sensors = useSensors(useSensor(PointerSensor), useSensor(TouchSensor, { activationConstraint: { distance: 10 } }));
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(TouchSensor, { activationConstraint: { distance: 10 } })
+  );
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveVideoId(event.active.id as string);
@@ -102,7 +110,9 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
           } else {
             setPlaylist([...playlist]);
             setVideos([removed, ...videos]);
-            setSavedPlaylist(savedPlaylist.filter((video) => video.id !== active.id));
+            setSavedPlaylist(
+              savedPlaylist.filter((video) => video.id !== active.id)
+            );
           }
         }
       } else {
@@ -136,12 +146,13 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
 
   const savePlaylist = async () => {
     if (user) {
-      const { data: existingPlaylist, error: fetchError } = await supabaseBrowser()
-        .from("playlists")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("player_id", playerId)
-        .maybeSingle();
+      const { data: existingPlaylist, error: fetchError } =
+        await supabaseBrowser()
+          .from("playlists")
+          .select("id")
+          .eq("user_id", user.id)
+          .eq("player_id", playerId)
+          .maybeSingle();
 
       if (fetchError) {
         console.error("Error fetching existing playlist:", fetchError);
@@ -203,26 +214,28 @@ export function PlaylistBuilder({ initialVideos, playerId }: PlaylistBuilderProp
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 ml-4 mr-4">
-          <div className="mb-4 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 ml-4 mr-4 ">
+          <div className="mb-4 w-full ">
             <div className="flex items-center my-4">
               <Image
                 src="https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_horizontal_primary%20(3).png"
                 alt="Image"
                 height={150}
-                width={200}
-                className="mr-4"
+                width={250}
+                className="mr-2"
               />
-              <h2 className="font-pgFont text-2xl">Highlights</h2>
+              <h2 className="font-pgFont text-2xl">All Highlights</h2>
             </div>
-            {videos.map((video) => (
-              <HighlightVideoItem
-                key={video.id}
-                video={video}
-                isInPlaylist={false}
-                onAddRemove={() => handleAddRemove(video)}
-              />
-            ))}
+            <div className="border sm:p-2 p-0 w-full border-gray-300 rounded-lg max-h-[650px] shadow-lg  bg-gray-100 overflow-y-auto">
+              {videos.map((video) => (
+                <HighlightVideoItem
+                  key={video.id}
+                  video={video}
+                  isInPlaylist={false}
+                  onAddRemove={() => handleAddRemove(video)}
+                />
+              ))}
+            </div>
           </div>
           <div>
             <DroppablePlaylist

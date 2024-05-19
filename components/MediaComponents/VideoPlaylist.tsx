@@ -153,9 +153,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         {playlist.map((video, index) => (
           <div
             key={String(video.id)}
-            className={`flex items-start gap-4 relative cursor-pointer h-24 ${
+            className={`flex items-start gap-4 relative cursor-pointer h-24 shadow-lg border border-gray-100 rounded-lg ${
               index === currentVideoIndex
-                ? "border border-gray-800 rounded-lg p-0"
+                ? "border border-gray-300 rounded-lg shadow-sm p-0 bg-gray-100"
                 : ""
             }`}
             onClick={() => handleThumbnailClick(index)}

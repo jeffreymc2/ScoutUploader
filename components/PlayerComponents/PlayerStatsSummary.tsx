@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 type PlayerStats = {
@@ -102,110 +102,88 @@ function calculatePitchingStatsSummary(gamePitchingStats: any[]): PitchingStats 
 
 function BattingStatsTab({ playerStats }: { playerStats: PlayerStats | null }) {
   if (!playerStats) {
-    return <div>No batting stats available.</div>;
+    return <div className="text-center">No batting stats available.</div>;
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">GP</span>
-        <span className="text-lg font-semibold">{playerStats.GP}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">PA</span>
-        <span className="text-lg font-semibold">{playerStats.PA}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">At Bats</span>
-        <span className="text-lg font-semibold">{playerStats.AB}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">BA</span>
-        <span className="text-lg font-semibold">{playerStats.AVG.toFixed(3)}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">Singles</span>
-        <span className="text-lg font-semibold">{playerStats.B1}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">Doubles</span>
-        <span className="text-lg font-semibold">{playerStats.B2}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">Triples</span>
-        <span className="text-lg font-semibold">{playerStats.B3}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">HRs</span>
-        <span className="text-lg font-semibold">{playerStats.HR}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">RBIs</span>
-        <span className="text-lg font-semibold">{playerStats.RBI}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">Walks</span>
-        <span className="text-lg font-semibold">{playerStats.BB}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">Runs</span>
-        <span className="text-lg font-semibold">{playerStats.R}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">SB</span>
-        <span className="text-lg font-semibold">{playerStats.SB}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">OBP</span>
-        <span className="text-lg font-semibold">{playerStats.OBP.toFixed(3)}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">OPS</span>
-        <span className="text-lg font-semibold">{playerStats.OPS.toFixed(3)}</span>
-      </div>
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm text-left text-gray-500 ">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-100 ">
+          <tr>
+            <th scope="col" className="px-4 py-2">GP</th>
+            <th scope="col" className="px-4 py-2">PA</th>
+            <th scope="col" className="px-4 py-2">AB</th>
+            <th scope="col" className="px-4 py-2">BA</th>
+            <th scope="col" className="px-4 py-2">H</th>
+            <th scope="col" className="px-4 py-2">1B</th>
+            <th scope="col" className="px-4 py-2">2B</th>
+            <th scope="col" className="px-4 py-2">3B</th>
+            <th scope="col" className="px-4 py-2">HR</th>
+            <th scope="col" className="px-4 py-2">RBI</th>
+            <th scope="col" className="px-4 py-2">BB</th>
+            <th scope="col" className="px-4 py-2">R</th>
+            <th scope="col" className="px-4 py-2">SB</th>
+            <th scope="col" className="px-4 py-2">OBP</th>
+            <th scope="col" className="px-4 py-2">OPS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className="bg-white border-b ">
+            <td className="px-4 py-2">{playerStats.GP}</td>
+            <td className="px-4 py-2">{playerStats.PA}</td>
+            <td className="px-4 py-2">{playerStats.AB}</td>
+            <td className="px-4 py-2">{playerStats.AVG.toFixed(3)}</td>
+            <td className="px-4 py-2">{playerStats.B1 + playerStats.B2 + playerStats.B3 + playerStats.HR}</td>
+            <td className="px-4 py-2">{playerStats.B1}</td>
+            <td className="px-4 py-2">{playerStats.B2}</td>
+            <td className="px-4 py-2">{playerStats.B3}</td>
+            <td className="px-4 py-2">{playerStats.HR}</td>
+            <td className="px-4 py-2">{playerStats.RBI}</td>
+            <td className="px-4 py-2">{playerStats.BB}</td>
+            <td className="px-4 py-2">{playerStats.R}</td>
+            <td className="px-4 py-2">{playerStats.SB}</td>
+            <td className="px-4 py-2">{playerStats.OBP.toFixed(3)}</td>
+            <td className="px-4 py-2">{playerStats.OPS.toFixed(3)}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 }
 
 function PitchingStatsTab({ pitchingStats }: { pitchingStats: PitchingStats | null }) {
   if (!pitchingStats) {
-    return <div>No pitching stats available.</div>;
+    return <div className="text-center">No pitching stats available.</div>;
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">Wins</span>
-        <span className="text-lg font-semibold">{pitchingStats.WON}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">ERA</span>
-        <span className="text-lg font-semibold">{pitchingStats.ERA.toFixed(2)}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">IP</span>
-        <span className="text-lg font-semibold">{pitchingStats.IP.toFixed(1)}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">Hits</span>
-        <span className="text-lg font-semibold">{pitchingStats.HITS}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">Ks</span>
-        <span className="text-lg font-semibold">{pitchingStats.K}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">Walks</span>
-        <span className="text-lg font-semibold">{pitchingStats.BB}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">ER</span>
-        <span className="text-lg font-semibold">{pitchingStats.ER}</span>
-      </div>
-      <div className="flex flex-col">
-        <span className="text-sm font-medium">WHIP</span>
-        <span className="text-lg font-semibold">{pitchingStats.WHIP.toFixed(2)}</span>
-      </div>
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm text-left text-gray-500 ">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-100 ">
+          <tr>
+            <th scope="col" className="px-4 py-2">W</th>
+            <th scope="col" className="px-4 py-2">ERA</th>
+            <th scope="col" className="px-4 py-2">IP</th>
+            <th scope="col" className="px-4 py-2">H</th>
+            <th scope="col" className="px-4 py-2">K</th>
+            <th scope="col" className="px-4 py-2">BB</th>
+            <th scope="col" className="px-4 py-2">ER</th>
+            <th scope="col" className="px-4 py-2">WHIP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className="bg-white border-b ">
+            <td className="px-4 py-2">{pitchingStats.WON}</td>
+            <td className="px-4 py-2">{pitchingStats.ERA.toFixed(2)}</td>
+            <td className="px-4 py-2">{pitchingStats.IP.toFixed(1)}</td>
+            <td className="px-4 py-2">{pitchingStats.HITS}</td>
+            <td className="px-4 py-2">{pitchingStats.K}</td>
+            <td className="px-4 py-2">{pitchingStats.BB}</td>
+            <td className="px-4 py-2">{pitchingStats.ER}</td>
+            <td className="px-4 py-2">{pitchingStats.WHIP.toFixed(2)}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -246,19 +224,19 @@ export default function PlayerStatsSummary({ playerId }: { playerId: string }) {
   }, [playerId]);
 
   if (loading) {
-    return <div>Loading player stats...</div>;
+    return <div className="text-center">Loading player stats...</div>;
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <div className="text-center text-red-500">{error}</div>;
   }
 
   return (
-    <Card className="w-full max-w-3xl">
-      
-      <CardContent >
-        <Tabs defaultValue="batting" className="w-full mt-2">
-          <TabsList>
+    <div className="w-auto m-4">
+    <Card className="w-auto">
+      <CardContent className='p-0'>
+        <Tabs defaultValue="batting" className="w-auto p-0">
+          <TabsList className="flex justify-center">
             <TabsTrigger value="batting">Batting</TabsTrigger>
             {playerPitchingStats && <TabsTrigger value="pitching">Pitching</TabsTrigger>}
           </TabsList>
@@ -273,5 +251,6 @@ export default function PlayerStatsSummary({ playerId }: { playerId: string }) {
         </Tabs>
       </CardContent>
     </Card>
+    </div>
   );
 }
