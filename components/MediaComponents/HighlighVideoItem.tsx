@@ -21,27 +21,24 @@ type Props = {
   isOpacityEnabled?: boolean;
   isDragging?: boolean;
   dragHandleProps?: any;
-  startTime?: number;
-  duration?: number;
 } & HTMLAttributes<HTMLDivElement>;
 
 const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
   function HighlightVideoItem(
-    { video, isInPlaylist, onAddRemove, isOpacityEnabled, isDragging, style, dragHandleProps, startTime = 0, duration, ...props },
+    { video, isInPlaylist, onAddRemove, isOpacityEnabled, isDragging, style, dragHandleProps, ...props },
     ref
   ) {
     const [isOpen, setIsOpen] = useState(false);
-    const [player, setPlayer] = useState<ReactPlayer | null>(null);
     const playerRef = useRef<ReactPlayer | null>(null);
 
     useEffect(() => {
       let timeoutId: NodeJS.Timeout | null = null;
 
-      if (isOpen && playerRef.current && duration) {
-        playerRef.current.seekTo(startTime, "seconds");
+      if (isOpen && playerRef.current && video.duration) {
+        playerRef.current.seekTo(video.start_time, "seconds");
         timeoutId = setTimeout(() => {
           playerRef.current?.getInternalPlayer()?.pause();
-        }, duration * 1000);
+        }, video.duration * 1000);
       }
 
       return () => {
@@ -49,7 +46,7 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
           clearTimeout(timeoutId);
         }
       };
-    }, [isOpen, startTime, duration]);
+    }, [isOpen, video.start_time, video.duration]);
 
     const handleDialogOpen = () => {
       setIsOpen(true);
@@ -122,7 +119,7 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
                     style={{ objectFit: "fill" }}
                     onReady={() => {
                       if (playerRef.current) {
-                        playerRef.current.seekTo(startTime, "seconds");
+                        playerRef.current.seekTo(video.start_time, "seconds");
                       }
                     }}
                   />
