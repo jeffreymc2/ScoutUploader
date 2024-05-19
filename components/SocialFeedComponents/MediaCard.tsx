@@ -200,6 +200,7 @@ export default function MediaCard({ media }: MediaCardProps) {
                   controls={false}
                   playing={false}
                   muted={true}
+                  playsinline={true}
                   volume={0}
                   width="100%"
                   height="100%"
