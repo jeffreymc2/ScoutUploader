@@ -1,10 +1,14 @@
-// app/components/MediaCard.tsx
 "use client";
 import { Badge } from "@/components/ui/badge";
-import { CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card";
+import {
+  CardHeader,
+  CardContent,
+  CardFooter,
+  Card,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MessageSquareIcon, ShareIcon, ThumbsUpIcon } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Post, Playlist, HighlightVideo } from "@/lib/types/types";
 import Image from "next/image";
 import React from "react";
@@ -19,6 +23,8 @@ export default function MediaCard({ media }: MediaCardProps) {
   const [likeCount, setLikeCount] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const playerRef = useRef<ReactPlayer | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const handleLike = () => {
     if (!isLiked) {
@@ -38,7 +44,9 @@ export default function MediaCard({ media }: MediaCardProps) {
     console.log(`Shared media with ID: ${media.id}`);
   };
 
-  const isHighlightVideo = (media: Post | Playlist | HighlightVideo): media is HighlightVideo => {
+  const isHighlightVideo = (
+    media: Post | Playlist | HighlightVideo
+  ): media is HighlightVideo => {
     return (media as HighlightVideo).url !== undefined;
   };
 
@@ -52,9 +60,7 @@ export default function MediaCard({ media }: MediaCardProps) {
     return match ? match[1] : title;
   };
 
-  const playerRef = React.useRef<ReactPlayer | null>(null);
-
-  const onReady = React.useCallback(() => {
+  const onReady = useCallback(() => {
     if (playerRef.current && isHighlightVideo(media)) {
       playerRef.current.seekTo(media.start_time as number, "seconds");
     }
@@ -85,7 +91,15 @@ export default function MediaCard({ media }: MediaCardProps) {
     return (
       <div className="absolute top-2 left-2">
         <Badge variant="secondary">
-          <Image className="mr-2" src={"https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_icon_inverse.png"} width={55} height={10} alt={""} />
+          <Image
+            className="mr-2"
+            src={
+              "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_icon_inverse.png"
+            }
+            width={55}
+            height={10}
+            alt={""}
+          />
         </Badge>
       </div>
     );
@@ -98,8 +112,40 @@ export default function MediaCard({ media }: MediaCardProps) {
     return description;
   };
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (playerRef.current) {
+            if (entry.isIntersecting) {
+              playerRef.current.getInternalPlayer().play();
+            } else {
+              playerRef.current.getInternalPlayer().pause();
+              if (isHighlightVideo(media)) {
+                playerRef.current.seekTo(media.start_time as number, "seconds");
+              }
+            }
+          }
+        });
+      },
+      {
+        threshold: 0.5, // Play the video when 50% of it is visible
+      }
+    );
+  
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+  
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current);
+      }
+    };
+  }, [media]);
+
   return (
-    <>
+    <div ref={containerRef}>
       <div className="flex items-center my-4 mx-auto">
         <Image
           src="https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_horizontal_primary%20(3).png"
@@ -113,33 +159,63 @@ export default function MediaCard({ media }: MediaCardProps) {
       <Card className="w-full mb-4 rounded-lg shadow-lg">
         <CardContent className="mt-4">
           {isHighlightVideo(media) && (
-            <ReactPlayer
-              url={media.url as string}
-              controls={true}
-              playing={false}
-              muted={true}
-              volume={0}
-              width={"100%"}
-              height={"100%"}
-              onProgress={handleProgress}
-              onReady={onReady}
-              className="w-full h-full rounded-lg object-cover"
-              ref={playerRef}
-            />
+            <div
+              className="relative"
+              style={{
+                paddingBottom: "100%",
+                minHeight: "450px",
+              }}
+            >
+              <ReactPlayer
+                url={media.url as string}
+                controls={true}
+                playing={true}
+                muted={true}
+                volume={0}
+                width="100%"
+                height="100%"
+                onProgress={handleProgress}
+                onReady={onReady}
+                className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
+                ref={playerRef}
+                config={{
+                  file: {
+                    attributes: {
+                      style: {
+                        objectFit: "cover",
+                        width: "100%",
+                        height: "100%",
+                      },
+                    },
+                  },
+                }}
+              />
+            </div>
           )}
           {isPost(media) && (
-            <div className="relative">
+            <div className="relative" style={{ paddingBottom: "100%" }}>
               {media.is_video ? (
                 <ReactPlayer
                   url={media.file_url as string}
-                  controls={true}
+                  controls={false}
                   playing={false}
                   muted={true}
                   volume={0}
-                  width={"100%"}
-                  height={"100%"}
-                  className="w-full h-full rounded-lg object-cover"
-                  light={media.thumbnail_url || true}
+                  width="100%"
+                  height="100%"
+                  className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
+                  light={media.thumbnail_url}
+                  config={{
+                    file: {
+                      attributes: {
+                        style: {
+                          objectFit: "cover",
+                          width: "100%",
+                          height: "100%",
+                        },
+                      },
+                    },
+                  }}
                 />
               ) : (
                 <Image
@@ -147,7 +223,7 @@ export default function MediaCard({ media }: MediaCardProps) {
                   alt={media.title || "Image"}
                   width={500}
                   height={500}
-                  className="w-full h-auto rounded-lg object-cover"
+                  className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
                 />
               )}
             </div>
@@ -165,7 +241,9 @@ export default function MediaCard({ media }: MediaCardProps) {
         </CardContent>
         <CardFooter className="flex space-x-4">
           <Button variant="ghost" onClick={handleLike}>
-            <ThumbsUpIcon className={`mr-1 ${isLiked ? "text-blue-500" : ""}`} />
+            <ThumbsUpIcon
+              className={`mr-1 ${isLiked ? "text-blue-500" : ""}`}
+            />
             {likeCount > 0 ? `${likeCount} Likes` : "Like"}
           </Button>
           <Button variant="ghost" onClick={handleComment}>
@@ -178,6 +256,6 @@ export default function MediaCard({ media }: MediaCardProps) {
           </Button>
         </CardFooter>
       </Card>
-    </>
+    </div>
   );
 }
