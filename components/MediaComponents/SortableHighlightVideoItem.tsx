@@ -53,9 +53,17 @@ import { HighlightVideo } from "@/lib/types/types";
 
 interface SortableHighlightVideoItemProps {
   video: HighlightVideo;
+  isInPlaylist: boolean;
+  onAddRemove: () => void;
+  isPlaceholder?: boolean;
 }
 
-export const SortableHighlightVideoItem: React.FC<SortableHighlightVideoItemProps> = ({ video }) => {
+export const SortableHighlightVideoItem: React.FC<SortableHighlightVideoItemProps> = ({
+  video,
+  isInPlaylist,
+  onAddRemove,
+  isPlaceholder
+}) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: video.id,
   });
@@ -65,10 +73,16 @@ export const SortableHighlightVideoItem: React.FC<SortableHighlightVideoItemProp
     transition,
   };
 
+  if (isPlaceholder) {
+    return <div className="sortable-placeholder h-[60px] w-[90px] bg-gray-200 border-dashed border-2 border-gray-400" />;
+  }
+
   return (
     <div ref={setNodeRef} style={style}>
       <HighlightVideoItem
         video={video}
+        isInPlaylist={isInPlaylist}
+        onAddRemove={onAddRemove}
         isDragging={isDragging}
         dragHandleProps={{ ...attributes, ...listeners }}
       />

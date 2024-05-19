@@ -62,9 +62,10 @@ import Image from "next/image";
 interface DroppablePlaylistProps {
   playlist: HighlightVideo[];
   setPlaylist: React.Dispatch<React.SetStateAction<HighlightVideo[]>>;
+  onAddRemove: (video: HighlightVideo) => void;
 }
 
-export function DroppablePlaylist({ playlist, setPlaylist }: DroppablePlaylistProps) {
+export function DroppablePlaylist({ playlist, setPlaylist, onAddRemove }: DroppablePlaylistProps) {
   const { isOver, setNodeRef } = useDroppable({ id: "playlist" });
   const style = {
     backgroundColor: isOver ? "rgba(0, 0, 0, 0.1)" : undefined,
@@ -78,14 +79,20 @@ export function DroppablePlaylist({ playlist, setPlaylist }: DroppablePlaylistPr
           alt="Image"
           height={75}
           width={250}
-          className="mr-4"
+          className="mr-2"
         />
         <h2 className="font-pgFont text-2xl">Custom Playlist</h2>
       </div>
       <SortableContext items={playlist} id="playlist" strategy={verticalListSortingStrategy}>
-        <div ref={setNodeRef} style={style} className="p-4 border border-gray-300 rounded-lg min-h-[500px] shadow-lg mr-4 bg-gray-100">
-          {playlist.map((video) => (
-            <SortableHighlightVideoItem key={video.id} video={video} />
+        <div ref={setNodeRef} style={style} className="border sm:p-2 p-0 w-full border-gray-300 rounded-lg min-h-[500px] shadow-lg  bg-gray-100">
+          {playlist.filter(Boolean).map((video) => (
+            <SortableHighlightVideoItem
+              key={video.id}
+              video={video}
+              isInPlaylist={true}
+              onAddRemove={() => onAddRemove(video)}
+              isPlaceholder={false}
+            />
           ))}
         </div>
       </SortableContext>

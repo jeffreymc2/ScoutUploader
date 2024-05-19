@@ -163,10 +163,12 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import ReactPlayer from "react-player";
-import { RiDraggable } from "react-icons/ri";
+import { RiAddCircleLine, RiSubtractLine, RiDragMove2Line } from "react-icons/ri";
 
 type Props = {
   video: HighlightVideo;
+  isInPlaylist: boolean;
+  onAddRemove: () => void;
   isOpacityEnabled?: boolean;
   isDragging?: boolean;
   dragHandleProps?: any;
@@ -174,7 +176,7 @@ type Props = {
 
 const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
   function HighlightVideoItem(
-    { video, isOpacityEnabled, isDragging, style, dragHandleProps, ...props },
+    { video, isInPlaylist, onAddRemove, isOpacityEnabled, isDragging, style, dragHandleProps, ...props },
     ref
   ) {
     const [isOpen, setIsOpen] = useState(false);
@@ -216,7 +218,7 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
     return (
       <>
         <div className="grid">
-          <Card className="flex items-center gap-4 rounded-lg bg-white mb-2">
+          <Card className="flex items-center gap-2 rounded-lg bg-white mb-2 p-2">
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger asChild>
                 <div onClick={handleDialogOpen}>
@@ -226,10 +228,9 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
                       "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp"
                     }
                     alt="Image"
-                    className="rounded-lg object-cover cursor-pointer"
-                    height="94"
-                    style={{ aspectRatio: "168/94", objectFit: "cover" }}
-                    width="168"
+                    width={125}
+                    height={50}
+                    className="rounded-lg  cursor-pointer max-h-[75px] object-cover"
                   />
                 </div>
               </DialogTrigger>
@@ -256,20 +257,32 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
             </Dialog>
             <div className="flex-1">
               {video.title && (
-                <p className="text-sm leading-4 font-bold text-gray-600 mt-2">
+                <p className="text-sm leading-4 font-bold text-gray-600 mt-2 truncate-text">
                   {getTitle(video.title)}
                 </p>
               )}
               {filterDescription(video.description) && (
-                <p className="text-xs mt-1">{filterDescription(video.description)}</p>
+                <p className="text-xs mt-1 truncate-text">{filterDescription(video.description)}</p>
               )}
             </div>
-            <div className="flex items-center gap-4 rounded-lg bg-white">
-              <RiDraggable
-                className="text-3xl text-gray-400"
-                style={styles}
-                {...dragHandleProps}
-              />
+            <div className="flex items-center gap-2">
+              {isInPlaylist ? (
+                <RiSubtractLine
+                  className="text-xl text-red-500 cursor-pointer"
+                  onClick={onAddRemove}
+                />
+              ) : (
+                <RiAddCircleLine
+                  className="text-xl text-green-500 cursor-pointer"
+                  onClick={onAddRemove}
+                />
+              )}
+              {dragHandleProps && (
+                <RiDragMove2Line
+                  className="text-2xl text-gray-400 touch-auto"
+                  {...dragHandleProps}
+                />
+              )}
             </div>
           </Card>
         </div>
@@ -279,3 +292,4 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
 );
 
 export { HighlightVideoItem };
+

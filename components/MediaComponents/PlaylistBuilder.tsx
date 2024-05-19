@@ -269,6 +269,7 @@ import {
   DragEndEvent,
   TouchSensor,
   closestCenter,
+  closestCorners,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -276,7 +277,6 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { HighlightVideo } from "@/lib/types/types";
-import { SortableHighlightVideoItem } from "./SortableHighlightVideoItem";
 import { HighlightVideoItem } from "@/components/MediaComponents/HighlighVideoItem";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import useUser from "@/app/hook/useUser";
@@ -318,7 +318,7 @@ export function PlaylistBuilder({
         } else {
           const fetchedPlaylist = playlistData?.playlist as HighlightVideo[];
           setSavedPlaylist(fetchedPlaylist || []);
-          setPlaylist(fetchedPlaylist || []);
+          setPlaylist(fetchedPlaylist?.filter(Boolean) || []);
           setVideos(
             initialVideos.filter(
               (video) =>
@@ -343,9 +343,14 @@ export function PlaylistBuilder({
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
-    if (active.id !== over?.id) {
+    if (!over) {
+      setActiveVideoId(null);
+      return;
+    }
+
+    if (active.id !== over.id) {
       const activeContainer = active.data.current?.sortable.containerId;
-      const overContainer = over?.data.current?.sortable.containerId;
+      const overContainer = over.data.current?.sortable.containerId;
 
       if (activeContainer !== overContainer) {
         const activeIndex =
@@ -361,11 +366,11 @@ export function PlaylistBuilder({
 
           if (activeContainer === "videos") {
             setVideos([...videos]);
-            setPlaylist([...playlist, removed]);
-            setSavedPlaylist([...savedPlaylist, removed]);
+            setPlaylist([removed, ...playlist]);
+            setSavedPlaylist([removed, ...savedPlaylist]);
           } else {
             setPlaylist([...playlist]);
-            setVideos([...videos, removed]);
+            setVideos([removed, ...videos]);
             setSavedPlaylist(
               savedPlaylist.filter((video) => video.id !== active.id)
             );
@@ -374,19 +379,30 @@ export function PlaylistBuilder({
       } else {
         const items = activeContainer === "videos" ? videos : playlist;
         const oldIndex = items.findIndex((video) => video.id === active.id);
-        const newIndex = items.findIndex((video) => video.id === over?.id);
+        const newIndex = items.findIndex((video) => video.id === over.id);
 
-        if (oldIndex !== 1 && newIndex !== 1) {
-          const reorderedItems = arrayMove(items, oldIndex, newIndex);
-          activeContainer === "videos"
-            ? setVideos(reorderedItems)
-            : setPlaylist(reorderedItems);
-          activeContainer === "playlist" && setSavedPlaylist(reorderedItems);
+        const reorderedItems = arrayMove(items, oldIndex, newIndex);
+
+        if (activeContainer === "videos") {
+          setVideos(reorderedItems);
+        } else {
+          setPlaylist(reorderedItems);
+          setSavedPlaylist(reorderedItems);
         }
       }
     }
 
     setActiveVideoId(null);
+  };
+
+  const handleAddRemove = (video: HighlightVideo) => {
+    if (playlist.some((v) => v.id === video.id)) {
+      setPlaylist(playlist.filter((v) => v.id !== video.id));
+      setVideos([video, ...videos]);
+    } else {
+      setPlaylist([video, ...playlist]);
+      setVideos(videos.filter((v) => v.id !== video.id));
+    }
   };
 
   const savePlaylist = async () => {
@@ -455,47 +471,45 @@ export function PlaylistBuilder({
     <>
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCenter}
+        collisionDetection={closestCorners}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <Card>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 ml-4 mr-4">
             <div className="mb-4 w-full">
               <div className="flex items-center my-4">
                 <Image
                   src="https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_horizontal_primary%20(3).png"
                   alt="Image"
-                  height={75}
-                  width={250}
+                  height={150}
+                  width={200}
                   className="mr-4"
                 />
                 <h2 className="font-pgFont text-2xl">Highlights</h2>
               </div>
-              <SortableContext
-                items={videos}
-                id="videos"
-                strategy={verticalListSortingStrategy}
-              >
-                {videos.map((video) => (
-                  <SortableHighlightVideoItem key={video.id} video={video} />
-                ))}
-              </SortableContext>
+              {videos.map((video) => (
+                <HighlightVideoItem
+                  key={video.id}
+                  video={video}
+                  isInPlaylist={false}
+                  onAddRemove={() => handleAddRemove(video)}
+                />
+              ))}
             </div>
             <div>
               <DroppablePlaylist
                 playlist={playlist}
                 setPlaylist={setPlaylist}
+                onAddRemove={handleAddRemove}
               />
               <Button onClick={savePlaylist} disabled={!user}>
                 Save Playlist
               </Button>{" "}
             </div>
           </div>
-        </Card>
-        <DragOverlay>
-          {activeVideo ? <HighlightVideoItem video={activeVideo} /> : null}
-        </DragOverlay>
+        {/* <DragOverlay>
+          {activeVideo ? <HighlightVideoItem video={activeVideo} isInPlaylist={true} onAddRemove={() => handleAddRemove(activeVideo)} /> : null}
+        </DragOverlay> */}
       </DndContext>
     </>
   );

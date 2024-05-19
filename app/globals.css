@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
+ 
+
 @font-face {
 	font-family: 'UnitedSansSmCdBd';
 	src: url('UnitedSansSmCdBd.woff2') format('woff2'); /* Adjust the path as needed */
@@ -127,19 +131,7 @@ html {
 	border-radius: 4px;
   }
 
-  @media (max-width: 640px) {
-	.grid {
-	  grid-template-columns: 1fr;
-	}
-	.sortable-video-item {
-	  margin-bottom: 16px;
-	}
-	.drag-handle {
-	  width: 100%;
-	  text-align: center;
-	}
-  }
-
+  
   /* styles.css */
 
 /* .video-player {
