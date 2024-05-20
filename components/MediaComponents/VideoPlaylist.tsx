@@ -126,10 +126,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
           <ReactPlayer
             key={currentVideoIndex} // Force ReactPlayer to reinitialize
             url={currentVideo.url as string}
-            controls={true}
+            controls={false}
             playing={true}
             playsinline
             volume={0}
+            muted={true}
             width={"100%"}
             height={"100%"}
             onProgress={handleProgress}
@@ -141,7 +142,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
               file: {
                 attributes: {
                   playsInline: true, // Important for iOS
-                  preload: "auto", // Preload video
+                  preload: "auto", // Preload video metadata
+                  muted: true,
                   style: {
                     objectFit: "cover",
                     width: "100%",
