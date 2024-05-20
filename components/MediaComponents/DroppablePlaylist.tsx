@@ -35,7 +35,7 @@ export function DroppablePlaylist({
 
   return (
     <div className="mb-4 w-full">
-      <div className="flex flex-col sm:flex-row items-center my-4">
+      <div className="flex flex-col sm:flex-row items-center my-2">
       <Image
         src="https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_horizontal_primary%20(3).png"
         alt="Image"
@@ -64,14 +64,16 @@ export function DroppablePlaylist({
         </TooltipProvider>
       </div>
     </div>
-      <div className="flex flex-col sm:flex-row items-center my-4">
-        <span className="flex items-center text-gray-500 text-sm ml-2 mb-2 sm:mb-0 sm:ml-4">
-          <p>Click the</p>
-          <RiSubtractLine className="text-xl text-red-500 mx-1" />
-          <p>icon to remove a highlight from your custom playlist. </p>
-        </span>
+    <div className="flex flex-col sm:flex-row items-center text-gray-500 text-sm ml-2 mb-2 sm:mb-0 sm:ml-4">
+      <div className="flex items-center whitespace-nowrap">
+        <p>Click the</p>
+        <RiSubtractLine className="text-xl text-red-500 mx-1" />
+        <p>icon</p>
       </div>
-
+      <p className="sm:ml-1">
+        to remove a highlight from your custom playlist.
+      </p>
+    </div>
       <SortableContext
         items={playlist}
         id="playlist"
