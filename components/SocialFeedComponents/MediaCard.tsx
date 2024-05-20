@@ -175,6 +175,7 @@ export default function MediaCard({ media }: MediaCardProps) {
                   preload="auto" // Preload video
                   onProgress={handleProgress}
                   onReady={onReady}
+                
                   className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
                   ref={playerRef}
                   config={{
@@ -182,11 +183,13 @@ export default function MediaCard({ media }: MediaCardProps) {
                       attributes: {
                         playsInline: true, // Important for iOS
                         preload: "auto", // Preload video
+                        forceSafariHLS: true,
                         style: {
                           objectFit: "cover",
                           width: "100%",
                           height: "100%",
                         },
+                        
                       },
                     },
                   }}

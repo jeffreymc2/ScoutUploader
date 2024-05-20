@@ -130,6 +130,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
             playing={true}
             playsinline
             volume={0}
+            preload="auto"
             muted={true}
             width={"100%"}
             height={"100%"}
@@ -142,7 +143,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
               file: {
                 attributes: {
                   playsInline: true, // Important for iOS
-                  preload: "auto", // Preload video metadata
+                  preload: "auto", // Preload vide
                   muted: true,
                   style: {
                     objectFit: "cover",
