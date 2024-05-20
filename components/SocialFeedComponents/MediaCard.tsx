@@ -205,7 +205,7 @@ export default function MediaCard({ media }: MediaCardProps) {
                   width="100%"
                   height="100%"
                   className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
-                  light={media.thumbnail_url}
+                  // light={media.thumbnail_url}
                   config={{
                     file: {
                       attributes: {
