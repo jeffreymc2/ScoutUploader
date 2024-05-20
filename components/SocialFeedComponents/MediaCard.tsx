@@ -1,11 +1,6 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
-import {
-  CardHeader,
-  CardContent,
-  CardFooter,
-  Card,
-} from "@/components/ui/card";
+import { CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MessageSquareIcon, ShareIcon, ThumbsUpIcon } from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -129,14 +124,14 @@ export default function MediaCard({ media }: MediaCardProps) {
         });
       },
       {
-        threshold: 0.5, // Play the video when 50% of it is visible
+        threshold: 0.7, // Play the video when 50% of it is visible
       }
     );
-  
+
     if (containerRef.current) {
       observer.observe(containerRef.current);
     }
-  
+
     return () => {
       if (containerRef.current) {
         observer.unobserve(containerRef.current);
@@ -181,6 +176,7 @@ export default function MediaCard({ media }: MediaCardProps) {
                 config={{
                   file: {
                     attributes: {
+                      playsInline: true, // Important for iOS
                       style: {
                         objectFit: "cover",
                         width: "100%",
@@ -200,7 +196,7 @@ export default function MediaCard({ media }: MediaCardProps) {
                   controls={false}
                   playing={false}
                   muted={true}
-                  playsinline={true}
+                  playsInline
                   volume={0}
                   width="100%"
                   height="100%"
@@ -209,6 +205,7 @@ export default function MediaCard({ media }: MediaCardProps) {
                   config={{
                     file: {
                       attributes: {
+                        playsInline: true, // Important for iOS
                         style: {
                           objectFit: "cover",
                           width: "100%",
