@@ -124,7 +124,7 @@ export default function MediaCard({ media }: MediaCardProps) {
         });
       },
       {
-        threshold: 0.7, // Play the video when 50% of it is visible
+        threshold: 0.5, // Play the video when 50% of it is visible
       }
     );
 
@@ -163,7 +163,7 @@ export default function MediaCard({ media }: MediaCardProps) {
             >
               <ReactPlayer
                 url={media.url as string}
-                controls={true}
+                controls={false} // Disable controls
                 playing={true}
                 muted={true}
                 volume={0}
@@ -193,7 +193,7 @@ export default function MediaCard({ media }: MediaCardProps) {
               {media.is_video ? (
                 <ReactPlayer
                   url={media.file_url as string}
-                  controls={false}
+                  controls={false} // Disable controls
                   playing={false}
                   muted={true}
                   playsInline
