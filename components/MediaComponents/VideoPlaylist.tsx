@@ -137,6 +137,19 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
             onEnded={handleNextVideo}
             className="w-full h-full rounded-lg object-cover"
             ref={playerRef}
+            config={{
+              file: {
+                attributes: {
+                  playsInline: true, // Important for iOS
+                  preload: "auto", // Preload video
+                  style: {
+                    objectFit: "cover",
+                    width: "100%",
+                    height: "100%",
+                  },
+                },
+              },
+            }}
           />
         </div>
 
@@ -177,7 +190,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
             <div className="absolute bottom-2 left-2 text-white text-xs">
               0:{String(video.duration)}
             </div>
-            <div className="text-sm">
+            <div className="text-sm"> 
               <div className="font-medium line-clamp-2 mt-2">
                 {getTitle(video.title as string)}
               </div>
