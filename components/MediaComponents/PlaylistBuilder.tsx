@@ -217,7 +217,7 @@ export function PlaylistBuilder({
       >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 ml-4 mr-4 ">
           <div className="mb-4 w-full ">
-            <div className="flex items-center my-4">
+            <div className="flex flex-col sm:flex-row items-center my-4">
               <Image
                 src="https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_horizontal_primary%20(3).png"
                 alt="Image"
@@ -225,13 +225,16 @@ export function PlaylistBuilder({
                 width={250}
                 className="mr-2"
               />
-              <h2 className="font-pgFont text-2xl">All Highlights</h2>
+
+              <h2 className="font-pgFont text-2xl sm:mr-4">All Highlights</h2>
             </div>
-            <span className="flex items-center text-gray-500 text-sm ml-2 mb-2">
+            <div className="flex flex-col sm:flex-row items-center my-4">
+            <span className="flex items-center text-gray-500 text-sm ml-2 mb-2 sm:mb-0 sm:ml-4">
               <p>Click the</p>
               <RiAddCircleLine className="text-xl text-green-500 mx-1" />
-              <p>icon to add to your custom playlist. </p>
+              <p>icon to add to your custom playlist.</p>
             </span>
+            </div>
             <div className="border sm:p-2 p-0 w-full border-gray-300 rounded-lg max-h-[650px] shadow-lg  bg-gray-100 overflow-y-auto">
               {videos.map((video) => (
                 <HighlightVideoItem

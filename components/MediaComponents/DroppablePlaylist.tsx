@@ -35,35 +35,43 @@ export function DroppablePlaylist({
 
   return (
     <div className="mb-4 w-full">
-      <div className="flex items-center my-4">
-        <Image
-          src="https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_horizontal_primary%20(3).png"
-          alt="Image"
-          height={150}
-          width={250}
-          className="mr-2"
-        />
-        <h2 className="font-pgFont text-2xl">Custom Playlist</h2>
+      <div className="flex flex-col sm:flex-row items-center my-4">
+      <Image
+        src="https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_horizontal_primary%20(3).png"
+        alt="Image"
+        height={150}
+        width={250}
+        className="mr-2"
+      />
+      <div className="flex items-center">
+        <h2 className="font-pgFont text-2xl sm:mr-4">Custom Playlist</h2>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
               <IoIosInformationCircleOutline className="text-2xl text-gray-500 cursor-pointer ml-1" />
             </TooltipTrigger>
             <TooltipContent className="bg-white p-4 rounded-lg shadow-lg max-w-[250px]">
-              <p className="text-gray-500 text-sm ml-2 mb-2">
-                Use the drag handles to reorder your playlist. <p className="mt-2">Your playlist
-                will be displayed on your main profile and visible to scouts,
-                college coaches, and fans in the DKPlus Highlights Social Feeds.</p>
-              </p>
+              <div className="text-gray-500 text-sm ml-2 mb-2">
+                <p>Use the drag handles to reorder your playlist.</p>
+                <p className="mt-2">
+                  Your playlist will be displayed on your main profile and
+                  visible to scouts, college coaches, and fans in the DKPlus
+                  Highlights Social Feeds.
+                </p>
+              </div>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </div>
-        <span className="flex items-center text-gray-500 text-sm ml-2 mb-2">
+    </div>
+      <div className="flex flex-col sm:flex-row items-center my-4">
+        <span className="flex items-center text-gray-500 text-sm ml-2 mb-2 sm:mb-0 sm:ml-4">
           <p>Click the</p>
           <RiSubtractLine className="text-xl text-red-500 mx-1" />
           <p>icon to remove a highlight from your custom playlist. </p>
         </span>
+      </div>
+
       <SortableContext
         items={playlist}
         id="playlist"
