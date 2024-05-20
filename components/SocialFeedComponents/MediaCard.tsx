@@ -8,6 +8,7 @@ import { Post, Playlist, HighlightVideo } from "@/lib/types/types";
 import Image from "next/image";
 import React from "react";
 import ReactPlayer from "react-player";
+import LazyLoad from "react-lazyload";
 
 interface MediaCardProps {
   media: Post | Playlist | HighlightVideo;
@@ -161,51 +162,21 @@ export default function MediaCard({ media }: MediaCardProps) {
                 minHeight: "450px",
               }}
             >
-              <ReactPlayer
-                url={media.url as string}
-                controls={false} // Disable controls
-                playing={true}
-                muted={true}
-                volume={0}
-                width="100%"
-                height="100%"
-                light={media.thumbnailUrl} // Thumbnail until video is ready
-                preload="auto" // Preload video
-                onProgress={handleProgress}
-                onReady={onReady}
-                className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
-                ref={playerRef}
-                config={{
-                  file: {
-                    attributes: {
-                      playsInline: true, // Important for iOS
-                      preload: "auto", // Preload video
-                      style: {
-                        objectFit: "cover",
-                        width: "100%",
-                        height: "100%",
-                      },
-                    },
-                  },
-                }}
-              />
-            </div>
-          )}
-          {isPost(media) && (
-            <div className="relative" style={{ paddingBottom: "100%" }}>
-              {media.is_video ? (
+              <LazyLoad offset={100} height={450}>
                 <ReactPlayer
-                  url={media.file_url as string}
+                  url={media.url as string}
                   controls={false} // Disable controls
                   playing={false}
                   muted={true}
-                  playsInline
                   volume={0}
                   width="100%"
                   height="100%"
-                  light={media.thumbnail_url} // Thumbnail until video is ready
+                  // light={media.thumbnailUrl} // Thumbnail until video is ready
                   preload="auto" // Preload video
+                  onProgress={handleProgress}
+                  onReady={onReady}
                   className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
+                  ref={playerRef}
                   config={{
                     file: {
                       attributes: {
@@ -220,15 +191,49 @@ export default function MediaCard({ media }: MediaCardProps) {
                     },
                   }}
                 />
-              ) : (
-                <Image
-                  src={media.file_url as string}
-                  alt={media.title || "Image"}
-                  width={500}
-                  height={500}
-                  className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
-                />
-              )}
+              </LazyLoad>
+            </div>
+          )}
+          {isPost(media) && (
+            <div className="relative" style={{ paddingBottom: "100%" }}>
+              <LazyLoad offset={100} height={500}>
+                {media.is_video ? (
+                  <ReactPlayer
+                    url={media.file_url as string}
+                    controls={false} // Disable controls
+                    playing={false}
+                    muted={true}
+                    playsInline
+                    volume={0}
+                    width="100%"
+                    height="100%"
+                    // light={media.thumbnail_url} // Thumbnail until video is ready
+                    preload="auto" // Preload video
+                    className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
+                    config={{
+                      file: {
+                        attributes: {
+                          playsInline: true, // Important for iOS
+                          preload: "auto", // Preload video
+                          style: {
+                            objectFit: "cover",
+                            width: "100%",
+                            height: "100%",
+                          },
+                        },
+                      },
+                    }}
+                  />
+                ) : (
+                  <Image
+                    src={media.file_url as string}
+                    alt={media.title || "Image"}
+                    width={500}
+                    height={500}
+                    className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
+                  />
+                )}
+              </LazyLoad>
             </div>
           )}
           {media.title && (
@@ -262,4 +267,3 @@ export default function MediaCard({ media }: MediaCardProps) {
     </div>
   );
 }
-
