@@ -128,6 +128,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
             url={currentVideo.url as string}
             controls={true}
             playing={true}
+            playsinline
             volume={0}
             width={"100%"}
             height={"100%"}

@@ -18,10 +18,11 @@ import { HighlightVideoItem } from "@/components/MediaComponents/HighlighVideoIt
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import useUser from "@/app/hook/useUser";
 import { DroppablePlaylist } from "./DroppablePlaylist";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { RiAddCircleLine } from "react-icons/ri";
 
 interface PlaylistBuilderProps {
   initialVideos: HighlightVideo[];
@@ -226,6 +227,11 @@ export function PlaylistBuilder({
               />
               <h2 className="font-pgFont text-2xl">All Highlights</h2>
             </div>
+            <span className="flex items-center text-gray-500 text-sm ml-2 mb-2">
+              <p>Click the</p>
+              <RiAddCircleLine className="text-xl text-green-500 mx-1" />
+              <p>icon to add to your custom playlist. </p>
+            </span>
             <div className="border sm:p-2 p-0 w-full border-gray-300 rounded-lg max-h-[650px] shadow-lg  bg-gray-100 overflow-y-auto">
               {videos.map((video) => (
                 <HighlightVideoItem

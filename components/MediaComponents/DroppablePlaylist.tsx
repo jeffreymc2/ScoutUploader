@@ -1,12 +1,21 @@
-
-
 "use client";
 import React from "react";
 import { useDroppable } from "@dnd-kit/core";
 import { HighlightVideo } from "@/lib/types/types";
-import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
 import { SortableHighlightVideoItem } from "@/components/MediaComponents/SortableHighlightVideoItem";
 import Image from "next/image";
+import { RiAddCircleLine, RiSubtractLine } from "react-icons/ri";
+import { IoIosInformationCircleOutline } from "react-icons/io";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface DroppablePlaylistProps {
   playlist: HighlightVideo[];
@@ -14,7 +23,11 @@ interface DroppablePlaylistProps {
   onAddRemove: (video: HighlightVideo) => void;
 }
 
-export function DroppablePlaylist({ playlist, setPlaylist, onAddRemove }: DroppablePlaylistProps) {
+export function DroppablePlaylist({
+  playlist,
+  setPlaylist,
+  onAddRemove,
+}: DroppablePlaylistProps) {
   const { isOver, setNodeRef } = useDroppable({ id: "playlist" });
   const style = {
     backgroundColor: isOver ? "rgba(0, 0, 0, 0.1)" : undefined,
@@ -31,9 +44,36 @@ export function DroppablePlaylist({ playlist, setPlaylist, onAddRemove }: Droppa
           className="mr-2"
         />
         <h2 className="font-pgFont text-2xl">Custom Playlist</h2>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <IoIosInformationCircleOutline className="text-2xl text-gray-500 cursor-pointer ml-1" />
+            </TooltipTrigger>
+            <TooltipContent className="bg-white p-4 rounded-lg shadow-lg max-w-[250px]">
+              <p className="text-gray-500 text-sm ml-2 mb-2">
+                Use the drag handles to reorder your playlist. <p className="mt-2">Your playlist
+                will be displayed on your main profile and visible to scouts,
+                college coaches, and fans in the DKPlus Highlights Social Feeds.</p>
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
-      <SortableContext items={playlist} id="playlist" strategy={verticalListSortingStrategy}>
-        <div ref={setNodeRef} style={style} className="border sm:p-2 p-0 w-full border-gray-300 rounded-lg min-h-[650px] shadow-lg  bg-gray-100">
+        <span className="flex items-center text-gray-500 text-sm ml-2 mb-2">
+          <p>Click the</p>
+          <RiSubtractLine className="text-xl text-red-500 mx-1" />
+          <p>icon to remove a highlight from your custom playlist. </p>
+        </span>
+      <SortableContext
+        items={playlist}
+        id="playlist"
+        strategy={verticalListSortingStrategy}
+      >
+        <div
+          ref={setNodeRef}
+          style={style}
+          className="border sm:p-2 p-0 w-full border-gray-300 rounded-lg min-h-[650px] shadow-lg  bg-gray-100"
+        >
           {playlist.filter(Boolean).map((video) => (
             <SortableHighlightVideoItem
               key={video.id}
