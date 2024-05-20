@@ -169,6 +169,8 @@ export default function MediaCard({ media }: MediaCardProps) {
                 volume={0}
                 width="100%"
                 height="100%"
+                light={media.thumbnailUrl} // Thumbnail until video is ready
+                preload="auto" // Preload video
                 onProgress={handleProgress}
                 onReady={onReady}
                 className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
@@ -177,6 +179,7 @@ export default function MediaCard({ media }: MediaCardProps) {
                   file: {
                     attributes: {
                       playsInline: true, // Important for iOS
+                      preload: "auto", // Preload video
                       style: {
                         objectFit: "cover",
                         width: "100%",
@@ -200,12 +203,14 @@ export default function MediaCard({ media }: MediaCardProps) {
                   volume={0}
                   width="100%"
                   height="100%"
+                  light={media.thumbnail_url} // Thumbnail until video is ready
+                  preload="auto" // Preload video
                   className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
-                  // light={media.thumbnail_url}
                   config={{
                     file: {
                       attributes: {
                         playsInline: true, // Important for iOS
+                        preload: "auto", // Preload video
                         style: {
                           objectFit: "cover",
                           width: "100%",
@@ -257,3 +262,4 @@ export default function MediaCard({ media }: MediaCardProps) {
     </div>
   );
 }
+
