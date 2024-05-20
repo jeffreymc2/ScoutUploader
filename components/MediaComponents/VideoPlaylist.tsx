@@ -7,7 +7,7 @@ import { Json } from "@/lib/types/types";
 import { VideoSkeleton } from "@/components/ui/skeletons";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Badge } from "../ui/badge";
+import { Badge } from "@/components/ui/badge";
 
 interface VideoPlayerProps {
   playerId: string;

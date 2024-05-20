@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../ui/dialog";
+} from "@/components/ui/dialog";
 import ReactPlayer from "react-player";
 import { RiAddCircleLine, RiSubtractLine, RiDragMove2Line } from "react-icons/ri";
 
