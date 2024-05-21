@@ -1,15 +1,28 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
-import { CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card";
+import {
+  CardHeader,
+  CardContent,
+  CardFooter,
+  Card,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MessageSquareIcon, ShareIcon, ThumbsUpIcon } from "lucide-react";
+import {
+  MessageSquareIcon,
+  ShareIcon,
+  ThumbsUpIcon,
+  PlayIcon,
+  PauseIcon,
+  RewindIcon,
+  FastForwardIcon,
+} from "lucide-react";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Post, Playlist, HighlightVideo } from "@/lib/types/types";
 import Image from "next/image";
 import React from "react";
 import ReactPlayer from "react-player";
 import LazyLoad from "react-lazyload";
-
+import { Separator } from "@/components/ui/separator";
 interface MediaCardProps {
   media: Post | Playlist | HighlightVideo;
 }
@@ -18,6 +31,7 @@ export default function MediaCard({ media }: MediaCardProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const playerRef = useRef<ReactPlayer | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -108,6 +122,19 @@ export default function MediaCard({ media }: MediaCardProps) {
     return description;
   };
 
+  const handlePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleSeek = (amount: number) => {
+    if (playerRef.current) {
+      playerRef.current.seekTo(
+        playerRef.current.getCurrentTime() + amount,
+        "seconds"
+      );
+    }
+  };
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -166,16 +193,13 @@ export default function MediaCard({ media }: MediaCardProps) {
                 <ReactPlayer
                   url={media.url as string}
                   controls={false} // Disable controls
-                  playing={false}
+                  playing={isPlaying}
                   muted={true}
                   volume={0}
                   width="100%"
                   height="100%"
-                  // light={media.thumbnailUrl} // Thumbnail until video is ready
-                  preload="auto" // Preload video
                   onProgress={handleProgress}
                   onReady={onReady}
-                
                   className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
                   ref={playerRef}
                   config={{
@@ -183,13 +207,17 @@ export default function MediaCard({ media }: MediaCardProps) {
                       attributes: {
                         playsInline: true, // Important for iOS
                         preload: "auto", // Preload video
-                        forceSafariHLS: true,
                         style: {
                           objectFit: "cover",
                           width: "100%",
                           height: "100%",
                         },
-                        
+                      },
+                      hlsOptions: {
+                        startLevel: 0, // Start with the lowest quality
+                        maxBufferLength: 30, // Adjust buffer length to manage quality adaptation
+                        maxMaxBufferLength: 60, // Adjust maximum buffer length
+                        liveSyncDurationCount: 3, // Adjust live sync duration
                       },
                     },
                   }}
@@ -204,13 +232,12 @@ export default function MediaCard({ media }: MediaCardProps) {
                   <ReactPlayer
                     url={media.file_url as string}
                     controls={false} // Disable controls
-                    playing={false}
+                    playing={isPlaying}
                     muted={true}
                     playsInline
                     volume={0}
                     width="100%"
                     height="100%"
-                    // light={media.thumbnail_url} // Thumbnail until video is ready
                     preload="auto" // Preload video
                     className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
                     config={{
@@ -239,8 +266,28 @@ export default function MediaCard({ media }: MediaCardProps) {
               </LazyLoad>
             </div>
           )}
+          <div className="grid grid-cols-3 items-center justify-center gap-4 my-2">
+            <Button variant="ghost" onClick={() => handleSeek(-5)}>
+              <RewindIcon className="mr-1" />
+              Back 5s
+            </Button>
+            <Button variant="ghost" onClick={handlePlayPause}>
+              {isPlaying ? (
+                <PauseIcon className="mr-1" />
+              ) : (
+                <PlayIcon className="mr-1" />
+              )}
+              {isPlaying ? "Pause" : "Play"}
+            </Button>
+            <Button variant="ghost" onClick={() => handleSeek(5)}>
+              <FastForwardIcon className="mr-1" />
+              Forward 5s
+            </Button>
+          </div>
+          <Separator  />
+          <div className="px-4 pt-2">    
           {media.title && (
-            <p className="text-md leading-4 font-bold text-gray-600 mt-2">
+            <p className="text-md leading-4 font-bold text-gray-600 mt-1">
               {getTitle(media.title)}
             </p>
           )}
@@ -249,8 +296,14 @@ export default function MediaCard({ media }: MediaCardProps) {
               {filterDescription(media.description)}
             </p>
           )}
+          </div>
         </CardContent>
-        <CardFooter className="flex space-x-4">
+        <div className="flex items-center justify-between px-4 py-0">
+        <Separator  />
+        </div>
+
+          <div className="grid grid-cols-3 items-center justify-center gap-4 my-2">
+
           <Button variant="ghost" onClick={handleLike}>
             <ThumbsUpIcon
               className={`mr-1 ${isLiked ? "text-blue-500" : ""}`}
@@ -265,7 +318,7 @@ export default function MediaCard({ media }: MediaCardProps) {
             <ShareIcon className="mr-1" />
             Share
           </Button>
-        </CardFooter>
+        </div>
       </Card>
     </div>
   );
