@@ -269,7 +269,7 @@ export default function MediaCard({ media }: MediaCardProps) {
           <div className="grid grid-cols-3 items-center justify-center gap-4 my-2">
             <Button variant="ghost" onClick={() => handleSeek(-5)}>
               <RewindIcon className="mr-1" />
-              Back 5s
+              5 secs
             </Button>
             <Button variant="ghost" onClick={handlePlayPause}>
               {isPlaying ? (
@@ -281,7 +281,7 @@ export default function MediaCard({ media }: MediaCardProps) {
             </Button>
             <Button variant="ghost" onClick={() => handleSeek(5)}>
               <FastForwardIcon className="mr-1" />
-              Forward 5s
+              5 secs
             </Button>
           </div>
           <Separator  />
