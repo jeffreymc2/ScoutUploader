@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import ReactPlayer from "react-player";
+import  Video from "next-video";
 import { RiAddCircleLine, RiSubtractLine, RiDragMove2Line } from "react-icons/ri";
 
 type Props = {
@@ -29,15 +29,18 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
     ref
   ) {
     const [isOpen, setIsOpen] = useState(false);
-    const playerRef = useRef<ReactPlayer | null>(null);
+    const playerRef = useRef<HTMLVideoElement | null>(null);
+    const [thumbnailUrl, setThumbnailUrl] = useState(video.thumbnailUrl || "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp");
 
     useEffect(() => {
       let timeoutId: NodeJS.Timeout | null = null;
 
       if (isOpen && playerRef.current && video.duration) {
-        playerRef.current.seekTo(video.start_time, "seconds");
+        playerRef.current.currentTime = video.start_time;
         timeoutId = setTimeout(() => {
-          playerRef.current?.getInternalPlayer()?.pause();
+          if (playerRef.current) {
+            playerRef.current.pause();
+          }
         }, video.duration * 1000);
       }
 
@@ -89,14 +92,14 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
               <DialogTrigger asChild>
                 <div onClick={handleDialogOpen}>
                   <Image
-                    src={
-                      video.thumbnailUrl ||
-                      "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp"
-                    }
+                    src={thumbnailUrl}
                     alt="Image"
                     width={125}
                     height={50}
                     className="rounded-lg cursor-pointer max-h-[75px] object-cover"
+                    onError={() => {
+                      setThumbnailUrl("https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp");
+                    }}
                   />
                 </div>
               </DialogTrigger>
@@ -108,18 +111,16 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
                   </DialogDescription>
                 </DialogHeader>
                 <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
-                  <ReactPlayer
+                  <Video
                     ref={playerRef}
                     className="rounded-lg absolute top-0 left-0"
-                    url={video.url}
-                    playing={isOpen}
+                    src={video.url}
                     controls={true}
-                    width={"100%"}
-                    height={"100%"}
+                    autoPlay={isOpen}
                     style={{ objectFit: "fill" }}
-                    onReady={() => {
+                    onLoadedData={() => {
                       if (playerRef.current) {
-                        playerRef.current.seekTo(video.start_time, "seconds");
+                        playerRef.current.currentTime = video.start_time;
                       }
                     }}
                   />

@@ -10,6 +10,10 @@ const supabase = createClient(
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const playerID = searchParams.get('playerID');
+  const page = searchParams.get('page') || '1';
+  const type = searchParams.get('type') || 'h';
+  const limit = searchParams.get('limit') || '20';
+  const position = searchParams.get('position') || 'b';
 
   if (!playerID) {
     return NextResponse.json({ message: 'Missing playerID parameter' }, { status: 400 });
@@ -17,7 +21,7 @@ export async function GET(request: NextRequest) {
 
   try {
     // Fetch player highlights from the external API
-    const highlightsUrl = `https://perfectgame.drund.com/~/highlights/${encodeURIComponent(playerID)}/?page=1&limit=20&type=h&version=v2&start_date=06-01-2023&end_date=04-16-2024&position=`;
+    const highlightsUrl = `https://perfectgame.drund.com/~/highlights/${encodeURIComponent(playerID)}/?page=${page}&limit=${limit}&type=${type}&version=v2&position=${position}`;
     const highlightsResponse = await fetch(highlightsUrl, {
       method: 'GET',
       headers: {
@@ -110,47 +114,3 @@ function isVideoFile(url: string): boolean {
   const extension = url.slice(url.lastIndexOf('.')).toLowerCase();
   return videoExtensions.includes(extension);
 }
-
-// // app/api/playerhighlights/route.ts
-// import { NextRequest, NextResponse } from 'next/server';
-
-// export async function GET(request: NextRequest) {
-//   const { searchParams } = new URL(request.url);
-//   const playerID = searchParams.get('playerID');
-  
-
-//   if (!playerID) {
-//     return NextResponse.json({ message: 'Missing playerID parameter' }, { status: 400 });
-//   }
-
-//   // Construct the URL for the external API request
-//   const url = `https://perfectgame.drund.com/~/highlights/${encodeURIComponent(playerID)}/?page=1&limit=10&type=h&version=v2&start_date=06-01-2023&end_date=04-16-2024&position=`;
-
-//   try {
-//     const response = await fetch(url, {
-//       method: 'GET',
-//       headers: {
-//         'Drund-Api-Key': `${process.env.DRUND_API_KEY}`,
-//         'Accept': 'application/json',
-//         'Access-Control-Allow-Origin': '*',  
-
-//       },
-//     });
-
-//     if (response.ok) {
-//       const data = await response.json();
-//       return NextResponse.json(data);
-//     } else {
-//       const errorData = await response.text();
-//       console.error('Error fetching data:', response.status, response.statusText);
-//       console.error('Error details:', errorData);
-//       return NextResponse.json(
-//         { message: 'Failed to fetch data', error: response.statusText },
-//         { status: response.status }
-//       );
-//     }
-//   } catch (error) {
-//     console.error('Error making request:', error);
-//     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
-//   }
-// }

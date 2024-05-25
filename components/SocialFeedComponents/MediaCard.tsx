@@ -1,11 +1,6 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
-import {
-  CardHeader,
-  CardContent,
-  CardFooter,
-  Card,
-} from "@/components/ui/card";
+import { CardHeader, CardContent, CardFooter, Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
   MessageSquareIcon,
@@ -20,9 +15,11 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Post, Playlist, HighlightVideo } from "@/lib/types/types";
 import Image from "next/image";
 import React from "react";
-import ReactPlayer from "react-player";
 import LazyLoad from "react-lazyload";
 import { Separator } from "@/components/ui/separator";
+import Video from "next-video";
+import BackgroundVideo from "next-video/background-video";
+
 interface MediaCardProps {
   media: Post | Playlist | HighlightVideo;
 }
@@ -33,7 +30,7 @@ export default function MediaCard({ media }: MediaCardProps) {
   const [currentTime, setCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-  const playerRef = useRef<ReactPlayer | null>(null);
+  const playerRef = useRef<HTMLVideoElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   const handleLike = () => {
@@ -72,20 +69,23 @@ export default function MediaCard({ media }: MediaCardProps) {
 
   const onReady = useCallback(() => {
     if (playerRef.current && isHighlightVideo(media)) {
-      playerRef.current.seekTo(media.start_time as number, "seconds");
+      playerRef.current.currentTime = media.start_time as number;
     }
   }, [playerRef.current, media]);
 
-  const handleProgress = (state: { playedSeconds: number }) => {
-    setCurrentTime(state.playedSeconds);
+  const handleProgress = () => {
+    if (playerRef.current) {
+      const playedSeconds = playerRef.current.currentTime;
+      setCurrentTime(playedSeconds);
 
-    if (isHighlightVideo(media)) {
-      if (
-        state.playedSeconds >=
-        (media.start_time as number) + (media.duration as number)
-      ) {
-        setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % 1);
-        setCurrentTime(0);
+      if (isHighlightVideo(media)) {
+        if (
+          playedSeconds >=
+          (media.start_time as number) + (media.duration as number)
+        ) {
+          setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % 1);
+          setCurrentTime(0);
+        }
       }
     }
   };
@@ -123,15 +123,21 @@ export default function MediaCard({ media }: MediaCardProps) {
   };
 
   const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
+    setIsPlaying((prevIsPlaying) => {
+      if (playerRef.current) {
+        if (prevIsPlaying) {
+          playerRef.current.pause();
+        } else {
+          playerRef.current.play();
+        }
+      }
+      return !prevIsPlaying;
+    });
   };
 
   const handleSeek = (amount: number) => {
     if (playerRef.current) {
-      playerRef.current.seekTo(
-        playerRef.current.getCurrentTime() + amount,
-        "seconds"
-      );
+      playerRef.current.currentTime += amount;
     }
   };
 
@@ -141,11 +147,11 @@ export default function MediaCard({ media }: MediaCardProps) {
         entries.forEach((entry) => {
           if (playerRef.current) {
             if (entry.isIntersecting) {
-              playerRef.current.getInternalPlayer().play();
+              playerRef.current.play();
             } else {
-              playerRef.current.getInternalPlayer().pause();
+              playerRef.current.pause();
               if (isHighlightVideo(media)) {
-                playerRef.current.seekTo(media.start_time as number, "seconds");
+                playerRef.current.currentTime = media.start_time as number;
               }
             }
           }
@@ -183,84 +189,46 @@ export default function MediaCard({ media }: MediaCardProps) {
         <CardContent className="mt-4">
           {isHighlightVideo(media) && (
             <div
-              className="relative"
-              style={{
-                paddingBottom: "100%",
-                minHeight: "450px",
-              }}
+     
             >
               <LazyLoad offset={100} height={450}>
-                <ReactPlayer
-                  url={media.url as string}
-                  controls={false} // Disable controls
-                  playing={isPlaying}
+                <Video
+                  src={media.url as string}
+                  controls={true} // Disable controls
+                  autoPlay={isPlaying}
                   muted={true}
                   volume={0}
-                  width="100%"
-                  height="100%"
-                  onProgress={handleProgress}
-                  onReady={onReady}
-                  className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
+                  onTimeUpdate={handleProgress}
+                  onLoadedData={onReady}
+                  className="absolute top-0 left-0 w-full h-full aspect-[4/5] rounded-lg object-cover"
                   ref={playerRef}
-                  config={{
-                    file: {
-                      attributes: {
-                        playsInline: true, // Important for iOS
-                        preload: "auto", // Preload video
-                        style: {
-                          objectFit: "cover",
-                          width: "100%",
-                          height: "100%",
-                        },
-                      },
-                      hlsOptions: {
-                        startLevel: 0, // Start with the lowest quality
-                        maxBufferLength: 30, // Adjust buffer length to manage quality adaptation
-                        maxMaxBufferLength: 60, // Adjust maximum buffer length
-                        liveSyncDurationCount: 3, // Adjust live sync duration
-                      },
-                    },
-                  }}
                 />
               </LazyLoad>
             </div>
           )}
           {isPost(media) && (
-            <div className="relative" style={{ paddingBottom: "100%" }}>
-              <LazyLoad offset={100} height={500}>
+            <div className="relative" >
+              <LazyLoad offset={100} height={625}>
                 {media.is_video ? (
-                  <ReactPlayer
-                    url={media.file_url as string}
-                    controls={false} // Disable controls
-                    playing={isPlaying}
+                  <Video
+                    src={media.file_url as string}
+                    controls={true} // Disable controls
+                    autoPlay={isPlaying}
                     muted={true}
                     playsInline
+
                     volume={0}
-                    width="100%"
-                    height="100%"
-                    preload="auto" // Preload video
-                    className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
-                    config={{
-                      file: {
-                        attributes: {
-                          playsInline: true, // Important for iOS
-                          preload: "auto", // Preload video
-                          style: {
-                            objectFit: "cover",
-                            width: "100%",
-                            height: "100%",
-                          },
-                        },
-                      },
-                    }}
+
+                    className="absolute top-0 left-0 w-full aspect-[4/5] h-full rounded-lg object-cover"
+                    ref={playerRef}
                   />
                 ) : (
                   <Image
                     src={media.file_url as string}
                     alt={media.title || "Image"}
                     width={500}
-                    height={500}
-                    className="absolute top-0 left-0 w-full h-full rounded-lg object-cover"
+                    height={700}
+                    className="absolute top-0 left-0 w-full aspect-[4/5] h-full rounded-lg object-cover"
                   />
                 )}
               </LazyLoad>
@@ -284,26 +252,25 @@ export default function MediaCard({ media }: MediaCardProps) {
               5 secs
             </Button>
           </div>
-          <Separator  />
-          <div className="px-4 pt-2">    
-          {media.title && (
-            <p className="text-md leading-4 font-bold text-gray-600 mt-1">
-              {getTitle(media.title)}
-            </p>
-          )}
-          {filterDescription(media.description) && (
-            <p className="text-xs mt-1">
-              {filterDescription(media.description)}
-            </p>
-          )}
+          <Separator />
+          <div className="px-4 pt-2">
+            {media.title && (
+              <p className="text-md leading-4 font-bold text-gray-600 mt-1">
+                {getTitle(media.title)}
+              </p>
+            )}
+            {filterDescription(media.description) && (
+              <p className="text-xs mt-1">
+                {filterDescription(media.description)}
+              </p>
+            )}
           </div>
         </CardContent>
         <div className="flex items-center justify-between px-4 py-0">
-        <Separator  />
+          <Separator />
         </div>
 
-          <div className="grid grid-cols-3 items-center justify-center gap-4 my-2">
-
+        <div className="grid grid-cols-3 items-center justify-center gap-4 my-2">
           <Button variant="ghost" onClick={handleLike}>
             <ThumbsUpIcon
               className={`mr-1 ${isLiked ? "text-blue-500" : ""}`}

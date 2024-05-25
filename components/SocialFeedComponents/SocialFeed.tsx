@@ -21,7 +21,7 @@ export default async function Feed() {
   return (
     <div className="max-w-xl mx-auto">
       <div className="flex flex-col space-y-4">
-        <SearchBar />
+        {/* <SearchBar /> */}
         {playlists.map((playlist, index) => (
           <div key={index}>
             {playlist.playlist.map((video) => (
