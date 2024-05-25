@@ -49,7 +49,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 
       setPlaylists((prev) => ({
         ...prev,
-        [type]: reset ? highlightVideos : [...prev[type], ...highlightVideos],
+        [type]: reset
+          ? highlightVideos
+          : [...prev[type], ...highlightVideos.filter((video: { id: string | number | boolean | Json[] | { [key: string]: Json; } | null; }) => !prev[type].some((prevVideo) => prevVideo.id === video.id))],
       }));
 
       if (highlightVideos.length === 0) {

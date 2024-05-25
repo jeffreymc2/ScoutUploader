@@ -88,18 +88,18 @@ export async function GET(request: NextRequest) {
     ];
 
     // Set CORS headers
-    const corsHeaders = {
-      'Access-Control-Allow-Origin': 'https://scouts.perfectgame.org',
-      'Access-Control-Allow-Methods': 'GET',
-      'Access-Control-Allow-Headers': 'Content-Type',
-    };
+    // const corsHeaders = {
+    //   'Access-Control-Allow-Origin': 'https://scouts.perfectgame.org',
+    //   'Access-Control-Allow-Methods': 'GET',
+    //   'Access-Control-Allow-Headers': 'Content-Type',
+    // };
 
     // Return the response with CORS headers
     return new NextResponse(JSON.stringify({ highlights: combinedHighlights }), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
-        ...corsHeaders,
+        // ...corsHeaders,
       },
     });
   } catch (error) {
