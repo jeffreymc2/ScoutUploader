@@ -205,6 +205,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                     autoPlay
                     playsInline
                     muted
+                    accentColor="blue-500"
                     className="w-full h-full rounded-lg object-cover"
                     onTimeUpdate={handleProgress}
                     onEnded={handleNextVideo}
