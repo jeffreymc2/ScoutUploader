@@ -101,7 +101,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
           const playlist = playlistData.playlist as unknown as Video[];
           setPlaylists((prev) => ({
             ...prev,
-            h: [...playlist, ...prev.h],
+            user: playlist,
           }));
         }
       }

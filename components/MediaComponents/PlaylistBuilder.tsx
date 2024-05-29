@@ -175,7 +175,7 @@ export function PlaylistBuilder({
         } else {
           console.log("Playlist updated successfully");
           toast.success("Playlist updated successfully");
-          router.refresh();
+          router.refresh(); // Refresh the page
         }
       } else {
         const { error: insertError } = await supabaseBrowser()
@@ -194,7 +194,7 @@ export function PlaylistBuilder({
         } else {
           console.log("Playlist created successfully");
           toast.success("Playlist created successfully");
-          router.refresh();
+          router.refresh(); // Refresh the page
         }
       }
     } else {
