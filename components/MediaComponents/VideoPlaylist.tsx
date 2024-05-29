@@ -8,6 +8,7 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { supabaseBrowser } from "@/lib/supabase/browser";
 
 interface VideoPlayerProps {
   playerId: string;
@@ -35,6 +36,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const [videoDurations, setVideoDurations] = useState<{
     [key: string]: number;
   }>({});
+  const [supabasePlaylist, setSupabasePlaylist] = useState<{ [key: string]: Json }[]>([]);
 
   const fetchPlaylist = async (page: number, type: string, reset = false) => {
     try {
@@ -93,19 +95,46 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   }, []);
 
   useEffect(() => {
+    const fetchSupabasePlaylist = async () => {
+      if (user) {
+        const { data: playlistData, error } = await supabaseBrowser()
+          .from("playlists")
+          .select("playlist")
+          .eq("user_id", user.id)
+          .eq("player_id", playerId)
+          .maybeSingle();
+  
+        if (error) {
+          console.error("Error fetching playlist from Supabase:", error);
+        } else if (playlistData) {
+          const playlist = playlistData.playlist as { [key: string]: Json }[];
+          setSupabasePlaylist(playlist);
+        }
+      }
+    };
+  
+    fetchSupabasePlaylist();
+  }, [user, playerId]);
+
+  useEffect(() => {
     setCurrentVideoIndex(0);
     setHasMore(true);
     setPage(1);
   }, [type]);
 
   useEffect(() => {
-    if (playlists[type].length > 0) {
-      setCurrentVideoIndex(0); // Reset to the first video on tab change
+    if (type === "h" && supabasePlaylist.length > 0) {
+      setCurrentVideoIndex(0);
+    } else if (playlists[type].length > 0) {
+      setCurrentVideoIndex(0);
     }
-  }, [playlists, type]);
+  }, [playlists, supabasePlaylist, type]);
 
   const handleProgress = ({ playedSeconds }: { playedSeconds: number }) => {
-    const currentVideo = playlists[type][currentVideoIndex];
+    const currentVideo = type === "h" && supabasePlaylist.length > 0
+      ? supabasePlaylist[currentVideoIndex]
+      : playlists[type][currentVideoIndex];
+
     if (
       playedSeconds >=
       (currentVideo.start_time as number) + (currentVideo.duration as number)
@@ -115,9 +144,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   };
 
   const handleNextVideo = () => {
-    setCurrentVideoIndex(
-      (prevIndex) => (prevIndex + 1) % playlists[type].length
-    );
+    const playlistLength = type === "h" && supabasePlaylist.length > 0
+      ? supabasePlaylist.length
+      : playlists[type].length;
+
+    setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % playlistLength);
   };
 
   const handleThumbnailClick = (index: number) => {
@@ -130,7 +161,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   };
 
   const seekToStartTime = useCallback(() => {
-    const currentVideo = playlists[type][currentVideoIndex];
+    const currentVideo = type === "h" && supabasePlaylist.length > 0
+      ? supabasePlaylist[currentVideoIndex]
+      : playlists[type][currentVideoIndex];
+
     if (
       playerRef.current &&
       currentVideo &&
@@ -138,7 +172,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     ) {
       playerRef.current.seekTo(currentVideo.start_time as number, "seconds");
     }
-  }, [currentVideoIndex, playlists, type]);
+  }, [currentVideoIndex, playlists, supabasePlaylist, type]);
 
   useEffect(() => {
     seekToStartTime();
@@ -147,11 +181,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const handleReady = () => {
     const internalPlayer = playerRef.current?.getInternalPlayer("hls");
     if (internalPlayer) {
-      internalPlayer.currentLevel = -1; // Set initial quality level to the highest
+      internalPlayer.currentLevel = -1;
       seekToStartTime();
     }
 
-    // Get the duration of the current video
+    const currentVideo = type === "h" && supabasePlaylist.length > 0
+      ? supabasePlaylist[currentVideoIndex]
+      : playlists[type][currentVideoIndex];
+
     if (playerRef.current && currentVideo.id) {
       const duration = playerRef.current.getDuration();
       setVideoDurations((prevDurations) => ({
@@ -167,11 +204,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  if (playlists[type].length === 0) {
+  if ((type === "h" && supabasePlaylist.length === 0 && playlists[type].length === 0) || (type !== "h" && playlists[type].length === 0)) {
     return <VideoSkeleton />;
   }
 
-  const currentVideo = playlists[type][currentVideoIndex];
+  const currentVideo = type === "h" && supabasePlaylist.length > 0
+    ? supabasePlaylist[currentVideoIndex]
+    : playlists[type][currentVideoIndex];
 
   const updateThumbnailUrl = (videoId: string, url: string) => {
     setThumbnailUrls((prevUrls) => ({
@@ -243,7 +282,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         </TabsList>
         <TabsContent value={type}>
           <InfiniteScroll
-            dataLength={playlists[type].length}
+            dataLength={type === "h" && supabasePlaylist.length > 0 ? supabasePlaylist.length : playlists[type].length}
             next={loadMoreVideos}
             hasMore={hasMore}
             loader={""}
@@ -263,13 +302,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                     onReady={handleReady}
                     config={{
                       file: {
-                        attributes: {
-                          crossOrigin: "anonymous",
-                        },
+                        // attributes: {
+                        //   crossOrigin: "anonymous",
+                        // },
                         hlsOptions: {
-                          autoStartLoad: true, // Start loading the video immediately
-                          startPosition: -1, // Start from the beginning of the video
-                          capLevelToPlayerSize: true, // Adjust quality based on player size
+                          autoStartLoad: true,
+                          startPosition: -1,
+                          capLevelToPlayerSize: true,
                           maxBufferLength: 30,
                           maxMaxBufferLength: 60,
                         },
@@ -288,7 +327,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
               </div>
 
               <div className="flex flex-col gap-2 max-h-[413px] overflow-y-auto">
-                {playlists[type].map((video, index) => (
+                {(type === "h" && supabasePlaylist.length > 0 ? supabasePlaylist : playlists[type]).map((video, index) => (
                   <div
                     key={String(video.id)}
                     className={`flex items-start gap-4 relative cursor-pointer h-24 shadow-lg border border-gray-100 rounded-lg ${
