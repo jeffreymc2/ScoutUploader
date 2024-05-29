@@ -14,10 +14,19 @@ interface VideoPlayerProps {
   playerId: string;
 }
 
+interface Video {
+  id: string | number;
+  url: string;
+  title?: string;
+  created?: string;
+  description?: string;
+  thumbnailUrl?: string;
+  start_time?: number;
+  duration?: number;
+}
+
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
-  const [playlists, setPlaylists] = useState<{
-    [key: string]: { [key: string]: Json }[];
-  }>({
+  const [playlists, setPlaylists] = useState<{ [key: string]: Video[] }>({
     h: [],
     a: [],
     l: [],
@@ -33,10 +42,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   );
   const { data: user } = useUser();
   const playerRef = useRef<ReactPlayer | null>(null);
-  const [videoDurations, setVideoDurations] = useState<{
-    [key: string]: number;
-  }>({});
-  const [supabasePlaylist, setSupabasePlaylist] = useState<{ [key: string]: Json }[]>([]);
 
   const fetchPlaylist = async (page: number, type: string, reset = false) => {
     try {
@@ -46,12 +51,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
       const highlightsData = await highlightsResponse.json();
       const highlightVideos = highlightsData.highlights || [];
 
-      const isPitchingVideo = highlightVideos.some(
-        (video: { tagged_player_keys: any[] }) =>
-          video.tagged_player_keys?.some(
-            (player: any) =>
-              player.Key === parseInt(playerId) && player.Position === "p"
-          )
+      const isPitchingVideo = highlightVideos.some((video: { tagged_player_keys: any[] }) =>
+        video.tagged_player_keys?.some((player: any) => player.Key === parseInt(playerId) && player.Position === "p")
       );
 
       if (isPitchingVideo) {
@@ -60,22 +61,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 
       setPlaylists((prev) => ({
         ...prev,
-        [type]: reset
-          ? highlightVideos
-          : [
-              ...prev[type],
-              ...highlightVideos.filter(
-                (video: {
-                  id:
-                    | string
-                    | number
-                    | boolean
-                    | Json[]
-                    | { [key: string]: Json }
-                    | null;
-                }) => !prev[type].some((prevVideo) => prevVideo.id === video.id)
-              ),
-            ],
+        [type]: reset ? highlightVideos : [...prev[type], ...highlightVideos.filter((video: { id: any }) => !prev[type].some((prevVideo) => prevVideo.id === video.id))],
       }));
 
       if (highlightVideos.length === 0) {
@@ -88,11 +74,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   };
 
   useEffect(() => {
-    fetchPlaylist(1, "h", true);
-    fetchPlaylist(1, "a", true);
-    fetchPlaylist(1, "l", true);
-    fetchPlaylist(1, "p", true);
-  }, []);
+    const fetchData = async () => {
+      await Promise.all([
+        fetchPlaylist(1, "h", true),
+        fetchPlaylist(1, "a", true),
+        fetchPlaylist(1, "l", true),
+        fetchPlaylist(1, "p", true),
+      ]);
+    };
+    fetchData();
+  }, [playerId]);
 
   useEffect(() => {
     const fetchSupabasePlaylist = async () => {
@@ -103,16 +94,19 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
           .eq("user_id", user.id)
           .eq("player_id", playerId)
           .single();
-  
+
         if (error) {
           console.error("Error fetching playlist from Supabase:", error);
         } else if (playlistData) {
-          const playlist = playlistData.playlist as { [key: string]: Json }[];
-          setSupabasePlaylist(playlist);
+          const playlist = playlistData.playlist as unknown as Video[];
+          setPlaylists((prev) => ({
+            ...prev,
+            h: [...playlist, ...prev.h],
+          }));
         }
       }
     };
-  
+
     fetchSupabasePlaylist();
   }, [user, playerId]);
 
@@ -122,33 +116,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     setPage(1);
   }, [type]);
 
-  useEffect(() => {
-    if (type === "h" && supabasePlaylist.length > 0) {
-      setCurrentVideoIndex(0);
-    } else if (playlists[type].length > 0) {
-      setCurrentVideoIndex(0);
-    }
-  }, [playlists, supabasePlaylist, type]);
-
   const handleProgress = ({ playedSeconds }: { playedSeconds: number }) => {
-    const currentVideo = type === "h" && supabasePlaylist.length > 0
-      ? supabasePlaylist[currentVideoIndex]
-      : playlists[type][currentVideoIndex];
-
-    if (
-      playedSeconds >=
-      (currentVideo.start_time as number) + (currentVideo.duration as number)
-    ) {
+    const currentVideo = playlists[type][currentVideoIndex];
+    if (currentVideo?.duration && playedSeconds >= (currentVideo.start_time ?? 0) + currentVideo.duration) {
       handleNextVideo();
     }
   };
 
   const handleNextVideo = () => {
-    const playlistLength = type === "h" && supabasePlaylist.length > 0
-      ? supabasePlaylist.length
-      : playlists[type].length;
-
-    setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % playlistLength);
+    setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % playlists[type].length);
   };
 
   const handleThumbnailClick = (index: number) => {
@@ -161,43 +137,25 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   };
 
   const seekToStartTime = useCallback(() => {
-    const currentVideo = type === "h" && supabasePlaylist.length > 0
-      ? supabasePlaylist[currentVideoIndex]
-      : playlists[type][currentVideoIndex];
-
-    if (
-      playerRef.current &&
-      currentVideo &&
-      isFinite(currentVideo.start_time as number)
-    ) {
-      playerRef.current.seekTo(currentVideo.start_time as number, "seconds");
+    const currentVideo = playlists[type][currentVideoIndex];
+    if (playerRef.current && currentVideo && typeof currentVideo.start_time === "number" && isFinite(currentVideo.start_time)) {
+      playerRef.current.seekTo(currentVideo.start_time, "seconds");
     }
-  }, [currentVideoIndex, playlists, supabasePlaylist, type]);
+  }, [currentVideoIndex, playlists, type]);
 
   useEffect(() => {
     seekToStartTime();
   }, [currentVideoIndex, seekToStartTime]);
 
   const handleReady = () => {
-    const currentVideo = type === "h" && supabasePlaylist.length > 0
-      ? supabasePlaylist[currentVideoIndex]
-      : playlists[type][currentVideoIndex];
-
-    if (typeof currentVideo.url === 'string' && currentVideo.url.endsWith(".m3u8")) {
+    const currentVideo = playlists[type][currentVideoIndex];
+    if (currentVideo && currentVideo.url.endsWith(".m3u8")) {
       const internalPlayer = playerRef.current?.getInternalPlayer("hls");
       if (internalPlayer) {
         internalPlayer.currentLevel = -1;
       }
     } else {
       seekToStartTime();
-    }
-
-    if (playerRef.current && currentVideo.id) {
-      const duration = playerRef.current.getDuration();
-      setVideoDurations((prevDurations) => ({
-        ...prevDurations,
-        [currentVideo.id as string]: duration,
-      }));
     }
   };
 
@@ -207,13 +165,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  if ((type === "h" && supabasePlaylist.length === 0 && playlists[type].length === 0) || (type !== "h" && playlists[type].length === 0)) {
+  if (playlists[type].length === 0) {
     return <VideoSkeleton />;
   }
 
-  const currentVideo = type === "h" && supabasePlaylist.length > 0
-    ? supabasePlaylist[currentVideoIndex]
-    : playlists[type][currentVideoIndex];
+  const currentVideo = playlists[type][currentVideoIndex];
 
   const updateThumbnailUrl = (videoId: string, url: string) => {
     setThumbnailUrls((prevUrls) => ({
@@ -222,7 +178,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     }));
   };
 
-  const renderThumbnail = (video: any) => {
+  const renderThumbnail = (video: Video) => {
     const thumbnailUrl =
       thumbnailUrls[video.id] ||
       video.thumbnailUrl ||
@@ -236,28 +192,27 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         src={thumbnailUrl}
         width={130}
         onError={() => {
-          updateThumbnailUrl(
-            video.id,
-            "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp"
-          );
+          updateThumbnailUrl(video.id as string, "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp");
         }}
       />
     );
   };
 
-  const getTitle = (title: string) => {
+  const getTitle = (title?: string) => {
+    if (!title) return "";
     const bracketRegex = /\[(.*?)\]/;
     const match = title.match(bracketRegex);
     return match ? title.replace(match[0], "") : title;
   };
 
-  const getTitleWithoutBrackets = (title: string) => {
+  const getTitleWithoutBrackets = (title?: string) => {
+    if (!title) return "";
     const bracketRegex = /\[(.*?)\]/;
     const match = title.match(bracketRegex);
     return match ? match[1] : title;
   };
 
-  const renderOverlayBadge = (title: string) => {
+  const renderOverlayBadge = (title?: string) => {
     const titleWithoutBrackets = getTitleWithoutBrackets(title);
     return (
       <div className="absolute top-2 left-2">
@@ -285,7 +240,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         </TabsList>
         <TabsContent value={type}>
           <InfiniteScroll
-            dataLength={type === "h" && supabasePlaylist.length > 0 ? supabasePlaylist.length : playlists[type].length}
+            dataLength={playlists[type].length}
             next={loadMoreVideos}
             hasMore={hasMore}
             loader={""}
@@ -295,7 +250,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                 <div className="aspect-w-16 aspect-h-9">
                   <ReactPlayer
                     ref={playerRef}
-                    url={currentVideo.url as string}
+                    url={currentVideo.url}
                     playing
                     controls
                     width="100%"
@@ -320,39 +275,30 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                 {currentVideo.title && (
                   <div className="absolute text-white inset-x-0 top-0 p-4 w-full overflow-hidden rounded-lg bg-gradient-to-b from-black/50 to-transparent">
                     <div className="line-clamp-1">
-                      {getTitle(currentVideo.title as string)}
+                      {getTitle(currentVideo.title)}
                     </div>
                   </div>
                 )}
               </div>
 
               <div className="flex flex-col gap-2 max-h-[413px] overflow-y-auto">
-                {(type === "h" && supabasePlaylist.length > 0 ? supabasePlaylist : playlists[type]).map((video, index) => (
+                {playlists[type].map((video, index) => (
                   <div
                     key={String(video.id)}
                     className={`flex items-start gap-4 relative cursor-pointer h-24 shadow-lg border border-gray-100 rounded-lg ${
-                      index === currentVideoIndex
-                        ? "border border-gray-300 rounded-lg shadow-sm p-0 bg-gray-100"
-                        : ""
+                      index === currentVideoIndex ? "border border-gray-300 rounded-lg shadow-sm p-0 bg-gray-100" : ""
                     }`}
                     onClick={() => handleThumbnailClick(index)}
                   >
                     {renderThumbnail(video)}
-                    {video.title && renderOverlayBadge(video.title as string)}
+                    {video.title && renderOverlayBadge(video.title)}
                     <div className="absolute bottom-2 left-2 text-white text-xs">
-                      {video.duration
-                        ? formatDuration(video.duration as number)
-                        : video.id && videoDurations[video.id as string]
-                        ? formatDuration(videoDurations[video.id as string])
-                        : ""}
+                      {video.duration ? formatDuration(video.duration) : ""}
                     </div>
                     <div className="text-sm">
-                      <div className="font-medium line-clamp-2 mt-2">
-                        {getTitle(video.title as string)}
-                      </div>
+                      <div className="font-medium line-clamp-2 mt-2">{getTitle(video.title)}</div>
                       <div className="text-xs text-gray-500 line-clamp-1 dark:text-gray-400">
-                        {typeof video.created === "string" ||
-                        typeof video.created === "number"
+                        {typeof video.created === "string" || typeof video.created === "number"
                           ? new Date(video.created).toLocaleDateString()
                           : ""}
                       </div>
