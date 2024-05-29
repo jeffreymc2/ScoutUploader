@@ -302,9 +302,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                     onReady={handleReady}
                     config={{
                       file: {
-                        attributes: {
-                          crossOrigin: "anonymous",
-                        },
+                        // attributes: {
+                        //   crossOrigin: "anonymous",
+                        // },
                         hlsOptions: {
                           autoStartLoad: true,
                           startPosition: -1,
