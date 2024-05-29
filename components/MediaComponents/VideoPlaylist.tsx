@@ -116,6 +116,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     setPage(1);
   }, [type]);
 
+  useEffect(() => {
+    seekToStartTime();
+  }, [currentVideoIndex]);
+
+  useEffect(() => {
+    seekToStartTime();
+  }, [type]);
+
   const handleProgress = ({ playedSeconds }: { playedSeconds: number }) => {
     const currentVideo = playlists[type][currentVideoIndex];
     if (currentVideo?.duration && playedSeconds >= (currentVideo.start_time ?? 0) + currentVideo.duration) {
@@ -142,10 +150,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
       playerRef.current.seekTo(currentVideo.start_time, "seconds");
     }
   }, [currentVideoIndex, playlists, type]);
-
-  useEffect(() => {
-    seekToStartTime();
-  }, [currentVideoIndex, seekToStartTime]);
 
   const handleReady = () => {
     const currentVideo = playlists[type][currentVideoIndex];
