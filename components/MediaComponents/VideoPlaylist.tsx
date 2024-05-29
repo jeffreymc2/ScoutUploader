@@ -102,7 +102,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
           .select("playlist")
           .eq("user_id", user.id)
           .eq("player_id", playerId)
-          .maybeSingle();
+          .single();
   
         if (error) {
           console.error("Error fetching playlist from Supabase:", error);
@@ -302,9 +302,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                     onReady={handleReady}
                     config={{
                       file: {
-                        // attributes: {
-                        //   crossOrigin: "anonymous",
-                        // },
+                        attributes: {
+                          crossOrigin: "anonymous",
+                        },
                         hlsOptions: {
                           autoStartLoad: true,
                           startPosition: -1,
