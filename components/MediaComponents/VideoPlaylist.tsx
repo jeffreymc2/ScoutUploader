@@ -160,7 +160,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   };
 
   const getCurrentPlaylist = () => {
-    if (userPlaylist.length > 0) {
+    if (type === "h" && userPlaylist.length > 0) {
       return userPlaylist;
     }
     return playlists[type];
