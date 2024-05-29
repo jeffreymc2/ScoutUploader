@@ -242,7 +242,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 
   return (
     <div className="p-4 lg:p-4">
-      <Tabs defaultValue="h" onValueChange={(value) => setType(value)}>
+      <Tabs
+        defaultValue="h"
+        onValueChange={(value) => {
+          setType(value);
+          setCurrentVideoIndex(0);
+        }}
+      >
         <TabsList>
           <TabsTrigger value="h">Highlights</TabsTrigger>
           <TabsTrigger value="a">Full At-Bats</TabsTrigger>
