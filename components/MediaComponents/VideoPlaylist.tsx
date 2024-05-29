@@ -9,6 +9,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { supabaseBrowser } from "@/lib/supabase/browser";
+import { Button } from "@/components/ui/button";
+import { PlayIcon, PauseIcon, RewindIcon, FastForwardIcon } from "lucide-react";
 
 interface VideoPlayerProps {
   playerId: string;
@@ -41,6 +43,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const [thumbnailUrls, setThumbnailUrls] = useState<{ [key: string]: string }>({});
   const { data: user } = useUser();
   const playerRef = useRef<ReactPlayer | null>(null);
+  const [isPlaying, setIsPlaying] = useState(true);
 
   const fetchPlaylist = async (page: number, type: string, reset = false) => {
     try {
@@ -97,7 +100,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         if (error) {
           console.error("Error fetching playlist from Supabase:", error);
         } else if (playlistData) {
-          const playlist = playlistData.playlist as unknown as Video[];
+          const playlist = playlistData.playlist as any as Video[];
           setUserPlaylist(playlist);
         }
       }
@@ -110,14 +113,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     setCurrentVideoIndex(0);
     setHasMore(true);
     setPage(1);
-  }, [type]);
-
-  useEffect(() => {
-    seekToStartTime();
-  }, [currentVideoIndex]);
-
-  useEffect(() => {
-    seekToStartTime();
   }, [type]);
 
   const handleProgress = ({ playedSeconds }: { playedSeconds: number }) => {
@@ -147,15 +142,28 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     }
   }, [currentVideoIndex, playlists, type]);
 
+  useEffect(() => {
+    seekToStartTime();
+  }, [currentVideoIndex, seekToStartTime]);
+
   const handleReady = () => {
+    seekToStartTime();
     const currentVideo = getCurrentVideo();
     if (currentVideo && currentVideo.url.endsWith(".m3u8")) {
       const internalPlayer = playerRef.current?.getInternalPlayer("hls");
       if (internalPlayer) {
         internalPlayer.currentLevel = -1;
       }
-    } else {
-      seekToStartTime();
+    }
+  };
+
+  const handlePlayPause = () => {
+    setIsPlaying((prev) => !prev);
+  };
+
+  const handleSeek = (seconds: number) => {
+    if (playerRef.current) {
+      playerRef.current.seekTo(playerRef.current.getCurrentTime() + seconds, "seconds");
     }
   };
 
@@ -263,13 +271,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
             loader={""}
           >
             <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4">
-              <div className="w-full overflow-hidden rounded-lg relative">
+              <div className="w-full overflow-hidden rounded-lg relative bg-gray-800">
                 <div className="aspect-w-16 aspect-h-9">
                   <ReactPlayer
                     ref={playerRef}
                     url={currentVideo.url}
-                    playing
-                    controls
+                    playing={isPlaying}
+                    controls={false}
+                    playsinline={true}
                     width="100%"
                     height="100%"
                     onProgress={handleProgress}
@@ -296,13 +305,35 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                     </div>
                   </div>
                 )}
+
+                {/* Custom Controls */}
+                <div className="absolute bottom-0 left-0 right-0 flex justify-center bg-gray-200 p-2 border-t-2 border-gray-300">
+                  <div className="grid grid-cols-3 items-center gap-4">
+                    <Button variant="ghost" onClick={() => handleSeek(-5)} className="w-28">
+                      <RewindIcon className="mr-1" />
+                      5 s
+                    </Button>
+                    <Button variant="ghost" onClick={handlePlayPause} className="w-28">
+                      {isPlaying ? (
+                        <PauseIcon className="mr-1" />
+                      ) : (
+                        <PlayIcon className="mr-1" />
+                      )}
+                      {isPlaying ? "Pause" : "Play"}
+                    </Button>
+                    <Button variant="ghost" onClick={() => handleSeek(5)} className="w-28">
+                      <FastForwardIcon className="mr-1" />
+                      5 s
+                    </Button>
+                  </div>
+                </div>
               </div>
 
-              <div className="flex flex-col gap-2 max-h-[413px] overflow-y-auto">
+              <div className="flex flex-col gap-2 max-h-[465px] overflow-y-auto">
                 {getCurrentPlaylist().map((video, index) => (
                   <div
                     key={String(video.id)}
-                    className={`flex items-start gap-4 relative cursor-pointer h-24 shadow-lg border border-gray-100 rounded-lg ${
+                    className={`flex items-start gap-4 relative cursor-pointer h-24 shadow-md border border-gray-100 rounded-lg ${
                       index === currentVideoIndex ? "border border-gray-300 rounded-lg shadow-sm p-0 bg-gray-100" : ""
                     }`}
                     onClick={() => handleThumbnailClick(index)}
@@ -332,3 +363,4 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 };
 
 export default VideoPlayer;
+
