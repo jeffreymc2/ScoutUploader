@@ -40,7 +40,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isPitcher, setIsPitcher] = useState(false);
-  const [thumbnailUrls, setThumbnailUrls] = useState<{ [key: string]: string }>({});
+  const [thumbnailUrls, setThumbnailUrls] = useState<{ [key: string]: string }>(
+    {}
+  );
   const { data: user } = useUser();
   const playerRef = useRef<ReactPlayer | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -53,8 +55,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
       const highlightsData = await highlightsResponse.json();
       const highlightVideos = highlightsData.highlights || [];
 
-      const isPitchingVideo = highlightVideos.some((video: { tagged_player_keys: any[] }) =>
-        video.tagged_player_keys?.some((player: any) => player.Key === parseInt(playerId) && player.Position === "p")
+      const isPitchingVideo = highlightVideos.some(
+        (video: { tagged_player_keys: any[] }) =>
+          video.tagged_player_keys?.some(
+            (player: any) =>
+              player.Key === parseInt(playerId) && player.Position === "p"
+          )
       );
 
       if (isPitchingVideo) {
@@ -63,7 +69,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 
       setPlaylists((prev) => ({
         ...prev,
-        [type]: reset ? highlightVideos : [...prev[type], ...highlightVideos.filter((video: { id: any }) => !prev[type].some((prevVideo) => prevVideo.id === video.id))],
+        [type]: reset
+          ? highlightVideos
+          : [
+              ...prev[type],
+              ...highlightVideos.filter(
+                (video: { id: any }) =>
+                  !prev[type].some((prevVideo) => prevVideo.id === video.id)
+              ),
+            ],
       }));
 
       if (highlightVideos.length === 0) {
@@ -117,13 +131,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 
   const handleProgress = ({ playedSeconds }: { playedSeconds: number }) => {
     const currentVideo = getCurrentVideo();
-    if (currentVideo?.duration && playedSeconds >= (currentVideo.start_time ?? 0) + currentVideo.duration) {
+    if (
+      currentVideo?.duration &&
+      playedSeconds >= (currentVideo.start_time ?? 0) + currentVideo.duration
+    ) {
       handleNextVideo();
     }
   };
 
   const handleNextVideo = () => {
-    setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % getCurrentPlaylist().length);
+    setCurrentVideoIndex(
+      (prevIndex) => (prevIndex + 1) % getCurrentPlaylist().length
+    );
   };
 
   const handleThumbnailClick = (index: number) => {
@@ -137,8 +156,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 
   const seekToStartTime = useCallback(() => {
     const currentVideo = getCurrentVideo();
-    if (playerRef.current && currentVideo && typeof currentVideo.start_time === "number" && isFinite(currentVideo.start_time)) {
-      playerRef.current.seekTo(currentVideo.start_time, "seconds");
+    if (playerRef.current && currentVideo) {
+      const startTime =
+        typeof currentVideo.start_time === "number" &&
+        isFinite(currentVideo.start_time)
+          ? currentVideo.start_time
+          : 0;
+      playerRef.current.seekTo(startTime, "seconds");
     }
   }, [currentVideoIndex, playlists, type]);
 
@@ -163,7 +187,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 
   const handleSeek = (seconds: number) => {
     if (playerRef.current) {
-      playerRef.current.seekTo(playerRef.current.getCurrentTime() + seconds, "seconds");
+      playerRef.current.seekTo(
+        playerRef.current.getCurrentTime() + seconds,
+        "seconds"
+      );
     }
   };
 
@@ -211,7 +238,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         src={thumbnailUrl}
         width={130}
         onError={() => {
-          updateThumbnailUrl(video.id as string, "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp");
+          updateThumbnailUrl(
+            video.id as string,
+            "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp"
+          );
         }}
       />
     );
@@ -271,7 +301,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
             loader={""}
           >
             <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4">
-              <div className="w-full overflow-hidden rounded-lg relative bg-gray-800">
+              <div className="w-full overflow-hidden rounded-lg relative bg-gray-100">
                 <div className="aspect-w-16 aspect-h-9">
                   <ReactPlayer
                     ref={playerRef}
@@ -296,6 +326,37 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                       },
                     }}
                   />
+                  {/* Custom Controls */}
+                  <div className="flex justify-center bg-gray-100 p-2 mt-0">
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleSeek(-5)}
+                        className="w-28"
+                      >
+                        <RewindIcon className="mr-1" />5 s
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={handlePlayPause}
+                        className="w-28"
+                      >
+                        {isPlaying ? (
+                          <PauseIcon className="mr-1" />
+                        ) : (
+                          <PlayIcon className="mr-1" />
+                        )}
+                        {isPlaying ? "Pause" : "Play"}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleSeek(5)}
+                        className="w-28"
+                      >
+                        <FastForwardIcon className="mr-1" />5 s
+                      </Button>
+                    </div>
+                  </div>
                 </div>
 
                 {currentVideo.title && (
@@ -305,28 +366,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                     </div>
                   </div>
                 )}
-
-                {/* Custom Controls */}
-                <div className="absolute bottom-0 left-0 right-0 flex justify-center bg-gray-200 p-2 border-t-2 border-gray-300">
-                  <div className="grid grid-cols-3 items-center gap-4">
-                    <Button variant="ghost" onClick={() => handleSeek(-5)} className="w-28">
-                      <RewindIcon className="mr-1" />
-                      5 s
-                    </Button>
-                    <Button variant="ghost" onClick={handlePlayPause} className="w-28">
-                      {isPlaying ? (
-                        <PauseIcon className="mr-1" />
-                      ) : (
-                        <PlayIcon className="mr-1" />
-                      )}
-                      {isPlaying ? "Pause" : "Play"}
-                    </Button>
-                    <Button variant="ghost" onClick={() => handleSeek(5)} className="w-28">
-                      <FastForwardIcon className="mr-1" />
-                      5 s
-                    </Button>
-                  </div>
-                </div>
               </div>
 
               <div className="flex flex-col gap-2 max-h-[465px] overflow-y-auto">
@@ -334,7 +373,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                   <div
                     key={String(video.id)}
                     className={`flex items-start gap-4 relative cursor-pointer h-24 shadow-md border border-gray-100 rounded-lg ${
-                      index === currentVideoIndex ? "border border-gray-300 rounded-lg shadow-sm p-0 bg-gray-100" : ""
+                      index === currentVideoIndex
+                        ? "border border-gray-300 rounded-lg shadow-sm p-0 bg-gray-100"
+                        : ""
                     }`}
                     onClick={() => handleThumbnailClick(index)}
                   >
@@ -344,9 +385,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                       {video.duration ? formatDuration(video.duration) : ""}
                     </div>
                     <div className="text-sm">
-                      <div className="font-medium line-clamp-2 mt-2">{getTitle(video.title)}</div>
+                      <div className="font-medium line-clamp-2 mt-2">
+                        {getTitle(video.title)}
+                      </div>
                       <div className="text-xs text-gray-500 line-clamp-1 dark:text-gray-400">
-                        {typeof video.created === "string" || typeof video.created === "number"
+                        {typeof video.created === "string" ||
+                        typeof video.created === "number"
                           ? new Date(video.created).toLocaleDateString()
                           : ""}
                       </div>
@@ -363,4 +407,3 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 };
 
 export default VideoPlayer;
-
