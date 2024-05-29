@@ -179,15 +179,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   }, [currentVideoIndex, seekToStartTime]);
 
   const handleReady = () => {
-    const internalPlayer = playerRef.current?.getInternalPlayer("hls");
-    if (internalPlayer) {
-      internalPlayer.currentLevel = -1;
-      seekToStartTime();
-    }
-
     const currentVideo = type === "h" && supabasePlaylist.length > 0
       ? supabasePlaylist[currentVideoIndex]
       : playlists[type][currentVideoIndex];
+
+    if (typeof currentVideo.url === 'string' && currentVideo.url.endsWith(".m3u8")) {
+      const internalPlayer = playerRef.current?.getInternalPlayer("hls");
+      if (internalPlayer) {
+        internalPlayer.currentLevel = -1;
+      }
+    } else {
+      seekToStartTime();
+    }
 
     if (playerRef.current && currentVideo.id) {
       const duration = playerRef.current.getDuration();
@@ -366,4 +369,3 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 };
 
 export default VideoPlayer;
-
