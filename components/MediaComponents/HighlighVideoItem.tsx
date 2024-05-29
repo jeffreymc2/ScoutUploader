@@ -149,6 +149,7 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
                       file: {
                         attributes: {
                           crossOrigin: "anonymous",
+                          playsInline: true, // Enable inline playback on mobile
                         },
                         hlsOptions: {
                           autoStartLoad: true, // Start loading the video immediately
@@ -202,3 +203,4 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
 );
 
 export { HighlightVideoItem };
+
