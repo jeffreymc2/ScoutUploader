@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { supabaseBrowser } from "@/lib/supabase/browser";
+import ReactPlayer from "react-player";
 import useUser from "@/app/hook/useUser";
 import { Json } from "@/lib/types/types";
 import { VideoSkeleton } from "@/components/ui/skeletons";
@@ -8,28 +8,33 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import InfiniteScroll from "react-infinite-scroll-component";
-import Video from "next-video";
 
 interface VideoPlayerProps {
   playerId: string;
 }
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
-  const [playlists, setPlaylists] = useState<{ [key: string]: { [key: string]: Json }[] }>({
+  const [playlists, setPlaylists] = useState<{
+    [key: string]: { [key: string]: Json }[];
+  }>({
     h: [],
     a: [],
     l: [],
     p: [],
   });
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
   const [type, setType] = useState("h");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isPitcher, setIsPitcher] = useState(false);
-  const [thumbnailUrls, setThumbnailUrls] = useState<{ [key: string]: string }>({});
+  const [thumbnailUrls, setThumbnailUrls] = useState<{ [key: string]: string }>(
+    {}
+  );
   const { data: user } = useUser();
-  const playerRef = useRef<HTMLVideoElement | null>(null);
+  const playerRef = useRef<ReactPlayer | null>(null);
+  const [videoDurations, setVideoDurations] = useState<{
+    [key: string]: number;
+  }>({});
 
   const fetchPlaylist = async (page: number, type: string, reset = false) => {
     try {
@@ -39,8 +44,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
       const highlightsData = await highlightsResponse.json();
       const highlightVideos = highlightsData.highlights || [];
 
-      const isPitchingVideo = highlightVideos.some((video: { tagged_player_keys: any[] }) =>
-        video.tagged_player_keys?.some((player: any) => player.Key === parseInt(playerId) && player.Position === 'p')
+      const isPitchingVideo = highlightVideos.some(
+        (video: { tagged_player_keys: any[] }) =>
+          video.tagged_player_keys?.some(
+            (player: any) =>
+              player.Key === parseInt(playerId) && player.Position === "p"
+          )
       );
 
       if (isPitchingVideo) {
@@ -51,14 +60,27 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         ...prev,
         [type]: reset
           ? highlightVideos
-          : [...prev[type], ...highlightVideos.filter((video: { id: string | number | boolean | Json[] | { [key: string]: Json; } | null; }) => !prev[type].some((prevVideo) => prevVideo.id === video.id))],
+          : [
+              ...prev[type],
+              ...highlightVideos.filter(
+                (video: {
+                  id:
+                    | string
+                    | number
+                    | boolean
+                    | Json[]
+                    | { [key: string]: Json }
+                    | null;
+                }) => !prev[type].some((prevVideo) => prevVideo.id === video.id)
+              ),
+            ],
       }));
 
       if (highlightVideos.length === 0) {
         setHasMore(false);
       }
     } catch (error) {
-      console.error('Error fetching playlist:', error);
+      console.error("Error fetching playlist:", error);
       setHasMore(false);
     }
   };
@@ -76,41 +98,73 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     setPage(1);
   }, [type]);
 
-  const onReady = useCallback(() => {
-    if (playerRef.current) {
-      const currentVideo = playlists[type][currentVideoIndex];
-      playerRef.current.currentTime = currentVideo.start_time as number;
+  useEffect(() => {
+    if (playlists[type].length > 0) {
+      setCurrentVideoIndex(0); // Reset to the first video on tab change
     }
-  }, [currentVideoIndex, playlists, type]);
+  }, [playlists, type]);
 
-  const handleProgress = () => {
-    if (playerRef.current) {
-      const playedSeconds = playerRef.current.currentTime;
-      setCurrentTime(playedSeconds);
-
-      const currentVideo = playlists[type][currentVideoIndex];
-      if (
-        playedSeconds >=
-        (currentVideo.start_time as number) + (currentVideo.duration as number)
-      ) {
-        handleNextVideo();
-      }
+  const handleProgress = ({ playedSeconds }: { playedSeconds: number }) => {
+    const currentVideo = playlists[type][currentVideoIndex];
+    if (
+      playedSeconds >=
+      (currentVideo.start_time as number) + (currentVideo.duration as number)
+    ) {
+      handleNextVideo();
     }
   };
 
   const handleNextVideo = () => {
-    setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % playlists[type].length);
-    setCurrentTime(0);
+    setCurrentVideoIndex(
+      (prevIndex) => (prevIndex + 1) % playlists[type].length
+    );
   };
 
   const handleThumbnailClick = (index: number) => {
     setCurrentVideoIndex(index);
-    setCurrentTime(0);
   };
 
   const loadMoreVideos = () => {
     fetchPlaylist(page + 1, type);
     setPage((prevPage) => prevPage + 1);
+  };
+
+  const seekToStartTime = useCallback(() => {
+    const currentVideo = playlists[type][currentVideoIndex];
+    if (
+      playerRef.current &&
+      currentVideo &&
+      isFinite(currentVideo.start_time as number)
+    ) {
+      playerRef.current.seekTo(currentVideo.start_time as number, "seconds");
+    }
+  }, [currentVideoIndex, playlists, type]);
+
+  useEffect(() => {
+    seekToStartTime();
+  }, [currentVideoIndex, seekToStartTime]);
+
+  const handleReady = () => {
+    const internalPlayer = playerRef.current?.getInternalPlayer("hls");
+    if (internalPlayer) {
+      internalPlayer.currentLevel = -1; // Set initial quality level to the highest
+      seekToStartTime();
+    }
+
+    // Get the duration of the current video
+    if (playerRef.current && currentVideo.id) {
+      const duration = playerRef.current.getDuration();
+      setVideoDurations((prevDurations) => ({
+        ...prevDurations,
+        [currentVideo.id as string]: duration,
+      }));
+    }
+  };
+
+  const formatDuration = (duration: number) => {
+    const minutes = Math.floor(duration / 60);
+    const seconds = Math.floor(duration % 60);
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
   if (playlists[type].length === 0) {
@@ -197,21 +251,29 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
             <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4">
               <div className="w-full overflow-hidden rounded-lg relative">
                 <div className="aspect-w-16 aspect-h-9">
-                  <Video
+                  <ReactPlayer
                     ref={playerRef}
-                    key={currentVideoIndex}
-                    src={currentVideo.url as string}
+                    url={currentVideo.url as string}
+                    playing
                     controls
-                    autoPlay
-                    playsInline
-                    muted
-                    accentColor="blue-500"
-                    className="w-full h-full rounded-lg object-cover"
-                    onTimeUpdate={handleProgress}
+                    width="100%"
+                    height="100%"
+                    onProgress={handleProgress}
                     onEnded={handleNextVideo}
-                    onLoadedData={onReady}
-                    onError={(e) => {
-                      console.error("Video load error:", e);
+                    onReady={handleReady}
+                    config={{
+                      file: {
+                        attributes: {
+                          crossOrigin: "anonymous",
+                        },
+                        hlsOptions: {
+                          autoStartLoad: true, // Start loading the video immediately
+                          startPosition: -1, // Start from the beginning of the video
+                          capLevelToPlayerSize: true, // Adjust quality based on player size
+                          maxBufferLength: 30,
+                          maxMaxBufferLength: 60,
+                        },
+                      },
                     }}
                   />
                 </div>
@@ -239,7 +301,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                     {renderThumbnail(video)}
                     {video.title && renderOverlayBadge(video.title as string)}
                     <div className="absolute bottom-2 left-2 text-white text-xs">
-                      0:{String(video.duration)}
+                      {video.duration
+                        ? formatDuration(video.duration as number)
+                        : video.id && videoDurations[video.id as string]
+                        ? formatDuration(videoDurations[video.id as string])
+                        : ""}
                     </div>
                     <div className="text-sm">
                       <div className="font-medium line-clamp-2 mt-2">

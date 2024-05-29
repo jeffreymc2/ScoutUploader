@@ -37,7 +37,7 @@ const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID })
       restrictions: {
         maxNumberOfFiles: 50,
         allowedFileTypes: ["image/*", "video/*"],
-        maxFileSize: 5 * 10000 * 1000,
+        maxFileSize: 5 * 100000 * 10000,
       },
       debug: true,
     }).use(Transloadit, {

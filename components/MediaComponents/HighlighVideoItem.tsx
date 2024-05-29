@@ -1,5 +1,12 @@
 "use client";
-import { CSSProperties, forwardRef, HTMLAttributes, useEffect, useRef, useState } from "react";
+import {
+  CSSProperties,
+  forwardRef,
+  HTMLAttributes,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { HighlightVideo } from "@/lib/types/types";
 import { Card } from "../ui/card";
 import Image from "next/image";
@@ -11,8 +18,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import  Video from "next-video";
-import { RiAddCircleLine, RiSubtractLine, RiDragMove2Line } from "react-icons/ri";
+import ReactPlayer from "react-player";
+import {
+  RiAddCircleLine,
+  RiSubtractLine,
+  RiDragMove2Line,
+} from "react-icons/ri";
 
 type Props = {
   video: HighlightVideo;
@@ -25,31 +36,20 @@ type Props = {
 
 const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
   function HighlightVideoItem(
-    { video, isInPlaylist, onAddRemove, isOpacityEnabled, isDragging, style, dragHandleProps, ...props },
+    {
+      video,
+      isInPlaylist,
+      onAddRemove,
+      isOpacityEnabled,
+      isDragging,
+      style,
+      dragHandleProps,
+      ...props
+    },
     ref
   ) {
     const [isOpen, setIsOpen] = useState(false);
-    const playerRef = useRef<HTMLVideoElement | null>(null);
-    const [thumbnailUrl, setThumbnailUrl] = useState(video.thumbnailUrl || "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp");
-
-    useEffect(() => {
-      let timeoutId: NodeJS.Timeout | null = null;
-
-      if (isOpen && playerRef.current && video.duration) {
-        playerRef.current.currentTime = video.start_time;
-        timeoutId = setTimeout(() => {
-          if (playerRef.current) {
-            playerRef.current.pause();
-          }
-        }, video.duration * 1000);
-      }
-
-      return () => {
-        if (timeoutId) {
-          clearTimeout(timeoutId);
-        }
-      };
-    }, [isOpen, video.start_time, video.duration]);
+    const playerRef = useRef<ReactPlayer | null>(null);
 
     const handleDialogOpen = () => {
       setIsOpen(true);
@@ -57,6 +57,29 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
 
     const handleDialogClose = () => {
       setIsOpen(false);
+    };
+
+    const handleReady = () => {
+      if (playerRef.current) {
+        const internalPlayer = playerRef.current.getInternalPlayer("hls");
+        if (internalPlayer) {
+          internalPlayer.currentLevel = -1; // Set initial quality level to the highest
+        }
+      }
+
+      if (playerRef.current && video.start_time !== undefined) {
+        playerRef.current.seekTo(video.start_time, "seconds");
+      }
+    };
+
+    const handleProgress = (state: { playedSeconds: number }) => {
+      if (
+        playerRef.current &&
+        video.duration &&
+        state.playedSeconds >= video.start_time + video.duration
+      ) {
+        playerRef.current.getInternalPlayer()?.pause();
+      }
     };
 
     const getTitleWithoutBrackets = (title: string) => {
@@ -92,36 +115,51 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
               <DialogTrigger asChild>
                 <div onClick={handleDialogOpen}>
                   <Image
-                    src={thumbnailUrl}
+                    src={
+                      video.thumbnailUrl ||
+                      "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp"
+                    }
                     alt="Image"
                     width={125}
                     height={50}
                     className="rounded-lg cursor-pointer max-h-[75px] object-cover"
-                    onError={() => {
-                      setThumbnailUrl("https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp");
-                    }}
                   />
                 </div>
               </DialogTrigger>
               <DialogContent className="sm:max-w-[850px]">
                 <DialogHeader>
-                  <DialogTitle>{getTitleWithoutBrackets(video.title)}</DialogTitle>
+                  <DialogTitle>
+                    {getTitleWithoutBrackets(video.title)}
+                  </DialogTitle>
                   <DialogDescription>
                     {filterDescription(video.description)}
                   </DialogDescription>
                 </DialogHeader>
                 <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
-                  <Video
+                  <ReactPlayer
                     ref={playerRef}
                     className="rounded-lg absolute top-0 left-0"
-                    src={video.url}
+                    url={video.url}
+                    playing={isOpen}
                     controls={true}
-                    autoPlay={isOpen}
+                    width={"100%"}
+                    height={"100%"}
                     style={{ objectFit: "fill" }}
-                    onLoadedData={() => {
-                      if (playerRef.current) {
-                        playerRef.current.currentTime = video.start_time;
-                      }
+                    onReady={handleReady}
+                    onProgress={handleProgress}
+                    config={{
+                      file: {
+                        attributes: {
+                          crossOrigin: "anonymous",
+                        },
+                        hlsOptions: {
+                          autoStartLoad: true, // Start loading the video immediately
+                          startPosition: -1, // Start from the beginning of the video
+                          capLevelToPlayerSize: true, // Adjust quality based on player size
+                          maxBufferLength: 30,
+                          maxMaxBufferLength: 60,
+                        },
+                      },
                     }}
                   />
                 </div>
@@ -134,7 +172,9 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
                 </p>
               )}
               {filterDescription(video.description) && (
-                <p className="text-xs mt-1 truncate-text">{filterDescription(video.description)}</p>
+                <p className="text-xs mt-1 truncate-text">
+                  {filterDescription(video.description)}
+                </p>
               )}
             </div>
             <div className="flex items-center gap-2">
