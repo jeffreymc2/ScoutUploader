@@ -32,14 +32,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     l: [],
     p: [],
   });
+  const [userPlaylist, setUserPlaylist] = useState<Video[]>([]);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [type, setType] = useState("h");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isPitcher, setIsPitcher] = useState(false);
-  const [thumbnailUrls, setThumbnailUrls] = useState<{ [key: string]: string }>(
-    {}
-  );
+  const [thumbnailUrls, setThumbnailUrls] = useState<{ [key: string]: string }>({});
   const { data: user } = useUser();
   const playerRef = useRef<ReactPlayer | null>(null);
 
@@ -99,10 +98,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
           console.error("Error fetching playlist from Supabase:", error);
         } else if (playlistData) {
           const playlist = playlistData.playlist as unknown as Video[];
-          setPlaylists((prev) => ({
-            ...prev,
-            user: playlist,
-          }));
+          setUserPlaylist(playlist);
         }
       }
     };
@@ -125,14 +121,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   }, [type]);
 
   const handleProgress = ({ playedSeconds }: { playedSeconds: number }) => {
-    const currentVideo = playlists[type][currentVideoIndex];
+    const currentVideo = getCurrentVideo();
     if (currentVideo?.duration && playedSeconds >= (currentVideo.start_time ?? 0) + currentVideo.duration) {
       handleNextVideo();
     }
   };
 
   const handleNextVideo = () => {
-    setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % playlists[type].length);
+    setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % getCurrentPlaylist().length);
   };
 
   const handleThumbnailClick = (index: number) => {
@@ -145,14 +141,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   };
 
   const seekToStartTime = useCallback(() => {
-    const currentVideo = playlists[type][currentVideoIndex];
+    const currentVideo = getCurrentVideo();
     if (playerRef.current && currentVideo && typeof currentVideo.start_time === "number" && isFinite(currentVideo.start_time)) {
       playerRef.current.seekTo(currentVideo.start_time, "seconds");
     }
   }, [currentVideoIndex, playlists, type]);
 
   const handleReady = () => {
-    const currentVideo = playlists[type][currentVideoIndex];
+    const currentVideo = getCurrentVideo();
     if (currentVideo && currentVideo.url.endsWith(".m3u8")) {
       const internalPlayer = playerRef.current?.getInternalPlayer("hls");
       if (internalPlayer) {
@@ -163,17 +159,28 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     }
   };
 
+  const getCurrentPlaylist = () => {
+    if (userPlaylist.length > 0) {
+      return userPlaylist;
+    }
+    return playlists[type];
+  };
+
+  const getCurrentVideo = () => {
+    return getCurrentPlaylist()[currentVideoIndex];
+  };
+
   const formatDuration = (duration: number) => {
     const minutes = Math.floor(duration / 60);
     const seconds = Math.floor(duration % 60);
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  if (playlists[type].length === 0) {
+  if (getCurrentPlaylist().length === 0) {
     return <VideoSkeleton />;
   }
 
-  const currentVideo = playlists[type][currentVideoIndex];
+  const currentVideo = getCurrentVideo();
 
   const updateThumbnailUrl = (videoId: string, url: string) => {
     setThumbnailUrls((prevUrls) => ({
@@ -244,7 +251,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         </TabsList>
         <TabsContent value={type}>
           <InfiniteScroll
-            dataLength={playlists[type].length}
+            dataLength={getCurrentPlaylist().length}
             next={loadMoreVideos}
             hasMore={hasMore}
             loader={""}
@@ -286,7 +293,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
               </div>
 
               <div className="flex flex-col gap-2 max-h-[413px] overflow-y-auto">
-                {playlists[type].map((video, index) => (
+                {getCurrentPlaylist().map((video, index) => (
                   <div
                     key={String(video.id)}
                     className={`flex items-start gap-4 relative cursor-pointer h-24 shadow-lg border border-gray-100 rounded-lg ${
