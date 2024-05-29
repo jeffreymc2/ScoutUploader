@@ -3,9 +3,8 @@ import {
   CSSProperties,
   forwardRef,
   HTMLAttributes,
-  useEffect,
-  useRef,
   useState,
+  useRef,
 } from "react";
 import { HighlightVideo } from "@/lib/types/types";
 import { Card } from "../ui/card";
@@ -61,14 +60,13 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
 
     const handleReady = () => {
       if (playerRef.current) {
-        const internalPlayer = playerRef.current.getInternalPlayer("hls");
-        if (internalPlayer) {
+        const internalPlayer = playerRef.current.getInternalPlayer();
+        if (internalPlayer?.getInternalPlayer) {
           internalPlayer.currentLevel = -1; // Set initial quality level to the highest
         }
-      }
-
-      if (playerRef.current && video.start_time !== undefined) {
-        playerRef.current.seekTo(video.start_time, "seconds");
+        if (typeof video.start_time === "number") {
+          playerRef.current.seekTo(video.start_time, "seconds");
+        }
       }
     };
 
@@ -76,7 +74,7 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
       if (
         playerRef.current &&
         video.duration &&
-        state.playedSeconds >= video.start_time + video.duration
+        state.playedSeconds >= (video.start_time ?? 0) + video.duration
       ) {
         playerRef.current.getInternalPlayer()?.pause();
       }
