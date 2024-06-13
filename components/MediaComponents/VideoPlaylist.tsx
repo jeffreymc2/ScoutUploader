@@ -17,7 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import BackgroundVideo from "next-video/background-video";
 
 interface VideoPlayerProps {
   playerId: string;
@@ -112,13 +111,13 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     }
   };
 
-  const fetchInitialData = (type: string, position: string = "") => {
+  const fetchInitialData = async (type: string, position: string = "") => {
     setIsLoading(true);
     setNoResults(false);
     setPage(1);
     setHasMore(true);
     setPlaylists({});
-    fetchPlaylist(1, type, position, true);
+    await fetchPlaylist(1, type, position, true);
   };
 
   useEffect(() => {
@@ -173,8 +172,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     return playlist;
   };
 
-  const loadMoreVideos = () => {
-    fetchPlaylist(page, type, type === "h" ? "" : position);
+  const loadMoreVideos = async () => {
+    await fetchPlaylist(page, type, type === "h" ? "" : position);
   };
 
   const handleProgress = ({ playedSeconds }: { playedSeconds: number }) => {
@@ -187,7 +186,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     }
   };
 
-  const handleNextVideo = () => {
+  const handleNextVideo = async () => {
     setCurrentVideoIndex(
       (prevIndex) => (prevIndex + 1) % getCurrentPlaylist().length
     );
@@ -264,6 +263,36 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     return match ? title.replace(match[0], "") : title;
   };
 
+  const updateThumbnailUrl = (videoId: string, url: string) => {
+    setThumbnailUrls((prevUrls) => ({
+      ...prevUrls,
+      [videoId]: url,
+    }));
+  };
+
+  const renderThumbnail = (video: Video) => {
+    const thumbnailUrl =
+      thumbnailUrls[video.id] ||
+      video.thumbnailUrl ||
+      "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp";
+
+    return (
+      <Image
+        alt="Thumbnail"
+        className="aspect-video rounded-lg object-cover h-full w-auto"
+        height={50}
+        src={thumbnailUrl}
+        width={130}
+        onError={() => {
+          updateThumbnailUrl(
+            video.id as string,
+            "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp"
+          );
+        }}
+      />
+    );
+  };
+
   const filterTitle = (title: string | undefined) => {
     if (title) {
       return title.replace(/9999/g, "");
@@ -295,25 +324,25 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     );
   };
 
-  const handleTabChange = (value: "h" | "a" | "p") => {
+  const handleTabChange = async (value: "h" | "a" | "p") => {
     setTab(value);
     if (value === "h") {
       setType("h");
       setPosition("");
-      fetchInitialData("h", "");
+      await fetchInitialData("h", "");
     } else if (value === "a") {
       setType("a"); // Set to default types for at-bats
       setPosition("b");
-      fetchInitialData("a", "b");
+      await fetchInitialData("a", "b");
     } else if (value === "p") {
       setType("a"); // Set to default types for pitching
       setPosition("p");
-      fetchInitialData("a", "p");
+      await fetchInitialData("a", "p");
     }
     setCurrentVideoIndex(0);
   };
 
-  const handleTypeChange = (value: string) => {
+  const handleTypeChange = async (value: string) => {
     setType(
       value as
         | "a"
@@ -329,7 +358,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         | "l,s,d,t,hr,iphr"
     );
     setCurrentVideoIndex(0);
-    fetchInitialData(value, position);
+    await fetchInitialData(value, position);
   };
 
   const renderTypeOptions = () => {
@@ -492,21 +521,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                       }`}
                       onClick={() => handleThumbnailClick(index)}
                     >
-                      <Image
-                        alt="Thumbnail"
-                        className="aspect-video rounded-lg object-cover h-full w-auto"
-                        height={50}
-                        key={video.id}
-                        src={
-                          thumbnailUrls[video.id as string] ||
-                          "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp"
-                        }
-                        width={130}
-                        onError={(e) => {
-                          e.currentTarget.src =
-                            "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp";
-                        }}
-                      />
+                                         {renderThumbnail(video)}
+
                       {video.title && renderOverlayBadge(video.title)}
                       <div className="absolute bottom-2 left-2 text-white text-xs">
                         {video.duration ? formatDuration(video.duration) : ""}
