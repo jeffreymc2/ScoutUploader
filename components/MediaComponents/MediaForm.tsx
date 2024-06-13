@@ -6,14 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import  Image from "next/image";
+import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { updatePost } from "@/app/media/actions";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { FaEdit } from "react-icons/fa";
-import ReactPlayer from "react-player";
+import Player from "next-video/player";
 
 interface MediaFormProps {
   postId: string;
@@ -100,26 +100,22 @@ export default function MediaForm({
         <DialogContent>
           {/* Media Preview */}
           {isVideo ? (
-            <div className="video-preview">
-              <ReactPlayer
-                url={fileUrl}
-                className="rounded-lg"
-                playing={false}
+            <div className="video-preview aspect-w-16 aspect-h-9">
+              <Player
+                src={fileUrl}
+                className="rounded-lg object-cover w-full h-full"
                 controls={true}
-                width="100%"
-                height="100%"
-                style={{ objectFit: "cover" }}
-                light={thumbnailUrl || true}
+                blurDataURL={thumbnailUrl}
+                
               />
             </div>
           ) : (
-            <div className="w-full max-h-[280px] overflow-hidden">
+            <div className="image-preview aspect-w-16 aspect-h-9">
               <Image
                 src={fileUrl}
                 alt="Media Preview"
-                width={500}
-                height={280}
-                className="w-full h-auto rounded-lg"
+                fill
+                className="object-cover rounded-lg"
               />
             </div>
           )}

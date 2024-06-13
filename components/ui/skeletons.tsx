@@ -270,29 +270,45 @@ export function InvoicesTableSkeleton() {
   );
 }
 
+interface VideoSkeletonProps {
+  isLoading?: boolean;
+  noResults?: boolean;
+  message?: string;
+}
 
-export function VideoSkeleton() {
-
+export function VideoSkeleton({ isLoading, noResults }: VideoSkeletonProps) {
   return (
-    <div className="max-w-2xl">
-        <div className="bg-gray-700 rounded-lg p-4">
-          <div className="skeleton-player h-64 bg-gray-900 rounded-lg animate-pulse"></div>
-          <div className="mt-4 flex justify-between">
-            <div className="skeleton-play-button h-10 w-10 bg-gray-300 rounded-full animate-pulse"></div>
-            <div className="skeleton-progress-bar flex-grow h-2 bg-gray-400 rounded-full overflow-hidden">
-              <div className="skeleton-progress h-full bg-gray-600 w-full animate-progress"></div>
-            </div>
-            <div className="flex items-center">
-              <div className="skeleton-volume-icon h-6 w-6 bg-gray-300 rounded-full animate-pulse mr-2"></div>
-              <div className="skeleton-volume-bar h-2 w-16 bg-gray-400 rounded-full overflow-hidden">
-                <div className="skeleton-volume-progress h-full bg-gray-600 w-full animate-progress"></div>
-              </div>
+    <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4">
+      <div className="bg-gray-200 rounded-lg p-4">
+        <div className="skeleton-player h-64 lg:h-[415px] bg-gray-300 rounded-lg animate-pulse"></div>
+        <div className="mt-4 flex justify-between">
+          <div className="skeleton-play-button h-10 w-10 bg-gray-300 rounded-full animate-pulse"></div>
+          <div className="skeleton-progress-bar flex-grow h-2 bg-gray-400 rounded-full overflow-hidden">
+            <div className="skeleton-progress h-full bg-gray-600 w-full animate-progress"></div>
+          </div>
+          <div className="flex items-center">
+            <div className="skeleton-volume-icon h-6 w-6 bg-gray-300 rounded-full animate-pulse mr-2"></div>
+            <div className="skeleton-volume-bar h-2 w-16 bg-gray-400 rounded-full overflow-hidden">
+              <div className="skeleton-volume-progress h-full bg-gray-600 w-full animate-progress"></div>
             </div>
           </div>
         </div>
-        {/* <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-          <strong className="font-bold">Must be logged in to DiamondKast Plus to view and create playlists</strong>
-        </div> */}
+      </div>
+      <div className="bg-gray-300 rounded-lg p-4">
+        {isLoading && (
+          <>
+            <div className="flex flex-col gap-4">
+              {[...Array(4)].map((_, index) => (
+                <div key={index} className="skeleton-playlist-item h-24 bg-gray-900 rounded-lg animate-pulse"></div>
+              ))}
+            </div>
+            <div className="text-center text-gray-400 mt-4">Loading...</div>
+          </>
+        )}
+        {noResults && (
+          <div className="text-center text-gray-400 mt-4">No video found. Switch tabs or adjust filter.</div>
+        )}
+      </div>
     </div>
   );
-};
+}

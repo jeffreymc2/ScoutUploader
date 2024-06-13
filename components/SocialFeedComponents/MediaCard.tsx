@@ -194,7 +194,7 @@ export default function MediaCard({ media }: MediaCardProps) {
               }}
             >
               <LazyLoad offset={100} height={450}>
-              <ReactPlayer
+                <ReactPlayer
                 url={media.url as string}
                 controls={false}
                 playing={isPlaying}

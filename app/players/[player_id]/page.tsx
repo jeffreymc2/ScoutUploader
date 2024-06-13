@@ -16,6 +16,13 @@ import PlayerStatsSummary from "@/components/PlayerComponents/PlayerStatsSummary
 import { PlaylistBuilder } from "@/components/MediaComponents/PlaylistBuilder";
 import { GameStatsTable } from "@/components/PlayerComponents/PlayerStatsTable";
 import VideoPlayer from "@/components/MediaComponents/VideoPlaylist";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Separator } from "@/components/ui/separator";
 
 interface PlayerData {
   PlayerID: number;
@@ -132,7 +139,7 @@ export default async function PlayerPage({
                   className="rounded-sm object-cover items-center w-full h-full"
                 />
                 <AvatarFallback>
-                  {playerData.PlayerName.slice(0, 2).toUpperCase()}
+                  {playerData?.PlayerName?.slice(0, 2).toUpperCase() || ""}
                 </AvatarFallback>
               </Avatar>
               <div className="flex justify-center mt-4 md:hidden">
@@ -183,7 +190,7 @@ export default async function PlayerPage({
 
             <CardContent className="flex flex-col justify-center ">
               <CardContent className="grid grid-cols-2 md:grid-cols-4 md:grid-rows-2 gap-4 mt-2 items-center md:justify-items-start justify-items-center">
-              <div className="md:text-left text-center justify-top">
+                <div className="md:text-left text-center">
                   <div className="text-sm text-gray-500">Height</div>
                   <div className="font-medium leading-4">
                     {playerData?.Height || "N/A"}&quot;
@@ -235,7 +242,7 @@ export default async function PlayerPage({
                   <div className="text-sm text-gray-500">Notes</div>
                   <div className="font-medium leading-6">
                     {playerData?.Note || "N/A"}
-                    </div>
+                  </div>
                 </div>
               </CardContent>
             </CardContent>
@@ -269,10 +276,28 @@ export default async function PlayerPage({
             </Dialog>
           </div>
           <VideoPlayer playerId={player_id} />
-          <PlaylistBuilder
-            initialVideos={highlightVideos}
-            playerId={player_id}
-          />
+          <Separator />
+          <div className="lg:hidden pb-4">
+            <Accordion type="single" collapsible>
+              <AccordionItem value="item-1">
+                <AccordionTrigger className="py-2 px-4 mt-4 hover:no-underline bg-gray-100 m-4">
+                  Create a Custom Playlist
+                </AccordionTrigger>
+                <AccordionContent>
+                  <PlaylistBuilder
+                    initialVideos={highlightVideos}
+                    playerId={player_id}
+                  />
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+          <div className="hidden lg:block">
+            <PlaylistBuilder
+              initialVideos={highlightVideos}
+              playerId={player_id}
+            />
+          </div>
         </Card>
 
         <Card className="mt-4">
@@ -295,7 +320,7 @@ export default async function PlayerPage({
             <PlayerMediaGallery
               posts={typedPosts}
               events={[]}
-              playerId={playerData.PlayerID.toString()}
+              playerId={playerData?.PlayerID?.toString() || ""}
             />
           </div>
         </Card>

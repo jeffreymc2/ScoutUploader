@@ -373,9 +373,11 @@ export type HighlightVideo = {
   thumbnailUrl: string;
   url: string;
   created: string;
-  tagged_player_keys: string[];
+    tagged_player_keys: { key: number; position: string }[];
+
   highlight_type: string;
   drund_event_id: string;
+  
   game_key: string;
   scoringapp_play_id: string;
   play_type: string;

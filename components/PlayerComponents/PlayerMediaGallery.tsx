@@ -182,7 +182,7 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                       </div>
                     )}
                     <DropdownMenuItem
-                      onClick={() => handleDownload(post.image || "")}
+                      onClick={() => handleDownload(post.file_url || "")}
                     >
                       Download
                     </DropdownMenuItem>
@@ -302,7 +302,7 @@ function handleDownload(url: string) {
     .then((blob) => {
       const link = document.createElement("a");
       link.href = URL.createObjectURL(blob);
-      link.download = "file";
+      link.download = url.split("/").pop() || "file";
       link.click();
     })
     .catch((error) => {

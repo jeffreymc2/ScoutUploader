@@ -37,6 +37,8 @@ export function PlaylistBuilder({
   const [playlist, setPlaylist] = useState<HighlightVideo[]>([]);
   const [savedPlaylist, setSavedPlaylist] = useState<HighlightVideo[]>([]);
   const [activeVideoId, setActiveVideoId] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const { data: user } = useUser();
   const router = useRouter();
 
@@ -202,6 +204,34 @@ export function PlaylistBuilder({
     }
   };
 
+  const fetchMoreVideos = async () => {
+    const response = await fetch(
+      `/api/playerhighlights?playerID=${playerId}&page=${page + 1}&type=h&limit=20`
+    );
+    const data = await response.json();
+    const newVideos = data.highlights || [];
+
+    if (newVideos.length > 0) {
+      setVideos((prevVideos) => [
+        ...prevVideos.filter(
+          (video) => !playlist.some((v) => v.id === video.id)
+        ),
+        ...newVideos,
+      ]);
+      setPage((prevPage) => prevPage + 1);
+    } else {
+      setHasMore(false);
+    }
+  };
+
+  const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, clientHeight, scrollHeight } = event.currentTarget;
+
+    if (scrollTop + clientHeight === scrollHeight && hasMore) {
+      fetchMoreVideos();
+    }
+  };
+
   const activeVideo =
     activeVideoId &&
     (videos.find((video) => video.id === activeVideoId) ||
@@ -215,8 +245,8 @@ export function PlaylistBuilder({
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 ml-4 mr-4 ">
-          <div className="mb-4 w-full ">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4 ml-4 mr-4">
+          <div className="mb-4 w-full">
             <div className="flex flex-col sm:flex-row items-center my-4">
               <Image
                 src="https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/dkPlus_horizontal_primary%20(3).png"
@@ -225,17 +255,19 @@ export function PlaylistBuilder({
                 width={250}
                 className="mr-2"
               />
-
               <h2 className="font-pgFont text-2xl sm:mr-4">All Highlights</h2>
             </div>
             <div className="flex flex-col sm:flex-row items-center my-4">
-            <span className="flex items-center text-gray-500 text-sm ml-2 mb-2 sm:mb-0 sm:ml-4">
-              <p>Click the</p>
-              <RiAddCircleLine className="text-xl text-green-500 mx-1" />
-              <p>icon to add to your custom playlist.</p>
-            </span>
+              <span className="flex items-center text-gray-500 text-sm ml-2 mb-2 sm:mb-0 sm:ml-4">
+                <p>Click the</p>
+                <RiAddCircleLine className="text-xl text-green-500 mx-1" />
+                <p>icon to add to your custom playlist.</p>
+              </span>
             </div>
-            <div className="border sm:p-2 p-0 w-full border-gray-300 rounded-lg max-h-[650px] shadow-lg  bg-gray-100 overflow-y-auto">
+            <div
+              className="border sm:p-2 p-0 w-full border-gray-300 rounded-lg max-h-[650px] shadow-lg bg-gray-100 overflow-y-auto"
+              onScroll={handleScroll}
+            >
               {videos.map((video) => (
                 <HighlightVideoItem
                   key={video.id}
@@ -254,12 +286,9 @@ export function PlaylistBuilder({
             />
             <Button onClick={savePlaylist} disabled={!user}>
               Save Playlist
-            </Button>{" "}
+            </Button>
           </div>
         </div>
-        {/* <DragOverlay>
-          {activeVideo ? <HighlightVideoItem video={activeVideo} isInPlaylist={true} onAddRemove={() => handleAddRemove(activeVideo)} /> : null}
-        </DragOverlay> */}
       </DndContext>
     </>
   );

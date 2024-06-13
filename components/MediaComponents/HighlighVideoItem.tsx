@@ -17,7 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import ReactPlayer from "react-player";
+import Player from "next-video/player";
 import {
   RiAddCircleLine,
   RiSubtractLine,
@@ -48,7 +48,7 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
     ref
   ) {
     const [isOpen, setIsOpen] = useState(false);
-    const playerRef = useRef<ReactPlayer | null>(null);
+    const playerRef = useRef<HTMLVideoElement | null>(null);
 
     const handleDialogOpen = () => {
       setIsOpen(true);
@@ -59,24 +59,18 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
     };
 
     const handleReady = () => {
-      if (playerRef.current) {
-        const internalPlayer = playerRef.current.getInternalPlayer();
-        if (internalPlayer?.getInternalPlayer) {
-          internalPlayer.currentLevel = -1; // Set initial quality level to the highest
-        }
-        if (typeof video.start_time === "number") {
-          playerRef.current.seekTo(video.start_time, "seconds");
-        }
+      if (playerRef.current && typeof video.start_time === "number") {
+        playerRef.current.currentTime = video.start_time;
       }
     };
 
-    const handleProgress = (state: { playedSeconds: number }) => {
+    const handleProgress = (evt: Event) => {
+      const playedSeconds = (evt.target as HTMLVideoElement).currentTime;
       if (
-        playerRef.current &&
         video.duration &&
-        state.playedSeconds >= (video.start_time ?? 0) + video.duration
+        playedSeconds >= (video.start_time ?? 0) + video.duration
       ) {
-        playerRef.current.getInternalPlayer()?.pause();
+        playerRef.current?.pause();
       }
     };
 
@@ -134,32 +128,16 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
                   </DialogDescription>
                 </DialogHeader>
                 <div className="relative w-full h-0 pb-[56.25%] border rounded-b-lg p-0">
-                  <ReactPlayer
+                  <Player
                     ref={playerRef}
-                    className="rounded-lg absolute top-0 left-0"
-                    url={video.url}
-                    playing={isOpen}
+                    src={video.url}
                     controls={true}
-                    width={"100%"}
-                    height={"100%"}
-                    style={{ objectFit: "fill" }}
-                    onReady={handleReady}
-                    onProgress={handleProgress}
-                    config={{
-                      file: {
-                        attributes: {
-                          crossOrigin: "anonymous",
-                          playsInline: true, // Enable inline playback on mobile
-                        },
-                        hlsOptions: {
-                          autoStartLoad: true, // Start loading the video immediately
-                          startPosition: -1, // Start from the beginning of the video
-                          capLevelToPlayerSize: true, // Adjust quality based on player size
-                          maxBufferLength: 30,
-                          maxMaxBufferLength: 60,
-                        },
-                      },
-                    }}
+                    playsInline={true}
+                    blurDataURL={video.thumbnailUrl}
+                    onTimeUpdate={handleProgress}
+                    onLoadedData={handleReady}
+                    accentColor="#005cb9"
+                    autoPlay
                   />
                 </div>
               </DialogContent>
@@ -203,4 +181,3 @@ const HighlightVideoItem = forwardRef<HTMLDivElement, Props>(
 );
 
 export { HighlightVideoItem };
-

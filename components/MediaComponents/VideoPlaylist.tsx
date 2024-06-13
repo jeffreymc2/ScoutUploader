@@ -1,22 +1,30 @@
 "use client";
-import React, { useEffect, useState, useRef, useCallback } from "react";
-import ReactPlayer from "react-player";
-import useUser from "@/app/hook/useUser";
-import { Json } from "@/lib/types/types";
+import React, { useState, useRef, useCallback, useEffect } from "react";
+import Player from "next-video/player";
 import { VideoSkeleton } from "@/components/ui/skeletons";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import InfiniteScroll from "react-infinite-scroll-component";
-import { supabaseBrowser } from "@/lib/supabase/browser";
 import { Button } from "@/components/ui/button";
 import { PlayIcon, PauseIcon, RewindIcon, FastForwardIcon } from "lucide-react";
+import { supabaseBrowser } from "@/lib/supabase/browser";
+import useUser from "@/app/hook/useUser";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import BackgroundVideo from "next-video/background-video";
 
 interface VideoPlayerProps {
   playerId: string;
 }
 
 interface Video {
+  highlight_type: string;
   id: string | number;
   url: string;
   title?: string;
@@ -28,77 +36,93 @@ interface Video {
 }
 
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
-  const [playlists, setPlaylists] = useState<{ [key: string]: Video[] }>({
-    h: [],
-    a: [],
-    l: [],
-    p: [],
-  });
-  const [userPlaylist, setUserPlaylist] = useState<Video[]>([]);
+  const [playlists, setPlaylists] = useState<{ [key: string]: Video[] }>({});
+  const [supabaseHighlights, setSupabaseHighlights] = useState<Video[]>([]);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-  const [type, setType] = useState("h");
+  const [tab, setTab] = useState<"h" | "a" | "p">("h");
+  const [type, setType] = useState<
+    | "h"
+    | "a"
+    | "l"
+    | "s"
+    | "d"
+    | "t"
+    | "hr"
+    | "iphr"
+    | "dp"
+    | "so"
+    | "dp,so"
+    | "l,s,d,t,hr,iphr"
+  >("h");
+  const [position, setPosition] = useState<"b" | "p" | "">("");
+  const [userPlaylist, setUserPlaylist] = useState<Video[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const [isPitcher, setIsPitcher] = useState(false);
+  const { data: user } = useUser();
   const [thumbnailUrls, setThumbnailUrls] = useState<{ [key: string]: string }>(
     {}
   );
-  const { data: user } = useUser();
-  const playerRef = useRef<ReactPlayer | null>(null);
+  const playerRef = useRef<HTMLVideoElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [noResults, setNoResults] = useState(false);
 
-  const fetchPlaylist = async (page: number, type: string, reset = false) => {
+  const fetchPlaylist = async (
+    page: number,
+    type: string,
+    position: string = "",
+    reset = false
+  ) => {
     try {
-      const highlightsResponse = await fetch(
-        `${process.env.NEXT_PUBLIC_URL}/api/playerhighlights?playerID=${playerId}&page=${page}&type=${type}`
-      );
-      const highlightsData = await highlightsResponse.json();
-      const highlightVideos = highlightsData.highlights || [];
-
-      const isPitchingVideo = highlightVideos.some(
-        (video: { tagged_player_keys: any[] }) =>
-          video.tagged_player_keys?.some(
-            (player: any) =>
-              player.Key === parseInt(playerId) && player.Position === "p"
-          )
-      );
-
-      if (isPitchingVideo) {
-        setIsPitcher(true);
+      let url = `/api/playerhighlights?playerID=${playerId}&page=${page}&type=${type}&limit=20`;
+      if (position) {
+        url += `&position=${position}`;
       }
+
+      const response = await fetch(url);
+      if (!response.ok) {
+        const errorDetails = await response.json();
+        console.error(
+          `Error fetching highlights: ${response.status} ${response.statusText}`
+        );
+        console.error(`Error details: ${JSON.stringify(errorDetails)}`);
+        setHasMore(false);
+        return;
+      }
+
+      const data = await response.json();
+      const videos = data.highlights || [];
 
       setPlaylists((prev) => ({
         ...prev,
-        [type]: reset
-          ? highlightVideos
-          : [
-              ...prev[type],
-              ...highlightVideos.filter(
-                (video: { id: any }) =>
-                  !prev[type].some((prevVideo) => prevVideo.id === video.id)
-              ),
-            ],
+        [type + position]: reset
+          ? videos
+          : [...(prev[type + position] || []), ...videos],
       }));
 
-      if (highlightVideos.length === 0) {
-        setHasMore(false);
-      }
+      setHasMore(data.next !== undefined);
+      setNoResults(videos.length === 0);
+      setIsLoading(false);
+      if (data.next) setPage(page + 1);
     } catch (error) {
       console.error("Error fetching playlist:", error);
       setHasMore(false);
+      setNoResults(true);
+      setIsLoading(false);
     }
   };
 
+  const fetchInitialData = (type: string, position: string = "") => {
+    setIsLoading(true);
+    setNoResults(false);
+    setPage(1);
+    setHasMore(true);
+    setPlaylists({});
+    fetchPlaylist(1, type, position, true);
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      await Promise.all([
-        fetchPlaylist(1, "h", true),
-        fetchPlaylist(1, "a", true),
-        fetchPlaylist(1, "l", true),
-        fetchPlaylist(1, "p", true),
-      ]);
-    };
-    fetchData();
+    fetchInitialData("h", ""); // Fetch highlights without position
   }, [playerId]);
 
   useEffect(() => {
@@ -123,11 +147,35 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     fetchSupabasePlaylist();
   }, [user, playerId]);
 
-  useEffect(() => {
-    setCurrentVideoIndex(0);
-    setHasMore(true);
-    setPage(1);
-  }, [type]);
+  const getCurrentPlaylist = () => {
+    let playlist: any[] = [];
+    if (type === "h") {
+      // Highlights do not use position
+      playlist = [
+        ...new Map(
+          [...supabaseHighlights, ...(playlists[type] || [])].map((video) => [
+            video.id,
+            video,
+          ])
+        ).values(),
+      ];
+    } else {
+      // Other types use position
+      playlist = [
+        ...new Map(
+          [...(playlists[type + position] || [])].map((video) => [
+            video.id,
+            video,
+          ])
+        ).values(),
+      ];
+    }
+    return playlist;
+  };
+
+  const loadMoreVideos = () => {
+    fetchPlaylist(page, type, type === "h" ? "" : position);
+  };
 
   const handleProgress = ({ playedSeconds }: { playedSeconds: number }) => {
     const currentVideo = getCurrentVideo();
@@ -149,11 +197,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     setCurrentVideoIndex(index);
   };
 
-  const loadMoreVideos = () => {
-    fetchPlaylist(page + 1, type);
-    setPage((prevPage) => prevPage + 1);
-  };
-
   const seekToStartTime = useCallback(() => {
     const currentVideo = getCurrentVideo();
     if (playerRef.current && currentVideo) {
@@ -162,9 +205,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         isFinite(currentVideo.start_time)
           ? currentVideo.start_time
           : 0;
-      playerRef.current.seekTo(startTime, "seconds");
+      playerRef.current.currentTime = startTime;
     }
-  }, [currentVideoIndex, playlists, type]);
+  }, [currentVideoIndex, playlists, type, position]);
 
   useEffect(() => {
     seekToStartTime();
@@ -174,31 +217,23 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     seekToStartTime();
     const currentVideo = getCurrentVideo();
     if (currentVideo && currentVideo.url.endsWith(".m3u8")) {
-      const internalPlayer = playerRef.current?.getInternalPlayer("hls");
-      if (internalPlayer) {
-        internalPlayer.currentLevel = -1;
-      }
+      // Handle HLS video if needed
     }
   };
 
   const handlePlayPause = () => {
+    if (isPlaying) {
+      playerRef.current?.pause();
+    } else {
+      playerRef.current?.play();
+    }
     setIsPlaying((prev) => !prev);
   };
 
   const handleSeek = (seconds: number) => {
     if (playerRef.current) {
-      playerRef.current.seekTo(
-        playerRef.current.getCurrentTime() + seconds,
-        "seconds"
-      );
+      playerRef.current.currentTime += seconds;
     }
-  };
-
-  const getCurrentPlaylist = () => {
-    if (type === "h" && userPlaylist.length > 0) {
-      return userPlaylist;
-    }
-    return playlists[type];
   };
 
   const getCurrentVideo = () => {
@@ -211,47 +246,29 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
-  if (getCurrentPlaylist().length === 0) {
-    return <VideoSkeleton />;
+  const currentPlaylist = getCurrentPlaylist();
+
+  if (isLoading) {
+    return <VideoSkeleton isLoading={true} noResults={false} />;
   }
 
   const currentVideo = getCurrentVideo();
 
-  const updateThumbnailUrl = (videoId: string, url: string) => {
-    setThumbnailUrls((prevUrls) => ({
-      ...prevUrls,
-      [videoId]: url,
-    }));
-  };
-
-  const renderThumbnail = (video: Video) => {
-    const thumbnailUrl =
-      thumbnailUrls[video.id] ||
-      video.thumbnailUrl ||
-      "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp";
-
-    return (
-      <Image
-        alt="Thumbnail"
-        className="aspect-video rounded-lg object-cover h-full w-auto"
-        height={50}
-        src={thumbnailUrl}
-        width={130}
-        onError={() => {
-          updateThumbnailUrl(
-            video.id as string,
-            "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp"
-          );
-        }}
-      />
-    );
-  };
-
   const getTitle = (title?: string) => {
     if (!title) return "";
+    if (title.includes("9999")) {
+      return title.replace("9999", "");
+    }
     const bracketRegex = /\[(.*?)\]/;
     const match = title.match(bracketRegex);
     return match ? title.replace(match[0], "") : title;
+  };
+
+  const filterTitle = (title: string | undefined) => {
+    if (title) {
+      return title.replace(/9999/g, "");
+    }
+    return title;
   };
 
   const getTitleWithoutBrackets = (title?: string) => {
@@ -278,56 +295,155 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     );
   };
 
+  const handleTabChange = (value: "h" | "a" | "p") => {
+    setTab(value);
+    if (value === "h") {
+      setType("h");
+      setPosition("");
+      fetchInitialData("h", "");
+    } else if (value === "a") {
+      setType("a"); // Set to default types for at-bats
+      setPosition("b");
+      fetchInitialData("a", "b");
+    } else if (value === "p") {
+      setType("a"); // Set to default types for pitching
+      setPosition("p");
+      fetchInitialData("a", "p");
+    }
+    setCurrentVideoIndex(0);
+  };
+
+  const handleTypeChange = (value: string) => {
+    setType(
+      value as
+        | "a"
+        | "l"
+        | "s"
+        | "d"
+        | "t"
+        | "hr"
+        | "iphr"
+        | "dp"
+        | "so"
+        | "dp,so"
+        | "l,s,d,t,hr,iphr"
+    );
+    setCurrentVideoIndex(0);
+    fetchInitialData(value, position);
+  };
+
+  const renderTypeOptions = () => {
+    if (position === "b") {
+      return (
+        <>
+          <SelectItem value="a">
+            <span>All Batting</span>
+          </SelectItem>
+          <SelectItem value="l">
+            <span>Last Pitch</span>
+          </SelectItem>
+          <SelectItem value="h,s">
+            <span>Single</span>
+          </SelectItem>
+          <SelectItem value="h,d">
+            <span>Double</span>
+          </SelectItem>
+          <SelectItem value="h,t">
+            <span>Triple</span>
+          </SelectItem>
+          <SelectItem value="h,hr">
+            <span>Homerun</span>
+          </SelectItem>
+          <SelectItem value="h,iphr">
+            <span>In-Park Homerun</span>
+          </SelectItem>
+        </>
+      );
+    } else if (position === "p") {
+      return (
+        <>
+          <SelectItem value="a">
+            <span>All</span>
+          </SelectItem>
+          <SelectItem value="a,dp">
+            <span>Double Play</span>
+          </SelectItem>
+          <SelectItem value="h,so">
+            <span>Strikeout</span>
+          </SelectItem>
+        </>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="p-4 lg:p-4">
       <Tabs
         defaultValue="h"
-        onValueChange={(value) => {
-          setType(value);
-          setCurrentVideoIndex(0);
-        }}
+        value={tab}
+        onValueChange={(value: string) =>
+          handleTabChange(value as "h" | "a" | "p")
+        }
       >
-        <TabsList>
-          <TabsTrigger value="h">Highlights</TabsTrigger>
-          <TabsTrigger value="a">Full At-Bats</TabsTrigger>
-          <TabsTrigger value="l">Last Pitch</TabsTrigger>
-          {isPitcher && <TabsTrigger value="p">Pitching</TabsTrigger>}
-        </TabsList>
-        <TabsContent value={type}>
-          <InfiniteScroll
-            dataLength={getCurrentPlaylist().length}
-            next={loadMoreVideos}
-            hasMore={hasMore}
-            loader={""}
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4">
-              <div className="w-full overflow-hidden rounded-lg relative bg-gray-100">
-                <div className="aspect-w-16 aspect-h-9">
-                  <ReactPlayer
-                    ref={playerRef}
-                    url={currentVideo.url}
-                    playing={isPlaying}
-                    controls={false}
-                    playsinline={true}
-                    width="100%"
-                    height="100%"
-                    onProgress={handleProgress}
-                    onEnded={handleNextVideo}
-                    onReady={handleReady}
-                    config={{
-                      file: {
-                        hlsOptions: {
-                          autoStartLoad: true,
-                          startPosition: -1,
-                          capLevelToPlayerSize: true,
-                          maxBufferLength: 30,
-                          maxMaxBufferLength: 60,
-                        },
-                      },
-                    }}
-                  />
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
+          <TabsList className="w-full lg:w-auto">
+            <TabsTrigger value="h">Highlights</TabsTrigger>
+            <TabsTrigger value="a">Full At-Bats</TabsTrigger>
+            <TabsTrigger value="p">Pitching</TabsTrigger>
+          </TabsList>
+          {tab !== "h" && (
+            <div className="mt-4 lg:mt-0 lg:ml-4">
+              <Select onValueChange={handleTypeChange} value={type}>
+                <SelectTrigger className="w-full lg:w-[180px]">
+                  <SelectValue placeholder="Filter by Type" />
+                </SelectTrigger>
+                <SelectContent>{renderTypeOptions()}</SelectContent>
+              </Select>
+            </div>
+          )}
+        </div>
+        <TabsContent value={tab}>
+          {isLoading ? (
+            <VideoSkeleton isLoading={true} noResults={false} />
+          ) : currentPlaylist.length === 0 ? (
+            <VideoSkeleton
+              noResults={true}
+              message="No video found. Switch tabs or adjust filter."
+            />
+          ) : (
+            <InfiniteScroll
+              dataLength={currentPlaylist.length}
+              next={loadMoreVideos}
+              hasMore={hasMore}
+              loader={""}
+            >
+              <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4 ">
+                <div className="w-full overflow-hidden rounded-lg relative bg-gray-100">
+                  <div className="aspect-w-16 aspect-h-9 lg:aspect-none lg:m-0 p-0 lg:p-0 -m-4">
+                    <Player
+                      ref={playerRef}
+                      src={currentVideo.url}
+                      poster={thumbnailUrls[currentVideo.id as string] || ""}
+                      playsInline={true}
+                      onProgress={(evt: ProgressEvent<EventTarget>) =>
+                        handleProgress(
+                          evt as unknown as { playedSeconds: number }
+                        )
+                      }
+                      onEnded={handleNextVideo}
+                      autoPlay
+                      volume={.5}
+                      muted={false}
+                      blurDataURL={currentVideo.thumbnailUrl}
+                      onLoadedData={handleReady}
+                      accentColor="#005cb9"
+                      className="w-full h-full object-fill"
+                      startTime={currentVideo.start_time}
+                    />
+                  </div>
                   {/* Custom Controls */}
-                  <div className="flex justify-center bg-gray-100 p-2 mt-0">
+                  <div className="flex justify-center bg-gray-100 lg:p-2 pt-4 mt-0">
                     <div className="grid grid-cols-3 items-center gap-4">
                       <Button
                         variant="ghost"
@@ -357,49 +473,61 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                       </Button>
                     </div>
                   </div>
+                  {currentVideo.title && (
+                    <div className="absolute text-white inset-x-0 top-0 p-4 w-full overflow-hidden rounded-lg bg-gradient-to-b from-black/50 to-transparent">
+                      <div className="line-clamp-1">
+                        {getTitle(currentVideo.title)}
+                      </div>
+                    </div>
+                  )}
                 </div>
-
-                {currentVideo.title && (
-                  <div className="absolute text-white inset-x-0 top-0 p-4 w-full overflow-hidden rounded-lg bg-gradient-to-b from-black/50 to-transparent">
-                    <div className="line-clamp-1">
-                      {getTitle(currentVideo.title)}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex flex-col gap-2 max-h-[465px] overflow-y-auto">
-                {getCurrentPlaylist().map((video, index) => (
-                  <div
-                    key={String(video.id)}
-                    className={`flex items-start gap-4 relative cursor-pointer h-24 shadow-md border border-gray-100 rounded-lg ${
-                      index === currentVideoIndex
-                        ? "border border-gray-300 rounded-lg shadow-sm p-0 bg-gray-100"
-                        : ""
-                    }`}
-                    onClick={() => handleThumbnailClick(index)}
-                  >
-                    {renderThumbnail(video)}
-                    {video.title && renderOverlayBadge(video.title)}
-                    <div className="absolute bottom-2 left-2 text-white text-xs">
-                      {video.duration ? formatDuration(video.duration) : ""}
-                    </div>
-                    <div className="text-sm">
-                      <div className="font-medium line-clamp-2 mt-2">
-                        {getTitle(video.title)}
+                <div className="flex flex-col gap-2 max-h-[60vh] lg:max-h-[465px] overflow-y-auto">
+                  {currentPlaylist.map((video, index) => (
+                    <div
+                      key={String(video.id)}
+                      className={`flex items-start gap-4 relative cursor-pointer h-24 shadow-md border border-gray-100 rounded-lg ${
+                        index === currentVideoIndex
+                          ? "border border-gray-300 rounded-lg shadow-sm p-0 bg-gray-100"
+                          : ""
+                      }`}
+                      onClick={() => handleThumbnailClick(index)}
+                    >
+                      <Image
+                        alt="Thumbnail"
+                        className="aspect-video rounded-lg object-cover h-full w-auto"
+                        height={50}
+                        key={video.id}
+                        src={
+                          thumbnailUrls[video.id as string] ||
+                          "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp"
+                        }
+                        width={130}
+                        onError={(e) => {
+                          e.currentTarget.src =
+                            "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp";
+                        }}
+                      />
+                      {video.title && renderOverlayBadge(video.title)}
+                      <div className="absolute bottom-2 left-2 text-white text-xs">
+                        {video.duration ? formatDuration(video.duration) : ""}
                       </div>
-                      <div className="text-xs text-gray-500 line-clamp-1 dark:text-gray-400">
-                        {typeof video.created === "string" ||
-                        typeof video.created === "number"
-                          ? new Date(video.created).toLocaleDateString()
-                          : ""}
+                      <div className="text-sm">
+                        <div className="font-medium line-clamp-2 mt-2">
+                          {getTitle(video.title)}
+                        </div>
+                        <div className="text-xs text-gray-500 line-clamp-1 dark:text-gray-400">
+                          {typeof video.created === "string" ||
+                          typeof video.created === "number"
+                            ? new Date(video.created).toLocaleDateString()
+                            : ""}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          </InfiniteScroll>
+            </InfiniteScroll>
+          )}
         </TabsContent>
       </Tabs>
     </div>

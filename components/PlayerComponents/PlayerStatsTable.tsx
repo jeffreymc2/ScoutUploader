@@ -111,7 +111,7 @@ const columns: ColumnDef<GameStats>[] = [
   },
 ];
 
-export  function GameStatsTable({ playerId }: { playerId: string }) {
+export function GameStatsTable({ playerId }: { playerId: string }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [gameStats, setGameStats] = useState<GameStats[]>([]);
   const [open, setOpen] = useState(false);
@@ -145,70 +145,109 @@ export  function GameStatsTable({ playerId }: { playerId: string }) {
 
   return (
     <>
-    
-    <Dialog.Root open={open} onOpenChange={setOpen}>
-      <Dialog.Trigger>
-        <Button variant="outline">View Game Stats</Button>
-      </Dialog.Trigger>
-      <Dialog.Portal>
-        <Dialog.Overlay className="DialogOverlay">
-          <div className="inset-0 bg-black bg-opacity-90" >
-          <Dialog.Content className="sm:max-w-[1250px] bg-white min-h-[900px]">
-            <Table>
-              <TableCaption>Game Stats</TableCaption>
-              <TableHeader className="bg-blue-500 text-white font-bold">
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => {
-                      return (
-                        <TableHead key={header.id} className="text-white sticky top-0">
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                                header.column.columnDef.header,
-                                header.getContext()
+      <Dialog.Root open={open} onOpenChange={setOpen}>
+        <Dialog.Trigger>
+          <Button variant="outline">View Game Stats</Button>
+        </Dialog.Trigger>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="max-h-screen overflow-auto">
+              <Dialog.Content className="bg-white p-6 rounded-lg shadow-lg max-w-7xl mx-auto my-8 sm:my-16">
+                <div className="flex justify-end">
+                  <Dialog.Close asChild>
+                    <button className="text-gray-500 hover:text-gray-700 focus:outline-none">
+                      <span className="sr-only">Close</span>
+                      <svg
+                        className="h-6 w-6"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </Dialog.Close>
+                </div>
+                <Table>
+                  <TableCaption>Game Stats</TableCaption>
+                  <TableHeader className="bg-blue-500 text-white font-bold hover:bg-blue-500">
+                    {table.getHeaderGroups().map((headerGroup) => (
+                      <TableRow key={headerGroup.id}>
+                        {headerGroup.headers.map((header) => {
+                          return (
+                            <TableHead
+                              key={header.id}
+                              className="text-white sticky top-0 hover:bg-blue-500"
+                            >
+                              {header.isPlaceholder ? null : (
+                                <div
+                                  className="cursor-pointer select-none flex items-center hover:bg-blue-500 p-2"
+                                  onClick={header.column.getToggleSortingHandler()}
+                                >
+                                  <span>
+                                    {flexRender(
+                                      header.column.columnDef.header,
+                                      header.getContext()
+                                    )}
+                                  </span>
+                                  <span className="ml-1">
+                                    {{
+                                      asc: "▲",
+                                      desc: "▼",
+                                    }[header.column.getIsSorted() as string] ??
+                                      null}
+                                  </span>
+                                </div>
                               )}
-                        </TableHead>
-                      );
-                    })}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows?.length ? (
-                  table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && "selected"}
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} className="h-6 py-2 text-xs">
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext()
-                          )}
+                            </TableHead>
+                          );
+                        })}
+                      </TableRow>
+                    ))}
+                  </TableHeader>
+                  <TableBody>
+                    {table.getRowModel().rows?.length ? (
+                      table.getRowModel().rows.map((row) => (
+                        <TableRow
+                          key={row.id}
+                          data-state={row.getIsSelected() && "selected"}
+                        >
+                          {row.getVisibleCells().map((cell) => (
+                            <TableCell
+                              key={cell.id}
+                              className="h-6 py-2 text-xs"
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell
+                          colSpan={columns.length}
+                          className="h-12 text-center"
+                        >
+                          No results.
                         </TableCell>
-                      ))}
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell
-                      colSpan={columns.length}
-                      className="h-12 text-center"
-                    >
-                      No results.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </Dialog.Content>
-          </div>
-        </Dialog.Overlay>
-      </Dialog.Portal>
-    </Dialog.Root>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </Dialog.Content>
+            </div>
+          </Dialog.Overlay>
+        </Dialog.Portal>
+      </Dialog.Root>
     </>
-
   );
 }
