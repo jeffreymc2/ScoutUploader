@@ -10,10 +10,6 @@ const supabase = createClient(
 );
 
 
-export const config = {
-  runtime: 'edge',
-};
-
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const playerID = searchParams.get('playerID');

@@ -58,10 +58,7 @@ const nextConfig = {
 		sizeLimit: '500mb', // Adjust the size limit as needed
 	  },
 	},
-	// images: {
-	//   loader: 'custom',
-	//   loaderFile: '@/lib/supabase/loader',
-	// },
+	
   };
   
   export default nextConfig;
