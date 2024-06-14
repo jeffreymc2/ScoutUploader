@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 // Loading animation
 const shimmer =
@@ -276,15 +277,38 @@ interface VideoSkeletonProps {
   message?: string;
 }
 
-export function VideoSkeleton({ isLoading, noResults }: VideoSkeletonProps) {
+
+
+export function VideoSkeleton({ isLoading, noResults }: { isLoading: boolean; noResults: boolean }) {
+  const [svgContent, setSvgContent] = useState<string>("");
+
+  useEffect(() => {
+    fetch("https://scoutuploads.s3.amazonaws.com/next-video/dkPlus_vertical_primary_inverse+(3).svg")
+      .then((response) => response.text())
+      .then((data) => setSvgContent(data));
+  }, []);
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4">
+    
+    <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4 ">
+     
       <div className="bg-gray-200 rounded-lg p-4">
-        <div className="skeleton-player h-64 lg:h-[415px] bg-gray-300 rounded-lg animate-pulse"></div>
+   
+        <div className=" h-64 lg:h-[415px] rounded-lg relative bg-gradient-to-b from-gray-600 to-black rounded-lg ">
+              {svgContent && (
+            <motion.div
+              className="w-full h-full"
+              dangerouslySetInnerHTML={{ __html: svgContent }}
+              animate={{ scale: [.6, .7, .6]}}
+              transition={{ duration: 4, repeat: Infinity }}
+            />
+          )}
+        </div>
         <div className="mt-4 flex justify-between">
-          <div className="skeleton-play-button h-10 w-10 bg-gray-300 rounded-full animate-pulse"></div>
-          <div className="skeleton-progress-bar flex-grow h-2 bg-gray-400 rounded-full overflow-hidden">
-            <div className="skeleton-progress h-full bg-gray-600 w-full animate-progress"></div>
+          <div className="skeleton-play-button h-10 w-10 bg-gray-300 rounded-full "></div>
+          <div className="skeleton-progress-bar flex-grow h-2 bg-gradient-to-b from-gray-800 to-black rounded-full overflow-hidden">
+            <div className="skeleton-progress h-full bg-gray-600 w-full animate-progress">
+                </div>
           </div>
           <div className="flex items-center">
             <div className="skeleton-volume-icon h-6 w-6 bg-gray-300 rounded-full animate-pulse mr-2"></div>
@@ -302,11 +326,11 @@ export function VideoSkeleton({ isLoading, noResults }: VideoSkeletonProps) {
                 <div key={index} className="skeleton-playlist-item h-24 bg-gray-900 rounded-lg animate-pulse"></div>
               ))}
             </div>
-            <div className="text-center text-gray-400 mt-4">Loading...</div>
+            <div className="text-center text-gray-900 mt-4">Loading...</div>
           </>
         )}
         {noResults && (
-          <div className="text-center text-gray-400 mt-4">No video found. Switch tabs or adjust filter.</div>
+          <div className="text-center text-gray-900 mt-4">No video found. Switch tabs or adjust filter.</div>
         )}
       </div>
     </div>

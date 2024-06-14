@@ -44,7 +44,7 @@ export function DroppablePlaylist({
         className="mr-2"
       />
       <div className="flex items-center">
-        <h2 className="font-pgFont text-2xl sm:mr-4">Custom Playlist</h2>
+        <h2 className="font-pgFont text-2xl sm:mr-4">Featured Playlist</h2>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>

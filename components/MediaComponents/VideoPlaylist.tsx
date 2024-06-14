@@ -127,6 +127,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   }, [playerId]);
 
   useEffect(() => {
+    if (hasCustomPlaylist) {
+      setTab("c");
+    } else {
+      fetchInitialData("h", ""); // Fetch highlights without position
+    }
+  }, [playerId, hasCustomPlaylist]);
+
+  useEffect(() => {
     const fetchSupabasePlaylist = async () => {
       if (user) {
         const { data: playlistData, error } = await supabaseBrowser()
@@ -152,12 +160,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const getCurrentPlaylist = () => {
     if (tab === "c") return userPlaylist;
 
-    let playlist: any[] = [];
+    let playlist: Video[] = [];
     if (type === "h") {
       playlist = [
         ...new Map(
           [...supabaseHighlights, ...(playlists[type] || [])].map((video) => [
-            video.id,
+            `${video.id}-${video.url}`, // Use a combination of id and url as the unique identifier
             video,
           ])
         ).values(),
@@ -166,7 +174,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
       playlist = [
         ...new Map(
           [...(playlists[type + position] || [])].map((video) => [
-            video.id,
+            `${video.id}-${video.url}`, // Use a combination of id and url as the unique identifier
             video,
           ])
         ).values(),
@@ -174,6 +182,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     }
     return playlist;
   };
+
 
   const loadMoreVideos = async () => {
     await fetchPlaylist(page, type, type === "h" ? "" : position);
@@ -272,22 +281,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     );
   };
 
-  const filterTitle = (title: string | undefined) => {
-    if (title) {
-      return title.replace(/9999/g, "");
-    }
-    return title;
-  };
-
-  const getTitleWithoutBrackets = (title?: string) => {
-    if (!title) return "";
-    const bracketRegex = /\[(.*?)\]/;
-    const match = title.match(bracketRegex);
-    return match ? match[1] : title;
-  };
 
   const renderOverlayBadge = (title?: string) => {
-    const titleWithoutBrackets = getTitleWithoutBrackets(title);
     return (
       <div className="absolute top-2 left-2">
         <Badge variant="secondary">
@@ -440,11 +435,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         }
       >
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
-          <TabsList className="w-full lg:w-auto">
+        <TabsList className="w-full lg:w-auto">
+            {hasCustomPlaylist && <TabsTrigger value="c">Featured Playlist</TabsTrigger>}
             <TabsTrigger value="h">Highlights</TabsTrigger>
             <TabsTrigger value="a">Full At-Bats</TabsTrigger>
             <TabsTrigger value="p">Pitching</TabsTrigger>
-            {hasCustomPlaylist && <TabsTrigger value="c">Custom Playlist</TabsTrigger>}
           </TabsList>
           {tab !== "c" && (
             <div className="mt-4 lg:mt-0 lg:ml-4">
@@ -463,7 +458,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
           ) : currentPlaylist.length === 0 ? (
             <VideoSkeleton
               noResults={true}
-              message="No video found. Switch tabs or adjust filter."
+              isLoading={false}
             />
           ) : (
             <InfiniteScroll

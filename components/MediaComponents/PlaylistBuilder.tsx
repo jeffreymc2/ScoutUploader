@@ -261,7 +261,7 @@ export function PlaylistBuilder({
               <span className="flex items-center text-gray-500 text-sm ml-2 mb-2 sm:mb-0 sm:ml-4">
                 <p>Click the</p>
                 <RiAddCircleLine className="text-xl text-green-500 mx-1" />
-                <p>icon to add to your custom playlist.</p>
+                <p>icon to create your own featured playlist.</p>
               </span>
             </div>
             <div
