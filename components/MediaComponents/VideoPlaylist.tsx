@@ -482,11 +482,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                           evt as unknown as { playedSeconds: number }
                         )
                       }
-                      crossOrigin="anonymous"
                       onEnded={handleNextVideo}
                       autoPlay
                       volume={.5}
-                      preload="auto"
                       muted={true}
                       blurDataURL={currentVideo.thumbnailUrl}
                       // onLoadedData={handleReady}

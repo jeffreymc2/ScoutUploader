@@ -152,7 +152,7 @@ export async function GET(request: NextRequest) {
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Methods": "GET,OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type",
+          "Access-Control-Allow-Headers": "Content-Type,Origin,Access-Control-Request-Headers,Access-Control-Request-Method",
         },
       }
     );
@@ -173,7 +173,7 @@ export async function OPTIONS() {
       headers: {
         "Access-Control-Allow-Origin": "*",
         "Access-Control-Allow-Methods": "GET,OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Headers": "Content-Type,Origin,Access-Control-Request-Headers,Access-Control-Request-Method",
       },
     }
   );
