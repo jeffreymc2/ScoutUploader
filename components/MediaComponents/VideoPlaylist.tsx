@@ -38,7 +38,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const [playlists, setPlaylists] = useState<{ [key: string]: Video[] }>({});
   const [supabaseHighlights, setSupabaseHighlights] = useState<Video[]>([]);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-  const [tab, setTab] = useState<"h" | "a" | "p">("h");
+  const [tab, setTab] = useState<"h" | "a" | "p" | "c">("h");
   const [type, setType] = useState<
     | "h"
     | "a"
@@ -58,6 +58,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const { data: user } = useUser();
+  const [hasCustomPlaylist, setHasCustomPlaylist] = useState(false);
   const [thumbnailUrls, setThumbnailUrls] = useState<{ [key: string]: string }>(
     {}
   );
@@ -65,6 +66,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [noResults, setNoResults] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const fetchPlaylist = async (
     page: number,
@@ -139,6 +141,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         } else if (playlistData) {
           const playlist = playlistData.playlist as any as Video[];
           setUserPlaylist(playlist);
+          setHasCustomPlaylist(playlist.length > 0);
         }
       }
     };
@@ -147,9 +150,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   }, [user, playerId]);
 
   const getCurrentPlaylist = () => {
+    if (tab === "c") return userPlaylist;
+
     let playlist: any[] = [];
     if (type === "h") {
-      // Highlights do not use position
       playlist = [
         ...new Map(
           [...supabaseHighlights, ...(playlists[type] || [])].map((video) => [
@@ -159,7 +163,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         ).values(),
       ];
     } else {
-      // Other types use position
       playlist = [
         ...new Map(
           [...(playlists[type + position] || [])].map((video) => [
@@ -180,45 +183,26 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     const currentVideo = getCurrentVideo();
     if (
       currentVideo?.duration &&
-      playedSeconds >= (currentVideo.start_time ?? 0) + currentVideo.duration
+      playedSeconds >= currentVideo.duration &&
+      !isTransitioning // Ensure we are not already transitioning
     ) {
+      setIsTransitioning(true); // Set transitioning state
       handleNextVideo();
     }
   };
 
+  // Reset the transitioning state when moving to the next video
   const handleNextVideo = async () => {
     setCurrentVideoIndex(
       (prevIndex) => (prevIndex + 1) % getCurrentPlaylist().length
     );
+    setIsTransitioning(false); // Reset transitioning state
   };
 
   const handleThumbnailClick = (index: number) => {
     setCurrentVideoIndex(index);
   };
 
-  const seekToStartTime = useCallback(() => {
-    const currentVideo = getCurrentVideo();
-    if (playerRef.current && currentVideo) {
-      const startTime =
-        typeof currentVideo.start_time === "number" &&
-        isFinite(currentVideo.start_time)
-          ? currentVideo.start_time
-          : 0;
-      playerRef.current.currentTime = startTime;
-    }
-  }, [currentVideoIndex, playlists, type, position]);
-
-  useEffect(() => {
-    seekToStartTime();
-  }, [currentVideoIndex, seekToStartTime]);
-
-  const handleReady = () => {
-    seekToStartTime();
-    const currentVideo = getCurrentVideo();
-    // if (currentVideo && currentVideo.url.endsWith(".m3u8")) {
-    //   // Handle HLS video if needed
-    // }
-  };
 
   const handlePlayPause = () => {
     if (isPlaying) {
@@ -246,11 +230,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   };
 
   const currentPlaylist = getCurrentPlaylist();
-
-  if (isLoading) {
-    return <VideoSkeleton isLoading={true} noResults={false} />;
-  }
-
   const currentVideo = getCurrentVideo();
 
   const getTitle = (title?: string) => {
@@ -324,18 +303,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     );
   };
 
-  const handleTabChange = async (value: "h" | "a" | "p") => {
+  const handleTabChange = async (value: "h" | "a" | "p" | "c") => {
     setTab(value);
     if (value === "h") {
       setType("h");
       setPosition("");
       await fetchInitialData("h", "");
     } else if (value === "a") {
-      setType("a"); // Set to default types for at-bats
+      setType("a");
       setPosition("b");
       await fetchInitialData("a", "b");
     } else if (value === "p") {
-      setType("a"); // Set to default types for pitching
+      setType("a");
       setPosition("p");
       await fetchInitialData("a", "p");
     }
@@ -345,6 +324,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const handleTypeChange = async (value: string) => {
     setType(
       value as
+      | "h"
         | "a"
         | "l"
         | "s"
@@ -356,6 +336,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         | "so"
         | "dp,so"
         | "l,s,d,t,hr,iphr"
+       
     );
     setCurrentVideoIndex(0);
     await fetchInitialData(value, position);
@@ -388,6 +369,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
           </SelectItem>
         </>
       );
+      
     } else if (position === "p") {
       return (
         <>
@@ -403,8 +385,50 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         </>
       );
     }
+    if (position === "") {
+      return (
+        <>
+           <SelectItem value="h">
+            <span>All</span>
+          </SelectItem>
+          <SelectItem value="h,s">
+            <span>Single</span>
+          </SelectItem>
+          <SelectItem value="h,d">
+            <span>Double</span>
+          </SelectItem>
+          <SelectItem value="h,t">
+            <span>Triple</span>
+          </SelectItem>
+          <SelectItem value="h,hr">
+            <span>Homerun</span>
+          </SelectItem>
+          <SelectItem value="h,iphr">
+            <span>In-Park Homerun</span>
+          </SelectItem>
+          <SelectItem value="h,so">
+            <span>Strikeout {"(P)"}</span>
+          </SelectItem>
+        </>
+      );
+    }
     return null;
   };
+
+   // Set up a timer to move to the next video after the current video's duration
+   useEffect(() => {
+    const currentVideo = getCurrentVideo();
+    if (currentVideo && isPlaying) {
+      const duration = currentVideo.duration || playerRef.current?.duration;
+      if (duration) {
+        const timer = setTimeout(() => {
+          handleNextVideo();
+        }, duration * 1000);
+
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [currentVideoIndex, isPlaying]);
 
   return (
     <div className="p-4 lg:p-4">
@@ -412,7 +436,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         defaultValue="h"
         value={tab}
         onValueChange={(value: string) =>
-          handleTabChange(value as "h" | "a" | "p")
+          handleTabChange(value as "h" | "a" | "p" | "c")
         }
       >
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
@@ -420,8 +444,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
             <TabsTrigger value="h">Highlights</TabsTrigger>
             <TabsTrigger value="a">Full At-Bats</TabsTrigger>
             <TabsTrigger value="p">Pitching</TabsTrigger>
+            {hasCustomPlaylist && <TabsTrigger value="c">Custom Playlist</TabsTrigger>}
           </TabsList>
-          {tab !== "h" && (
+          {tab !== "c" && (
             <div className="mt-4 lg:mt-0 lg:ml-4">
               <Select onValueChange={handleTypeChange} value={type}>
                 <SelectTrigger className="w-full lg:w-[180px]">
@@ -467,10 +492,10 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                       preload="auto"
                       muted={true}
                       blurDataURL={currentVideo.thumbnailUrl}
-                      onLoadedData={handleReady}
+                      // onLoadedData={handleReady}
                       accentColor="#005cb9"
                       className="w-full h-full object-fill"
-                      startTime={currentVideo.start_time}
+                      startTime={currentVideo?.start_time || 0}
                     />
                   </div>
                   {/* Custom Controls */}
@@ -523,8 +548,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                       }`}
                       onClick={() => handleThumbnailClick(index)}
                     >
-                                         {renderThumbnail(video)}
-
+                      {renderThumbnail(video)}
                       {video.title && renderOverlayBadge(video.title)}
                       <div className="absolute bottom-2 left-2 text-white text-xs">
                         {video.duration ? formatDuration(video.duration) : ""}
