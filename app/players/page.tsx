@@ -1,4 +1,5 @@
 // app/page.tsx
+"use server";
 import { supabaseServer } from "@/lib/supabase/server";
 
 import PlayerSearchComponent from "@/components/PlayerComponents/PlayerSearchComponent";

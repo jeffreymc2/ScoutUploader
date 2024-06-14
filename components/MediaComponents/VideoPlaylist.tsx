@@ -215,9 +215,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const handleReady = () => {
     seekToStartTime();
     const currentVideo = getCurrentVideo();
-    if (currentVideo && currentVideo.url.endsWith(".m3u8")) {
-      // Handle HLS video if needed
-    }
+    // if (currentVideo && currentVideo.url.endsWith(".m3u8")) {
+    //   // Handle HLS video if needed
+    // }
   };
 
   const handlePlayPause = () => {
@@ -460,10 +460,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                           evt as unknown as { playedSeconds: number }
                         )
                       }
+                      crossOrigin="anonymous"
                       onEnded={handleNextVideo}
                       autoPlay
                       volume={.5}
-                      muted={false}
+                      preload="auto"
+                      muted={true}
                       blurDataURL={currentVideo.thumbnailUrl}
                       onLoadedData={handleReady}
                       accentColor="#005cb9"

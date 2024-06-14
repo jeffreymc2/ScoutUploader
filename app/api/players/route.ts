@@ -1,3 +1,4 @@
+// pages/api/playername.ts
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -8,7 +9,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ message: 'Missing playerID parameter' }, { status: 400 });
   }
 
-  // Construct the URL for the external API request
   const url = `https://tpa.perfectgame.org/api/ScoutNotes/PlayerProfile?playerID=${encodeURIComponent(playerID)}`;
 
   try {
