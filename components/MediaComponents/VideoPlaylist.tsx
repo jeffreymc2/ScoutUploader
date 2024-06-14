@@ -68,6 +68,32 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const [noResults, setNoResults] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
+  
+    useEffect(() => {
+      const fetchSupabasePlaylist = async () => {
+        if (user) {
+          const { data: playlistData, error } = await supabaseBrowser()
+            .from("playlists")
+            .select("playlist")
+            .eq("user_id", user.id)
+            .eq("player_id", playerId)
+            .single();
+  
+          if (error) {
+            console.error("Error fetching playlist from Supabase:", error);
+          } else if (playlistData) {
+            const playlist = playlistData.playlist as any as Video[];
+            setUserPlaylist(playlist);
+            setHasCustomPlaylist(playlist.length > 0);
+          }
+        }
+      };
+  
+      fetchSupabasePlaylist();
+    
+    fetchInitialData("h", ""); // Fetch highlights without position
+  }, [user, playerId]);
+
   const fetchPlaylist = async (
     page: number,
     type: string,
@@ -123,10 +149,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   };
 
   useEffect(() => {
-    fetchInitialData("h", ""); // Fetch highlights without position
-  }, [playerId]);
-
-  useEffect(() => {
     if (hasCustomPlaylist) {
       setTab("c");
     } else {
@@ -134,32 +156,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     }
   }, [playerId, hasCustomPlaylist]);
 
-  useEffect(() => {
-    const fetchSupabasePlaylist = async () => {
-      if (user) {
-        const { data: playlistData, error } = await supabaseBrowser()
-          .from("playlists")
-          .select("playlist")
-          .eq("user_id", user.id)
-          .eq("player_id", playerId)
-          .single();
-
-        if (error) {
-          console.error("Error fetching playlist from Supabase:", error);
-        } else if (playlistData) {
-          const playlist = playlistData.playlist as any as Video[];
-          setUserPlaylist(playlist);
-          setHasCustomPlaylist(playlist.length > 0);
-        }
-      }
-    };
-
-    fetchSupabasePlaylist();
-  }, [user, playerId]);
+  
 
   const getCurrentPlaylist = () => {
     if (tab === "c") return userPlaylist;
-
+  
     let playlist: Video[] = [];
     if (type === "h") {
       playlist = [
@@ -471,6 +472,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                 <div className="w-full overflow-hidden rounded-lg relative bg-gray-100">
                   <div className="aspect-w-16 aspect-h-9 lg:aspect-none lg:m-0 p-0 lg:p-0 -m-4">
                     <Player
+                      key={`${currentVideo.id}-${currentVideo.url}`} // Add a unique key based on the current video
                       ref={playerRef}
                       src={currentVideo.url}
                       poster={thumbnailUrls[currentVideo.id as string] || ""}
@@ -534,15 +536,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                 </div>
                 <div className="flex flex-col gap-2 max-h-[60vh] lg:max-h-[465px] overflow-y-auto">
                   {currentPlaylist.map((video, index) => (
-                    <div
-                      key={String(video.id)}
-                      className={`flex items-start gap-4 relative cursor-pointer h-24 shadow-md border border-gray-100 rounded-lg ${
-                        index === currentVideoIndex
-                          ? "border border-gray-300 rounded-lg shadow-sm p-0 bg-gray-100"
-                          : ""
-                      }`}
-                      onClick={() => handleThumbnailClick(index)}
-                    >
+                 <div
+                 key={`${video.id}-${video.url}`} // Use the same combination of id and url as the key
+                 className={`flex items-start gap-4 relative cursor-pointer h-24 shadow-md border border-gray-100 rounded-lg ${
+                   index === currentVideoIndex
+                     ? "border border-gray-300 rounded-lg shadow-sm p-0 bg-gray-100"
+                     : ""
+                 }`}
+                 onClick={() => handleThumbnailClick(index)}
+               >
                       {renderThumbnail(video)}
                       {video.title && renderOverlayBadge(video.title)}
                       <div className="absolute bottom-2 left-2 text-white text-xs">
