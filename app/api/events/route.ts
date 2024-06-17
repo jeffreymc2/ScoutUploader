@@ -14,8 +14,6 @@ export async function GET(request: NextRequest) {
     searchQuery || ''
   )}&limit=${encodeURIComponent(limit)}&state=${encodeURIComponent(state)}`;
 
-  // ...rest of your code remains the same
-
   
   try {
     const response = await fetch(url, {

@@ -150,7 +150,7 @@ export async function GET(request: NextRequest) {
       {
         status: 200,
         headers: {
-          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Origin": "https://scouts.perfectgame.org",
           "Access-Control-Allow-Methods": "GET,HEAD,OPTIONS",
           "Access-Control-Allow-Headers": "Content-Type,Origin,Access-Control-Request-Headers,Access-Control-Request-Method",
         },
@@ -171,7 +171,7 @@ export async function OPTIONS() {
     {
       status: 204,
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Origin": "https://scouts.perfectgame.org",
         "Access-Control-Allow-Methods": "GET,HEAD,OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type,Origin,Access-Control-Request-Headers,Access-Control-Request-Method",
       },
