@@ -120,8 +120,8 @@ const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID })
           post_by: user?.id,
           event_id: EventID,
           team_id: TeamID,
-          file_url: `https://d3v9c4w2c7wrqu.cloudfront.net/${file.filePath}`,
-          thumbnail_url: file.isVideo ? `https://d3v9c4w2c7wrqu.cloudfront.net/${file.thumbnailPath}` : null,
+          file_url: `https://d2x49pf2i7371p.cloudfront.net/${file.filePath}`,
+          thumbnail_url: file.isVideo ? `https://d2x49pf2i7371p.cloudfront.net/${file.thumbnailPath}` : null,
           is_video: file.isVideo,
           name: file.name,
         })

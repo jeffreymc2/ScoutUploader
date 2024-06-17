@@ -132,8 +132,8 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         .insert({
           post_by: user?.id,
           player_id,
-          file_url: `https://d3v9c4w2c7wrqu.cloudfront.net/${file.filePath}`,
-          thumbnail_url: file.isVideo ? `https://d3v9c4w2c7wrqu.cloudfront.net/${file.thumbnailPath}` : null,
+          file_url: `https://d2x49pf2i7371p.cloudfront.net/${file.filePath}`,
+          thumbnail_url: file.isVideo ? `https://d2x49pf2i7371p.cloudfront.net/${file.thumbnailPath}` : null,
           is_video: file.isVideo,
           name: file.name,
         })
