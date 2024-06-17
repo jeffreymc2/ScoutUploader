@@ -58,6 +58,7 @@ const nextConfig = {
 		sizeLimit: '500mb', // Adjust the size limit as needed
 	  },
 	},
+	crossOrigin: 'anonymous',
 	
   };
   
