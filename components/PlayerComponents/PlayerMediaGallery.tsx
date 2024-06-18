@@ -25,6 +25,7 @@ import DeletePost from "@/components/UtilityComponents/DeletePost";
 import useUser from "@/app/hook/useUser";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { PiDotsThreeOutlineVerticalLight } from "react-icons/pi";
+import { IoDownloadOutline } from "react-icons/io5";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -163,6 +164,7 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                               fileUrl={post.image || ""}
                               isVideo={post.isVideo}
                               thumbnailUrl={post.thumbnail_url || ""}
+                              start_time={post.start_time || 0}
                             />
                           </DialogTrigger>
                         </Dialog>
@@ -183,8 +185,9 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                     )}
                     <DropdownMenuItem
                       onClick={() => handleDownload(post.file_url || "")}
-                    >
-                      Download
+                    > <span className="text-sm flex items-center cursor-pointer">
+                    <IoDownloadOutline className="text-xl mr-2" /> Download
+                  </span>{" "}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

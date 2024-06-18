@@ -224,6 +224,7 @@ export interface Post {
   mux_asset_id?: string | null;
   mux_playback_id?: string | null;
   isHighlight?: boolean;
+  start_time?: number;
 }
 
 export interface EventData {

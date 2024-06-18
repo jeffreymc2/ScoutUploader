@@ -55,6 +55,20 @@ const nextConfig = {
 			protocol: 'https',
 			hostname: 'd3v9c4w2c7wrqu.cloudfront.net',
 		  },
+		{	protocol: 'https',
+		  	hostname: "web-cdn.blivenyc.com",
+		},
+		{	protocol: 'https',
+		  	hostname: "web-cdn.perfectgame.tv",
+		},
+		{	protocol: 'https',
+		  	hostname: "video.perfectgame.tv",
+		},
+		{	protocol: 'https',
+		  	hostname: "safe-images-cdn.drund.com",
+		},
+
+
 	  ],
 	},
 	api: {

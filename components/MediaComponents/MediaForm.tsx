@@ -20,6 +20,7 @@ interface MediaFormProps {
   fileUrl: string;
   isVideo: boolean;
   thumbnailUrl: string;
+  start_time: number;
 }
 
 export default function MediaForm({
@@ -27,6 +28,7 @@ export default function MediaForm({
   fileUrl,
   thumbnailUrl,
   isVideo,
+  start_time,
 }: MediaFormProps) {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -35,6 +37,8 @@ export default function MediaForm({
     description: "",
     publish_media: false,
     thumbnailUrl: "",
+    fileUrl: "",
+    start_time: 0,
   });
 
   const supabase = supabaseBrowser();
@@ -53,7 +57,9 @@ export default function MediaForm({
         title: data?.title || "",
         description: data?.description || "",
         publish_media: data?.publish_media || false,
+        fileUrl: fileUrl,
         thumbnailUrl: thumbnailUrl,
+        start_time: start_time,
       });
     }
   }, [postId, supabase, thumbnailUrl]);
@@ -106,6 +112,9 @@ export default function MediaForm({
                 className="rounded-lg object-cover w-full h-full"
                 controls={true}
                 blurDataURL={thumbnailUrl}
+                accentColor=""
+                startTime={start_time}
+                playsInline={true}
                 
               />
             </div>

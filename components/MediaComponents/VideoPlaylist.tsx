@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef, useCallback, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import Player from "next-video/player";
 import { VideoSkeleton } from "@/components/ui/skeletons";
 import Image from "next/image";
@@ -34,11 +34,13 @@ interface Video {
   duration?: number;
 }
 
+const baseUrl = process.env.NEXT_PUBLIC_URL;
+
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const [playlists, setPlaylists] = useState<{ [key: string]: Video[] }>({});
   const [supabaseHighlights, setSupabaseHighlights] = useState<Video[]>([]);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
-  const [tab, setTab] = useState<"h" | "a" | "p" | "c">("h");
+  const [tab, setTab] = useState<"s" | "h" | "a" | "p" | "c">("s");
   const [type, setType] = useState<
     | "h"
     | "a"
@@ -67,32 +69,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [noResults, setNoResults] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showcaseVideos, setShowcaseVideos] = useState<Video[]>([]);
 
-  
-    useEffect(() => {
-      const fetchSupabasePlaylist = async () => {
-        if (user) {
-          const { data: playlistData, error } = await supabaseBrowser()
-            .from("playlists")
-            .select("playlist")
-            .eq("user_id", user.id)
-            .eq("player_id", playerId)
-            .single();
-  
-          if (error) {
-            console.error("Error fetching playlist from Supabase:", error);
-          } else if (playlistData) {
-            const playlist = playlistData.playlist as any as Video[];
-            setUserPlaylist(playlist);
-            setHasCustomPlaylist(playlist.length > 0);
-          }
-        }
-      };
-  
-      fetchSupabasePlaylist();
-    
-    fetchInitialData("h", ""); // Fetch highlights without position
-  }, [user, playerId]);
+  const debounce = (func: Function, wait: number) => {
+    let timeout: NodeJS.Timeout;
+    return (...args: any[]) => {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+  };
 
   const fetchPlaylist = async (
     page: number,
@@ -101,7 +86,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     reset = false
   ) => {
     try {
-      let url = `/api/playerhighlights?playerID=${playerId}&page=${page}&type=${type}&limit=20`;
+      let url = `${baseUrl}/api/playerhighlights?playerID=${playerId}&page=${page}&type=${type}&limit=20`;
       if (position) {
         url += `&position=${position}`;
       }
@@ -148,25 +133,77 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     await fetchPlaylist(1, type, position, true);
   };
 
-  useEffect(() => {
-    if (hasCustomPlaylist) {
-      setTab("c");
-    } else {
-      fetchInitialData("h", ""); // Fetch highlights without position
+  const fetchSupabasePlaylist = async (): Promise<Video[]> => {
+    if (!user) {
+      console.warn("User is not authenticated.");
+      return [];
     }
-  }, [playerId, hasCustomPlaylist]);
 
-  
+    try {
+      const { data: playlistData, error } = await supabaseBrowser()
+        .from("playlists")
+        .select("playlist")
+        .eq("user_id", user.id)
+        .eq("player_id", playerId)
+        .single();
+
+      if (error) {
+        console.error("Error fetching playlist from Supabase:", error);
+        return [];
+      }
+
+      if (!playlistData || !playlistData.playlist) {
+        console.warn("No playlist found for the given user and player ID.");
+        return [];
+      }
+
+      return playlistData.playlist as unknown as Video[];
+    } catch (err) {
+      console.error("Unexpected error fetching playlist from Supabase:", err);
+      return [];
+    }
+  };
+
+  const fetchShowcaseVideos = async (): Promise<Video[]> => {
+    try {
+      const response = await fetch(`${baseUrl}/api/blive/?playerID=${playerId}`);
+
+      if (!response.ok) {
+        throw new Error(`Error fetching showcase videos: ${response.statusText}`);
+      }
+
+      const videos: Video[] = await response.json();
+      return videos;
+    } catch (error) {
+      console.error("Error fetching showcase videos:", error);
+      return [];
+    }
+  };
+
+  useEffect(() => {
+    const initializeData = async () => {
+      const supabasePlaylist = await fetchSupabasePlaylist();
+      setUserPlaylist(supabasePlaylist);
+      setHasCustomPlaylist(supabasePlaylist.length > 0);
+
+      const showcaseVideos = await fetchShowcaseVideos();
+      setShowcaseVideos(showcaseVideos);
+      await fetchInitialData("h", "");
+    };
+
+    initializeData();
+  }, [playerId, user]);
 
   const getCurrentPlaylist = () => {
     if (tab === "c") return userPlaylist;
-  
+    if (tab === "s") return showcaseVideos;
+
     let playlist: Video[] = [];
     if (type === "h") {
       playlist = [
         ...new Map(
           [...supabaseHighlights, ...(playlists[type] || [])].map((video) => [
-            `${video.id}-${video.url}`, // Use a combination of id and url as the unique identifier
+            `${video.id}-${video.url}`,
             video,
           ])
         ).values(),
@@ -175,7 +212,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
       playlist = [
         ...new Map(
           [...(playlists[type + position] || [])].map((video) => [
-            `${video.id}-${video.url}`, // Use a combination of id and url as the unique identifier
+            `${video.id}-${video.url}`,
             video,
           ])
         ).values(),
@@ -184,35 +221,32 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     return playlist;
   };
 
-
-  const loadMoreVideos = async () => {
+  const loadMoreVideos = debounce(async () => {
     await fetchPlaylist(page, type, type === "h" ? "" : position);
-  };
+  }, 200);
 
   const handleProgress = ({ playedSeconds }: { playedSeconds: number }) => {
     const currentVideo = getCurrentVideo();
     if (
       currentVideo?.duration &&
       playedSeconds >= currentVideo.duration &&
-      !isTransitioning // Ensure we are not already transitioning
+      !isTransitioning
     ) {
-      setIsTransitioning(true); // Set transitioning state
+      setIsTransitioning(true);
       handleNextVideo();
     }
   };
 
-  // Reset the transitioning state when moving to the next video
   const handleNextVideo = async () => {
     setCurrentVideoIndex(
       (prevIndex) => (prevIndex + 1) % getCurrentPlaylist().length
     );
-    setIsTransitioning(false); // Reset transitioning state
+    setIsTransitioning(false);
   };
 
   const handleThumbnailClick = (index: number) => {
     setCurrentVideoIndex(index);
   };
-
 
   const handlePlayPause = () => {
     if (isPlaying) {
@@ -282,7 +316,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     );
   };
 
-
   const renderOverlayBadge = (title?: string) => {
     return (
       <div className="absolute top-2 left-2">
@@ -299,7 +332,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     );
   };
 
-  const handleTabChange = async (value: "h" | "a" | "p" | "c") => {
+  const handleTabChange = async (value: "s" | "a" | "p" | "c" | "h") => {
     setTab(value);
     if (value === "h") {
       setType("h");
@@ -313,6 +346,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
       setType("a");
       setPosition("p");
       await fetchInitialData("a", "p");
+    } else if (value === "s") {
+      setCurrentVideoIndex(0);
     }
     setCurrentVideoIndex(0);
   };
@@ -320,7 +355,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const handleTypeChange = async (value: string) => {
     setType(
       value as
-      | "h"
+        | "h"
         | "a"
         | "l"
         | "s"
@@ -332,7 +367,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         | "so"
         | "dp,so"
         | "l,s,d,t,hr,iphr"
-       
     );
     setCurrentVideoIndex(0);
     await fetchInitialData(value, position);
@@ -365,7 +399,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
           </SelectItem>
         </>
       );
-      
     } else if (position === "p") {
       return (
         <>
@@ -384,7 +417,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     if (position === "") {
       return (
         <>
-           <SelectItem value="h">
+          <SelectItem value="h">
             <span>All</span>
           </SelectItem>
           <SelectItem value="h,s">
@@ -411,38 +444,26 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     return null;
   };
 
-   // Set up a timer to move to the next video after the current video's duration
-   useEffect(() => {
-    const currentVideo = getCurrentVideo();
-    if (currentVideo && isPlaying) {
-      const duration = currentVideo.duration || playerRef.current?.duration;
-      if (duration) {
-        const timer = setTimeout(() => {
-          handleNextVideo();
-        }, duration * 1000);
-
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [currentVideoIndex, isPlaying]);
-
   return (
     <div className="p-4 lg:p-4">
       <Tabs
-        defaultValue="h"
+        defaultValue="s"
         value={tab}
         onValueChange={(value: string) =>
-          handleTabChange(value as "h" | "a" | "p" | "c")
+          handleTabChange(value as "s" | "h" | "a" | "p" | "c")
         }
       >
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
-        <TabsList className="w-full lg:w-auto">
-            {hasCustomPlaylist && <TabsTrigger value="c">Featured Playlist</TabsTrigger>}
+          <TabsList className="w-full lg:w-auto">
+            {hasCustomPlaylist && (
+              <TabsTrigger value="c">Featured Playlist</TabsTrigger>
+            )}
+            <TabsTrigger value="s">Showcase</TabsTrigger>
             <TabsTrigger value="h">Highlights</TabsTrigger>
             <TabsTrigger value="a">Full At-Bats</TabsTrigger>
             <TabsTrigger value="p">Pitching</TabsTrigger>
           </TabsList>
-          {tab !== "c" && (
+          {tab !== "c" && tab !== "s" && (
             <div className="mt-4 lg:mt-0 lg:ml-4">
               <Select onValueChange={handleTypeChange} value={type}>
                 <SelectTrigger className="w-full lg:w-[180px]">
@@ -457,10 +478,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
           {isLoading ? (
             <VideoSkeleton isLoading={true} noResults={false} />
           ) : currentPlaylist.length === 0 ? (
-            <VideoSkeleton
-              noResults={true}
-              isLoading={false}
-            />
+            <VideoSkeleton noResults={true} isLoading={false} />
           ) : (
             <InfiniteScroll
               dataLength={currentPlaylist.length}
@@ -484,7 +502,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                       }
                       onEnded={handleNextVideo}
                       autoPlay
-                      volume={.5}
+                      volume={0.5}
                       muted={true}
                       blurDataURL={currentVideo.thumbnailUrl}
                       // onLoadedData={handleReady}
@@ -534,15 +552,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                 </div>
                 <div className="flex flex-col gap-2 max-h-[60vh] lg:max-h-[465px] overflow-y-auto">
                   {currentPlaylist.map((video, index) => (
-                 <div
-                 key={`${video.id}-${video.url}`} // Use the same combination of id and url as the key
-                 className={`flex items-start gap-4 relative cursor-pointer h-24 shadow-md border border-gray-100 rounded-lg ${
-                   index === currentVideoIndex
-                     ? "border border-gray-300 rounded-lg shadow-sm p-0 bg-gray-100"
-                     : ""
-                 }`}
-                 onClick={() => handleThumbnailClick(index)}
-               >
+                    <div
+                      key={`${video.id}-${video.url}`} // Use the same combination of id and url as the key
+                      className={`flex items-start gap-4 relative cursor-pointer h-24 shadow-md border border-gray-100 rounded-lg ${
+                        index === currentVideoIndex
+                          ? "border border-gray-300 rounded-lg shadow-sm p-0 bg-gray-100"
+                          : ""
+                      }`}
+                      onClick={() => handleThumbnailClick(index)}
+                    >
                       {renderThumbnail(video)}
                       {video.title && renderOverlayBadge(video.title)}
                       <div className="absolute bottom-2 left-2 text-white text-xs">
