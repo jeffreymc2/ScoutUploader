@@ -509,11 +509,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                       src={currentVideo.url}
                       poster={thumbnailUrls[currentVideo.id as string] || ""}
                       playsInline={true}
-                      onProgress={(evt: ProgressEvent<EventTarget>) =>
-                        handleProgress(
-                          evt as unknown as { playedSeconds: number }
-                        )
-                      }
+                      // onProgress={(evt: ProgressEvent<EventTarget>) =>
+                      //   handleProgress(
+                      //     evt as unknown as { playedSeconds: number }
+                      //   )
+                      // }
                       onEnded={handleNextVideo}
                       autoPlay
                       volume={0.5}
@@ -523,6 +523,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                       accentColor="#005cb9"
                       className="w-full h-full object-fill"
                       startTime={currentVideo?.start_time || 0}
+                      defaultDuration={currentVideo?.duration || 0}
                     />
                   </div>
                   {/* Custom Controls */}
