@@ -79,6 +79,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     };
   };
 
+  // Fetch highlights from the Drund API
   const fetchPlaylist = async (
     page: number,
     type: string,
@@ -124,6 +125,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     }
   };
 
+  // Set initial data for the playlist
   const fetchInitialData = async (type: string, position: string = "") => {
     setIsLoading(true);
     setNoResults(false);
@@ -133,6 +135,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     await fetchPlaylist(1, type, position, true);
   };
 
+  // Fetch highlights from the Supabase API
   const fetchSupabasePlaylist = async (): Promise<Video[]> => {
     if (!user) {
       console.warn("User is not authenticated.");
@@ -164,6 +167,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     }
   };
 
+  // Fetch showcase videos from the Blive API
   const fetchShowcaseVideos = async (): Promise<Video[]> => {
     try {
       const response = await fetch(
@@ -242,20 +246,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 
   const handleProgress = ({ playedSeconds }: { playedSeconds: number }) => {
     const currentVideo = getCurrentVideo();
-    if (
-      currentVideo?.duration &&
-      playedSeconds >= currentVideo.duration &&
-      !isTransitioning
-    ) {
+    if (currentVideo?.duration && playedSeconds >= currentVideo.duration && !isTransitioning) {
       setIsTransitioning(true);
       handleNextVideo();
     }
   };
 
   const handleNextVideo = async () => {
-    setCurrentVideoIndex(
-      (prevIndex) => (prevIndex + 1) % getCurrentPlaylist().length
-    );
+    setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % getCurrentPlaylist().length);
     setIsTransitioning(false);
   };
 
