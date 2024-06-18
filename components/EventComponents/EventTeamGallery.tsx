@@ -25,6 +25,7 @@ import DeletePost from "@/components/UtilityComponents/DeletePost";
 import useUser from "@/app/hook/useUser";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { PiDotsThreeOutlineVerticalLight } from "react-icons/pi";
+import { IoDownloadOutline } from "react-icons/io5";
 
 interface EventTeamGalleryProps {
   posts: Post[];
@@ -103,23 +104,23 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
               className="bg-white rounded-lg shadow-md overflow-hidden"
             >
               <SupabaseMediaCard
-              file={{
-                id: post.id || "",
-                created_at: "",
-                profile: { display_name: "" },
-                name: post.image || "",
-                isVideo: post.isVideo,
-                url: post.file_url || "",
-                title: post.title || "",
-                description: post.description || "",
-                thumbnail: post.thumbnail_url || "",
-                file_url: post.file_url || "",
-                post_by: post.post_by,
-                player_id: post.player_id,
-                team_id: post.team_id,
-                image: post.image || "",
-              }}
-            />
+                file={{
+                  id: post.id || "",
+                  created_at: "",
+                  profile: { display_name: "" },
+                  name: post.image || "",
+                  isVideo: post.isVideo,
+                  url: post.file_url || "",
+                  title: post.title || "",
+                  description: post.description || "",
+                  thumbnail: post.thumbnail_url || "",
+                  file_url: post.file_url || "",
+                  post_by: post.post_by,
+                  player_id: post.player_id,
+                  team_id: post.team_id,
+                  image: post.image || "",
+                }}
+              />
               <div className="p-4">
                 <div className="flex items-center justify-between mb-0">
                   <div className="px-0 mb-2">
@@ -148,6 +149,7 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                                 fileUrl={post.file_url || ""}
                                 isVideo={post.isVideo}
                                 thumbnailUrl={post.thumbnail_url || ""}
+                                start_time={post.start_time || 0}
                               />
                             </DialogTrigger>
                           </Dialog>
@@ -165,7 +167,10 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                       <DropdownMenuItem
                         onClick={() => handleDownload(post.file_url || "")}
                       >
-                        Download
+                        <span className="text-sm flex items-center cursor-pointer">
+                          <IoDownloadOutline className="text-xl mr-2" />{" "}
+                          Download
+                        </span>{" "}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
