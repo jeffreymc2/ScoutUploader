@@ -259,6 +259,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 
   const handleThumbnailClick = (index: number) => {
     setCurrentVideoIndex(index);
+    setIsTransitioning(false);  // Reset the transition flag when a new video is clicked
   };
 
   const handlePlayPause = () => {
