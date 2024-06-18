@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Player from "next-video/player";
 import { VideoSkeleton } from "@/components/ui/skeletons";
 import Image from "next/image";
@@ -509,21 +509,19 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                       src={currentVideo.url}
                       poster={thumbnailUrls[currentVideo.id as string] || ""}
                       playsInline={true}
-                      // onProgress={(evt: ProgressEvent<EventTarget>) =>
-                      //   handleProgress(
-                      //     evt as unknown as { playedSeconds: number }
-                      //   )
-                      // }
+                      onProgress={(evt: ProgressEvent<EventTarget>) =>
+                        handleProgress(
+                          evt as unknown as { playedSeconds: number }
+                        )
+                      }
                       onEnded={handleNextVideo}
                       autoPlay
                       volume={0.5}
                       muted={true}
                       blurDataURL={currentVideo.thumbnailUrl}
-                      // onLoadedData={handleReady}
                       accentColor="#005cb9"
                       className="w-full h-full object-fill"
                       startTime={currentVideo?.start_time || 0}
-                      defaultDuration={currentVideo?.duration || 0}
                     />
                   </div>
                   {/* Custom Controls */}
