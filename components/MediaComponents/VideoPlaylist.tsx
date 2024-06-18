@@ -166,10 +166,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 
   const fetchShowcaseVideos = async (): Promise<Video[]> => {
     try {
-      const response = await fetch(`${baseUrl}/api/blive/?playerID=${playerId}`);
+      const response = await fetch(
+        `${baseUrl}/api/blive/?playerID=${playerId}`
+      );
 
       if (!response.ok) {
-        throw new Error(`Error fetching showcase videos: ${response.statusText}`);
+        throw new Error(
+          `Error fetching showcase videos: ${response.statusText}`
+        );
       }
 
       const videos: Video[] = await response.json();
@@ -188,7 +192,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 
       const showcaseVideos = await fetchShowcaseVideos();
       setShowcaseVideos(showcaseVideos);
-      await fetchInitialData("h", "");
+
+      let initialTab: "a" | "c" | "h" | "p" | "s" = "h"; // Default to highlights if no other options are available
+
+      if (supabasePlaylist.length > 0) {
+        initialTab = "c";
+      } else if (showcaseVideos.length > 0) {
+        initialTab = "s";
+      }
+
+      setTab(initialTab); // Set the determined initial tab
+
+      await fetchInitialData(initialTab === "h" ? "h" : initialTab, "");
     };
 
     initializeData();
@@ -447,7 +462,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   return (
     <div className="p-4 lg:p-4">
       <Tabs
-        defaultValue="s"
+        defaultValue={tab}
         value={tab}
         onValueChange={(value: string) =>
           handleTabChange(value as "s" | "h" | "a" | "p" | "c")
