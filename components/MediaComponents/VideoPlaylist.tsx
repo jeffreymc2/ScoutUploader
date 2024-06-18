@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import Player from "next-video/player";
 import { VideoSkeleton } from "@/components/ui/skeletons";
 import Image from "next/image";
@@ -246,20 +246,25 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 
   const handleProgress = ({ playedSeconds }: { playedSeconds: number }) => {
     const currentVideo = getCurrentVideo();
-    if (currentVideo?.duration && playedSeconds >= currentVideo.duration && !isTransitioning) {
+    if (
+      currentVideo?.duration &&
+      playedSeconds >= currentVideo.duration &&
+      !isTransitioning
+    ) {
       setIsTransitioning(true);
       handleNextVideo();
     }
   };
 
   const handleNextVideo = async () => {
-    setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % getCurrentPlaylist().length);
+    setCurrentVideoIndex(
+      (prevIndex) => (prevIndex + 1) % getCurrentPlaylist().length
+    );
     setIsTransitioning(false);
   };
 
   const handleThumbnailClick = (index: number) => {
     setCurrentVideoIndex(index);
-    setIsTransitioning(false);  // Reset the transition flag when a new video is clicked
   };
 
   const handlePlayPause = () => {
@@ -519,6 +524,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                       volume={0.5}
                       muted={true}
                       blurDataURL={currentVideo.thumbnailUrl}
+                      // onLoadedData={handleReady}
                       accentColor="#005cb9"
                       className="w-full h-full object-fill"
                       startTime={currentVideo?.start_time || 0}
