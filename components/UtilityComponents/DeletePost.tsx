@@ -39,6 +39,11 @@ const DeletePost: React.FC<DeletePostProps> = ({ postId, post_by, filePath }) =>
   };
 
   const handleDelete = async () => {
+    if (!filePath || filePath.includes("undefined")) {
+      toast.error("Invalid file path");
+      return;
+    }
+
     toast.info("Deleting post...");
     try {
       // Delete the post from the 'posts' table in Supabase
@@ -110,4 +115,3 @@ const DeletePost: React.FC<DeletePostProps> = ({ postId, post_by, filePath }) =>
 };
 
 export default DeletePost;
-
