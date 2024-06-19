@@ -1,11 +1,19 @@
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
+import {
+  ThumbsUpIcon,
+  StarIcon,
+  RewindIcon,
+  PlayIcon,
+  FastForwardIcon,
+  Pause,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 // Loading animation
 const shimmer =
-  'before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent';
+  "before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-white/60 before:to-transparent";
 
 export function CardSkeleton() {
   return (
@@ -23,8 +31,6 @@ export function CardSkeleton() {
   );
 }
 
-
-
 export function CardsSkeleton() {
   return (
     <>
@@ -36,50 +42,49 @@ export function CardsSkeleton() {
   );
 }
 
-
 // Skeleton placeholder for the player card
 const PlayerCardSkeleton = () => (
-    <div className="animate-pulse flex flex-row bg-white shadow-md rounded-lg overflow-hidden">
-      <div className="w-1/3 md:w-1/2 bg-gray-300 h-full"></div>
-      <div className="w-2/3 md:w-1/2 p-4 flex flex-col justify-between space-y-4">
-        <div>
-          <div className="h-6 bg-gray-300 rounded-md w-3/4"></div>
-          <div className="h-4 bg-gray-300 rounded-md w-1/2 mt-2"></div>
-          <div className="h-4 bg-gray-300 rounded-md w-1/3 mt-2"></div>
-          <div className="h-4 bg-gray-300 rounded-md w-1/4 mt-2"></div>
-        </div>
-        <div className="mt-4 md:mt-0 h-8 bg-gray-300 rounded-md"></div>
+  <div className="animate-pulse flex flex-row bg-white shadow-md rounded-lg overflow-hidden">
+    <div className="w-1/3 md:w-1/2 bg-gray-300 h-full"></div>
+    <div className="w-2/3 md:w-1/2 p-4 flex flex-col justify-between space-y-4">
+      <div>
+        <div className="h-6 bg-gray-300 rounded-md w-3/4"></div>
+        <div className="h-4 bg-gray-300 rounded-md w-1/2 mt-2"></div>
+        <div className="h-4 bg-gray-300 rounded-md w-1/3 mt-2"></div>
+        <div className="h-4 bg-gray-300 rounded-md w-1/4 mt-2"></div>
+      </div>
+      <div className="mt-4 md:mt-0 h-8 bg-gray-300 rounded-md"></div>
+    </div>
+  </div>
+);
+
+export function PlayerSearchByNameSkeleton() {
+  return (
+    <div className="mt-5">
+      <div className="flex items-center relative">
+        <Input
+          type="text"
+          placeholder="Search by player name"
+          className="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md text-base"
+          disabled // Disable input in the skeleton
+        />
+        <Button
+          className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md"
+          disabled // Disable button in the skeleton
+        >
+          Search
+        </Button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+        {/* Display several skeleton cards to mimic loading state */}
+        <PlayerCardSkeleton />
+        <PlayerCardSkeleton />
+        <PlayerCardSkeleton />
       </div>
     </div>
   );
-  
-  export function PlayerSearchByNameSkeleton() {
-    return (
-      <div className="mt-5">
-        <div className="flex items-center relative">
-          <Input
-            type="text"
-            placeholder="Search by player name"
-            className="w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md text-base"
-            disabled // Disable input in the skeleton
-          />
-          <Button
-            className="px-4 py-2 ml-2 font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md"
-            disabled // Disable button in the skeleton
-          >
-            Search
-          </Button>
-        </div>
-      
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
-          {/* Display several skeleton cards to mimic loading state */}
-          <PlayerCardSkeleton />
-          <PlayerCardSkeleton />
-          <PlayerCardSkeleton />
-        </div>
-      </div>
-    );
-  }
+}
 
 export function RevenueChartSkeleton() {
   return (
@@ -215,8 +220,6 @@ export function InvoicesMobileSkeleton() {
   );
 }
 
-
-
 export function InvoicesTableSkeleton() {
   return (
     <div className="mt-6 flow-root">
@@ -277,60 +280,89 @@ interface VideoSkeletonProps {
   message?: string;
 }
 
-
-
-export function VideoSkeleton({ isLoading, noResults }: { isLoading: boolean; noResults: boolean }) {
+export function VideoSkeleton({
+  isLoading,
+  noResults,
+}: {
+  isLoading: boolean;
+  noResults: boolean;
+}) {
   const [svgContent, setSvgContent] = useState<string>("");
 
   useEffect(() => {
-    fetch("https://scoutuploads.s3.amazonaws.com/next-video/dkPlus_vertical_primary_inverse+(3).svg")
+    fetch(
+      "https://scoutuploads.s3.amazonaws.com/next-video/dkPlus_vertical_primary_inverse+(3).svg"
+    )
       .then((response) => response.text())
       .then((data) => setSvgContent(data));
   }, []);
 
   return (
-    
     <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4 ">
-     
-      <div className="bg-gray-200 rounded-lg p-4">
-   
-        <div className=" h-64 lg:h-[415px] rounded-lg relative bg-gradient-to-b from-gray-600 to-black rounded-lg ">
-              {svgContent && (
+      <div className="w-full overflow-hidden rounded-lg relative bg-gray-100">
+        <div className="sm:h-[415px] rounded-lg relative bg-gradient-to-b from-gray-600 to-black w-full">
+          {svgContent && (
             <motion.div
               className="w-full h-full"
               dangerouslySetInnerHTML={{ __html: svgContent }}
-              animate={{ scale: [.6, .7, .6]}}
+              animate={{ scale: [0.6, 0.7, 0.6] }}
               transition={{ duration: 4, repeat: Infinity }}
             />
           )}
         </div>
-        <div className="mt-4 flex justify-between">
-          <div className="skeleton-play-button h-10 w-10 bg-gray-300 rounded-full "></div>
-          <div className="skeleton-progress-bar flex-grow h-2 bg-gradient-to-b from-gray-800 to-black rounded-full overflow-hidden">
-            <div className="skeleton-progress h-full bg-gray-600 w-full animate-progress">
-                </div>
+
+        {/* Custom Controls */}
+        <div className="bg-gray-100 p-0 px-2 lg:px-0 lg:p-2 mt-0 flex items-center justify-between">
+          <div className="flex items-center gap-2 pl-2">
+            <ThumbsUpIcon className="text-xs h-4 w-4" />
+            <StarIcon className="text-xs h-4 w-4" />
           </div>
-          <div className="flex items-center">
-            <div className="skeleton-volume-icon h-6 w-6 bg-gray-300 rounded-full animate-pulse mr-2"></div>
-            <div className="skeleton-volume-bar h-2 w-16 bg-gray-400 rounded-full overflow-hidden">
-              <div className="skeleton-volume-progress h-full bg-gray-600 w-full animate-progress"></div>
-            </div>
+
+          <div className="flex items-center gap-2 justify-center flex-grow">
+            <Button
+              variant="ghost"
+              className="flex items-center justify-center p-1"
+            >
+              <RewindIcon className="mr-1 text-xs w-4 h-4" />5 s
+            </Button>
+            <Button
+              variant="ghost"
+              className="flex items-center justify-center p-1"
+            >
+              <Pause className="mr-1 text-xs w-4 h-4" /> Pause
+            </Button>
+            <Button
+              variant="ghost"
+              className="flex items-center justify-center p-1"
+            >
+              <FastForwardIcon className="mr-1 text-xs w-4 h-4" />5 s
+            </Button>
+          </div>
+
+          <div className="flex items-center pr-2">
+            <div className="text-center text-xs">0:00</div>
           </div>
         </div>
       </div>
+
       <div className="bg-gray-300 rounded-lg p-4">
         {isLoading && (
           <>
             <div className="flex flex-col gap-4">
               {[...Array(4)].map((_, index) => (
-                <div key={index} className="skeleton-playlist-item h-24 bg-gray-900 rounded-lg animate-pulse"></div>
+                <div
+                  key={index}
+                  className="skeleton-playlist-item h-20 bg-gray-900 rounded-lg animate-pulse"
+                ></div>
               ))}
             </div>
             <div className="text-center text-gray-900 mt-4">Loading...</div>
           </>
         )}
         {noResults && (
-          <div className="text-center text-gray-900 mt-4">No video found. Switch tabs or adjust filter.</div>
+          <div className="text-center text-gray-900 mt-4">
+            No video found. Switch tabs or adjust filter.
+          </div>
         )}
       </div>
     </div>

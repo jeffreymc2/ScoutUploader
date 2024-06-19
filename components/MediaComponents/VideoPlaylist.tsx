@@ -7,7 +7,14 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Button } from "@/components/ui/button";
-import { PlayIcon, PauseIcon, RewindIcon, FastForwardIcon } from "lucide-react";
+import {
+  PlayIcon,
+  PauseIcon,
+  RewindIcon,
+  FastForwardIcon,
+  StarIcon,
+  ThumbsUpIcon,
+} from "lucide-react";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import useUser from "@/app/hook/useUser";
 import {
@@ -40,6 +47,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const [playlists, setPlaylists] = useState<{ [key: string]: Video[] }>({});
   const [supabaseHighlights, setSupabaseHighlights] = useState<Video[]>([]);
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
   const [tab, setTab] = useState<"s" | "h" | "a" | "p" | "c">("s");
   const [type, setType] = useState<
     | "h"
@@ -104,13 +114,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 
       const data = await response.json();
       const videos = data.highlights || [];
+      console.log("Fetched videos:", videos);
 
-      setPlaylists((prev) => ({
-        ...prev,
-        [type + position]: reset
-          ? videos
-          : [...(prev[type + position] || []), ...videos],
-      }));
+      setPlaylists((prev) => {
+        const updatedPlaylists = {
+          ...prev,
+          [type + position]: reset
+            ? videos
+            : [...(prev[type + position] || []), ...videos],
+        };
+        console.log("Updated playlists:", updatedPlaylists);
+        return updatedPlaylists;
+      });
 
       setHasMore(data.next !== undefined);
       setNoResults(videos.length === 0);
@@ -209,6 +224,31 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     initializeData();
   }, [playerId, user]);
 
+  // ...
+
+  useEffect(() => {
+    if (hasCustomPlaylist) {
+      setTab("c");
+    } else {
+      fetchInitialData("h", ""); // Fetch highlights without position
+    }
+  }, [playerId, hasCustomPlaylist]);
+
+  // Add the new useEffect hook here
+  useEffect(() => {
+    const currentVideo = getCurrentVideo();
+    if (currentVideo && isPlaying) {
+      const duration = currentVideo?.duration || playerRef.current?.duration;
+      if (duration) {
+        const timer = setTimeout(() => {
+          handleNextVideo();
+        }, duration * 1000);
+
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [currentVideoIndex, isPlaying]);
+
   const getCurrentPlaylist = () => {
     if (tab === "c") return userPlaylist;
     if (tab === "s") return showcaseVideos;
@@ -233,6 +273,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         ).values(),
       ];
     }
+    console.log("Current playlist:", playlist);
+
     return playlist;
   };
 
@@ -242,6 +284,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 
   const handleProgress = ({ playedSeconds }: { playedSeconds: number }) => {
     const currentVideo = getCurrentVideo();
+    console.log(
+      "Progress:",
+      currentVideo?.duration,
+      playedSeconds,
+      isTransitioning
+    );
+
+    if (currentVideo?.duration === undefined) {
+      // Skip the transition logic if duration is undefined
+      return;
+    }
+
     if (
       currentVideo?.duration &&
       playedSeconds >= currentVideo.duration &&
@@ -253,10 +307,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   };
 
   const handleNextVideo = async () => {
+    console.log("Next video triggered");
+
     setCurrentVideoIndex(
       (prevIndex) => (prevIndex + 1) % getCurrentPlaylist().length
     );
-    setIsTransitioning(false);
+    setTimeout(() => {
+      setIsTransitioning(false);
+    }, 10); // Adjust the delay as needed
   };
 
   const handleThumbnailClick = (index: number) => {
@@ -281,8 +339,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const getCurrentVideo = () => {
     return getCurrentPlaylist()[currentVideoIndex];
   };
-
-  const formatDuration = (duration: number) => {
+  const formatDuration = (duration: number | undefined) => {
+    if (!duration || duration < 0) return "0:00";
     const minutes = Math.floor(duration / 60);
     const seconds = Math.floor(duration % 60);
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
@@ -306,6 +364,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
       ...prevUrls,
       [videoId]: url,
     }));
+  };
+
+  const handleLike = () => {
+    setIsLiked((prevState) => !prevState);
+    // Add logic to update the like status on the backend or perform any other actions
+  };
+
+  const handleFavorite = () => {
+    setIsFavorite((prevState) => !prevState);
+    // Add logic to update the favorite status on the backend or perform any other actions
   };
 
   const renderThumbnail = (video: Video) => {
@@ -503,7 +571,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
             >
               <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-4 ">
                 <div className="w-full overflow-hidden rounded-lg relative bg-gray-100">
-                  <div className="aspect-w-16 aspect-h-9 lg:aspect-none lg:m-0 p-0 lg:p-0 -m-4">
+                  <div className="aspect-w-16 aspect-h-9 lg:aspect-none lg:m-0 p-0 lg:p-0 sm:h-[415px]">
                     <Player
                       key={`${currentVideo.id}-${currentVideo.url}`} // Add a unique key based on the current video
                       ref={playerRef}
@@ -518,45 +586,71 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                       onEnded={handleNextVideo}
                       autoPlay
                       volume={0.5}
+                      onTimeUpdate={(evt: Event) =>
+                        setCurrentTime(
+                          (evt.target as HTMLVideoElement).currentTime
+                        )
+                      } // Update this line
                       muted={true}
                       blurDataURL={currentVideo.thumbnailUrl}
-                      // onLoadedData={handleReady}
                       accentColor="#005cb9"
                       className="w-full h-full object-fill"
                       startTime={currentVideo?.start_time || 0}
                     />
                   </div>
                   {/* Custom Controls */}
-                  <div className="flex justify-center bg-gray-100 lg:p-2 pt-4 mt-0">
-                    <div className="grid grid-cols-3 items-center gap-4">
+                  <div className="bg-gray-100 p-0 px-2 lg:px-0 lg:p-2 mt-0 flex items-center justify-between">
+                    <div className="flex items-center gap-2 pl-2">
+                      <ThumbsUpIcon
+                        onClick={handleLike}
+                        className={`text-xs h-4 w-4 ${
+                          isLiked ? "text-blue-500" : ""
+                        }`}
+                      />
+                      <StarIcon
+                        onClick={handleFavorite}
+                        className={`text-xs h-4 w-4 ${
+                          isFavorite ? "text-blue-500" : ""
+                        }`}
+                      />
+                    </div>
+
+                    <div className="flex items-center gap-2 justify-center flex-grow">
                       <Button
                         variant="ghost"
                         onClick={() => handleSeek(-5)}
-                        className="w-28"
+                        className="flex items-center justify-center p-1"
                       >
-                        <RewindIcon className="mr-1" />5 s
+                        <RewindIcon className="mr-1 text-xs w-4 h-4" />5 s
                       </Button>
                       <Button
                         variant="ghost"
                         onClick={handlePlayPause}
-                        className="w-28"
+                        className="flex items-center justify-center p-1"
                       >
                         {isPlaying ? (
-                          <PauseIcon className="mr-1" />
+                          <PauseIcon className="mr-1 text-xs w-4 h-4" />
                         ) : (
-                          <PlayIcon className="mr-1" />
+                          <PlayIcon className="mr-1 text-xs w-4 h-4" />
                         )}
                         {isPlaying ? "Pause" : "Play"}
                       </Button>
                       <Button
                         variant="ghost"
                         onClick={() => handleSeek(5)}
-                        className="w-28"
+                        className="flex items-center justify-center p-1"
                       >
-                        <FastForwardIcon className="mr-1" />5 s
+                        <FastForwardIcon className="mr-1 text-xs w-4 h-4" />5 s
                       </Button>
                     </div>
+
+                    <div className="flex items-center pr-2">
+                      <div className="text-center text-xs">
+                        {formatDuration(currentVideo?.duration || 0)}
+                      </div>
+                    </div>
                   </div>
+
                   {currentVideo.title && (
                     <div className="absolute text-white inset-x-0 top-0 p-4 w-full overflow-hidden rounded-lg bg-gradient-to-b from-black/50 to-transparent">
                       <div className="line-clamp-1">
