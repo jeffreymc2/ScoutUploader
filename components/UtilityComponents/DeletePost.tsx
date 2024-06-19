@@ -6,7 +6,7 @@ import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { getUserData } from "@/lib/useUser";
+import {getUserData} from "@/lib/useUser";
 
 import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import {
@@ -27,19 +27,9 @@ interface DeletePostProps {
   filePath: string;
 }
 
-const DeletePost: React.FC<DeletePostProps> = ({ postId, post_by, filePath }) => {
-  const [user, setUser] = useState<{ id: string } | null>(null);
+const DeletePost: React.FC<DeletePostProps> = async ({ postId, post_by, filePath }) => {
   const router = useRouter();
   const supabase = supabaseBrowser();
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const userData = await getUserData();
-      setUser(userData);
-    };
-
-    fetchUser();
-  }, []);
 
   const getS3KeyFromCloudFrontURL = (url: string) => {
     const cloudFrontDomain = process.env.NEXT_PUBLIC_CLOUDFRONT_DOMAIN; // Example: "https://d123.cloudfront.net/"
@@ -95,7 +85,8 @@ const DeletePost: React.FC<DeletePostProps> = ({ postId, post_by, filePath }) =>
   };
 
 
-  if (user?.id === post_by) {
+  const userData = await getUserData();
+  if (userData?.id === post_by) {
     return (
       <AlertDialog>
         <AlertDialogTrigger>
@@ -120,6 +111,7 @@ const DeletePost: React.FC<DeletePostProps> = ({ postId, post_by, filePath }) =>
   } else {
     return null;
   }
+  useRouter();
 };
 
 export default DeletePost;
