@@ -2,6 +2,7 @@
 "use server"
 import { supabaseServer } from "@/lib/supabase/server"; // Adjust the import as needed
 
+
 export const getUserData = async () => {
   const supabase = supabaseServer();
   const { data } = await supabase.auth.getSession();
