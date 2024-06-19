@@ -7,7 +7,7 @@ import "@uppy/core/dist/style.css";
 import "@uppy/dashboard/dist/style.css";
 import { Button } from "./ui/button";
 import Transloadit, { AssemblyOptions } from "@uppy/transloadit";
-import useUser from "@/app/hook/useUser";
+import { getUserData } from "@/lib/useUser";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
 
@@ -27,10 +27,19 @@ interface UploadedFile {
 // const user3 = "3faf9652-84d8-4b76-8b44-8e1f3b7ff7fd";
 
 const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID }) => {
-  const { data: user } = useUser();
+  const [user, setUser] = useState<{ id: string } | null>(null);
   const supabase = supabaseBrowser();
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [uploadCompleted, setUploadCompleted] = useState(false);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const userData = await getUserData();
+      setUser(userData);
+    };
+
+    fetchUser();
+  }, []);
 
   const [uppy] = useState(() =>
     new Uppy({
