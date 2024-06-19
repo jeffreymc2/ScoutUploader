@@ -31,6 +31,7 @@ const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID })
   const [uploadCompleted, setUploadCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [uppy, setUppy] = useState<Uppy | null>(null);
 
   const fetchUser = async () => {
     try {
@@ -48,86 +49,100 @@ const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID })
     fetchUser();
   }, []);
 
-  const createUppy = () => {
-    return new Uppy({
-      restrictions: {
-        maxNumberOfFiles: 50,
-        allowedFileTypes: ["image/*", "video/*"],
-        maxFileSize: 5 * 100000 * 100000,
-      },
-      debug: true,
-    }).use(Transloadit, {
-      waitForEncoding: true,
-      assemblyOptions: (file) => {
-        const isVideo = file?.type?.includes("video") ?? false;
-        const filePath = `events/${user?.id}/${EventID}/${TeamID}/${file?.name}`;
-        let thumbnailPath = null;
+  useEffect(() => {
+    if (user) {
+      const uppyInstance = new Uppy({
+        restrictions: {
+          maxNumberOfFiles: 50,
+          allowedFileTypes: ["image/*", "video/*"],
+          maxFileSize: 5 * 100000 * 100000,
+        },
+        debug: true,
+        autoProceed: false,
+      }).use(Transloadit, {
+        waitForEncoding: true,
+        assemblyOptions: (file) => {
+          const isVideo = file?.type?.includes("video") ?? false;
+          const filePath = `events/${user.id}/${EventID}/${TeamID}/${file?.name}`;
+          let thumbnailPath = null;
 
-        if (isVideo) {
-          const fileNameWithoutExt = file?.name.substring(0, file.name.lastIndexOf("."));
-          thumbnailPath = `events/${user?.id}/${EventID}/${TeamID}/thumbnails/${fileNameWithoutExt}_thumbnail.jpg`;
-        }
+          if (isVideo) {
+            const fileNameWithoutExt = file?.name.substring(0, file.name.lastIndexOf("."));
+            thumbnailPath = `events/${user.id}/${EventID}/${TeamID}/thumbnails/${fileNameWithoutExt}_thumbnail.jpg`;
+          }
 
-        setUploadedFiles((prevFiles) => [
-          ...prevFiles,
-          { filePath, thumbnailPath, isVideo, name: file?.name },
-        ]);
+          setUploadedFiles((prevFiles) => [
+            ...prevFiles,
+            { filePath, thumbnailPath, isVideo, name: file?.name },
+          ]);
 
-        const params: AssemblyOptions["params"] = {
-          auth: {
-            key: process.env.NEXT_PUBLIC_TRANSLOADIT_AUTH_KEY || "",
-          },
-          steps: {
-            ":original": {
-              robot: "/upload/handle",
-              result: true,
+          const params: AssemblyOptions["params"] = {
+            auth: {
+              key: process.env.NEXT_PUBLIC_TRANSLOADIT_AUTH_KEY || "",
             },
-            uploaded: {
-              use: ":original",
-              robot: "/s3/store",
-              credentials: "scoutuploads",
-              bucket: "scoutuploads",
-              path: filePath,
-            },
-          },
-        };
-
-        if (isVideo) {
-          params.steps = {
-            ...params.steps,
-            thumbnail: {
-              use: ":original",
-              robot: "/video/thumbs",
-              width: 800,
-              height: 600,
-              resize_strategy: "pad",
-              ffmpeg_stack: "v6.0.0",
-              count: 1,
-              format: "jpg",
-              result: true,
-            },
-            uploadedThumbnail: {
-              use: "thumbnail",
-              robot: "/s3/store",
-              credentials: "scoutuploads",
-              bucket: "scoutuploads",
-              path: thumbnailPath,
+            steps: {
+              ":original": {
+                robot: "/upload/handle",
+                result: true,
+              },
+              uploaded: {
+                use: ":original",
+                robot: "/s3/store",
+                credentials: "scoutuploads",
+                bucket: "scoutuploads",
+                path: filePath,
+              },
             },
           };
-        }
 
-        return {
-          params,
-          fields: {
-            user_id: user?.id ?? "",
-            event_id: EventID,
-            team_id: TeamID,
-            file_name: file?.name,
-          } as { [name: string]: string },
-        };
-      },
-    });
-  };
+          if (isVideo) {
+            params.steps = {
+              ...params.steps,
+              thumbnail: {
+                use: ":original",
+                robot: "/video/thumbs",
+                width: 800,
+                height: 600,
+                resize_strategy: "pad",
+                ffmpeg_stack: "v6.0.0",
+                count: 1,
+                format: "jpg",
+                result: true,
+              },
+              uploadedThumbnail: {
+                use: "thumbnail",
+                robot: "/s3/store",
+                credentials: "scoutuploads",
+                bucket: "scoutuploads",
+                path: thumbnailPath,
+              },
+            };
+          }
+
+          return {
+            params,
+            fields: {
+              user_id: user.id,
+              event_id: EventID,
+              team_id: TeamID,
+              file_name: file?.name,
+            } as { [name: string]: string },
+          };
+        },
+      });
+
+      uppyInstance.on("file-added", () => {
+        setUploadedFiles([]);
+        setUploadCompleted(false);
+      });
+
+      setUppy(uppyInstance);
+
+      return () => {
+        uppyInstance.close();
+      };
+    }
+  }, [user, EventID, TeamID]);
 
   const handlePostToSupabase = async (file: UploadedFile) => {
     try {
@@ -168,7 +183,10 @@ const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID })
       return;
     }
 
-    const uppy = createUppy();
+    if (!uppy) {
+      toast.error("Uppy instance not initialized.");
+      return;
+    }
 
     if (uppy.getFiles().length === 0) {
       toast.error("Please select a file to upload.");
@@ -209,9 +227,9 @@ const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID })
           <p>Selected Event: {EventName} | Event ID: {EventID}</p>
         </div>
       </div>
-      {user ? (
+      {user && uppy ? (
         <>
-          <Dashboard uppy={createUppy()} className="w-auto" hideUploadButton />
+          <Dashboard uppy={uppy} className="w-auto" hideUploadButton />
           <Button
             id="upload-trigger"
             className="px-4 py-2 ml-2 w-full font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
