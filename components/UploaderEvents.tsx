@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Uppy from "@uppy/core";
 import { Dashboard } from "@uppy/react";
 import "@uppy/core/dist/style.css";
@@ -24,12 +24,29 @@ interface UploadedFile {
   name?: string;
 }
 
-const UploaderEvents: React.FC<UploaderProps> = async ({ EventID, EventName, TeamID }) => {
-  const userData = await getUserData();
-  const [user, setUser] = useState<{ id: string } | null>(userData);
+const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID }) => {
+  const [user, setUser] = useState<{ id: string } | null>(null);
   const supabase = supabaseBrowser();
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [uploadCompleted, setUploadCompleted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchUser = async () => {
+    try {
+      const userData = await getUserData();
+      setUser(userData);
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching user data:", err);
+      setError("Failed to fetch user data. Please try again.");
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   const createUppy = () => {
     return new Uppy({
@@ -47,7 +64,8 @@ const UploaderEvents: React.FC<UploaderProps> = async ({ EventID, EventName, Tea
         let thumbnailPath = null;
 
         if (isVideo) {
-          thumbnailPath = `events/${user?.id}/${EventID}/${TeamID}/thumbnails/${file?.name}_thumbnail.jpg`;
+          const fileNameWithoutExt = file?.name.substring(0, file.name.lastIndexOf("."));
+          thumbnailPath = `events/${user?.id}/${EventID}/${TeamID}/thumbnails/${fileNameWithoutExt}_thumbnail.jpg`;
         }
 
         setUploadedFiles((prevFiles) => [
@@ -157,18 +175,31 @@ const UploaderEvents: React.FC<UploaderProps> = async ({ EventID, EventName, Tea
       return;
     }
 
-    uppy.upload().then((result) => {
-      if (result.failed.length === 0) {
-        uploadedFiles.forEach((file) => {
-          handlePostToSupabase(file);
-        });
-        setUploadCompleted(true);
-      } else {
-        console.error("Upload error:", result.failed);
-        toast.error("An error occurred during upload.");
-      }
-    });
+    uppy.upload()
+      .then((result) => {
+        if (result.failed.length === 0) {
+          uploadedFiles.forEach((file) => {
+            handlePostToSupabase(file);
+          });
+          setUploadCompleted(true);
+        } else {
+          console.error("Upload error:", result.failed);
+          toast.error("An error occurred during upload.");
+        }
+      })
+      .catch((err) => {
+        console.error("Upload error:", err);
+        toast.error("An error occurred during upload. Please try again.");
+      });
   };
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
     <div className="space-y-5">
@@ -190,7 +221,7 @@ const UploaderEvents: React.FC<UploaderProps> = async ({ EventID, EventName, Tea
           </Button>
         </>
       ) : (
-        <p>Loading...</p>
+        <p>User not authenticated. Please log in and try again.</p>
       )}
     </div>
   );
