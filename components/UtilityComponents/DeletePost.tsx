@@ -6,7 +6,7 @@ import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { MediaFile } from "@/lib/types/types";
+import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,7 +18,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { S3Client, DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 interface DeletePostProps {
   postId: string;
@@ -30,6 +29,14 @@ const DeletePost: React.FC<DeletePostProps> = ({ postId, post_by, filePath }) =>
   const { data: user, isFetching } = useUser();
   const router = useRouter();
   const supabase = supabaseBrowser();
+
+  const getS3KeyFromCloudFrontURL = (url: string) => {
+    const cloudFrontDomain = process.env.NEXT_PUBLIC_CLOUDFRONT_DOMAIN; // Example: "https://d123.cloudfront.net/"
+    if (cloudFrontDomain && url.startsWith(cloudFrontDomain)) {
+      return url.replace(cloudFrontDomain, "");
+    }
+    throw new Error("Invalid CloudFront URL or Domain");
+  };
 
   const handleDelete = async () => {
     toast.info("Deleting post...");
@@ -44,6 +51,9 @@ const DeletePost: React.FC<DeletePostProps> = ({ postId, post_by, filePath }) =>
         throw new Error(deletePostError.message);
       }
 
+      // Extract the S3 key from the CloudFront URL
+      const s3Key = getS3KeyFromCloudFrontURL(filePath);
+
       // Delete the corresponding file from S3
       const s3Client = new S3Client({
         region: process.env.NEXT_PUBLIC_AWS_REGION,
@@ -55,7 +65,7 @@ const DeletePost: React.FC<DeletePostProps> = ({ postId, post_by, filePath }) =>
 
       const deleteFileCommand = new DeleteObjectCommand({
         Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME,
-        Key: filePath,
+        Key: s3Key,
       });
 
       await s3Client.send(deleteFileCommand);
