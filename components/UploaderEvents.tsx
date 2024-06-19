@@ -131,9 +131,16 @@ const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID })
         },
       });
 
-      uppyInstance.on("file-added", () => {
-        setUploadedFiles([]);
-        setUploadCompleted(false);
+      uppyInstance.on("complete", (result) => {
+        if (result.failed.length === 0) {
+          uploadedFiles.forEach((file) => {
+            handlePostToSupabase(file);
+          });
+          setUploadCompleted(true);
+        } else {
+          console.error("Upload error:", result.failed);
+          toast.error("An error occurred during upload.");
+        }
       });
 
       setUppy(uppyInstance);
@@ -193,22 +200,7 @@ const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID })
       return;
     }
 
-    uppy.upload()
-      .then((result) => {
-        if (result.failed.length === 0) {
-          uploadedFiles.forEach((file) => {
-            handlePostToSupabase(file);
-          });
-          setUploadCompleted(true);
-        } else {
-          console.error("Upload error:", result.failed);
-          toast.error("An error occurred during upload.");
-        }
-      })
-      .catch((err) => {
-        console.error("Upload error:", err);
-        toast.error("An error occurred during upload. Please try again.");
-      });
+    uppy.upload();
   };
 
   if (loading) {
