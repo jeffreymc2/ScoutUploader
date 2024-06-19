@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Uppy from "@uppy/core";
 import { Dashboard } from "@uppy/react";
 import "@uppy/core/dist/style.css";
@@ -24,25 +24,15 @@ interface UploadedFile {
   name?: string;
 }
 
-// const user3 = "3faf9652-84d8-4b76-8b44-8e1f3b7ff7fd";
-
-const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID }) => {
-  const [user, setUser] = useState<{ id: string } | null>(null);
+const UploaderEvents: React.FC<UploaderProps> = async ({ EventID, EventName, TeamID }) => {
+  const userData = await getUserData();
+  const [user, setUser] = useState<{ id: string } | null>(userData);
   const supabase = supabaseBrowser();
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [uploadCompleted, setUploadCompleted] = useState(false);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const userData = await getUserData();
-      setUser(userData);
-    };
-
-    fetchUser();
-  }, []);
-
-  const [uppy] = useState(() =>
-    new Uppy({
+  const createUppy = () => {
+    return new Uppy({
       restrictions: {
         maxNumberOfFiles: 50,
         allowedFileTypes: ["image/*", "video/*"],
@@ -118,8 +108,8 @@ const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID })
           } as { [name: string]: string },
         };
       },
-    })
-  );
+    });
+  };
 
   const handlePostToSupabase = async (file: UploadedFile) => {
     try {
@@ -130,7 +120,9 @@ const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID })
           event_id: EventID,
           team_id: TeamID,
           file_url: `https://d2x49pf2i7371p.cloudfront.net/${file.filePath}`,
-          thumbnail_url: file.isVideo ? `https://d2x49pf2i7371p.cloudfront.net/${file.thumbnailPath}` : null,
+          thumbnail_url: file.isVideo
+            ? `https://d2x49pf2i7371p.cloudfront.net/${file.thumbnailPath}`
+            : null,
           is_video: file.isVideo,
           name: file.name,
         })
@@ -153,62 +145,53 @@ const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID })
   };
 
   const handleUpload = () => {
+    if (!user) {
+      toast.error("User not authenticated. Please log in and try again.");
+      return;
+    }
+
+    const uppy = createUppy();
+
     if (uppy.getFiles().length === 0) {
       toast.error("Please select a file to upload.");
       return;
     }
-    uppy.upload();
-  };
 
-  useEffect(() => {
-    const onComplete = (result: any) => {
-      if (!uploadCompleted) {
+    uppy.upload().then((result) => {
+      if (result.failed.length === 0) {
         uploadedFiles.forEach((file) => {
           handlePostToSupabase(file);
         });
         setUploadCompleted(true);
-      }
-    };
-
-    const onError = (error: any) => {
-      console.error("Upload error:", error);
-
-      if (error.message.includes("AuthorizationHeaderMalformed")) {
-        toast.error(
-          "Invalid AWS credentials. Please check your access key ID and secret access key."
-        );
       } else {
+        console.error("Upload error:", result.failed);
         toast.error("An error occurred during upload.");
       }
-    };
-
-    uppy.on("complete", onComplete);
-    uppy.on("error", onError);
-
-    return () => {
-      uppy.off("complete", onComplete);
-      uppy.off("error", onError);
-    };
-  }, [uploadCompleted, uploadedFiles]);
+    });
+  };
 
   return (
     <div className="space-y-5">
       <div className="space-y-5">
-        <h1 className="font-pgFont text-2xl">
-          Upload Files By Event
-        </h1>
+        <h1 className="font-pgFont text-2xl">Upload Files By Event</h1>
         <div>
           <p>Selected Event: {EventName} | Event ID: {EventID}</p>
         </div>
       </div>
-      <Dashboard uppy={uppy} className="w-auto" hideUploadButton />
-      <Button
-        id="upload-trigger"
-        className="px-4 py-2 ml-2 w-full font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
-        onClick={handleUpload}
-      >
-        Upload
-      </Button>
+      {user ? (
+        <>
+          <Dashboard uppy={createUppy()} className="w-auto" hideUploadButton />
+          <Button
+            id="upload-trigger"
+            className="px-4 py-2 ml-2 w-full font-medium tracking-wide text-white transition-colors duration-200 transform bg-blue-500 rounded-md hover:bg-blue-800"
+            onClick={handleUpload}
+          >
+            Upload
+          </Button>
+        </>
+      ) : (
+        <p>Loading...</p>
+      )}
     </div>
   );
 };
