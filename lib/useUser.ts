@@ -1,4 +1,5 @@
 // lib/server/useUser.ts
+"use server"
 import { supabaseServer } from "@/lib/supabase/server"; // Adjust the import as needed
 
 export const getUserData = async () => {
