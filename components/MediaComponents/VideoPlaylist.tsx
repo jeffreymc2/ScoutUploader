@@ -42,7 +42,7 @@ interface Video {
 }
 
 const baseUrl = process.env.NEXT_PUBLIC_URL;
-
+const bLiveUrl = process.env.NEXT_PUBLIC_BLIVE_URL;
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const [playlists, setPlaylists] = useState<{ [key: string]: Video[] }>({});
   const [supabaseHighlights, setSupabaseHighlights] = useState<Video[]>([]);
@@ -182,7 +182,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const fetchShowcaseVideos = async (): Promise<Video[]> => {
     try {
       const response = await fetch(
-        `${baseUrl}/api/blive/?playerID=${playerId}`
+        `${bLiveUrl}/api/blive/?playerID=${playerId}`
       );
 
       if (!response.ok) {

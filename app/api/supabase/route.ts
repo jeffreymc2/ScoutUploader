@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
         }))
       : [];
 
-    return NextResponse.json({ supabaseHighlights: supabaseVideos }, {
+    return NextResponse.json( supabaseVideos, {
       status: 200,
       headers: {
         'Access-Control-Allow-Origin': '*',

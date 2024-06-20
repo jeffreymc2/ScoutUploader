@@ -28,13 +28,14 @@ interface DeletePostProps {
 }
 
 const DeletePost: React.FC<DeletePostProps> = async ({ postId, post_by, filePath }) => {
-  const router = useRouter();
   const supabase = supabaseBrowser();
+  const router = useRouter();
 
   const getS3KeyFromCloudFrontURL = (url: string) => {
     const cloudFrontDomain = process.env.NEXT_PUBLIC_CLOUDFRONT_DOMAIN; // Example: "https://d123.cloudfront.net/"
     if (cloudFrontDomain && url.startsWith(cloudFrontDomain)) {
-      return url.replace(cloudFrontDomain, "");
+      const newFilepath = url.replace(cloudFrontDomain, "");
+      return newFilepath;
     }
     throw new Error("Invalid CloudFront URL or Domain");
   };
@@ -80,8 +81,8 @@ const DeletePost: React.FC<DeletePostProps> = async ({ postId, post_by, filePath
       router.refresh();
     } catch (error) {
       console.error("Error during delete operation:", error);
-      toast.error("An error occurred while deleting the post");
     }
+
   };
 
 
@@ -111,7 +112,6 @@ const DeletePost: React.FC<DeletePostProps> = async ({ postId, post_by, filePath
   } else {
     return null;
   }
-  useRouter();
 };
 
 export default DeletePost;
