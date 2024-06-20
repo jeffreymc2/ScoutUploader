@@ -96,7 +96,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     reset = false
   ) => {
     try {
-      let url = `${baseUrl}/api/playerhighlights?playerID=${playerId}&page=${page}&type=${type}&limit=20`;
+      let url = `/api/playerhighlights?playerID=${playerId}&page=${page}&type=${type}&limit=20`;
       if (position) {
         url += `&position=${position}`;
       }
@@ -182,7 +182,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const fetchShowcaseVideos = async (): Promise<Video[]> => {
     try {
       const response = await fetch(
-        `${bLiveUrl}/api/blive/?playerID=${playerId}`
+        `/api/blive/?playerID=${playerId}`
       );
 
       if (!response.ok) {
