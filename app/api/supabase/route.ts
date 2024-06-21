@@ -11,11 +11,7 @@ export async function GET(request: NextRequest) {
   const playerID = searchParams.get('playerID');
 
   if (!playerID) {
-    const response = NextResponse.json({ message: 'Missing playerID parameter' }, { status: 400 });
-    response.headers.set('Access-Control-Allow-Origin', '*');
-    response.headers.set('Access-Control-Allow-Methods', 'GET,OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
-    return response;
+    return createResponse({ message: 'Missing playerID parameter' }, 400);
   }
 
   try {
@@ -27,11 +23,7 @@ export async function GET(request: NextRequest) {
 
     if (postsError) {
       console.error('Error fetching posts from Supabase:', postsError);
-      const response = NextResponse.json({ message: 'Failed to fetch posts from Supabase' }, { status: 500 });
-      response.headers.set('Access-Control-Allow-Origin', '*');
-      response.headers.set('Access-Control-Allow-Methods', 'GET,OPTIONS');
-      response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
-      return response;
+      return createResponse({ message: 'Failed to fetch posts from Supabase' }, 500);
     }
 
     const supabaseVideos = posts
@@ -42,35 +34,31 @@ export async function GET(request: NextRequest) {
           thumbnailUrl: post.thumbnail_url || '',
           url: post.file_url || '',
           created: post.created_at,
-          highlight_type: "", // Add the missing property 'highlight_type'
+          highlight_type: "h", // Assuming all Supabase videos are highlights
         }))
       : [];
 
-    const response = NextResponse.json(supabaseVideos, { status: 200 });
-    response.headers.set('Access-Control-Allow-Origin', '*');
-    response.headers.set('Access-Control-Allow-Methods', 'GET,OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
-    return response;
+    return createResponse(supabaseVideos, 200);
   } catch (error) {
     console.error('Error making request:', error);
-    const response = NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
-    response.headers.set('Access-Control-Allow-Origin', '*');
-    response.headers.set('Access-Control-Allow-Methods', 'GET,OPTIONS');
-    response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
-    return response;
+    return createResponse({ message: 'Internal Server Error' }, 500);
   }
 }
 
 export function OPTIONS() {
-  const response = NextResponse.json({}, { status: 200 });
-  response.headers.set('Access-Control-Allow-Origin', '*');
-  response.headers.set('Access-Control-Allow-Methods', 'GET,OPTIONS');
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
-  return response;
+  return createResponse({}, 200);
 }
 
 function isVideoFile(url: string): boolean {
   const videoExtensions = ['.mp4', '.mov', '.avi', '.wmv', '.flv', '.mkv'];
   const extension = url.slice(url.lastIndexOf('.')).toLowerCase();
   return videoExtensions.includes(extension);
+}
+
+function createResponse(body: any, status: number): NextResponse {
+  const response = NextResponse.json(body, { status });
+  response.headers.set('Access-Control-Allow-Origin', '*');
+  response.headers.set('Access-Control-Allow-Methods', 'GET,OPTIONS');
+  response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
+  return response;
 }
