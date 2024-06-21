@@ -31,9 +31,9 @@ export async function GET(request: NextRequest) {
   const playerID = searchParams.get('playerID');
 
   if (!playerID) {
-    return NextResponse.json(
-      { message: 'Missing playerID parameter' },
-      { status: 400, headers: corsHeaders }
+    return new NextResponse(
+      JSON.stringify({ message: 'Missing playerID parameter' }),
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 
@@ -46,9 +46,9 @@ export async function GET(request: NextRequest) {
 
     if (postsError) {
       console.error('Error fetching posts from Supabase:', postsError);
-      return NextResponse.json(
-        { message: 'Failed to fetch posts from Supabase' },
-        { status: 500, headers: corsHeaders }
+      return new NextResponse(
+        JSON.stringify({ message: 'Failed to fetch posts from Supabase' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -64,12 +64,15 @@ export async function GET(request: NextRequest) {
         }))
       : [];
 
-    return NextResponse.json(supabaseVideos, { status: 200, headers: corsHeaders });
+    return new NextResponse(
+      JSON.stringify(supabaseVideos),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
   } catch (error) {
     console.error('Error making request:', error);
-    return NextResponse.json(
-      { message: 'Internal Server Error' },
-      { status: 500, headers: corsHeaders }
+    return new NextResponse(
+      JSON.stringify({ message: 'Internal Server Error' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 }
