@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import Player from "next-video/player";
 import { VideoSkeleton } from "@/components/ui/skeletons";
@@ -24,6 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { debounce } from "lodash";
 
 interface VideoPlayerProps {
   playerId: string;
@@ -41,8 +43,6 @@ interface Video {
   duration?: number;
 }
 
-const baseUrl = process.env.NEXT_PUBLIC_URL;
-const bLiveUrl = process.env.NEXT_PUBLIC_BLIVE_URL;
 const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const [playlists, setPlaylists] = useState<{ [key: string]: Video[] }>({});
   const [supabaseHighlights, setSupabaseHighlights] = useState<Video[]>([]);
@@ -51,29 +51,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
   const [tab, setTab] = useState<"s" | "h" | "a" | "p" | "c">("s");
-  const [type, setType] = useState<
-    | "h"
-    | "a"
-    | "l"
-    | "s"
-    | "d"
-    | "t"
-    | "hr"
-    | "iphr"
-    | "dp"
-    | "so"
-    | "dp,so"
-    | "l,s,d,t,hr,iphr"
-  >("h");
+  const [type, setType] = useState<"h" | "a" | "l" | "s" | "d" | "t" | "hr" | "iphr" | "dp" | "so" | "dp,so" | "l,s,d,t,hr,iphr">("h");
   const [position, setPosition] = useState<"b" | "p" | "">("");
   const [userPlaylist, setUserPlaylist] = useState<Video[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const { data: user } = useUser();
   const [hasCustomPlaylist, setHasCustomPlaylist] = useState(false);
-  const [thumbnailUrls, setThumbnailUrls] = useState<{ [key: string]: string }>(
-    {}
-  );
+  const [thumbnailUrls, setThumbnailUrls] = useState<{ [key: string]: string }>({});
   const playerRef = useRef<HTMLVideoElement | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
@@ -81,15 +66,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showcaseVideos, setShowcaseVideos] = useState<Video[]>([]);
 
-  const debounce = (func: Function, wait: number) => {
-    let timeout: NodeJS.Timeout;
-    return (...args: any[]) => {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => func.apply(this, args), wait);
-    };
-  };
-
-  const fetchPlaylist = async (
+  const fetchPlaylist = useCallback(async (
     page: number,
     type: string,
     position: string = "",
@@ -114,7 +91,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
 
       const data = await response.json();
       const videos = data.highlights || [];
-      console.log("Fetched videos:", videos);
 
       setPlaylists((prev) => {
         const updatedPlaylists = {
@@ -123,7 +99,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
             ? videos
             : [...(prev[type + position] || []), ...videos],
         };
-        console.log("Updated playlists:", updatedPlaylists);
         return updatedPlaylists;
       });
 
@@ -137,18 +112,18 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
       setNoResults(true);
       setIsLoading(false);
     }
-  };
+  }, [playerId]);
 
-  const fetchInitialData = async (type: string, position: string = "") => {
+  const fetchInitialData = useCallback(async (type: string, position: string = "") => {
     setIsLoading(true);
     setNoResults(false);
     setPage(1);
     setHasMore(true);
     setPlaylists({});
     await fetchPlaylist(1, type, position, true);
-  };
+  }, [fetchPlaylist]);
 
-  const fetchSupabasePlaylist = async (): Promise<Video[]> => {
+  const fetchSupabasePlaylist = useCallback(async (): Promise<Video[]> => {
     if (!user) {
       console.warn("User is not authenticated.");
       return [];
@@ -177,18 +152,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
       console.error("Unexpected error fetching playlist from Supabase:", err);
       return [];
     }
-  };
+  }, [user, playerId]);
 
-  const fetchShowcaseVideos = async (): Promise<Video[]> => {
+  const fetchShowcaseVideos = useCallback(async (): Promise<Video[]> => {
     try {
-      const response = await fetch(
-        `/api/blive/?playerID=${playerId}`
-      );
+      const response = await fetch(`/api/blive/?playerID=${playerId}`);
 
       if (!response.ok) {
-        throw new Error(
-          `Error fetching showcase videos: ${response.statusText}`
-        );
+        throw new Error(`Error fetching showcase videos: ${response.statusText}`);
       }
 
       const videos: Video[] = await response.json();
@@ -197,7 +168,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
       console.error("Error fetching showcase videos:", error);
       return [];
     }
-  };
+  }, [playerId]);
 
   useEffect(() => {
     const initializeData = async () => {
@@ -208,7 +179,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
       const showcaseVideos = await fetchShowcaseVideos();
       setShowcaseVideos(showcaseVideos);
 
-      let initialTab: "a" | "c" | "h" | "p" | "s" = "h"; // Default to highlights if no other options are available
+      let initialTab: "a" | "c" | "h" | "p" | "s" = "h";
 
       if (supabasePlaylist.length > 0) {
         initialTab = "c";
@@ -216,13 +187,12 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         initialTab = "s";
       }
 
-      setTab(initialTab); // Set the determined initial tab
-
+      setTab(initialTab);
       await fetchInitialData(initialTab === "h" ? "h" : initialTab, "");
     };
 
     initializeData();
-  }, [playerId, user]);
+  }, [playerId, user, fetchSupabasePlaylist, fetchShowcaseVideos, fetchInitialData]);
 
   // ...
 
