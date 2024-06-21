@@ -6,12 +6,35 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
+function getCorsHeaders(origin: string | null) {
+  // Check if the origin is from a perfectgame.org domain or subdomain
+  const isValidOrigin = origin && /^https:\/\/([a-zA-Z0-9-]+\.)*perfectgame\.org$/.test(origin);
+
+  return {
+    'Access-Control-Allow-Origin': isValidOrigin ? origin : 'https://perfectgame.org',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true',
+  };
+}
+
 export async function GET(request: NextRequest) {
+  const origin = request.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+
+  // Handle preflight request
+  if (request.method === 'OPTIONS') {
+    return new NextResponse(null, { headers: corsHeaders });
+  }
+
   const { searchParams } = new URL(request.url);
   const playerID = searchParams.get('playerID');
 
   if (!playerID) {
-    return createResponse({ message: 'Missing playerID parameter' }, 400);
+    return NextResponse.json(
+      { message: 'Missing playerID parameter' },
+      { status: 400, headers: corsHeaders }
+    );
   }
 
   try {
@@ -23,7 +46,10 @@ export async function GET(request: NextRequest) {
 
     if (postsError) {
       console.error('Error fetching posts from Supabase:', postsError);
-      return createResponse({ message: 'Failed to fetch posts from Supabase' }, 500);
+      return NextResponse.json(
+        { message: 'Failed to fetch posts from Supabase' },
+        { status: 500, headers: corsHeaders }
+      );
     }
 
     const supabaseVideos = posts
@@ -38,27 +64,23 @@ export async function GET(request: NextRequest) {
         }))
       : [];
 
-    return createResponse(supabaseVideos, 200);
+    return NextResponse.json(supabaseVideos, { status: 200, headers: corsHeaders });
   } catch (error) {
     console.error('Error making request:', error);
-    return createResponse({ message: 'Internal Server Error' }, 500);
+    return NextResponse.json(
+      { message: 'Internal Server Error' },
+      { status: 500, headers: corsHeaders }
+    );
   }
 }
 
-export function OPTIONS() {
-  return createResponse({}, 200);
+export async function OPTIONS(request: NextRequest) {
+  const origin = request.headers.get('origin');
+  return new NextResponse(null, { headers: getCorsHeaders(origin) });
 }
 
 function isVideoFile(url: string): boolean {
   const videoExtensions = ['.mp4', '.mov', '.avi', '.wmv', '.flv', '.mkv'];
   const extension = url.slice(url.lastIndexOf('.')).toLowerCase();
   return videoExtensions.includes(extension);
-}
-
-function createResponse(body: any, status: number): NextResponse {
-  const response = NextResponse.json(body, { status });
-  response.headers.set('Access-Control-Allow-Origin', '*');
-  response.headers.set('Access-Control-Allow-Methods', 'GET,OPTIONS');
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type');
-  return response;
 }

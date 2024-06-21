@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import Player from "next-video/player";
 import { VideoSkeleton } from "@/components/ui/skeletons";
 import Image from "next/image";
@@ -194,32 +194,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     initializeData();
   }, [playerId, user, fetchSupabasePlaylist, fetchShowcaseVideos, fetchInitialData]);
 
-  // ...
-
   useEffect(() => {
     if (hasCustomPlaylist) {
       setTab("c");
     } else {
-      fetchInitialData("h", ""); // Fetch highlights without position
+      fetchInitialData("h", "");
     }
-  }, [playerId, hasCustomPlaylist]);
+  }, [hasCustomPlaylist, fetchInitialData]);
 
-  // Add the new useEffect hook here
-  useEffect(() => {
-    const currentVideo = getCurrentVideo();
-    if (currentVideo && isPlaying) {
-      const duration = currentVideo?.duration || playerRef.current?.duration;
-      if (duration) {
-        const timer = setTimeout(() => {
-          handleNextVideo();
-        }, duration * 1000);
-
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [currentVideoIndex, isPlaying]);
-
-  const getCurrentPlaylist = () => {
+  const getCurrentPlaylist = useMemo(() => {
     if (tab === "c") return userPlaylist;
     if (tab === "s") return showcaseVideos;
 
@@ -243,26 +226,22 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         ).values(),
       ];
     }
-    console.log("Current playlist:", playlist);
-
     return playlist;
-  };
+  }, [tab, userPlaylist, showcaseVideos, type, position, supabaseHighlights, playlists]);
 
-  const loadMoreVideos = debounce(async () => {
+  const currentVideo = useMemo(() => getCurrentPlaylist[currentVideoIndex], [getCurrentPlaylist, currentVideoIndex]);
+
+  const loadMoreVideos = useCallback(debounce(async () => {
     await fetchPlaylist(page, type, type === "h" ? "" : position);
-  }, 200);
+  }, 200), [fetchPlaylist, page, type, position]);
 
-  const handleProgress = ({ playedSeconds }: { playedSeconds: number }) => {
-    const currentVideo = getCurrentVideo();
-    console.log(
-      "Progress:",
-      currentVideo?.duration,
-      playedSeconds,
-      isTransitioning
-    );
+  const handleNextVideo = useCallback(() => {
+    setCurrentVideoIndex((prevIndex) => (prevIndex + 1) % getCurrentPlaylist.length);
+    setIsTransitioning(false);
+  }, [getCurrentPlaylist]);
 
+  const handleProgress = useCallback(({ playedSeconds }: { playedSeconds: number }) => {
     if (currentVideo?.duration === undefined) {
-      // Skip the transition logic if duration is undefined
       return;
     }
 
@@ -274,52 +253,48 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
       setIsTransitioning(true);
       handleNextVideo();
     }
-  };
+  }, [currentVideo, isTransitioning, handleNextVideo]);
 
-  const handleNextVideo = async () => {
-    console.log("Next video triggered");
+  useEffect(() => {
+    if (currentVideo && isPlaying) {
+      const duration = currentVideo.duration || playerRef.current?.duration;
+      if (duration) {
+        const timer = setTimeout(() => {
+          handleNextVideo();
+        }, duration * 1000);
 
-    setCurrentVideoIndex(
-      (prevIndex) => (prevIndex + 1) % getCurrentPlaylist().length
-    );
-    setTimeout(() => {
-      setIsTransitioning(false);
-    }, 10); // Adjust the delay as needed
-  };
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [currentVideo, isPlaying, handleNextVideo]);
 
-  const handleThumbnailClick = (index: number) => {
+  const handleThumbnailClick = useCallback((index: number) => {
     setCurrentVideoIndex(index);
-  };
+  }, []);
 
-  const handlePlayPause = () => {
+  const handlePlayPause = useCallback(() => {
     if (isPlaying) {
       playerRef.current?.pause();
     } else {
       playerRef.current?.play();
     }
     setIsPlaying((prev) => !prev);
-  };
+  }, [isPlaying]);
 
-  const handleSeek = (seconds: number) => {
+  const handleSeek = useCallback((seconds: number) => {
     if (playerRef.current) {
       playerRef.current.currentTime += seconds;
     }
-  };
+  }, []);
 
-  const getCurrentVideo = () => {
-    return getCurrentPlaylist()[currentVideoIndex];
-  };
-  const formatDuration = (duration: number | undefined) => {
+  const formatDuration = useCallback((duration: number | undefined) => {
     if (!duration || duration < 0) return "0:00";
     const minutes = Math.floor(duration / 60);
     const seconds = Math.floor(duration % 60);
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-  };
+  }, []);
 
-  const currentPlaylist = getCurrentPlaylist();
-  const currentVideo = getCurrentVideo();
-
-  const getTitle = (title?: string) => {
+  const getTitle = useCallback((title?: string) => {
     if (!title) return "";
     if (title.includes("9999")) {
       return title.replace("9999", "");
@@ -327,38 +302,38 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
     const bracketRegex = /\[(.*?)\]/;
     const match = title.match(bracketRegex);
     return match ? title.replace(match[0], "") : title;
-  };
+  }, []);
 
-  const updateThumbnailUrl = (videoId: string, url: string) => {
+  const handleLike = useCallback(() => {
+    setIsLiked((prev) => !prev);
+    // Add logic to update the like status on the backend or perform any other actions
+  }, []);
+
+  const handleFavorite = useCallback(() => {
+    setIsFavorite((prev) => !prev);
+    // Add logic to update the favorite status on the backend or perform any other actions
+  }, []);
+
+  const updateThumbnailUrl = useCallback((videoId: string, url: string) => {
     setThumbnailUrls((prevUrls) => ({
       ...prevUrls,
       [videoId]: url,
     }));
-  };
+  }, []);
 
-  const handleLike = () => {
-    setIsLiked((prevState) => !prevState);
-    // Add logic to update the like status on the backend or perform any other actions
-  };
+const renderThumbnail = useCallback((video: Video) => {
+  const thumbnailUrl =
+    thumbnailUrls[video.id] ||
+    video.thumbnailUrl ||
+    "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp";
 
-  const handleFavorite = () => {
-    setIsFavorite((prevState) => !prevState);
-    // Add logic to update the favorite status on the backend or perform any other actions
-  };
-
-  const renderThumbnail = (video: Video) => {
-    const thumbnailUrl =
-      thumbnailUrls[video.id] ||
-      video.thumbnailUrl ||
-      "https://avkhdvyjcweghosyfiiw.supabase.co/storage/v1/object/public/misc/638252106298352027-DKPlusHP%20(1).webp";
-
-    return (
+  return (
+    <div className="w-[130px] h-full relative">
       <Image
         alt="Thumbnail"
-        className="aspect-video rounded-lg object-cover h-full w-auto"
-        height={50}
         src={thumbnailUrl}
-        width={130}
+        fill
+        className="rounded-lg w-fuil h-full object-cover"
         onError={() => {
           updateThumbnailUrl(
             video.id as string,
@@ -366,10 +341,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
           );
         }}
       />
-    );
-  };
+    </div>
+  );
+}, [thumbnailUrls, updateThumbnailUrl]);
 
-  const renderOverlayBadge = (title?: string) => {
+  const renderOverlayBadge = useCallback(() => {
     return (
       <div className="absolute top-2 left-2">
         <Badge variant="secondary">
@@ -383,9 +359,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         </Badge>
       </div>
     );
-  };
+  }, []);
 
-  const handleTabChange = async (value: "s" | "a" | "p" | "c" | "h") => {
+  const handleTabChange = useCallback(async (value: "s" | "a" | "p" | "c" | "h") => {
     setTab(value);
     if (value === "h") {
       setType("h");
@@ -403,29 +379,15 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
       setCurrentVideoIndex(0);
     }
     setCurrentVideoIndex(0);
-  };
+  }, [fetchInitialData]);
 
-  const handleTypeChange = async (value: string) => {
-    setType(
-      value as
-        | "h"
-        | "a"
-        | "l"
-        | "s"
-        | "d"
-        | "t"
-        | "hr"
-        | "iphr"
-        | "dp"
-        | "so"
-        | "dp,so"
-        | "l,s,d,t,hr,iphr"
-    );
+  const handleTypeChange = useCallback(async (value: string) => {
+    setType(value as any);
     setCurrentVideoIndex(0);
     await fetchInitialData(value, position);
-  };
+  }, [fetchInitialData, position]);
 
-  const renderTypeOptions = () => {
+  const renderTypeOptions = useCallback(() => {
     if (position === "b") {
       return (
         <>
@@ -495,7 +457,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
       );
     }
     return null;
-  };
+  }, [position]);
 
   return (
     <div className="p-4 lg:p-4">
@@ -530,11 +492,11 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
         <TabsContent value={tab}>
           {isLoading ? (
             <VideoSkeleton isLoading={true} noResults={false} />
-          ) : currentPlaylist.length === 0 ? (
+          ) : getCurrentPlaylist.length === 0 ? (
             <VideoSkeleton noResults={true} isLoading={false} />
           ) : (
             <InfiniteScroll
-              dataLength={currentPlaylist.length}
+              dataLength={getCurrentPlaylist.length}
               next={loadMoreVideos}
               hasMore={hasMore}
               loader={""}
@@ -543,7 +505,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                 <div className="w-full overflow-hidden rounded-lg relative bg-gray-100">
                   <div className="aspect-w-16 aspect-h-9 lg:aspect-none lg:m-0 p-0 lg:p-0 sm:h-[415px]">
                     <Player
-                      key={`${currentVideo.id}-${currentVideo.url}`} // Add a unique key based on the current video
+                      key={`${currentVideo.id}-${currentVideo.url}`}
                       ref={playerRef}
                       src={currentVideo.url}
                       poster={thumbnailUrls[currentVideo.id as string] || ""}
@@ -560,7 +522,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                         setCurrentTime(
                           (evt.target as HTMLVideoElement).currentTime
                         )
-                      } // Update this line
+                      }
                       muted={true}
                       blurDataURL={currentVideo.thumbnailUrl}
                       accentColor="#005cb9"
@@ -630,18 +592,20 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
                   )}
                 </div>
                 <div className="flex flex-col gap-2 max-h-[60vh] lg:max-h-[465px] overflow-y-auto">
-                  {currentPlaylist.map((video, index) => (
+                  {getCurrentPlaylist.map((video, index) => (
                     <div
-                      key={`${video.id}-${video.url}`} // Use the same combination of id and url as the key
-                      className={`flex items-start gap-4 relative cursor-pointer h-24 shadow-md border border-gray-100 rounded-lg ${
+                      key={`${video.id}-${video.url}`}
+                      className={`flex items-start gap-4 relative cursor-pointer min-h-20 shadow-md border border-gray-100 rounded-lg ${
                         index === currentVideoIndex
                           ? "border border-gray-300 rounded-lg shadow-sm p-0 bg-gray-100"
                           : ""
                       }`}
                       onClick={() => handleThumbnailClick(index)}
                     >
+                      <div className="w-[130px] h-full relative">
                       {renderThumbnail(video)}
-                      {video.title && renderOverlayBadge(video.title)}
+                      </div>
+                      {video.title && renderOverlayBadge()}
                       <div className="absolute bottom-2 left-2 text-white text-xs">
                         {video.duration ? formatDuration(video.duration) : ""}
                       </div>
@@ -668,4 +632,4 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   );
 };
 
-export default VideoPlayer;
+export default React.memo(VideoPlayer);
