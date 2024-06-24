@@ -149,7 +149,6 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                                 fileUrl={post.file_url || ""}
                                 isVideo={post.isVideo}
                                 thumbnailUrl={post.thumbnail_url || ""}
-                                start_time={post.start_time || 0}
                               />
                             </DialogTrigger>
                           </Dialog>

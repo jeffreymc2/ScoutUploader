@@ -164,7 +164,6 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                               fileUrl={post.image || ""}
                               isVideo={post.isVideo}
                               thumbnailUrl={post.thumbnail_url || ""}
-                              start_time={post.start_time || 0}
                             />
                           </DialogTrigger>
                         </Dialog>
