@@ -63,8 +63,10 @@ const DeletePost: React.FC<DeletePostProps> = ({ postId, post_by, filePath }) =>
       toast.success("Successfully deleted post");
       router.refresh();
     } catch (error) {
-      console.error("Error during delete operation:", error);
-      toast.error("An error occurred while deleting the post");
+      // console.error("Error during delete operation:", error);
+      // toast.error("An error occurred while deleting the post");
+      router.refresh();
+
     }
   };
 
