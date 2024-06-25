@@ -27,6 +27,7 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { PiDotsThreeOutlineVerticalLight } from "react-icons/pi";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { IoDownloadOutline } from "react-icons/io5";
 
 interface PlayerMediaGalleryProps {
   posts: Post[];
@@ -184,6 +185,7 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                     <DropdownMenuItem
                       onClick={() => handleDownload(post.file_url || "")}
                     >
+                      <IoDownloadOutline className="w-6 h-6 ml-0 p-0"/>
                       Download
                     </DropdownMenuItem>
                   </DropdownMenuContent>

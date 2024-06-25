@@ -25,6 +25,8 @@ import DeletePost from "@/components/UtilityComponents/DeletePost";
 import useUser from "@/app/hook/useUser";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import { PiDotsThreeOutlineVerticalLight } from "react-icons/pi";
+import { IoDownloadOutline } from 'react-icons/io5';
+
 
 interface EventTeamGalleryProps {
   posts: Post[];
@@ -162,9 +164,11 @@ const EventTeamGallery: React.FC<EventTeamGalleryProps> = ({
                           />
                         </div>
                       )}
+
                       <DropdownMenuItem
                         onClick={() => handleDownload(post.file_url || "")}
                       >
+                        <IoDownloadOutline />
                         Download
                       </DropdownMenuItem>
                     </DropdownMenuContent>

@@ -1,12 +1,10 @@
 "use client";
 import React from "react";
-import { Button } from "../ui/button";
 import useUser from "@/app/hook/useUser";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { MediaFile } from "@/lib/types/types";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -44,6 +42,9 @@ const DeletePost: React.FC<DeletePostProps> = ({ postId, post_by, filePath }) =>
         throw new Error(deletePostError.message);
       }
 
+      // Remove the Cloudfront URL from the file path
+      const s3FilePath = filePath.replace('https://d3v9c4w2c7wrqu.cloudfront.net/', '');
+
       // Delete the corresponding file from S3
       const s3Client = new S3Client({
         region: process.env.NEXT_PUBLIC_AWS_REGION,
@@ -55,18 +56,26 @@ const DeletePost: React.FC<DeletePostProps> = ({ postId, post_by, filePath }) =>
 
       const deleteFileCommand = new DeleteObjectCommand({
         Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME,
-        Key: filePath,
+        Key: s3FilePath,
       });
 
       await s3Client.send(deleteFileCommand);
 
+      // Delete the thumbnail from S3
+      const thumbnailPath = `${s3FilePath}/thumbnails/${s3FilePath.split('/').pop()}`;
+      const deleteThumbnailCommand = new DeleteObjectCommand({
+        Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME,
+        Key: thumbnailPath,
+      });
+
+      await s3Client.send(deleteThumbnailCommand);
+
       toast.success("Successfully deleted post");
       router.refresh();
     } catch (error) {
-      // console.error("Error during delete operation:", error);
-      // toast.error("An error occurred while deleting the post");
+      console.error("Error during delete operation:", error);
+      toast.error("An error occurred while deleting the post");
       router.refresh();
-
     }
   };
 
