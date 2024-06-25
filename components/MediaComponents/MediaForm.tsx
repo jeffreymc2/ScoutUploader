@@ -42,7 +42,7 @@ export default function MediaForm({
   const fetchInitialData = useCallback(async () => {
     const { data, error } = await supabase
       .from("posts")
-      .select("title, description, publish_media")
+      .select("title, description, publish_media, thumbnail_url")
       .eq("id", postId)
       .single();
 
@@ -53,10 +53,10 @@ export default function MediaForm({
         title: data?.title || "",
         description: data?.description || "",
         publish_media: data?.publish_media || false,
-        thumbnailUrl: thumbnailUrl,
+        thumbnailUrl: data?.thumbnail_url || "",
       });
     }
-  }, [postId, supabase, thumbnailUrl]);
+  }, [postId, supabase]);
 
   const handleDialogOpen = useCallback(() => {
     fetchInitialData().then(() => setIsDialogOpen(true));
@@ -105,8 +105,7 @@ export default function MediaForm({
                 src={fileUrl}
                 className="rounded-lg object-cover w-full h-full"
                 controls={true}
-                blurDataURL={thumbnailUrl}
-                
+                blurDataURL={initialData.thumbnailUrl}
               />
             </div>
           ) : (
