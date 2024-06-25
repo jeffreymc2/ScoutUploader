@@ -62,7 +62,10 @@ const DeletePost: React.FC<DeletePostProps> = ({ postId, post_by, filePath }) =>
       await s3Client.send(deleteFileCommand);
 
       // Delete the thumbnail from S3
-      const thumbnailPath = `${s3FilePath}/thumbnails/${s3FilePath.split('/').pop()}`;
+      const fileNameWithExtension = s3FilePath.split('/').pop() || '';
+      const fileNameWithoutExtension = fileNameWithExtension.split('.').slice(0, -1).join('.');
+      const thumbnailPath = `${s3FilePath.split('/').slice(0, -1).join('/')}/thumbnails/${fileNameWithoutExtension}_thumbnail.jpg`;
+
       const deleteThumbnailCommand = new DeleteObjectCommand({
         Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME,
         Key: thumbnailPath,
