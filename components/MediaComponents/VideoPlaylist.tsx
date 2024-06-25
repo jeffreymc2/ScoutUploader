@@ -49,6 +49,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const [currentVideoIndex, setCurrentVideoIndex] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
+  const { data: user } = useUser();
+  
   const [isFavorite, setIsFavorite] = useState(false);
   const [tab, setTab] = useState<"s" | "h" | "a" | "p" | "c">("s");
   const [type, setType] = useState<"h" | "a" | "l" | "s" | "d" | "t" | "hr" | "iphr" | "dp" | "so" | "dp,so" | "l,s,d,t,hr,iphr">("h");
@@ -56,7 +58,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ playerId }) => {
   const [userPlaylist, setUserPlaylist] = useState<Video[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const { data: user } = useUser();
   const [hasCustomPlaylist, setHasCustomPlaylist] = useState(false);
   const [thumbnailUrls, setThumbnailUrls] = useState<{ [key: string]: string }>({});
   const playerRef = useRef<HTMLVideoElement | null>(null);
