@@ -95,11 +95,10 @@ export default function MediaForm({
           Edit Content
         </span>
       </DialogTrigger>
-
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
-          {/* Media Preview */}
-          {isVideo ? (
+      {isVideo ? (
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent>
+            {/* Media Preview */}
             <div className="video-preview aspect-w-16 aspect-h-9">
               <Player
                 src={fileUrl}
@@ -108,7 +107,7 @@ export default function MediaForm({
                 blurDataURL={initialData.thumbnailUrl}
               />
             </div>
-          ) : (
+
             <div className="image-preview aspect-w-16 aspect-h-9">
               <Image
                 src={fileUrl}
@@ -117,41 +116,88 @@ export default function MediaForm({
                 className="object-cover rounded-lg"
               />
             </div>
-          )}
-          <form onSubmit={handleSubmit}>
-            <input type="hidden" name="postId" value={postId} />
-            <div className="mt-4">
-              <Label htmlFor="title">Title</Label>
-              <Input
-                id="title"
-                name="title"
-                className="mt-1"
-                defaultValue={initialData.title}
+            <form onSubmit={handleSubmit}>
+              <input type="hidden" name="postId" value={postId} />
+              <div className="mt-4">
+                <Label htmlFor="title">Title</Label>
+                <Input
+                  id="title"
+                  name="title"
+                  className="mt-1"
+                  defaultValue={initialData.title}
+                />
+              </div>
+              <div className="mt-4">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  className="mt-1"
+                  defaultValue={initialData.description}
+                />
+              </div>
+              <div className="mt-4 flex items-center space-x-2">
+                <Switch
+                  id="publish_media"
+                  name="publish_media"
+                  defaultChecked={initialData.publish_media}
+                />
+                <Label htmlFor="publish_media">Publish to Profile</Label>
+              </div>
+              <Button className="mt-2" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Updating..." : "Save"}
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
+      ) : (
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent>
+            {/* Media Preview */}
+            <div className="image-preview aspect-w-16 aspect-h-9">
+              <Image
+                src={fileUrl}
+                alt="Media Preview"
+                fill
+                className="object-cover rounded-lg"
               />
             </div>
-            <div className="mt-4">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                name="description"
-                className="mt-1"
-                defaultValue={initialData.description}
-              />
-            </div>
-            <div className="mt-4 flex items-center space-x-2">
-              <Switch
-                id="publish_media"
-                name="publish_media"
-                defaultChecked={initialData.publish_media}
-              />
-              <Label htmlFor="publish_media">Publish to Profile</Label>
-            </div>
-            <Button className="mt-2" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Updating..." : "Save"}
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
+
+            <form onSubmit={handleSubmit}>
+              <input type="hidden" name="postId" value={postId} />
+              <div className="mt-4">
+                <Label htmlFor="title">Title</Label>
+                <Input
+                  id="title"
+                  name="title"
+                  className="mt-1"
+                  defaultValue={initialData.title}
+                />
+              </div>
+              <div className="mt-4">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  name="description"
+                  className="mt-1"
+                  defaultValue={initialData.description}
+                />
+              </div>
+              <div className="mt-4 flex items-center space-x-2">
+                <Switch
+                  id="publish_media"
+                  name="publish_media"
+                  defaultChecked={initialData.publish_media}
+                />
+                <Label htmlFor="publish_media">Publish to Profile</Label>
+              </div>
+              <Button className="mt-2" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Updating..." : "Save"}
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
+      )}
     </Dialog>
   );
 }
