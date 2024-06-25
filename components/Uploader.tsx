@@ -62,13 +62,14 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         let thumbnailPath = null;
 
         if (isVideo) {
-          thumbnailPath = `players/${user?.id}/${player_id}/thumbnails/${file?.name}_thumbnail.jpg`;
+          const fileNameWithoutExtension = file?.name?.split(".").slice(0, -1).join(".");
+          thumbnailPath = `players/${user?.id}/${player_id}/thumbnails/${fileNameWithoutExtension}_thumbnail.jpg`;
         }
 
-        setUploadedFiles((prevFiles) => [
-          ...prevFiles,
-          { filePath, thumbnailPath, isVideo, name: file?.name },
-        ]);
+       setUploadedFiles((prevFiles) => [
+        ...prevFiles,
+        { filePath, thumbnailPath, isVideo, name: file?.name },
+      ]);
 
         const params: AssemblyOptions["params"] = {
           auth: {

@@ -50,7 +50,8 @@ const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID })
         let thumbnailPath = null;
 
         if (isVideo) {
-          thumbnailPath = `events/${user?.id}/${EventID}/${TeamID}/thumbnails/${file?.name}_thumbnail.jpg`;
+          const fileNameWithoutExtension = file?.name?.split(".").slice(0, -1).join(".");
+          thumbnailPath = `players/${user?.id}/${EventID}//${TeamID}/thumbnails/${fileNameWithoutExtension}_thumbnail.jpg`;
         }
 
         setUploadedFiles((prevFiles) => [
