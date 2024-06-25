@@ -7,6 +7,7 @@ import "@uppy/dashboard/dist/style.css";
 import { Button } from "./ui/button";
 import Transloadit, { AssemblyOptions } from "@uppy/transloadit";
 import useUser from "@/app/hook/useUser";
+import {getUserData} from "@/lib/useUser";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
 
@@ -30,8 +31,8 @@ interface UploadedFile {
   name?: string;
 }
 
-const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
-  const { data: user } = useUser();
+const Uploader: React.FC<UploaderProps> = async ({ playerid, FullName }) => {
+  const user = await getUserData();
   const supabase = supabaseBrowser();
   const [selectedPlayer, setSelectedPlayer] = useState<UploaderProps | null>(null);
 
