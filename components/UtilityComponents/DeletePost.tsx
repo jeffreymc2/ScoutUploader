@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import useUser from "@/app/hook/useUser";
+import {getUserData} from "@/lib/useUser";
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -24,12 +25,12 @@ interface DeletePostProps {
   filePath: string;
 }
 
-const DeletePost: React.FC<DeletePostProps> = ({
+const DeletePost: React.FC<DeletePostProps> = async ({
   postId,
   post_by,
   filePath,
 }) => {
-  const { data: user, isFetching } = useUser();
+  const user = await getUserData();
   const router = useRouter();
   const supabase = supabaseBrowser();
 
@@ -103,7 +104,7 @@ const DeletePost: React.FC<DeletePostProps> = ({
     }
   };
 
-  if (isFetching) {
+  if (!user) {
     return null;
   }
 
