@@ -114,7 +114,7 @@ export default function MediaForm({
                 src={fileUrl}
                 alt="Media Preview"
                 fill
-                className="object-cover rounded-lg"
+                className="object-cover rounded-lg relative w-full h-full"
               />
             </div>
           )}
