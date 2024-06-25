@@ -113,8 +113,8 @@ export default function MediaForm({
               <Image
                 src={fileUrl}
                 alt="Media Preview"
-                fill
-                className="object-cover rounded-lg relative w-full h-full"
+                style={{ position: "relative" }}
+                className="object-cover rounded-lg"
               />
             </div>
           )}
