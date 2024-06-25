@@ -1,3 +1,4 @@
+// @app/auth/actions/index.ts
 "use server";
 
 import { supabaseServer } from "@/lib/supabase/server";

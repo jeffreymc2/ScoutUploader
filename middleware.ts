@@ -7,6 +7,17 @@ export async function middleware(request: NextRequest) {
     request: { headers: request.headers },
   });
 
+  // Add CORS headers to the response
+  response.headers.set("Access-Control-Allow-Origin", "https://scouts.perfectgame.org");
+  response.headers.set("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
+  response.headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  // Handle preflight requests
+  if (request.method === "OPTIONS") {
+    return response;
+  }
+
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 

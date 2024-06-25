@@ -9,3 +9,4 @@ export const protectedPaths = [
   "/players/:player_id",
   "/players",
 ];
+
