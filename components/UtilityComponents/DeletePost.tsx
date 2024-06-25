@@ -24,12 +24,18 @@ interface DeletePostProps {
   filePath: string;
 }
 
-const DeletePost: React.FC<DeletePostProps> = ({ postId, post_by, filePath }) => {
+const DeletePost: React.FC<DeletePostProps> = ({
+  postId,
+  post_by,
+  filePath,
+}) => {
   const { data: user, isFetching } = useUser();
   const router = useRouter();
   const supabase = supabaseBrowser();
 
   const handleDelete = async () => {
+    console.log("Deleting post with ID:", postId);
+
     toast.info("Deleting post...");
     try {
       // Delete the post from the 'posts' table in Supabase
@@ -38,12 +44,16 @@ const DeletePost: React.FC<DeletePostProps> = ({ postId, post_by, filePath }) =>
         .delete()
         .eq("id", postId);
 
+      console.log("Delete post error:", deletePostError);
+
       if (deletePostError) {
         throw new Error(deletePostError.message);
       }
-
       // Remove the Cloudfront URL from the file path
-      const s3FilePath = filePath.replace('https://d3v9c4w2c7wrqu.cloudfront.net/', '');
+      const s3FilePath = filePath.replace(
+        "https://d3v9c4w2c7wrqu.cloudfront.net/",
+        ""
+      );
 
       // Delete the corresponding file from S3
       const s3Client = new S3Client({
@@ -62,22 +72,33 @@ const DeletePost: React.FC<DeletePostProps> = ({ postId, post_by, filePath }) =>
       await s3Client.send(deleteFileCommand);
 
       // Delete the thumbnail from S3
-      const fileNameWithExtension = s3FilePath.split('/').pop() || '';
-      const fileNameWithoutExtension = fileNameWithExtension.split('.').slice(0, -1).join('.');
-      const thumbnailPath = `${s3FilePath.split('/').slice(0, -1).join('/')}/thumbnails/${fileNameWithoutExtension}_thumbnail.jpg`;
+      const fileNameWithExtension = s3FilePath.split("/").pop() || "";
+      const fileNameWithoutExtension = fileNameWithExtension
+        .split(".")
+        .slice(0, -1)
+        .join(".");
+      const thumbnailPath = `${s3FilePath
+        .split("/")
+        .slice(0, -1)
+        .join("/")}/thumbnails/${fileNameWithoutExtension}_thumbnail.jpg`;
 
       const deleteThumbnailCommand = new DeleteObjectCommand({
         Bucket: process.env.NEXT_PUBLIC_AWS_S3_BUCKET_NAME,
         Key: thumbnailPath,
       });
 
-      await s3Client.send(deleteThumbnailCommand);
+      console.log("Deleting file from S3:", s3FilePath);
+      await s3Client.send(deleteFileCommand);
 
       toast.success("Successfully deleted post");
+
+      console.log("Deleting thumbnail from S3:", thumbnailPath);
+      await s3Client.send(deleteThumbnailCommand);
+
       router.refresh();
     } catch (error) {
-      // console.error("Error during delete operation:", error);
-      // toast.error("An error occurred while deleting the post");
+      console.error("Error during delete operation:", error);
+      toast.error("An error occurred while deleting the post");
       router.refresh();
     }
   };
@@ -98,7 +119,8 @@ const DeletePost: React.FC<DeletePostProps> = ({ postId, post_by, filePath }) =>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the post and file from storage.
+              This action cannot be undone. This will permanently delete the
+              post and file from storage.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -186,7 +208,7 @@ export default DeletePost;
 //       toast.error("An error occurred while deleting the image");
 //     }
 //   };
-  
+
 //   if (isFetching) {
 //     return null;
 //   }
