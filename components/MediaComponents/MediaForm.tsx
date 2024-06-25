@@ -107,38 +107,6 @@ export default function MediaForm({
                 controls={true}
                 blurDataURL={initialData.thumbnailUrl}
               />
-              <form onSubmit={handleSubmit}>
-            <input type="hidden" name="postId" value={postId} />
-            <div className="mt-4">
-              <Label htmlFor="title">Title</Label>
-              <Input
-                id="title"
-                name="title"
-                className="mt-1"
-                defaultValue={initialData.title}
-              />
-            </div>
-            <div className="mt-4">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                name="description"
-                className="mt-1"
-                defaultValue={initialData.description}
-              />
-            </div>
-            <div className="mt-4 flex items-center space-x-2">
-              <Switch
-                id="publish_media"
-                name="publish_media"
-                defaultChecked={initialData.publish_media}
-              />
-              <Label htmlFor="publish_media">Publish to Profile</Label>
-            </div>
-            <Button className="mt-2" type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Updating..." : "Save"}
-            </Button>
-          </form>
             </div>
           ) : (
             <div className="image-preview aspect-w-16 aspect-h-9">
@@ -148,7 +116,9 @@ export default function MediaForm({
                 fill
                 className="object-cover rounded-lg"
               />
-              <form onSubmit={handleSubmit}>
+            </div>
+          )}
+          <form onSubmit={handleSubmit}>
             <input type="hidden" name="postId" value={postId} />
             <div className="mt-4">
               <Label htmlFor="title">Title</Label>
@@ -180,9 +150,6 @@ export default function MediaForm({
               {isSubmitting ? "Updating..." : "Save"}
             </Button>
           </form>
-            </div>
-          )}
-          
         </DialogContent>
       </Dialog>
     </Dialog>
