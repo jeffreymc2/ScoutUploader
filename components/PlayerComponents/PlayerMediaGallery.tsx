@@ -171,15 +171,11 @@ const PlayerMediaGallery: React.FC<PlayerMediaGalleryProps> = ({
                     )}
                     {user?.id === post.post_by && (
                       <div className="mt-3">
-                        <DeletePost
-                          postId={post.id?.toString() || ""}
-                          post_by={post.post_by || ""}
-                          filePath={`media/${
-                            post.event_id ? "events" : "players"
-                          }/${post.post_by}/${
-                            post.event_id || post.player_id
-                          }/${post.name}`}
-                        />
+                         <DeletePost
+                            postId={post.id?.toString() || ""}
+                            post_by={post.post_by || ""}
+                            filePath={post.file_url || ""}
+                          />
                       </div>
                     )}
                     <DropdownMenuItem
