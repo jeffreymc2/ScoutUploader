@@ -461,35 +461,35 @@ const renderThumbnail = useCallback((video: Video) => {
   }, [position]);
 
   return (
-    <div className="p-4 lg:p-4">
-      <Tabs
-        defaultValue={tab}
-        value={tab}
-        onValueChange={(value: string) =>
-          handleTabChange(value as "s" | "h" | "a" | "p" | "c")
-        }
-      >
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
-          <TabsList className="w-full lg:w-auto">
-            {hasCustomPlaylist && (
-              <TabsTrigger value="c">Featured Playlist</TabsTrigger>
-            )}
-            <TabsTrigger value="s">Showcase</TabsTrigger>
-            <TabsTrigger value="h">Highlights</TabsTrigger>
-            <TabsTrigger value="a">Full At-Bats</TabsTrigger>
-            <TabsTrigger value="p">Pitching</TabsTrigger>
-          </TabsList>
-          {tab !== "c" && tab !== "s" && (
-            <div className="mt-4 lg:mt-0 lg:ml-4">
-              <Select onValueChange={handleTypeChange} value={type}>
-                <SelectTrigger className="w-full lg:w-[180px]">
-                  <SelectValue placeholder="Filter by Type" />
-                </SelectTrigger>
-                <SelectContent>{renderTypeOptions()}</SelectContent>
-              </Select>
+      <div className="p-4 lg:p-4">
+        <Tabs
+          defaultValue={tab}
+          value={tab}
+          onValueChange={(value) => handleTabChange(value as "s" | "h" | "a" | "p" | "c")}
+        >
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
+            <div className="overflow-x-auto pb-2 lg:pb-0">
+              <TabsList className="w-max lg:w-auto flex-nowrap whitespace-nowrap">
+                {hasCustomPlaylist && (
+                  <TabsTrigger value="c" className="flex-shrink-0">Featured Playlist</TabsTrigger>
+                )}
+                <TabsTrigger value="s" className="flex-shrink-0">Showcase</TabsTrigger>
+                <TabsTrigger value="h" className="flex-shrink-0">Highlights</TabsTrigger>
+                <TabsTrigger value="a" className="flex-shrink-0">Full At-Bats</TabsTrigger>
+                <TabsTrigger value="p" className="flex-shrink-0">Pitching</TabsTrigger>
+              </TabsList>
             </div>
-          )}
-        </div>
+            {tab !== "c" && tab !== "s" && (
+              <div className="mt-4 lg:mt-0 lg:ml-4">
+                <Select onValueChange={handleTypeChange} value={type}>
+                  <SelectTrigger className="w-full lg:w-[180px]">
+                    <SelectValue placeholder="Filter by Type" />
+                  </SelectTrigger>
+                  <SelectContent>{renderTypeOptions()}</SelectContent>
+                </Select>
+              </div>
+            )}
+          </div>
         <TabsContent value={tab}>
           {isLoading ? (
             <VideoSkeleton isLoading={true} noResults={false} />
