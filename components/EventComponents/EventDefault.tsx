@@ -262,6 +262,7 @@ export default function EventDefault() {
             <DialogDescription>
               <UploaderEvents
                 EventName={selectedEvent.EventName}
+                TeamName={selectedTeams[selectedEvent.EventID]?.TournamentTeamName || ""}
                 EventID={selectedEvent.EventID.toString()}
                 TeamID={
                   selectedTeams[

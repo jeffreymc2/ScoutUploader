@@ -215,6 +215,7 @@ export default function EventSearchRoute({ events }: EventSearchProps) {
                 <div>
                   <UploaderEvents
                     EventName={selectedEvent.EventName}
+                    TeamName={selectedTeam.TournamentTeamName}
                     EventID={selectedEvent.EventID.toString()}
                     TeamID={selectedTeam.TournamentTeamID.toString()}
                   />

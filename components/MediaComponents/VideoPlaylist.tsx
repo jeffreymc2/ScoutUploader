@@ -529,6 +529,7 @@ const renderThumbnail = useCallback((video: Video) => {
                       accentColor="#005cb9"
                       className="w-full h-full object-fill"
                       startTime={currentVideo?.start_time || 0}
+                      
                     />
                   </div>
                   {/* Custom Controls */}

@@ -15,6 +15,7 @@ import { toast } from "sonner";
 interface UploaderProps {
   EventID: string;
   EventName: string;
+  TeamName: string;
   TeamID: string;
 }
 
@@ -27,7 +28,7 @@ interface UploadedFile {
 
 // const user3 = "3faf9652-84d8-4b76-8b44-8e1f3b7ff7fd";
 
-const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID }) => {
+const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID, TeamName }) => {
   const user = getUserData();
   const supabase = supabaseBrowser();
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
@@ -123,11 +124,14 @@ const UploaderEvents: React.FC<UploaderProps> = ({ EventID, EventName, TeamID })
         .insert({
           post_by: user?.id,
           event_id: EventID,
+          title: EventName,
+          description: TeamName,
           team_id: TeamID,
           file_url: `https://d2x49pf2i7371p.cloudfront.net/${file.filePath}`,
           thumbnail_url: file.isVideo ? `https://d2x49pf2i7371p.cloudfront.net/${file.thumbnailPath}` : null,
           is_video: file.isVideo,
           name: file.name,
+          publish_media: true,
         })
         .single();
 

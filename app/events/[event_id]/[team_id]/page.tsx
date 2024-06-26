@@ -200,6 +200,7 @@ export default async function EventTeamPage({ params }: EventTeamPageProps) {
                       <DialogHeader>
                         <UploaderEvents
                           EventName={event.EventName}
+                          TeamName={team.TournamentTeamName}
                           EventID={event.EventID.toString()}
                           TeamID={team.TournamentTeamID.toString() || ""}
                         />
