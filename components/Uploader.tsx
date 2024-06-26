@@ -58,6 +58,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       waitForEncoding: true,
       assemblyOptions: (file) => {
         const isVideo = file?.type?.includes("video") ?? false;
+        const isMP4 = file?.type === "video/mp4";
         const originalFilePath = `players/${user?.id}/${player_id}/${file?.name}`;
         let thumbnailPath: string | null = null;
         let mp4Path: string | null = null;
@@ -65,10 +66,12 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         if (isVideo) {
           const fileNameWithoutExtension = file?.name?.split(".").slice(0, -1).join(".");
           thumbnailPath = `players/${user?.id}/${player_id}/thumbnails/${fileNameWithoutExtension}_thumbnail.jpg`;
-          mp4Path = `players/${user?.id}/${player_id}/${fileNameWithoutExtension}.mp4`;
+          if (!isMP4) {
+            mp4Path = `players/${user?.id}/${player_id}/${fileNameWithoutExtension}.mp4`;
+          }
         }
 
-        const filePath = isVideo ? (mp4Path || originalFilePath) : originalFilePath;
+        const filePath = isVideo && !isMP4 ? (mp4Path || originalFilePath) : originalFilePath;
 
         setUploadedFiles((prevFiles) => [
           ...prevFiles,
@@ -85,7 +88,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
               result: true,
             },
             uploaded: {
-              use: isVideo ? "mp4" : ":original",
+              use: isVideo && !isMP4 ? "mp4" : ":original",
               robot: "/s3/store",
               credentials: "scoutuploads",
               bucket: "scoutuploads",
@@ -95,17 +98,23 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         };
 
         if (isVideo) {
+          if (!isMP4) {
+            params.steps = {
+              ...params.steps,
+              mp4: {
+                use: ":original",
+                robot: "/video/encode",
+                preset: "mp4",
+                ffmpeg_stack: "v4.3.1",
+                result: true,
+              },
+            };
+          }
+
           params.steps = {
             ...params.steps,
-            mp4: {
-              use: ":original",
-              robot: "/video/encode",
-              preset: "mp4",
-              ffmpeg_stack: "v4.3.1",
-              result: true,
-            },
             thumbnail: {
-              use: "mp4",
+              use: isMP4 ? ":original" : "mp4",
               robot: "/video/thumbs",
               width: 800,
               height: 600,
