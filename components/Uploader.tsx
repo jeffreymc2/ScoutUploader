@@ -58,18 +58,22 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
       waitForEncoding: true,
       assemblyOptions: (file) => {
         const isVideo = file?.type?.includes("video") ?? false;
-        const filePath = `players/${user?.id}/${player_id}/${file?.name}`;
-        let thumbnailPath = null;
+        const originalFilePath = `players/${user?.id}/${player_id}/${file?.name}`;
+        let thumbnailPath: string | null = null;
+        let mp4Path: string | null = null;
 
         if (isVideo) {
           const fileNameWithoutExtension = file?.name?.split(".").slice(0, -1).join(".");
           thumbnailPath = `players/${user?.id}/${player_id}/thumbnails/${fileNameWithoutExtension}_thumbnail.jpg`;
+          mp4Path = `players/${user?.id}/${player_id}/${fileNameWithoutExtension}.mp4`;
         }
 
-       setUploadedFiles((prevFiles) => [
-        ...prevFiles,
-        { filePath, thumbnailPath, isVideo, name: file?.name },
-      ]);
+        const filePath = isVideo ? (mp4Path || originalFilePath) : originalFilePath;
+
+        setUploadedFiles((prevFiles) => [
+          ...prevFiles,
+          { filePath, thumbnailPath, isVideo, name: file?.name },
+        ]);
 
         const params: AssemblyOptions["params"] = {
           auth: {
@@ -81,7 +85,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
               result: true,
             },
             uploaded: {
-              use: ":original",
+              use: isVideo ? "mp4" : ":original",
               robot: "/s3/store",
               credentials: "scoutuploads",
               bucket: "scoutuploads",
@@ -93,8 +97,15 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
         if (isVideo) {
           params.steps = {
             ...params.steps,
-            thumbnail: {
+            mp4: {
               use: ":original",
+              robot: "/video/encode",
+              preset: "mp4",
+              ffmpeg_stack: "v4.3.1",
+              result: true,
+            },
+            thumbnail: {
+              use: "mp4",
               robot: "/video/thumbs",
               width: 800,
               height: 600,
@@ -109,7 +120,7 @@ const Uploader: React.FC<UploaderProps> = ({ playerid, FullName }) => {
               robot: "/s3/store",
               credentials: "scoutuploads",
               bucket: "scoutuploads",
-              path: thumbnailPath,
+              path: thumbnailPath || "",
             },
           };
         }
