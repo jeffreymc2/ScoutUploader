@@ -59,7 +59,8 @@ export default function PlayerSearchByName() {
       toast.info("Please enter a name to search.");
       return;
     }
-
+  
+    setIsLoading(true);
     try {
       const response = await fetch(
         `/api/playername?query=${encodeURIComponent(searchQuery)}`
@@ -68,8 +69,6 @@ export default function PlayerSearchByName() {
       if (players.length > 0) {
         setSearchResults(players);
       } else {
-        setIsLoading(false); // Set to false once data is fetched
-
         setSearchResults([]);
         toast.info("No players found.");
       }
@@ -77,6 +76,8 @@ export default function PlayerSearchByName() {
       const errorMessage =
         error instanceof Error ? error.message : "An unknown error occurred";
       toast.error(`Error searching for players: ${errorMessage}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
